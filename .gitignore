@@ -1,0 +1,37 @@
+# OSX
+#
+.DS_Store
+
+# Misc
+#
+.env
+.vercel
+.serverless
+
+# Gatsby
+#
+.cache
+public
+
+# Expo
+#
+.expo
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build
+google-services.json
+
+# IDE specific
+.vscode
+
+# Node
+#
+node_modules
+npm-debug.log
+package-lock.json
+yarn-error.log
+yarn.lock

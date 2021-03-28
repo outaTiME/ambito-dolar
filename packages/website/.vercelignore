@@ -1,0 +1,8 @@
+/*
+!src
+!src/**/*.js
+!static
+!static/**/*.{css,png,jpg,webp,scss}
+!gatsby-*.js
+!package.json
+!yarn.lock

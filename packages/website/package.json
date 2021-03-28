@@ -1,0 +1,40 @@
+{
+  "name": "@ambito-dolar/website",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "gatsby": "^2.7.5",
+    "gatsby-background-image": "^1.1.1",
+    "gatsby-cli": "^2.7.47",
+    "gatsby-image": "^2.1.2",
+    "gatsby-plugin-dark-mode": "^1.1.2",
+    "gatsby-plugin-google-analytics": "^2.3.13",
+    "gatsby-plugin-humans-txt": "^1.1.4",
+    "gatsby-plugin-manifest": "^2.1.1",
+    "gatsby-plugin-no-sourcemaps": "^2.2.0",
+    "gatsby-plugin-offline": "^3.2.16",
+    "gatsby-plugin-react-helmet": "^3.0.12",
+    "gatsby-plugin-robots-txt": "^1.5.1",
+    "gatsby-plugin-sass": "^3.0.0",
+    "gatsby-plugin-sharp": "^2.1.2",
+    "gatsby-plugin-web-font-loader": "^1.0.4",
+    "gatsby-source-filesystem": "^2.0.37",
+    "gatsby-transformer-sharp": "^2.1.20",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-helmet": "^6.1.0",
+    "react-icons": "^4.2.0",
+    "sass": "^1.32.8"
+  },
+  "engines": {
+    "node": ">=12.x"
+  },
+  "scripts": {
+    "develop": "gatsby develop",
+    "start": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "ambito-dolar",
+  "license": "MIT",
+  "repository": "outaTiME/ambito-dolar",
+  "author": {
+    "name": "outaTiME",
+    "email": "afalduto@gmail.com",
+    "url": "https://outa.im"
+  },
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
+    "eslint": "^7.22.0",
+    "eslint-config-universe": "^7.0.1",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.3"
+  }
+}
