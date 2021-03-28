@@ -6,11 +6,11 @@
   "useWorkspaces": true,
   "version": "independent",
   "command": {
-    "publish": {
-      "allowBranch": "main",
+    "version": {
+      "allowBranch": "master",
       "conventionalCommits": true,
       "createRelease": "github",
-      "message": "chore: publish",
+      "message": "chore: version",
       "ignoreChanges": [
         "**/*.md"
       ]
