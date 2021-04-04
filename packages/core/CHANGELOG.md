@@ -11,6 +11,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.0...@ambito-dolar/core@1.0.0) (2021-04-04)
+
+**Note:** Version bump only for package @ambito-dolar/core
+
+
+
+
+
 # 1.0.0 (2021-04-04)
 
 **Note:** Version bump only for package @ambito-dolar/core
