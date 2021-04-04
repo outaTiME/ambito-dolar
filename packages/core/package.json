@@ -1,0 +1,24 @@
+{
+  "name": "@ambito-dolar/core",
+  "version": "1.0.0",
+  "dependencies": {
+    "chrono-node": "~1.4.0",
+    "lodash": "^4.17.11",
+    "moment-timezone": "^0.5.23",
+    "numeral": "^2.0.6",
+    "utf8-length": "^0.0.1"
+  },
+  "devDependencies": {
+    "ava": "^3.15.0"
+  },
+  "engines": {
+    "node": ">=12.x"
+  },
+  "scripts": {
+    "test": "eslint . && ava"
+  },
+  "exports": "./index.js",
+  "files": [
+    "index.js"
+  ]
+}
