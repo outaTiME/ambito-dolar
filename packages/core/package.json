@@ -20,5 +20,8 @@
   "exports": "./index.js",
   "files": [
     "index.js"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
