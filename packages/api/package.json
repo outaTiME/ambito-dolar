@@ -12,7 +12,6 @@
     "file-type": "^16.0.0",
     "googleapis": "^70.0.0",
     "instagram-private-api": "^1.41.0",
-    "instagram-web-api": "^2.2.2",
     "joi": "^17.4.0",
     "lodash": "^4.17.11",
     "node-fetch": "2",
@@ -20,13 +19,7 @@
     "puppeteer-core": "^8.0.0",
     "semver": "^7.3.2"
   },
-  "devDependencies": {
-    "vercel": "^21.3.3"
-  },
   "engines": {
     "node": ">=12.x"
-  },
-  "scripts": {
-    "release": "vercel --prod"
   }
 }
