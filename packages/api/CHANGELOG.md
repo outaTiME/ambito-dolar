@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.1...@ambito-dolar/api@1.0.2) (2021-04-05)
+
+
+### Bug Fixes
+
+* Leave core as fixed version, use headless chrome 80 for social images and simplest way to authenticate against google. ([b84b25e](https://github.com/outaTiME/ambito-dolar/commit/b84b25ef6cbc07ddfe84baefe79a89bdae0c5fad))
+
+
+
+
+
 ## [1.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.0...@ambito-dolar/api@1.0.1) (2021-04-05)
 
 
