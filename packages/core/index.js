@@ -1,5 +1,5 @@
 const chrono = require('chrono-node');
-const isEmpty = require('lodash.isEmpty');
+const isEmpty = require('lodash.isempty');
 const pickBy = require('lodash.pickby');
 const moment = require('moment-timezone');
 require('moment/locale/es');
