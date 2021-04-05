@@ -1,5 +1,6 @@
 const chrono = require('chrono-node');
-const _ = require('lodash');
+const isEmpty = require('lodash.isEmpty');
+const pickBy = require('lodash.pickby');
 const moment = require('moment-timezone');
 require('moment/locale/es');
 const numeral = require('numeral');
@@ -80,7 +81,7 @@ const isRateFromToday = (rate) => {
 };
 
 const hasRatesFromToday = (rates = {}) =>
-  !_.isEmpty(_.pickBy(rates, (rate) => isRateFromToday(rate)));
+  !isEmpty(pickBy(rates, (rate) => isRateFromToday(rate)));
 
 const parseNaturalDate = (value, format /* = 'YYYY-MM-DDTHH:mm:ss' */) => {
   const date = chrono.es.parseDate(value);

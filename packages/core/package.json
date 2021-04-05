@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "dependencies": {
     "chrono-node": "~1.4.0",
-    "lodash": "^4.17.11",
+    "lodash.isempty": "^4.4.0",
+    "lodash.pickby": "^4.6.0",
     "moment-timezone": "^0.5.23",
     "numeral": "^2.0.6",
     "utf8-length": "^0.0.1"

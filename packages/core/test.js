@@ -24,7 +24,8 @@ test('rate should be of the day', function (t) {
 });
 
 test('should parse the date from a string', function (t) {
-  const date = AmbitoDolar.getTimezoneDate('2021-03-31');
+  // ignore timezone as natural parse
+  const date = AmbitoDolar.getTimezoneDate('2021-03-31', undefined, true);
   t.true(date.isSame(AmbitoDolar.parseNaturalDate('31-03-2021'), 'day'));
   t.true(date.isSame(AmbitoDolar.parseNaturalDate('31/03/2021'), 'day'));
   t.true(date.isSame(AmbitoDolar.parseNaturalDate('2021-03-31'), 'day'));
