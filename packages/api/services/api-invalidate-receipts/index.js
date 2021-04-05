@@ -1,8 +1,7 @@
 const AmbitoDolar = require('@ambito-dolar/core');
-const { Expo } = require('expo-server-sdk');
 const _ = require('lodash');
 
-const { Shared, EXPO_CONCURRENT_REQUEST_LIMIT } = require('../../lib/shared');
+const { Shared } = require('../../lib/shared');
 
 const client = Shared.getDynamoDBClient();
 
@@ -35,9 +34,7 @@ const invalidateDevice = async (installation_id) => {
 
 const check = async (items = [], readonly) => {
   if (items.length > 0) {
-    const expo = new Expo({
-      maxConcurrentRequests: EXPO_CONCURRENT_REQUEST_LIMIT,
-    });
+    const expo = Shared.getExpoClient();
     const receiptIds = _.map(items, 'id');
     const expo_start_time = Date.now();
     console.info(

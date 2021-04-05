@@ -1,7 +1,6 @@
 const AmbitoDolar = require('@ambito-dolar/core');
 const chrome = require('chrome-aws-lambda');
 const { IgApiClient } = require('instagram-private-api');
-const _ = require('lodash');
 const puppeteer = require('puppeteer-core');
 
 const { Shared } = require('../../lib/shared');
@@ -24,17 +23,11 @@ const getPuppeteerOptions = async () => {
   };
 };
 
-const getScreenshotUrl = (title) => {
-  return _.template(process.env.SOCIAL_SCREENSHOT_URL)({
-    title: encodeURIComponent(title),
-  });
-};
-
 // TODO: use microlink.io instead of local puppeteer (???)
 // https://github.com/MaximeHeckel/carbonara/blob/master/api/_lib/screenshot.ts
 const generateScreenshot = async (type, title) => {
   const start_time = Date.now();
-  const screenshot_url = getScreenshotUrl(title);
+  const screenshot_url = Shared.getSocialScreenshotUrl(title);
   const options = await getPuppeteerOptions();
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();

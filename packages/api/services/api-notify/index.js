@@ -1,12 +1,10 @@
 const AmbitoDolar = require('@ambito-dolar/core');
-const { Expo } = require('expo-server-sdk');
 const _ = require('lodash');
 
 const {
   Shared,
   MIN_CLIENT_VERSION_FOR_MEP,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
-  EXPO_CONCURRENT_REQUEST_LIMIT,
 } = require('../../lib/shared');
 
 const client = Shared.getDynamoDBClient();
@@ -41,6 +39,7 @@ const getBodyMessage = (rates) => {
     if (rate_message) {
       obj.push(rate_message);
     }
+    return obj;
   }, []);
   if (body.length > 0) {
     return `${body.join(', ')}.`;
@@ -157,10 +156,10 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
           {}
         );
         // remove rates on outdated clients
-        if (isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_MEP)) {
+        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_MEP)) {
           delete rates_for_settings[AmbitoDolar.MEP_TYPE];
         }
-        if (isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_WHOLESALER)) {
+        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_WHOLESALER)) {
           delete rates_for_settings[AmbitoDolar.WHOLESALER_TYPE];
         }
         const body = getBodyMessage(rates_for_settings);
@@ -308,14 +307,11 @@ const notify = async (
       'Generated messages',
       JSON.stringify({
         // type: type_detail,
-        // messages: `${messages.length} (${EXPO_CONCURRENT_REQUEST_LIMIT} * ${Expo.pushNotificationChunkSizeLimit})`,
         amount: messages.length,
       })
     );
     if (messages.length > 0) {
-      const expo = new Expo({
-        maxConcurrentRequests: EXPO_CONCURRENT_REQUEST_LIMIT,
-      });
+      const expo = Shared.getExpoClient();
       // https://github.com/expo/expo-server-sdk-node/blob/master/src/ExpoClient.ts#L20
       const chunks = expo.chunkPushNotifications(
         // create messages array without (internal) source

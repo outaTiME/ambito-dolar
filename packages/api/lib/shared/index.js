@@ -2,7 +2,7 @@ const AmbitoDolar = require('@ambito-dolar/core');
 const Fetch = require('@zeit/fetch');
 const AWS = require('aws-sdk');
 const FileType = require('file-type');
-const { google } = require('googleapis');
+const { JWT } = require('google-auth-library');
 const _ = require('lodash');
 const semverLt = require('semver/functions/lt');
 const zlib = require('zlib');
@@ -14,9 +14,11 @@ AWS.config.update(JSON.parse(process.env.AWS_CONFIG_JSON));
 const dynamoDBClient = new AWS.DynamoDB.DocumentClient({
   // pass
 });
+
 const s3 = new AWS.S3({
   // pass
 });
+
 const sns = new AWS.SNS({
   // pass
 });
@@ -36,8 +38,6 @@ const HISTORICAL_RATES_LEGACY_OBJECT_KEY =
 // 5.x
 const RATES_OBJECT_KEY = process.env.RATES_OBJECT_KEY;
 const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
-// const FORMAT_LOCALE = 'es-AR';
-// const FRACTION_DIGITS = 2;
 // run all calls in parallel
 const EXPO_CONCURRENT_REQUEST_LIMIT = 0;
 
@@ -49,27 +49,25 @@ const FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY;
 const getFirebaseAccessToken = async () => {
   const { access_token, expiry_date } = this._firebase_token || {};
   if (!expiry_date || (expiry_date && Date.now() >= expiry_date)) {
-    /* if (!expiry_date) {
+    if (!expiry_date) {
       console.log('>>> Empty access token from getFirebaseAccessToken');
     } else {
       console.log(
-        '>>> Expired access token from getFirebaseAccessToken',
-        JSON.stringify(this._firebase_token)
+        '>>> Expired access token from getFirebaseAccessToken'
+        // JSON.stringify(this._firebase_token)
       );
-    } */
+    }
     // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
     const scopes = [
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/firebase.database',
     ];
     return new Promise((resolve, reject) => {
-      const jwtClient = new google.auth.JWT(
-        FIREBASE_CLIENT_EMAIL,
-        null,
-        FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      const jwtClient = new JWT({
+        email: FIREBASE_CLIENT_EMAIL,
+        key: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
         scopes,
-        null
-      );
+      });
       jwtClient.authorize((err, token) => {
         if (err) {
           reject(err);
@@ -81,10 +79,10 @@ const getFirebaseAccessToken = async () => {
       });
     });
   }
-  /* console.log(
-    '>>> Using already generated access token from getFirebaseAccessToken',
-    JSON.stringify(this._firebase_token)
-  ); */
+  console.log(
+    '>>> Using already generated access token from getFirebaseAccessToken'
+    // JSON.stringify(this._firebase_token)
+  );
   return access_token;
 };
 
@@ -439,6 +437,17 @@ const getHistoricalRateUrl = (type) => {
   });
 };
 
+const getSocialScreenshotUrl = (title) => {
+  return _.template(process.env.SOCIAL_SCREENSHOT_URL)({
+    title: encodeURIComponent(title),
+  });
+};
+
+const getExpoClient = () =>
+  new Expo({
+    maxConcurrentRequests: EXPO_CONCURRENT_REQUEST_LIMIT,
+  });
+
 // SNS
 
 const publishMessageToTopic = async (event, payload) => {
@@ -567,6 +576,7 @@ const triggerSendSocialNotificationsEvent = async (
 };
 
 const Shared = {
+  fetchFirebaseData,
   putFirebaseData,
   serviceResponse,
   getDynamoDBClient,
@@ -588,6 +598,8 @@ const Shared = {
   getDataProviderForRate,
   getRateUrl,
   getHistoricalRateUrl,
+  getSocialScreenshotUrl,
+  getExpoClient,
   triggerNotifyEvent,
   triggerSocialNotifyEvent,
   triggerSendSocialNotificationsEvent,
@@ -598,5 +610,4 @@ module.exports = {
   MIN_CLIENT_VERSION_FOR_MEP,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
   MAX_NUMBER_OF_STATS,
-  EXPO_CONCURRENT_REQUEST_LIMIT,
 };
