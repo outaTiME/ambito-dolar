@@ -1,6 +1,7 @@
 const AmbitoDolar = require('@ambito-dolar/core');
 const Fetch = require('@zeit/fetch');
 const AWS = require('aws-sdk');
+const { Expo } = require('expo-server-sdk');
 const FileType = require('file-type');
 const { JWT } = require('google-auth-library');
 const _ = require('lodash');
