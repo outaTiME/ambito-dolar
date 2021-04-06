@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.2...@ambito-dolar/api@1.0.3) (2021-04-06)
+
+
+### Bug Fixes
+
+* Add expo client on shared. ([cb44c29](https://github.com/outaTiME/ambito-dolar/commit/cb44c29830068ff797d62ae224702d218c4d4d03))
+* Issue when empty rates on notify, encoding issue with providers, split firebase operations to reuse access tokens and upgrade chrome-aws-lambda to prevent issues on vercel. ([c392c1f](https://github.com/outaTiME/ambito-dolar/commit/c392c1fbba853ad71629e90565eedc54dc2bc88a))
+
+
+
+
+
 ## [1.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.1...@ambito-dolar/api@1.0.2) (2021-04-05)
 
 
