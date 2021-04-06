@@ -203,7 +203,7 @@ const storeJsonObject = async (
       Bucket: bucket,
       Key: `${key}.json`,
       Body: compressed,
-      ContentType: 'application/json',
+      ContentType: 'application/json; charset=utf-8',
       ...(is_public === true && { ACL: 'public-read' }),
       CacheControl: 'no-cache',
       // brotli-compressed
@@ -516,7 +516,7 @@ const triggerEvent = async (event, payload) => {
     {
       method: 'POST',
       // required by IFTTT
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify(payload),
     }
   )

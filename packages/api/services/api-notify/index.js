@@ -264,7 +264,7 @@ const notify = async (
       );
     } else {
       // use getRates when NOTIFICATION_CLOSE_TYPE
-      rates = rates || (await getRates());
+      rates = rates || (await Shared.getRates());
       // FIXME: remove following line when MIN_CLIENT_VERSION_FOR_WHOLESALER release
       delete rates[AmbitoDolar.WHOLESALER_TYPE];
       // useful for holidays when NOTIFICATION_CLOSE_TYPE
@@ -407,7 +407,7 @@ export default async (req, res) => {
     if (sns_message_type) {
       // console.debug('Message received', sns_message_type, req.body);
       // some logs lost when "manually" change the content-type
-      // req.headers['content-type'] = 'application/json;charset=UTF-8';
+      // req.headers['content-type'] = 'application/json; charset=utf-8';
       // req.headers['content-type'] = 'application/json';
       payload = JSON.parse(req.body);
       if (

@@ -138,7 +138,7 @@ export default async (req, res) => {
     if (sns_message_type) {
       // console.debug('Message received', sns_message_type, req.body);
       // some logs lost when "manually" change the content-type
-      // req.headers['content-type'] = 'application/json;charset=UTF-8';
+      // req.headers['content-type'] = 'application/json; charset=utf-8';
       // req.headers['content-type'] = 'application/json';
       payload = JSON.parse(req.body);
       if (
@@ -157,6 +157,7 @@ export default async (req, res) => {
       hashtags = req.query.hashtags,
       // timestamp = req.query.timestamp,
       ig_only = req.query.ig_only,
+      generate_only = req.query.generate_only,
     } = payload || {};
     // must required for social notification
     if (!type || !title || !caption || !hashtags) {
@@ -176,45 +177,50 @@ export default async (req, res) => {
         // timestamp
       })
     );
-    const promises = [];
-    const caption_with_hashtags = `${caption}\n\n${hashtags}`;
-    if (type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
-      try {
-        const { file, target_url } = await generateScreenshot(type, title);
-        promises.push(publishToInstagram(file, caption_with_hashtags));
-        // to generate again when ig login fails
-        if (ig_only === undefined) {
-          promises.push(
-            Shared.triggerSendSocialNotificationsEvent(
-              caption,
-              caption_with_hashtags,
-              target_url
-            )
+    if (generate_only !== undefined) {
+      const { target_url } = await generateScreenshot(type, title);
+      Shared.serviceResponse(res, 200, { target_url });
+    } else {
+      const promises = [];
+      const caption_with_hashtags = `${caption}\n\n${hashtags}`;
+      if (type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
+        try {
+          const { file, target_url } = await generateScreenshot(type, title);
+          promises.push(publishToInstagram(file, caption_with_hashtags));
+          // to generate again when ig login fails
+          if (ig_only === undefined) {
+            promises.push(
+              Shared.triggerSendSocialNotificationsEvent(
+                caption,
+                caption_with_hashtags,
+                target_url
+              )
+            );
+          }
+        } catch (error) {
+          console.warn(
+            'Unable to generate the screenshot for notification',
+            JSON.stringify({ type, title, error: error.message })
           );
+          // send as plain
         }
-      } catch (error) {
-        console.warn(
-          'Unable to generate the screenshot for notification',
-          JSON.stringify({ type, title, error: error.message })
-        );
-        // send as plain
       }
+      // when NOTIFICATION_VARIATION_TYPE or error
+      if (promises.length === 0) {
+        promises.push(
+          Shared.triggerSendSocialNotificationsEvent(
+            caption,
+            caption_with_hashtags
+          )
+        );
+      }
+      const results = await Promise.all(promises);
+      console.info('Completed', JSON.stringify(results));
+      Shared.serviceResponse(res, 200, results);
     }
-    // when NOTIFICATION_VARIATION_TYPE or error
-    if (promises.length === 0) {
-      promises.push(
-        Shared.triggerSendSocialNotificationsEvent(
-          caption,
-          caption_with_hashtags
-        )
-      );
-    }
-    const results = await Promise.all(promises);
-    console.info('Completed', JSON.stringify(results));
-    Shared.serviceResponse(res, 200, results);
     // screenshot generation on local environment
     /* if (type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
-      const { file } = await generateScreenshotForNotification(
+      const { file } = await generateScreenshot(
         type,
         title
       );

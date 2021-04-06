@@ -341,11 +341,10 @@ export default async (req, res) => {
       has_new_rates && Shared.storeHistoricalRatesJsonObject(base_rates),
     ]);
     // firebase update should occur after saving json files
-    await Promise.all([
-      has_new_rates &&
-        Shared.putFirebaseData('updated_at', base_rates.updated_at),
-      Shared.putFirebaseData('processed_at', base_rates.processed_at),
-    ]);
+    if (has_new_rates) {
+      await Shared.putFirebaseData('updated_at', base_rates.updated_at);
+    }
+    await Shared.putFirebaseData('processed_at', base_rates.processed_at);
     // notifications should occur after saving json files
     if (has_new_rates && notify !== undefined) {
       await notifyUpdates(rates, has_rates_from_today, new_rates);

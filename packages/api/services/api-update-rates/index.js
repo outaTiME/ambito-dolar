@@ -4,6 +4,7 @@ const { Shared } = require('../../lib/shared');
 
 export default async (req, res) => {
   // TODO: add query parameter to update clients?
+  // TODO: add parameter to update historical data optional?
   try {
     // assertions
     Shared.assertPost(req);
@@ -27,11 +28,9 @@ export default async (req, res) => {
       Shared.storeHistoricalRatesJsonObject(base_rates),
     ]);
     // firebase update should occur after saving json files
-    await Promise.all([
-      // silent update
-      Shared.putFirebaseData('updated_at', base_rates.updated_at),
-      // Shared.putFirebaseData('processed_at', base_rates.processed_at),
-    ]);
+    // silent update
+    await Shared.putFirebaseData('updated_at', base_rates.updated_at);
+    // await Shared.putFirebaseData('processed_at', base_rates.processed_at),
     Shared.serviceResponse(res, 200, { status: 'Rates updated' });
   } catch (error) {
     Shared.serviceResponse(res, error.code || 400, {
