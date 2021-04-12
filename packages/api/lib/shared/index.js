@@ -27,7 +27,7 @@ const sns = new AWS.SNS({
 // constants
 
 const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
-const MIN_CLIENT_VERSION_FOR_WHOLESALER = '3.2.0';
+const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
 const MAX_NUMBER_OF_STATS = 7; // 1 week
 const S3_BUCKET = process.env.S3_BUCKET;
 // 2.1.x
