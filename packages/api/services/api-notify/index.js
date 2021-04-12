@@ -46,51 +46,10 @@ const getBodyMessage = (rates) => {
   }
 };
 
-const getTitleMessage = (type) => {
-  if (type === AmbitoDolar.NOTIFICATION_OPEN_TYPE) {
-    return 'Apertura de jornada';
-  } else if (type === AmbitoDolar.NOTIFICATION_CLOSE_TYPE) {
-    return 'Cierre de jornada';
-  }
-  return 'Variación de cotización';
-};
-
-// aligned to client app
-const getNotificationSettings = (notification_settings) => {
-  const rate_types = AmbitoDolar.getAvailableRateTypes();
-  // all rate types enabled by default
-  const rate_defaults = rate_types.reduce((obj, type) => {
-    obj[type] = true;
-    return obj;
-  }, {});
-  const type_defaults = {
-    enabled: false,
-    rates: rate_defaults,
-  };
-  // use new instance to prevent update issues over the same type_defaults instance
-  return _.merge(
-    {},
-    {
-      enabled: true,
-      [AmbitoDolar.NOTIFICATION_OPEN_TYPE]: {
-        ...type_defaults,
-      },
-      [AmbitoDolar.NOTIFICATION_CLOSE_TYPE]: {
-        ...type_defaults,
-        enabled: true,
-      },
-      [AmbitoDolar.NOTIFICATION_VARIATION_TYPE]: {
-        ...type_defaults,
-      },
-    },
-    notification_settings
-  );
-};
-
 const getSocialCaption = (type, rates) => {
   const body = getBodyMessage(rates);
   if (body) {
-    const title = getTitleMessage(type);
+    const title = AmbitoDolar.getNotificationTitle(type);
     // const hashtags = getHashtags(type, rates);
     // return `${title}.\n${body}`;
     // return `${title}. ${body}\n\n${hashtags}`;
@@ -126,7 +85,7 @@ const getMessage = (extras = {}) => ({
 
 const getMessagesFromCurrentRate = async (items, type, rates) => {
   try {
-    const title = getTitleMessage(type);
+    const title = AmbitoDolar.getNotificationTitle(type);
     const messages = items.map(
       ({
         notification_settings,
@@ -135,7 +94,9 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
         device_name,
         app_version,
       }) => {
-        const settings = getNotificationSettings(notification_settings)[type];
+        const settings = AmbitoDolar.getNotificationSettings(
+          notification_settings
+        )[type];
         const rates_for_settings = Object.entries(rates).reduce(
           (obj, [type, value]) => {
             // legacy support for settings < MIN_CLIENT_VERSION_FOR_WHOLESALER
@@ -203,7 +164,7 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
 };
 
 const checkForSetting = (notification_settings = {}, type) => {
-  const settings = getNotificationSettings(notification_settings);
+  const settings = AmbitoDolar.getNotificationSettings(notification_settings);
   return settings.enabled === true && settings[type].enabled === true;
 };
 
@@ -284,7 +245,7 @@ const notify = async (
         if (social === true) {
           await Shared.triggerSocialNotifyEvent({
             type,
-            title: getTitleMessage(type),
+            title: AmbitoDolar.getNotificationTitle(type),
             caption: getSocialCaption(type, rates),
             hashtags: getSocialHashtags(type, rates),
             // timestamp: AmbitoDolar.getTimezoneDate().format(),

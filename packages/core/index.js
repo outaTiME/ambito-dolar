@@ -1,5 +1,6 @@
 const chrono = require('chrono-node');
 const isEmpty = require('lodash.isempty');
+const merge = require('lodash.merge');
 const pickBy = require('lodash.pickby');
 const moment = require('moment-timezone');
 require('moment/locale/es');
@@ -107,6 +108,7 @@ const getRateTitle = (type) => {
   } else if (type === INFORMAL_TYPE) {
     return 'Blue';
   } else if (type === CCL_TYPE) {
+    // return 'Contado con liquidación',
     return 'CCL';
   } else if (type === MEP_TYPE) {
     return 'MEP';
@@ -115,6 +117,46 @@ const getRateTitle = (type) => {
   } else if (type === WHOLESALER_TYPE) {
     return 'Mayorista';
   }
+};
+
+const getNotificationTitle = (type) => {
+  if (type === NOTIFICATION_OPEN_TYPE) {
+    return 'Apertura de jornada';
+  } else if (type === NOTIFICATION_CLOSE_TYPE) {
+    return 'Cierre de jornada';
+  }
+  return 'Variación de cotización';
+};
+
+const getNotificationSettings = (notification_settings) => {
+  const rate_types = getAvailableRateTypes();
+  // all rate types enabled by default
+  const rate_defaults = rate_types.reduce((obj, type) => {
+    obj[type] = true;
+    return obj;
+  }, {});
+  const type_defaults = {
+    enabled: false,
+    rates: rate_defaults,
+  };
+  // use new instance to prevent update issues over the same type_defaults instance
+  return merge(
+    {},
+    {
+      enabled: true,
+      [NOTIFICATION_OPEN_TYPE]: {
+        ...type_defaults,
+      },
+      [NOTIFICATION_CLOSE_TYPE]: {
+        ...type_defaults,
+        enabled: true,
+      },
+      [NOTIFICATION_VARIATION_TYPE]: {
+        ...type_defaults,
+      },
+    },
+    notification_settings
+  );
 };
 
 module.exports = {
@@ -141,4 +183,6 @@ module.exports = {
   parseNaturalDate,
   getAvailableRateTypes,
   getRateTitle,
+  getNotificationTitle,
+  getNotificationSettings,
 };
