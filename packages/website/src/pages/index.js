@@ -7,6 +7,7 @@ import {
   FaInstagram as Insta,
   FaFacebook as Facebook,
   FaCoffee as Cafecito,
+  FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa';
 
@@ -104,13 +105,21 @@ const IndexPage = () => {
                       >
                         <Facebook />
                       </a>
-                      <a
+                      {/* <a
                         className="icon"
                         href="https://cafecito.app/ambitodolar"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         <Cafecito />
+                      </a> */}
+                      <a
+                        className="icon"
+                        href="https://github.com/outaTiME/ambito-dolar"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Github />
                       </a>
                       <a
                         className="icon"
@@ -121,6 +130,22 @@ const IndexPage = () => {
                         <Mail />
                       </a>
                     </p>
+
+                    <p className="donation">
+                      Esta aplicación es gratuita y de código abierto, podes
+                      contribuir con su desarrollo y mantenimiento haciendo tu
+                      aporte en&nbsp;
+                      <a
+                        className="icon"
+                        href="https://cafecito.app/ambitodolar"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Cafecito App
+                      </a>
+                      .
+                    </p>
+
                     <div className="feature__action">
                       <AppStore />
                       <PlayStore />
