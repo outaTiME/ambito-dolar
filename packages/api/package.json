@@ -1,9 +1,9 @@
 {
   "name": "@ambito-dolar/api",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "dependencies": {
-    "@ambito-dolar/core": "1.0.1",
+    "@ambito-dolar/core": "^1.0.2",
     "@zeit/fetch": "^6.0.0",
     "aws-sdk": "^2.553.0",
     "chrome-aws-lambda": "~6.0",

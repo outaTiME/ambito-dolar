@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.3...@ambito-dolar/api@1.0.4) (2021-04-12)
+
+
+### Bug Fixes
+
+* Add notification helpers on core. ([8e182d8](https://github.com/outaTiME/ambito-dolar/commit/8e182d863c4198513d3ea6c2c7b3b7e5a341940c))
+* Update MIN_CLIENT_VERSION_FOR_WHOLESALER to align with new client version. ([90a0d49](https://github.com/outaTiME/ambito-dolar/commit/90a0d49f5776af3a98fe5345e3c1c0a2114af3ef))
+
+
+
+
+
 ## [1.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.2...@ambito-dolar/api@1.0.3) (2021-04-06)
 
 

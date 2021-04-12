@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.1...@ambito-dolar/core@1.0.2) (2021-04-12)
+
+
+### Bug Fixes
+
+* Add notification helpers on core. ([8e182d8](https://github.com/outaTiME/ambito-dolar/commit/8e182d863c4198513d3ea6c2c7b3b7e5a341940c))
+
+
+
+
+
 ## [1.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.0...@ambito-dolar/core@1.0.1) (2021-04-05)
 
 
