@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.5](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.4...@ambito-dolar/api@1.0.5) (2021-04-13)
+
+
+### Bug Fixes
+
+* Better timezonee handling on core, cleanup the code and bump dependencies. ([73980fa](https://github.com/outaTiME/ambito-dolar/commit/73980fafb13ba57546e33a3d410a15c4eac70f16))
+
+
+
+
+
 ## [1.0.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.3...@ambito-dolar/api@1.0.4) (2021-04-12)
 
 
