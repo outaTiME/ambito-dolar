@@ -2,7 +2,7 @@
   "name": "@ambito-dolar/core",
   "version": "1.0.2",
   "dependencies": {
-    "chrono-node": "~1.4.0",
+    "chrono-node": "^1.4",
     "lodash.isempty": "^4.4.0",
     "lodash.merge": "^4.6.2",
     "lodash.pickby": "^4.6.0",

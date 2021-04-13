@@ -16,7 +16,7 @@ numeral.locale(chosenLocale);
 
 // constants
 
-const BASE_TIMEZONE = 'America/Argentina/Buenos_Aires';
+const TIMEZONE = 'America/Argentina/Buenos_Aires';
 const OFFICIAL_TYPE = 'oficial';
 const INFORMAL_TYPE = 'informal';
 const TOURIST_TYPE = 'turista';
@@ -31,33 +31,48 @@ const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
 const NOTIFICATION_VARIATION_TYPE = 'variation';
 
-// https://stackoverflow.com/questions/28593304/same-date-in-different-time-zone/28615654#28615654
-const getTimezoneDate = (date, format, keep_local_time, start_of_day) => {
-  date = moment(date, format).tz(BASE_TIMEZONE, keep_local_time === true);
+const getCapitalized = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+// https://github.com/moment/moment/pull/4129#issuecomment-339201996
+const __weekdays = moment.weekdays().map((days) => getCapitalized(days));
+const __weekdaysShort = moment
+  .weekdaysShort()
+  .map((days) => getCapitalized(days));
+moment.updateLocale(chosenLocale, {
+  weekdays: __weekdays,
+  weekdaysShort: __weekdaysShort,
+  calendar: {
+    nextWeek() {
+      return 'lll';
+    },
+    lastWeek() {
+      return 'lll';
+    },
+    sameElse: 'lll',
+  },
+});
+
+const getDate = (date, format, start_of_day) => {
+  date = moment(date, format);
   if (start_of_day === true) {
-    date = date
-      // .subtract(1, 'days')
-      .startOf('day');
+    date = date.startOf('day');
   }
   return date;
 };
 
+const getTimezoneDate = (date, format, start_of_day) => {
+  // fixed-offset timezone with the provided offset
+  date = moment.parseZone(date, format);
+  // keep local time
+  return getDate(date, format, start_of_day).tz(TIMEZONE, true);
+};
+
 const formatRateChange = (num) =>
-  /* formatNumber(num, {
-    style: 'percent',
-  }); */
   (num > 0 ? '+' : '') + numeral(num).format(`${CURRENCY_NUMBER_FORMAT}`) + '%';
 
-const formatRateCurrency = (num) =>
-  // formatNumber(num);
-  numeral(num).format(CURRENCY_NUMBER_FORMAT);
+const formatRateCurrency = (num) => numeral(num).format(CURRENCY_NUMBER_FORMAT);
 
 const formatCurrency = (num, usd) =>
-  /* formatNumber(num, {
-    style: 'currency',
-    currency: usd === true ? 'USD' : 'ARS',
-    currencyDisplay: 'symbol',
-  }); */
   (usd === true ? 'US$' : '$') +
   numeral(num).format(`${CURRENCY_NUMBER_FORMAT}`);
 
@@ -71,14 +86,9 @@ const getNumberValue = (str, decimal_places = 2) =>
 const getPercentNumberValue = (str) => getNumberValue(str.replace('%', ''));
 
 const isRateFromToday = (rate) => {
-  const today = getTimezoneDate()
-    // .subtract(1, 'days')
-    .startOf('day');
+  const date = getTimezoneDate(undefined, undefined, true);
   // use processing time instead of original timestamp
-  const rate_date = getTimezoneDate(rate[0])
-    // .subtract(1, 'days')
-    .startOf('day');
-  return today.isSame(rate_date);
+  return date.isSame(getTimezoneDate(rate[0], undefined, true));
 };
 
 const hasRatesFromToday = (rates = {}) =>
@@ -87,7 +97,7 @@ const hasRatesFromToday = (rates = {}) =>
 const parseNaturalDate = (value, format /* = 'YYYY-MM-DDTHH:mm:ss' */) => {
   const date = chrono.es.parseDate(value);
   // use today when invalid chrono format (ignore timezone)
-  return getTimezoneDate(date, undefined, true).format(format);
+  return getTimezoneDate(date).format(format);
 };
 
 const getAvailableRateTypes = () => [
@@ -160,6 +170,7 @@ const getNotificationSettings = (notification_settings) => {
 };
 
 module.exports = {
+  TIMEZONE,
   OFFICIAL_TYPE,
   INFORMAL_TYPE,
   TOURIST_TYPE,
@@ -171,6 +182,8 @@ module.exports = {
   NOTIFICATION_OPEN_TYPE,
   NOTIFICATION_CLOSE_TYPE,
   NOTIFICATION_VARIATION_TYPE,
+  getCapitalized,
+  getDate,
   getTimezoneDate,
   formatRateChange,
   formatRateCurrency,

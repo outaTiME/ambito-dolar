@@ -137,17 +137,6 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
               app_version,
             },
           });
-          /* } else {
-              console.info(
-                'No message for notification',
-                JSON.stringify({
-                  type,
-                  installation_id,
-                  rates,
-                  settings,
-                  rates_for_settings,
-                })
-              ); */
         }
       }
     );
@@ -177,14 +166,9 @@ const notify = async (
   if (body_message) {
     type = 'custom';
   }
-  /* const type_detail = `${type}${
-      !_.isEmpty(rates) ? ' ' + Object.keys(rates) : ''
-    }`; */
   console.info(
     'New notification',
     JSON.stringify({
-      // type: type_detail,
-      // body_message,
       social,
       // environment: process.env.NODE_ENV,
     })
@@ -255,19 +239,13 @@ const notify = async (
           ...(await getMessagesFromCurrentRate(items, type, rates))
         );
       } else {
-        console.warn(
-          'No rates today for notification' /* ,
-            JSON.stringify({
-              type: type_detail,
-            }) */
-        );
+        console.warn('No rates today for notification');
       }
     }
     const expo_start_time = Date.now();
     console.info(
       'Generated messages',
       JSON.stringify({
-        // type: type_detail,
         amount: messages.length,
       })
     );
@@ -300,7 +278,6 @@ const notify = async (
             console.error(
               'Unable to send messages',
               JSON.stringify({
-                // type: type_detail,
                 error: error.message,
               })
             );
@@ -338,19 +315,13 @@ const notify = async (
         console.warn(
           'Unable to store notification tickets',
           JSON.stringify({
-            // type: type_detail,
             error: error.message,
           })
         );
       }
     }
   } else {
-    console.warn(
-      'No messages to send' /* ,
-        JSON.stringify({
-          type: type_detail,
-        }) */
-    );
+    console.warn('No messages to send');
   }
   return {
     tickets: tickets.length,
@@ -385,7 +356,6 @@ export default async (req, res) => {
       installation_id = req.query.installation_id,
       message = req.query.message,
       rates = req.query.rates,
-      // timestamp = req.query.timestamp,
     } = payload || {};
     console.info(
       'Message received',
@@ -394,16 +364,13 @@ export default async (req, res) => {
         installation_id,
         message,
         rates,
-        // timestamp
       })
     );
     const start_time = Date.now();
-    // console.log('>>> Notificator', opts);
     let filter_expression =
-      // 'attribute_exists(push_token) AND attribute_not_exists(invalidated) AND app_ownership <> :app_ownership';
       'attribute_exists(push_token) AND attribute_not_exists(invalidated)';
     const expression_attribute_values = {
-      // ':app_ownership': 'expo'
+      // pass
     };
     if (installation_id) {
       filter_expression =

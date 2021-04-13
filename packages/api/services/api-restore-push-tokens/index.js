@@ -8,16 +8,12 @@ const reactivateDevice = async ({ installation_id, push_token }, _date) => {
     Key: {
       installation_id,
     },
-    // ConditionExpression: 'attribute_not_exists(push_token) AND attribute_exists(invalidated)',
     ConditionExpression: 'attribute_not_exists(push_token)',
-    // UpdateExpression: 'SET push_token = :push_token REMOVE invalidated',
     UpdateExpression: 'SET push_token = :push_token',
     ExpressionAttributeValues: {
       ':push_token': push_token,
-      // ':last_update': date,
     },
     ReturnValues: 'ALL_NEW',
-    // ReturnValues: 'UPDATED_NEW',
   };
   return new Promise((resolve, reject) => {
     client
@@ -25,11 +21,9 @@ const reactivateDevice = async ({ installation_id, push_token }, _date) => {
       .promise()
       .then(
         function (data) {
-          // console.log('Device re-activated', installation_id);
           resolve(data);
         },
         function (error) {
-          // console.error('Unable to re-activate device', installation_id, error);
           reject(error);
         }
       );
@@ -38,11 +32,7 @@ const reactivateDevice = async ({ installation_id, push_token }, _date) => {
 
 const check = async ({ tickets }, date, readonly) => {
   const devices = tickets.reduce((obj, { status, ...extra }) => {
-    // if (status === 'ok') {
     obj.push(extra);
-    /* } else {
-      console.warn('Invalid ticket status', installation_id, status);
-    } */
     return obj;
   }, []);
   const reactivated = [];
@@ -71,8 +61,6 @@ export default async (req, res) => {
     const { date = req.query.date, readonly = req.query.readonly } =
       req.body || {};
     if (!date) {
-      // codes
-      // https://developers.getbase.com/docs/rest/articles/errors
       throw new Error(
         'A request query parameter is malformed, missing or has an invalid value'
       );
@@ -85,7 +73,6 @@ export default async (req, res) => {
     };
     const params = {
       TableName: 'ambito-dolar-notifications',
-      // ProjectionExpression: 'installation_id, device_name, push_token',
       FilterExpression: filter_expression,
       ExpressionAttributeValues: expression_attribute_values,
       ExpressionAttributeNames: {

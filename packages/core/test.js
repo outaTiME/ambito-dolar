@@ -2,6 +2,45 @@ const test = require('ava');
 
 const AmbitoDolar = require('.');
 
+// timezone forcing
+// process.env.TZ = 'America/Los_Angeles';
+
+test('dates should use the default timezone', function (t) {
+  t.is(
+    AmbitoDolar.getTimezoneDate('2021-03-08').format(),
+    '2021-03-08T00:00:00-03:00'
+  );
+  t.is(
+    AmbitoDolar.getTimezoneDate('2021-03-08T12:00:00').format(),
+    '2021-03-08T12:00:00-03:00'
+  );
+  t.is(
+    AmbitoDolar.getTimezoneDate('2021-03-08T12:00:00-03:00').format(),
+    '2021-03-08T12:00:00-03:00'
+  );
+  t.is(
+    AmbitoDolar.getTimezoneDate(
+      '2021-03-08T12:00:00-03:00',
+      undefined,
+      true
+    ).format(),
+    '2021-03-08T00:00:00-03:00'
+  );
+});
+
+test('should parse date from a natural language string', function (t) {
+  // default value for time is 12:00 on "chrono-node" parse
+  const date_str = '2021-03-08T12:00:00-03:00';
+  t.is(AmbitoDolar.parseNaturalDate('08-03-2021'), date_str);
+  t.is(AmbitoDolar.parseNaturalDate('08/03/2021'), date_str);
+  t.is(AmbitoDolar.parseNaturalDate('2021-03-08'), date_str);
+  t.is(AmbitoDolar.parseNaturalDate('2021/03/08'), date_str);
+  t.is(
+    AmbitoDolar.parseNaturalDate('An appointment on March 8, 2021'),
+    date_str
+  );
+});
+
 test('number should be formatted as a percentage', function (t) {
   t.is(AmbitoDolar.formatRateChange(10), '+10,00%');
   t.is(AmbitoDolar.formatRateChange(0), '0,00%');
@@ -21,19 +60,4 @@ test('rate should be of the day', function (t) {
   t.true(AmbitoDolar.isRateFromToday([today]));
   const yesterday = AmbitoDolar.getTimezoneDate().subtract(1, 'day');
   t.false(AmbitoDolar.isRateFromToday([yesterday]));
-});
-
-test('should parse the date from a string', function (t) {
-  // ignore timezone as natural parse
-  const date = AmbitoDolar.getTimezoneDate('2021-03-31', undefined, true);
-  t.true(date.isSame(AmbitoDolar.parseNaturalDate('31-03-2021'), 'day'));
-  t.true(date.isSame(AmbitoDolar.parseNaturalDate('31/03/2021'), 'day'));
-  t.true(date.isSame(AmbitoDolar.parseNaturalDate('2021-03-31'), 'day'));
-  t.true(date.isSame(AmbitoDolar.parseNaturalDate('2021/03/31'), 'day'));
-  t.true(
-    date.isSame(
-      AmbitoDolar.parseNaturalDate('An appointment on March 31, 2021'),
-      'day'
-    )
-  );
 });

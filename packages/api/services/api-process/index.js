@@ -47,7 +47,6 @@ const getRate = (type) => {
             type,
             rate: [...rate, getRateHash([value.fecha, rate])],
           };
-          // console.log('Rate from remote', type, value, result);
           resolve(result);
         }
       })
@@ -76,9 +75,6 @@ const getHistoricalRate = (type, rate, { max, max_date }) => {
             .keys({
               maximo: Joi.string().required(),
               fecha_maximo: Joi.string().required(),
-              // not available when TOURIST_TYPE
-              // minimo: Joi.string().allow(null),
-              // fecha_minimo: Joi.string().allow(null),
             })
             .unknown(true);
           const { value, error } = schema.validate(data);
@@ -95,12 +91,6 @@ const getHistoricalRate = (type, rate, { max, max_date }) => {
               rate: {
                 max: AmbitoDolar.getNumberValue(value.maximo),
                 max_date: AmbitoDolar.parseNaturalDate(value.fecha_maximo),
-                // no export min values
-                /* ...(false &&
-                  value.fecha_minimo && {
-                    min: AmbitoDolar.getNumberValue(value.minimo),
-                    min_date: AmbitoDolar.parseNaturalDate(value.fecha_minimo, 'L'),
-                  }), */
               },
             };
             console.info(
@@ -128,12 +118,6 @@ const getHistoricalRate = (type, rate, { max, max_date }) => {
       rate: {
         max: value,
         max_date: rate[0],
-        // no export min values
-        /* ...(false &&
-          value.fecha_minimo && {
-            min: AmbitoDolar.getNumberValue(value.minimo),
-            min_date: AmbitoDolar.parseNaturalDate(value.fecha_minimo, 'L'),
-          }), */
       },
     };
     console.info(
@@ -142,11 +126,6 @@ const getHistoricalRate = (type, rate, { max, max_date }) => {
     );
     return result;
   }
-  // ignore
-  /* console.debug(
-    'No historical rate updates',
-    JSON.stringify({ type, value: rates.max, new_value: value })
-  ); */
 };
 
 const getObjectRates = (arr) =>
@@ -192,16 +171,7 @@ const getNewRates = (rates, new_rates) =>
           new: new_rate,
         })
       );
-    } /* else {
-      console.info(
-        'No rate updates',
-        JSON.stringify({
-          type,
-          rate,
-          new_rate,
-        })
-      );
-    } */
+    }
     return obj;
   }, {});
 
@@ -246,7 +216,6 @@ const notifyUpdates = (rates, has_rates_from_today, new_rates) => {
       Shared.triggerNotifyEvent({
         type,
         rates,
-        // timestamp: AmbitoDolar.getTimezoneDate().format(),
       })
     )
   );
@@ -350,12 +319,6 @@ export default async (req, res) => {
       await notifyUpdates(rates, has_rates_from_today, new_rates);
     }
     Shared.serviceResponse(res, 200, new_rates);
-    /* Shared.serviceResponse(res, 200, {
-      base_rates,
-      rates,
-      has_rates_from_today,
-      new_rates,
-    }); */
   } catch (error) {
     Shared.serviceResponse(res, error.code || 400, {
       error: error.message,

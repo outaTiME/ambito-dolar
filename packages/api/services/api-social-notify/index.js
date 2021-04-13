@@ -36,6 +36,7 @@ const generateScreenshot = async (type, title) => {
     height: 620,
     deviceScaleFactor: 2,
   });
+  await page.emulateTimezone(AmbitoDolar.TIMEZONE);
   await page.goto(screenshot_url, { waitUntil: 'networkidle0' });
   // https://pptr.dev/#?product=Puppeteer&version=v5.2.1&show=api-pageselector
   // FIXME: throw exception when invalid page contents using page.$$('svg')
@@ -64,25 +65,6 @@ const generateScreenshot = async (type, title) => {
     target_url,
   };
 };
-
-/* const publishToInstagram = async (file, caption) => {
-  const IG_USERNAME = process.env.IG_USERNAME;
-  const IG_PASSWORD = process.env.IG_PASSWORD;
-  const start_time = Date.now();
-  const ig = new IgApiClient();
-  ig.state.generateDevice(IG_USERNAME);
-  await ig.account.login(IG_USERNAME, IG_PASSWORD);
-  const { upload_id, status } = await ig.publish.photo({
-    file,
-    caption,
-  });
-  const duration = (Date.now() - start_time) / 1000;
-  return {
-    upload_id,
-    status,
-    duration,
-  };
-}; */
 
 // https://github.com/dilame/instagram-private-api/blob/master/examples/session.example.ts
 const publishToInstagram = async (file, caption) => {
@@ -155,14 +137,11 @@ export default async (req, res) => {
       title = req.query.title,
       caption = req.query.caption,
       hashtags = req.query.hashtags,
-      // timestamp = req.query.timestamp,
       ig_only = req.query.ig_only,
       generate_only = req.query.generate_only,
     } = payload || {};
     // must required for social notification
     if (!type || !title || !caption || !hashtags) {
-      // codes
-      // https://developers.getbase.com/docs/rest/articles/errors
       throw new Error(
         'A request query parameter is malformed, missing or has an invalid value'
       );
@@ -174,7 +153,6 @@ export default async (req, res) => {
         title,
         caption,
         hashtags,
-        // timestamp
       })
     );
     if (generate_only !== undefined) {

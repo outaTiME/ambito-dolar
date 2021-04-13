@@ -50,14 +50,6 @@ const FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY;
 const getFirebaseAccessToken = async () => {
   const { access_token, expiry_date } = this._firebase_token || {};
   if (!expiry_date || (expiry_date && Date.now() >= expiry_date)) {
-    if (!expiry_date) {
-      console.log('>>> Empty access token from getFirebaseAccessToken');
-    } else {
-      console.log(
-        '>>> Expired access token from getFirebaseAccessToken'
-        // JSON.stringify(this._firebase_token)
-      );
-    }
     // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
     const scopes = [
       'https://www.googleapis.com/auth/userinfo.email',
@@ -80,10 +72,6 @@ const getFirebaseAccessToken = async () => {
       });
     });
   }
-  console.log(
-    '>>> Using already generated access token from getFirebaseAccessToken'
-    // JSON.stringify(this._firebase_token)
-  );
   return access_token;
 };
 
@@ -93,12 +81,7 @@ const fetchFirebaseData = async (uri, opts = {}) => {
   const access_token = await getFirebaseAccessToken();
   const url = new URL(`${FIREBASE_DATABASE_URL}${uri}`);
   url.pathname = url.pathname + '.json';
-  // url.searchParams.set('print', 'pretty');
   url.searchParams.set('access_token', access_token);
-  // https://firebase.google.com/docs/database/rest/retrieve-data#tiempo-de-espera
-  // url.searchParams.set('timeout', '10s');
-  // TODO: parse url to handle parameters and add access_token
-  // console.log('>>> fetchFirebaseData', url.href, opts);
   return fetch(url.href, opts).then(async (response) => {
     const data = await response.json();
     return data;
@@ -331,23 +314,10 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
       'year'
     );
     const moment_to = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
-    /* console.debug(
-      'Date range for historical rates',
-      JSON.stringify({
-        type,
-        from: moment_from.format(),
-        to: moment_to.format(),
-      })
-    ); */
     // limit base_rates excluding stats
     base_rates[type] = (base_rates[type] || [])
       .filter(([timestamp]) => {
-        const moment_timestamp = AmbitoDolar.getTimezoneDate(
-          timestamp,
-          undefined,
-          true
-        );
-        // ignore timezone on timestamp (when plain timestamp date only without time)
+        const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
         const include = moment_timestamp.isBetween(
           moment_from,
           moment_to,
@@ -355,17 +325,9 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
           // moment_to exclusion
           '[)'
         );
-        /* if (!include) {
-          console.debug(
-            'Excluding historical rate',
-            JSON.stringify({
-              type,
-              timestamp: moment_timestamp.format(),
-            })
-          );
-        } */
         return include;
-      }) // leave new rate without hash
+      })
+      // leave new rate without hash
       .concat(stats.map((stat) => _.take(stat, 3)));
   });
   const legacy_rates = Object.entries(base_rates || {}).reduce(
@@ -546,21 +508,10 @@ const triggerEvent = async (event, payload) => {
     });
 };
 
-/* const triggerEventSecured = (event, payload) =>
-  triggerEvent(event, {
-    value1: JSON.stringify({
-      ...payload,
-      // attach access token on payload
-      access_token: process.env.SECRET_KEY,
-    }),
-  }); */
-
 const triggerNotifyEvent = async (payload) =>
-  // triggerEventSecured('notify', payload);
   publishMessageToTopicSecured('notify', payload);
 
 const triggerSocialNotifyEvent = async (payload) =>
-  // triggerEventSecured('social-notify', payload);
   publishMessageToTopicSecured('social-notify', payload);
 
 const triggerSendSocialNotificationsEvent = async (

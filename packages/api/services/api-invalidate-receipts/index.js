@@ -119,7 +119,7 @@ export default async (req, res) => {
     const expression_attribute_values = {
       ':date_from':
         date_from ||
-        AmbitoDolar.getTimezoneDate(undefined, undefined, undefined, true)
+        AmbitoDolar.getTimezoneDate(undefined, undefined, true)
           // .subtract(1, 'days')
           .format(),
     };
