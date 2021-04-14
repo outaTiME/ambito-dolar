@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.3...@ambito-dolar/core@1.0.4) (2021-04-14)
+
+
+### Bug Fixes
+
+* Issue with timezone when empty date. ([bfa23e2](https://github.com/outaTiME/ambito-dolar/commit/bfa23e2c63a498da1bb922883d298d4c7a75c8a0))
+
+
+
+
+
 ## [1.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.2...@ambito-dolar/core@1.0.3) (2021-04-13)
 
 
