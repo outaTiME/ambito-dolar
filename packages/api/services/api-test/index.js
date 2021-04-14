@@ -1,5 +1,3 @@
-// const AmbitoDolar = require('@ambito-dolar/core');
-
 const { Shared } = require('../../lib/shared');
 
 export default async (req, res) => {
