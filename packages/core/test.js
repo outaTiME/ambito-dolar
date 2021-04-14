@@ -3,9 +3,15 @@ const test = require('ava');
 const AmbitoDolar = require('.');
 
 // timezone forcing
+// process.env.TZ = 'UTC';
 // process.env.TZ = 'America/Los_Angeles';
 
 test('dates should use the default timezone', function (t) {
+  const utc_offset = AmbitoDolar.getTimezoneDate().utcOffset();
+  t.is(
+    AmbitoDolar.getDate().utcOffset(utc_offset).format(),
+    AmbitoDolar.getTimezoneDate().format()
+  );
   t.is(
     AmbitoDolar.getTimezoneDate('2021-03-08').format(),
     '2021-03-08T00:00:00-03:00'

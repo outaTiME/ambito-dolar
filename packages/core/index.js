@@ -61,10 +61,16 @@ const getDate = (date, format, start_of_day) => {
 };
 
 const getTimezoneDate = (date, format, start_of_day) => {
+  // keep local time only when dates
+  const keep_time = !!date;
   // fixed-offset timezone with the provided offset
   date = moment.parseZone(date, format);
-  // keep local time
-  return getDate(date, format, start_of_day).tz(TIMEZONE, true);
+  date = getDate(date, format).tz(TIMEZONE, keep_time);
+  // start_of_day must be applied after the timezone conversion
+  if (start_of_day === true) {
+    date = date.startOf('day');
+  }
+  return date;
 };
 
 const formatRateChange = (num) =>
@@ -87,8 +93,9 @@ const getPercentNumberValue = (str) => getNumberValue(str.replace('%', ''));
 
 const isRateFromToday = (rate) => {
   const date = getTimezoneDate(undefined, undefined, true);
+  const rate_date = getTimezoneDate(rate[0], undefined, true);
   // use processing time instead of original timestamp
-  return date.isSame(getTimezoneDate(rate[0], undefined, true));
+  return date.isSame(rate_date);
 };
 
 const hasRatesFromToday = (rates = {}) =>
