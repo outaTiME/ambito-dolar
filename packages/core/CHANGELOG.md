@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.8](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.7...@ambito-dolar/core@1.0.8) (2021-04-16)
+
+
+### Bug Fixes
+
+* Upgrade web viewport size for rates. ([2c27193](https://github.com/outaTiME/ambito-dolar/commit/2c271931cdd47cfb993294c949ac1a704379027b))
+
+
+
+
+
 ## [1.0.7](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.6...@ambito-dolar/core@1.0.7) (2021-04-16)
 
 **Note:** Version bump only for package @ambito-dolar/core
