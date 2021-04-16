@@ -31,6 +31,10 @@ const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
 const NOTIFICATION_VARIATION_TYPE = 'variation';
 
+// proportional for 1080x1920
+const WEB_VIEWPORT_SIZE = 675;
+const WEB_VIEWPORT_STORY_HEIGHT = 1200;
+
 const getCapitalized = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 // https://github.com/moment/moment/pull/4129#issuecomment-339201996
@@ -189,6 +193,8 @@ module.exports = {
   NOTIFICATION_OPEN_TYPE,
   NOTIFICATION_CLOSE_TYPE,
   NOTIFICATION_VARIATION_TYPE,
+  WEB_VIEWPORT_SIZE,
+  WEB_VIEWPORT_STORY_HEIGHT,
   getCapitalized,
   getDate,
   getTimezoneDate,

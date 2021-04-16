@@ -32,8 +32,8 @@ const generateScreenshot = async (type, title) => {
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   await page.setViewport({
-    width: 620,
-    height: 620,
+    width: AmbitoDolar.WEB_VIEWPORT_SIZE,
+    height: AmbitoDolar.WEB_VIEWPORT_SIZE,
     deviceScaleFactor: 2,
   });
   await page.emulateTimezone(AmbitoDolar.TIMEZONE);
@@ -42,6 +42,14 @@ const generateScreenshot = async (type, title) => {
   // FIXME: throw exception when invalid page contents using page.$$('svg')
   const image_type = 'jpeg';
   const file = await page.screenshot({
+    type: image_type,
+  });
+  await page.setViewport({
+    width: AmbitoDolar.WEB_VIEWPORT_SIZE,
+    height: AmbitoDolar.WEB_VIEWPORT_STORY_HEIGHT,
+    deviceScaleFactor: 2,
+  });
+  const story_file = await page.screenshot({
     type: image_type,
   });
   await browser.close();
@@ -62,12 +70,22 @@ const generateScreenshot = async (type, title) => {
   );
   return {
     file,
+    story_file,
     target_url,
   };
 };
 
+// https://github.com/dilame/instagram-private-api/blob/3e1605831996c19e59f7b91461eea3539cd3521f/examples/story-upload.example.ts#L89
+const centeredSticker = (width, height) => ({
+  x: 0.5,
+  y: 0.5,
+  width,
+  height,
+  rotation: 0.0,
+});
+
 // https://github.com/dilame/instagram-private-api/blob/master/examples/session.example.ts
-const publishToInstagram = async (file, caption) => {
+const publishToInstagram = async (file, story_file, caption) => {
   const IG_SESSION_KEY = 'instagram-session';
   const IG_USERNAME = process.env.IG_USERNAME;
   const IG_PASSWORD = process.env.IG_PASSWORD;
@@ -97,14 +115,29 @@ const publishToInstagram = async (file, caption) => {
   // This call will provoke request.end$ stream
   await ig.account.login(IG_USERNAME, IG_PASSWORD);
   // Most of the time you don't have to login after loading the state
-  const { upload_id, status } = await ig.publish.photo({
+  const {
+    status,
+    upload_id,
+    media: { pk: media_id } = {},
+  } = await ig.publish.photo({
     file,
     caption,
   });
+  if (media_id) {
+    await ig.publish.story({
+      file: story_file,
+      media: {
+        ...centeredSticker(0.8, 0.8),
+        is_sticker: true,
+        media_id,
+      },
+    });
+  }
   const duration = (Date.now() - start_time) / 1000;
   return {
-    upload_id,
     status,
+    upload_id,
+    media_id,
     duration,
   };
 };
@@ -163,8 +196,13 @@ export default async (req, res) => {
       const caption_with_hashtags = `${caption}\n\n${hashtags}`;
       if (type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
         try {
-          const { file, target_url } = await generateScreenshot(type, title);
-          promises.push(publishToInstagram(file, caption_with_hashtags));
+          const { file, story_file, target_url } = await generateScreenshot(
+            type,
+            title
+          );
+          promises.push(
+            publishToInstagram(file, story_file, caption_with_hashtags)
+          );
           // to generate again when ig login fails
           if (ig_only === undefined) {
             promises.push(
@@ -184,7 +222,7 @@ export default async (req, res) => {
         }
       }
       // when NOTIFICATION_VARIATION_TYPE or error
-      if (promises.length === 0) {
+      if (promises.length === 0 && ig_only === undefined) {
         promises.push(
           Shared.triggerSendSocialNotificationsEvent(
             caption,
