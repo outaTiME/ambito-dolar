@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.6](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.5...@ambito-dolar/core@1.0.6) (2021-04-16)
+
+
+### Bug Fixes
+
+* Stories support for IG and bump dependencies. ([c43c51e](https://github.com/outaTiME/ambito-dolar/commit/c43c51e2f94d20c9e36a8bc9783bd797e19c3878))
+
+
+
+
+
 ## [1.0.5](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.4...@ambito-dolar/core@1.0.5) (2021-04-14)
 
 **Note:** Version bump only for package @ambito-dolar/core
