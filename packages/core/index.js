@@ -32,8 +32,8 @@ const NOTIFICATION_CLOSE_TYPE = 'close';
 const NOTIFICATION_VARIATION_TYPE = 'variation';
 
 // proportional for 1080x1920
-const WEB_VIEWPORT_SIZE = 675;
-const WEB_VIEWPORT_STORY_HEIGHT = 1200;
+const WEB_VIEWPORT_SIZE = 630;
+const WEB_VIEWPORT_STORY_HEIGHT = 1120;
 
 const getCapitalized = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
