@@ -17,7 +17,7 @@
     "node": ">=12.x"
   },
   "scripts": {
-    "test": "eslint . && ava"
+    "test": "yarn g:eslint && ava"
   },
   "exports": "./index.js",
   "files": [

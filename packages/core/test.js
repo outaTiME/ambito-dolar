@@ -6,7 +6,7 @@ const AmbitoDolar = require('.');
 // process.env.TZ = 'UTC';
 // process.env.TZ = 'America/Los_Angeles';
 
-test('dates should use the default timezone', function (t) {
+test('Dates should use the default timezone', function (t) {
   const utc_offset = AmbitoDolar.getTimezoneDate().utcOffset();
   t.is(
     AmbitoDolar.getDate().utcOffset(utc_offset).format(),
@@ -49,7 +49,7 @@ test('dates should use the default timezone', function (t) {
   );
 });
 
-test('should parse date from a natural language string', function (t) {
+test('Should parse date from a natural language string', function (t) {
   // default value for time is 12:00 on "chrono-node" parse
   const date_str = '2021-03-08T12:00:00-03:00';
   t.is(AmbitoDolar.parseNaturalDate('08-03-2021'), date_str);
@@ -62,21 +62,29 @@ test('should parse date from a natural language string', function (t) {
   );
 });
 
-test('number should be formatted as a percentage', function (t) {
+test('Number should be formatted as a percentage', function (t) {
   t.is(AmbitoDolar.formatRateChange(10), '+10,00%');
   t.is(AmbitoDolar.formatRateChange(0), '0,00%');
   t.is(AmbitoDolar.formatRateChange(-10), '-10,00%');
 });
 
-test('number should be formatted as currency', function (t) {
+test('Number should be formatted as currency', function (t) {
   t.is(AmbitoDolar.formatRateCurrency(1000.5), '1.000,50');
 });
 
-test('should return a number from a percentage string', function (t) {
-  t.is(AmbitoDolar.getPercentNumberValue('0,04%'), 0.04);
+test('Should return a number from a string', function (t) {
+  t.is(AmbitoDolar.getNumber('1,00'), 1);
+  t.is(AmbitoDolar.getNumber('0,04'), 0.04);
+  t.is(AmbitoDolar.getNumber(), 0);
 });
 
-test('rate should be of the day', function (t) {
+test('Should return a number from a percentage string', function (t) {
+  t.is(AmbitoDolar.getPercentNumber('1,00%'), 1);
+  t.is(AmbitoDolar.getPercentNumber('0,04%'), 0.04);
+  t.is(AmbitoDolar.getPercentNumber(), 0);
+});
+
+test('Rate should be of the current day', function (t) {
   const today = AmbitoDolar.getTimezoneDate();
   t.true(AmbitoDolar.isRateFromToday([today]));
   const yesterday = AmbitoDolar.getTimezoneDate().subtract(1, 'day');

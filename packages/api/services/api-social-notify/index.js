@@ -203,7 +203,6 @@ export default async (req, res) => {
           promises.push(
             publishToInstagram(file, story_file, caption_with_hashtags)
           );
-          // to generate again when ig login fails
           if (ig_only === undefined) {
             promises.push(
               Shared.triggerSendSocialNotificationsEvent(

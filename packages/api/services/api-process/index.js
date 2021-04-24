@@ -36,12 +36,12 @@ const getRate = (type) => {
         } else {
           const rate = [
             value.valor
-              ? AmbitoDolar.getNumberValue(value.valor)
+              ? AmbitoDolar.getNumber(value.valor)
               : [
-                  AmbitoDolar.getNumberValue(value.compra),
-                  AmbitoDolar.getNumberValue(value.venta),
+                  AmbitoDolar.getNumber(value.compra),
+                  AmbitoDolar.getNumber(value.venta),
                 ],
-            AmbitoDolar.getPercentNumberValue(value.variacion),
+            AmbitoDolar.getPercentNumber(value.variacion),
           ];
           const result = {
             type,
@@ -89,7 +89,7 @@ const getHistoricalRate = (type, rate, { max, max_date }) => {
             const result = {
               type,
               rate: {
-                max: AmbitoDolar.getNumberValue(value.maximo),
+                max: AmbitoDolar.getNumber(value.maximo),
                 max_date: AmbitoDolar.parseNaturalDate(value.fecha_maximo),
               },
             };

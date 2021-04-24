@@ -22,6 +22,7 @@
     "typescript": "^4.2.3"
   },
   "scripts": {
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "g:eslint": "cd $INIT_CWD && eslint ."
   }
 }

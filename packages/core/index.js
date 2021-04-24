@@ -25,13 +25,11 @@ const CCL_LEGACY_TYPE = 'cl';
 const MEP_TYPE = 'mep';
 const FUTURE_TYPE = 'futuro';
 const WHOLESALER_TYPE = 'mayorista';
-const CURRENCY_NUMBER_FORMAT = '0,0.00';
-const BYTES_NUMBER_FORMAT = '0 b';
 const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
 const NOTIFICATION_VARIATION_TYPE = 'variation';
 
-// proportional for 1080x1920
+// must be proportional to 1080x1920 (IG feed and story)
 const WEB_VIEWPORT_SIZE = 630;
 const WEB_VIEWPORT_STORY_HEIGHT = 1120;
 
@@ -77,23 +75,59 @@ const getTimezoneDate = (date, format, start_of_day) => {
   return date;
 };
 
-const formatRateChange = (num) =>
-  (num > 0 ? '+' : '') + numeral(num).format(`${CURRENCY_NUMBER_FORMAT}`) + '%';
+const FRACTION_DIGITS = 2;
 
-const formatRateCurrency = (num) => numeral(num).format(CURRENCY_NUMBER_FORMAT);
+// api uses the chosen locale and the client its own locale
+const setDelimiters = ({ thousands, decimal }) => {
+  const localeData = numeral.localeData();
+  Object.assign(localeData.delimiters, {
+    ...(thousands && { thousands }),
+    ...(decimal && { decimal }),
+  });
+};
+
+const formatNumber = (
+  num,
+  maxDigits = FRACTION_DIGITS,
+  forceFractionDigits = true
+) => {
+  // https://github.com/NickKaramoff/pretty-money/issues/11
+  /* const number_fmt = prettyMoney(
+    {
+      decimalDelimiter: DECIMAL_SEPARATOR,
+      thousandsDelimiter: DIGIT_GROUPING_SEPARATOR,
+      minDecimal: forceFractionDigits === true ? maxDigits : 0,
+      maxDecimal: maxDigits,
+    },
+    num
+  ); */
+  const decimal_digits = '0'.repeat(maxDigits);
+  let fmt = '0,0.' + decimal_digits;
+  if (forceFractionDigits !== true) {
+    fmt = '0,0[.][' + decimal_digits + ']';
+  }
+  return numeral(num).format(fmt);
+};
+
+// TODO: should return undefined when value is null?
+const getNumber = (value, maxDigits = FRACTION_DIGITS) =>
+  +numeral(value || 0)
+    .value()
+    .toFixed(maxDigits);
+
+const formatRateCurrency = (num) => formatNumber(num);
+
+const formatRateChange = (num) =>
+  (num > 0 ? '+' : '') + formatRateCurrency(num) + '%';
 
 const formatCurrency = (num, usd) =>
-  (usd === true ? 'US$' : '$') +
-  numeral(num).format(`${CURRENCY_NUMBER_FORMAT}`);
+  (usd === true ? 'US$' : '$') + formatRateCurrency(num);
 
-const formatBytes = (num) => numeral(num).format(`$${BYTES_NUMBER_FORMAT}`);
+const formatBytes = (num) => numeral(num).format('0 b');
 
 const getBytes = (obj) => formatBytes(bytes(JSON.stringify(obj)));
 
-const getNumberValue = (str, decimal_places = 2) =>
-  +numeral(str).value().toFixed(decimal_places);
-
-const getPercentNumberValue = (str) => getNumberValue(str.replace('%', ''));
+const getPercentNumber = (str) => getNumber((str || '').replace('%', ''));
 
 const isRateFromToday = (rate) => {
   const date = getTimezoneDate(undefined, undefined, true);
@@ -198,12 +232,15 @@ module.exports = {
   getCapitalized,
   getDate,
   getTimezoneDate,
+  FRACTION_DIGITS,
+  setDelimiters,
+  formatNumber,
+  getNumber,
   formatRateChange,
   formatRateCurrency,
   formatCurrency,
   getBytes,
-  getNumberValue,
-  getPercentNumberValue,
+  getPercentNumber,
   isRateFromToday,
   hasRatesFromToday,
   parseNaturalDate,

@@ -50,9 +50,6 @@ const getSocialCaption = (type, rates) => {
   const body = getBodyMessage(rates);
   if (body) {
     const title = AmbitoDolar.getNotificationTitle(type);
-    // const hashtags = getHashtags(type, rates);
-    // return `${title}.\n${body}`;
-    // return `${title}. ${body}\n\n${hashtags}`;
     return `${title}. ${body}`;
   }
 };
@@ -170,7 +167,6 @@ const notify = async (
     'New notification',
     JSON.stringify({
       social,
-      // environment: process.env.NODE_ENV,
     })
   );
   const tickets = [];
@@ -208,10 +204,8 @@ const notify = async (
         })
       );
     } else {
-      // use getRates when NOTIFICATION_CLOSE_TYPE
+      // uses getRates when NOTIFICATION_CLOSE_TYPE
       rates = rates || (await Shared.getRates());
-      // FIXME: remove following line when MIN_CLIENT_VERSION_FOR_WHOLESALER release
-      delete rates[AmbitoDolar.WHOLESALER_TYPE];
       // useful for holidays when NOTIFICATION_CLOSE_TYPE
       const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
       if (has_rates_from_today) {
@@ -232,7 +226,6 @@ const notify = async (
             title: AmbitoDolar.getNotificationTitle(type),
             caption: getSocialCaption(type, rates),
             hashtags: getSocialHashtags(type, rates),
-            // timestamp: AmbitoDolar.getTimezoneDate().format(),
           });
         }
         messages.push(
@@ -288,7 +281,6 @@ const notify = async (
       console.info(
         'Sent messages',
         JSON.stringify({
-          // type: type_detail,
           amount: `${tickets.length} (${AmbitoDolar.getBytes(chunks)})`,
           duration: sending_duration,
         })
