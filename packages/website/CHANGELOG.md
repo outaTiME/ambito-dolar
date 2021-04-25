@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.0.1...@ambito-dolar/website@1.0.2) (2021-04-25)
+
+
+### Bug Fixes
+
+* **website:** Add new images on landing. ([26982de](https://github.com/outaTiME/ambito-dolar/commit/26982de23d070145bd2d6f9a2772e1df55ca766b))
+
+
+
+
+
 ## [1.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.0.0...@ambito-dolar/website@1.0.1) (2021-04-12)
 
 
