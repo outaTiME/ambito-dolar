@@ -83,9 +83,8 @@ const getJson = async (url, opts = {}) => {
     });
 };
 
-// the default delimiters are used because the way to get the delimiters from the web is not consistent
+// default delimiters are used for the web because the way to get them is not consistent
 if (Platform.OS !== 'web') {
-  // use device delimiters, otherwise use default values
   AmbitoDolar.setDelimiters({
     thousands: Localization.digitGroupingSeparator,
     decimal: Localization.decimalSeparator,
