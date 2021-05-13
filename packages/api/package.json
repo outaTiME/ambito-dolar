@@ -17,8 +17,5 @@
     "object-hash": "^2.0.3",
     "puppeteer-core": "~6.0",
     "semver": "^7.3.2"
-  },
-  "engines": {
-    "node": ">=14.x"
   }
 }

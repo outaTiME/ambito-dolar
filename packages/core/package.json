@@ -13,9 +13,6 @@
   "devDependencies": {
     "ava": "^3.15.0"
   },
-  "engines": {
-    "node": ">=14.x"
-  },
   "scripts": {
     "test": "eslint . && ava"
   },

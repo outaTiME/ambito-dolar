@@ -81,8 +81,5 @@
     "expo-yarn-workspaces": "^1.5.1",
     "redux-devtools-extension": "^2.13.8"
   },
-  "engines": {
-    "node": ">=14.x"
-  },
   "version": "5.0.0"
 }
