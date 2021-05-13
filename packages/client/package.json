@@ -6,7 +6,7 @@
     "postinstall": "expo-yarn-workspaces postinstall"
   },
   "dependencies": {
-    "@ambito-dolar/core": "^1.0.9",
+    "@ambito-dolar/core": "^1.0.10",
     "@expo/react-native-action-sheet": "^3.4.1",
     "@expo/vector-icons": "^12.0.0",
     "@rainbow-me/animated-charts": "^1.0.0-alpha.3",
@@ -76,5 +76,5 @@
     "expo-yarn-workspaces": "^1.5.1",
     "redux-devtools-extension": "^2.13.8"
   },
-  "version": "5.0.0"
+  "version": "5.0.1"
 }

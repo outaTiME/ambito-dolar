@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@5.0.0...@ambito-dolar/client@5.0.1) (2021-05-13)
+
+
+### Bug Fixes
+
+* **api:** emulate media feature color scheme on social image ([56952c5](https://github.com/outaTiME/ambito-dolar/commit/56952c523b408f8b582f157764c28fd49bbd2f45))
+* use default delimiters for the web ([4034824](https://github.com/outaTiME/ambito-dolar/commit/4034824add2c7f26d1977534e34ebf885c1a1104))
+* **client:** user colorscheme support on web ([8ad6013](https://github.com/outaTiME/ambito-dolar/commit/8ad601388d0e9bb6f89e5e0f8319690d86e5da71))
+
+
+
+
+
 # 5.0.0 (2021-04-24)
 
 

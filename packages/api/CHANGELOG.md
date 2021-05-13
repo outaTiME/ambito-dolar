@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.12](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.11...@ambito-dolar/api@1.0.12) (2021-05-13)
+
+
+### Bug Fixes
+
+* **api:** emulate media feature color scheme on social image ([56952c5](https://github.com/outaTiME/ambito-dolar/commit/56952c523b408f8b582f157764c28fd49bbd2f45))
+
+
+
+
+
 ## [1.0.11](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.10...@ambito-dolar/api@1.0.11) (2021-04-24)
 
 **Note:** Version bump only for package @ambito-dolar/api
