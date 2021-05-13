@@ -77,13 +77,19 @@ const getTimezoneDate = (date, format, start_of_day) => {
 
 const FRACTION_DIGITS = 2;
 
-// api uses the chosen locale and the client its own locale
+// api uses the chosen locale and the client its own locale (except on web)
+
 const setDelimiters = ({ thousands, decimal }) => {
   const localeData = numeral.localeData();
   Object.assign(localeData.delimiters, {
     ...(thousands && { thousands }),
     ...(decimal && { decimal }),
   });
+};
+
+const getDelimiters = () => {
+  const localeData = numeral.localeData();
+  return localeData.delimiters;
 };
 
 const formatNumber = (
@@ -234,6 +240,7 @@ module.exports = {
   getTimezoneDate,
   FRACTION_DIGITS,
   setDelimiters,
+  getDelimiters,
   formatNumber,
   getNumber,
   formatRateChange,

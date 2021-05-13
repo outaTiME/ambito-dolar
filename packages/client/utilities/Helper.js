@@ -83,15 +83,16 @@ const getJson = async (url, opts = {}) => {
     });
 };
 
-const DECIMAL_SEPARATOR = Localization.decimalSeparator;
-const DIGIT_GROUPING_SEPARATOR = Localization.digitGroupingSeparator;
+// the default delimiters are used because the way to get the delimiters from the web is not consistent
+if (Platform.OS !== 'web') {
+  // use device delimiters, otherwise use default values
+  AmbitoDolar.setDelimiters({
+    thousands: Localization.digitGroupingSeparator,
+    decimal: Localization.decimalSeparator,
+  });
+}
 
-// TODO: better way to force delimiters on core for current instance
-
-AmbitoDolar.setDelimiters({
-  thousands: DIGIT_GROUPING_SEPARATOR,
-  decimal: DECIMAL_SEPARATOR,
-});
+const { decimal: DECIMAL_SEPARATOR } = AmbitoDolar.getDelimiters();
 
 const FRACTION_DIGITS = AmbitoDolar.FRACTION_DIGITS;
 
