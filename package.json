@@ -30,7 +30,15 @@
     "typescript": "^4.2.3"
   },
   "scripts": {
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "client:start": "yarn workspace @ambito-dolar/client expo start",
+    "client:build:ios": "yarn workspace @ambito-dolar/client expo build:ios",
+    "client:build:android": "yarn workspace @ambito-dolar/client expo build:android",
+    "client:build:web": "yarn workspace @ambito-dolar/client expo build:web",
+    "client:publish": "yarn workspace @ambito-dolar/client expo publish",
+    "api:start": "vercel dev packages/api",
+    "api:publish": "vercel packages/api",
+    "publish": "lerna publish"
   },
   "resolutions": {
     "react": "16.13.1",

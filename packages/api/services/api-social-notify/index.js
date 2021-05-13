@@ -37,6 +37,9 @@ const generateScreenshot = async (type, title) => {
     deviceScaleFactor: 2,
   });
   await page.emulateTimezone(AmbitoDolar.TIMEZONE);
+  await page.emulateMediaFeatures([
+    { name: 'prefers-color-scheme', value: 'dark' },
+  ]);
   await page.goto(screenshot_url, { waitUntil: 'networkidle0' });
   // https://pptr.dev/#?product=Puppeteer&version=v5.2.1&show=api-pageselector
   // FIXME: throw exception when invalid page contents using page.$$('svg')
