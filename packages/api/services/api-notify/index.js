@@ -54,26 +54,6 @@ const getSocialCaption = (type, rates) => {
   }
 };
 
-const getSocialHashtags = (type, rates) => {
-  const hashtags = ['#ÁmbitoDólar'];
-  if (type === AmbitoDolar.NOTIFICATION_OPEN_TYPE) {
-    hashtags.push('#AperturaDólar');
-  } else if (type === AmbitoDolar.NOTIFICATION_CLOSE_TYPE) {
-    hashtags.push('#CierreDólar');
-  } else {
-    hashtags.push('#VariaciónDólar');
-  }
-  hashtags.push('#Dólar', '#DólarArgentina');
-  // rates
-  Object.keys(rates || {}).forEach((type) => {
-    const rate_title = AmbitoDolar.getRateTitle(type);
-    if (rate_title) {
-      hashtags.push('#Dólar' + rate_title);
-    }
-  });
-  return hashtags.join(' ');
-};
-
 const getMessage = (extras = {}) => ({
   priority: 'high',
   sound: 'default',
@@ -183,12 +163,8 @@ const notify = async (
       .value();
     if (body_message) {
       // TODO: custom message support for broadcasting?
-      const {
-        installation_id,
-        push_token,
-        device_name,
-        app_version,
-      } = items[0];
+      const { installation_id, push_token, device_name, app_version } =
+        items[0];
       // single item only allowed (installation_id as parameter)
       messages.push(
         getMessage({
@@ -225,7 +201,6 @@ const notify = async (
             type,
             title: AmbitoDolar.getNotificationTitle(type),
             caption: getSocialCaption(type, rates),
-            hashtags: getSocialHashtags(type, rates),
           });
         }
         messages.push(

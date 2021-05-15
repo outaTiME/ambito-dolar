@@ -47,6 +47,7 @@ const generateScreenshot = async (type, title) => {
   const file = await page.screenshot({
     type: image_type,
   });
+  const base64 = file.toString('base64');
   await page.setViewport({
     width: AmbitoDolar.WEB_VIEWPORT_SIZE,
     height: AmbitoDolar.WEB_VIEWPORT_STORY_HEIGHT,
@@ -73,6 +74,7 @@ const generateScreenshot = async (type, title) => {
   );
   return {
     file,
+    base64,
     story_file,
     target_url,
   };
@@ -172,12 +174,11 @@ export default async (req, res) => {
       type = req.query.type,
       title = req.query.title,
       caption = req.query.caption,
-      hashtags = req.query.hashtags,
       ig_only = req.query.ig_only,
       generate_only = req.query.generate_only,
     } = payload || {};
     // must required for social notification
-    if (!type || !title || !caption || !hashtags) {
+    if (!type || !title || !caption) {
       throw new Error(
         'A request query parameter is malformed, missing or has an invalid value'
       );
@@ -188,30 +189,29 @@ export default async (req, res) => {
         type,
         title,
         caption,
-        hashtags,
       })
     );
     if (generate_only !== undefined) {
-      const { target_url } = await generateScreenshot(type, title);
-      Shared.serviceResponse(res, 200, { target_url });
+      const { base64: base64_image, target_url: image_url } =
+        await generateScreenshot(type, title);
+      Shared.serviceResponse(res, 200, { base64_image, image_url });
     } else {
       const promises = [];
-      const caption_with_hashtags = `${caption}\n\n${hashtags}`;
       if (type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
         try {
-          const { file, story_file, target_url } = await generateScreenshot(
-            type,
-            title
-          );
-          promises.push(
-            publishToInstagram(file, story_file, caption_with_hashtags)
-          );
+          const {
+            file,
+            base64,
+            story_file,
+            target_url: image_url,
+          } = await generateScreenshot(type, title);
+          promises.push(publishToInstagram(file, story_file, caption));
           if (ig_only === undefined) {
             promises.push(
               Shared.triggerSendSocialNotificationsEvent(
                 caption,
-                caption_with_hashtags,
-                target_url
+                image_url,
+                base64
               )
             );
           }
@@ -225,12 +225,7 @@ export default async (req, res) => {
       }
       // when NOTIFICATION_VARIATION_TYPE or error
       if (promises.length === 0 && ig_only === undefined) {
-        promises.push(
-          Shared.triggerSendSocialNotificationsEvent(
-            caption,
-            caption_with_hashtags
-          )
-        );
+        promises.push(Shared.triggerSendSocialNotificationsEvent(caption));
       }
       const results = await Promise.all(promises);
       console.info('Completed', JSON.stringify(results));

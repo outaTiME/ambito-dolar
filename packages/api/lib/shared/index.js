@@ -516,14 +516,13 @@ const triggerSocialNotifyEvent = async (payload) =>
 
 const triggerSendSocialNotificationsEvent = async (
   caption,
-  caption_with_hashtags,
-  uri
+  image_url,
+  base64_image
 ) => {
   const event = 'send-social-notifications';
-  return triggerEvent(uri ? event + '-with-photo' : event, {
+  return triggerEvent(image_url ? event + '-with-photo' : event, {
     value1: caption,
-    value2: caption_with_hashtags,
-    ...(uri && { value3: uri }),
+    ...(image_url && { value2: image_url, value3: base64_image }),
   });
 };
 
