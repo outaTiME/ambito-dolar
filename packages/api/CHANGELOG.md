@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.12...@ambito-dolar/api@1.1.0) (2021-05-15)
+
+
+### Features
+
+* **api:** remove hashtags and send base64 image to ifttt for use on reddit ([07a8011](https://github.com/outaTiME/ambito-dolar/commit/07a8011223829bd8a41e36e4ea3de62a6326142d))
+
+
+
+
+
 ## [1.0.12](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.11...@ambito-dolar/api@1.0.12) (2021-05-13)
 
 
