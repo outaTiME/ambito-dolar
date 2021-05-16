@@ -47,7 +47,6 @@ const generateScreenshot = async (type, title) => {
   const file = await page.screenshot({
     type: image_type,
   });
-  const base64 = file.toString('base64');
   await page.setViewport({
     width: AmbitoDolar.WEB_VIEWPORT_SIZE,
     height: AmbitoDolar.WEB_VIEWPORT_STORY_HEIGHT,
@@ -59,10 +58,8 @@ const generateScreenshot = async (type, title) => {
   await browser.close();
   const duration = (Date.now() - start_time) / 1000;
   // store image
-  const key = `rate-images/${AmbitoDolar.getTimezoneDate().format()}-${type}`;
-  const { Location: target_url } = await Shared.storePublicFileObject(
-    key,
-    file
+  const { link: target_url } = await Shared.storePublicBase64ImageFile(
+    file.toString('base64')
   );
   console.info(
     'Screenshot completed',
@@ -74,7 +71,6 @@ const generateScreenshot = async (type, title) => {
   );
   return {
     file,
-    base64,
     story_file,
     target_url,
   };
@@ -192,27 +188,21 @@ export default async (req, res) => {
       })
     );
     if (generate_only !== undefined) {
-      const { base64: base64_image, target_url: image_url } =
-        await generateScreenshot(type, title);
-      Shared.serviceResponse(res, 200, { base64_image, image_url });
+      const { target_url: image_url } = await generateScreenshot(type, title);
+      Shared.serviceResponse(res, 200, { image_url });
     } else {
       const promises = [];
       if (type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
         try {
           const {
             file,
-            base64,
             story_file,
             target_url: image_url,
           } = await generateScreenshot(type, title);
           promises.push(publishToInstagram(file, story_file, caption));
           if (ig_only === undefined) {
             promises.push(
-              Shared.triggerSendSocialNotificationsEvent(
-                caption,
-                image_url,
-                base64
-              )
+              Shared.triggerSendSocialNotificationsEvent(caption, image_url)
             );
           }
         } catch (error) {

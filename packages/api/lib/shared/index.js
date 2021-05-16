@@ -2,7 +2,6 @@ const AmbitoDolar = require('@ambito-dolar/core');
 const Fetch = require('@zeit/fetch');
 const AWS = require('aws-sdk');
 const { Expo } = require('expo-server-sdk');
-const FileType = require('file-type');
 const { JWT } = require('google-auth-library');
 const _ = require('lodash');
 const semverLt = require('semver/functions/lt');
@@ -83,8 +82,10 @@ const fetchFirebaseData = async (uri, opts = {}) => {
   url.pathname = url.pathname + '.json';
   url.searchParams.set('access_token', access_token);
   return fetch(url.href, opts).then(async (response) => {
-    const data = await response.json();
-    return data;
+    if (response.ok) {
+      return await response.json();
+    }
+    throw Error(response.statusText);
   });
 };
 
@@ -140,36 +141,6 @@ const getVariationThreshold = (type) => {
   }
   return 0;
 };
-
-const storeFileObject = async (
-  key,
-  buffer,
-  bucket = S3_BUCKET,
-  is_public = false
-) => {
-  // try {
-  // https://blog.jonathandion.com/posts/json-gzip-s3/
-  const { ext, mime } = await FileType.fromBuffer(buffer);
-  return s3
-    .upload({
-      Bucket: bucket,
-      Key: `${key}.${ext}`,
-      Body: buffer,
-      ...(is_public === true && { ACL: 'public-read' }),
-      ContentType: mime,
-    })
-    .promise();
-  /* } catch (error) {
-    console.warn(
-      'Unable to store object in bucket',
-      JSON.stringify({ bucket, key, json, error: error.message })
-    );
-    // trace and continue
-  } */
-};
-
-const storePublicFileObject = async (key, buffer, bucket) =>
-  storeFileObject(key, buffer, bucket, true);
 
 const storeJsonObject = async (
   key,
@@ -477,14 +448,15 @@ const triggerEvent = async (event, payload) => {
     `https://maker.ifttt.com/trigger/${event}/with/key/${process.env.IFTTT_KEY}`,
     {
       method: 'POST',
-      // required by IFTTT
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
       body: JSON.stringify(payload),
     }
   )
-    .then((res) => {
+    .then((response) => {
       const duration = (Date.now() - start_time) / 1000;
-      if (res.ok) {
+      if (response.ok) {
         console.info(
           'Event triggered',
           JSON.stringify({
@@ -497,7 +469,7 @@ const triggerEvent = async (event, payload) => {
           duration,
         };
       }
-      throw Error(res.statusText);
+      throw Error(response.statusText);
     })
     .catch((error) => {
       // ignore error and trace
@@ -514,15 +486,31 @@ const triggerNotifyEvent = async (payload) =>
 const triggerSocialNotifyEvent = async (payload) =>
   publishMessageToTopicSecured('social-notify', payload);
 
-const triggerSendSocialNotificationsEvent = async (
-  caption,
-  image_url,
-  base64_image
-) => {
+const triggerSendSocialNotificationsEvent = async (caption, image_url) => {
   const event = 'send-social-notifications';
   return triggerEvent(image_url ? event + '-with-photo' : event, {
     value1: caption,
-    ...(image_url && { value2: image_url, value3: base64_image }),
+    ...(image_url && { value2: image_url }),
+  });
+};
+
+const storePublicBase64ImageFile = async (image) => {
+  return fetch('https://api.imgur.com/3/image', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+    },
+    body: JSON.stringify({
+      image,
+      type: 'base64',
+    }),
+  }).then(async (response) => {
+    if (response.ok) {
+      const { data } = await response.json();
+      return data;
+    }
+    throw Error(response.statusText);
   });
 };
 
@@ -536,7 +524,6 @@ const Shared = {
   fetch,
   isSemverLt,
   getVariationThreshold,
-  storePublicFileObject,
   storeJsonObject,
   getJsonObject,
   storeRateStats,
@@ -554,6 +541,7 @@ const Shared = {
   triggerNotifyEvent,
   triggerSocialNotifyEvent,
   triggerSendSocialNotificationsEvent,
+  storePublicBase64ImageFile,
 };
 
 module.exports = {

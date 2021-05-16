@@ -35,6 +35,7 @@
     "RATE_STATS_OBJECT_KEY": "@rate-stats-ambito-dolar-object-key",
     "RATES_OBJECT_KEY": "@rates-ambito-dolar-object-key",
     "RATES_LEGACY_OBJECT_KEY": "@rates-legacy-ambito-dolar-object-key",
-    "SOCIAL_SCREENSHOT_URL": "@social-screenshot-ambito-dolar-url"
+    "SOCIAL_SCREENSHOT_URL": "@social-screenshot-ambito-dolar-url",
+    "IMGUR_CLIENT_ID": "@imgur-ambito-dolar-client-id"
   }
 }
