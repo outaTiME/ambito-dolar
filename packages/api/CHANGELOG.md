@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.1.0...@ambito-dolar/api@1.2.0) (2021-05-17)
+
+
+### Features
+
+* **api:** social images now hosted on Imgur instead of S3 ([61b8da8](https://github.com/outaTiME/ambito-dolar/commit/61b8da8b7321509fd8f5d0e04f8f99b080ae1a7e))
+
+
+
+
+
 # [1.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.0.12...@ambito-dolar/api@1.1.0) (2021-05-15)
 
 
