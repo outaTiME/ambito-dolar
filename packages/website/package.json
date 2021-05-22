@@ -1,7 +1,7 @@
 {
   "name": "@ambito-dolar/website",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.1.0",
   "dependencies": {
     "gatsby": "^2.7.5",
     "gatsby-background-image": "^1.1.1",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.0.3...@ambito-dolar/website@1.1.0) (2021-05-22)
+
+
+### Features
+
+* **website:** add reddit community link ([3a45a7e](https://github.com/outaTiME/ambito-dolar/commit/3a45a7e510dcded8862f1aeb9271bcccfced3091))
+
+
+
+
+
 ## [1.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.0.2...@ambito-dolar/website@1.0.3) (2021-05-13)
 
 **Note:** Version bump only for package @ambito-dolar/website
