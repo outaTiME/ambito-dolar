@@ -1,0 +1,196 @@
+import { useLayout } from '@react-native-community/hooks';
+import * as d3Shape from 'd3-shape';
+import * as Haptics from 'expo-haptics';
+import { LongPressGestureHandler } from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedGestureHandler,
+  Extrapolate,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  useDerivedValue,
+  withSpring,
+  runOnJS,
+  useAnimatedReaction,
+} from 'react-native-reanimated';
+import { parse as parsePath, getYForX, clamp } from 'react-native-redash';
+import Svg, { Path } from 'react-native-svg';
+import { View, StyleSheet } from 'react-native';
+import React from 'react';
+
+import Settings from '../config/settings';
+
+const DEBUG_CHART = __DEV__;
+
+export default ({ data, domain, color, selectionIndex, style }) => {
+  const { onLayout, width, height } = useLayout();
+  const hasLayout = React.useMemo(() => width && height, [width, height]);
+  return (
+    <View style={style} {...(!hasLayout && { onLayout })}>
+      {hasLayout ? (
+        <ChartOverlayPathView
+          {...{
+            width,
+            height,
+            data,
+            domain,
+            color,
+            selectionIndex,
+          }}
+        />
+      ) : null}
+    </View>
+  );
+};
+
+const scale = (v, d, r) => {
+  'worklet';
+  return interpolate(v, d, r, Extrapolate.CLAMP);
+};
+const scaleInvert = (y, d, r) => {
+  'worklet';
+  return interpolate(y, r, d, Extrapolate.CLAMP);
+};
+
+const ChartOverlayPathView = ({
+  width,
+  height,
+  data,
+  domain,
+  color,
+  selectionIndex,
+}) => {
+  const range = React.useMemo(
+    () => ({
+      x: [0, width],
+      y: [height, 0],
+    }),
+    [width, height]
+  );
+  const d = d3Shape
+    .line()
+    .x(({ x }) => scale(x, domain.x, range.x))
+    .y(({ y }) => scale(y, domain.y, range.y))
+    .curve(d3Shape.curveMonotoneX)(data);
+  const path = parsePath(d);
+  const length = useSharedValue(width);
+  const point = useDerivedValue(() => {
+    const x_value = length.value;
+    const coord = {
+      x: x_value,
+      y: getYForX(path, x_value) || 0,
+    };
+    const result = {
+      coord,
+      index: Math.round(scaleInvert(coord.x, domain.x, range.x)),
+    };
+    // console.log('>>> derived data', result, data[result.index]);
+    return result;
+  });
+  useAnimatedReaction(
+    () => {
+      return point.value;
+    },
+    (result) => {
+      // console.log('>>> useAnimatedReaction (selectionIndex)', result.index);
+      selectionIndex.value = result.index;
+    }
+  );
+  return (
+    <>
+      {DEBUG_CHART && (
+        <Svg {...{ width, height }}>
+          <Path
+            fill="transparent"
+            stroke="magenta"
+            strokeWidth={Settings.CHART_STROKE_WIDTH}
+            strokeDasharray={[2, 4]}
+            {...{ d }}
+          />
+        </Svg>
+      )}
+      <Cursor {...{ length, point, width, color }} />
+    </>
+  );
+};
+
+const CURSOR_SIZE = 10;
+const CURSOR_CONTAINER_SIZE = Settings.PADDING * 2;
+const EXTRA_OFFSET = Settings.PADDING;
+
+const Cursor = ({ length, point, width, color }) => {
+  const isActive = useSharedValue(false);
+  const onGestureEvent = useAnimatedGestureHandler({
+    onActive: (event, ctx) => {
+      if (!isActive.value) {
+        runOnJS(Haptics.selectionAsync)();
+      }
+      isActive.value = true;
+      length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
+    },
+    onEnd: () => {
+      length.value = width;
+      runOnJS(Haptics.selectionAsync)();
+      isActive.value = false;
+    },
+  });
+
+  const style = useAnimatedStyle(() => {
+    const { coord } = point.value;
+    const translateX = coord.x + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
+    const translateY = coord.y + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
+    return {
+      transform: [
+        { translateX },
+        { translateY },
+        {
+          scale: withSpring(isActive.value ? 1.5 : 1, {
+            damping: 15,
+            mass: 1,
+            stiffness: 600,
+          }),
+        },
+      ],
+    };
+  }, [point]);
+
+  return (
+    <LongPressGestureHandler
+      onGestureEvent={onGestureEvent}
+      minDurationMs={60}
+      maxDist={Number.MAX_SAFE_INTEGER}
+      shouldCancelWhenOutside={false}
+      // hitSlop={Settings.PADDING}
+    >
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFill,
+          { margin: -EXTRA_OFFSET },
+          DEBUG_CHART && { borderWidth: 1, borderColor: 'magenta' },
+        ]}
+      >
+        <Animated.View style={[styles.cursorContainer, style]}>
+          <View style={[styles.cursor, { backgroundColor: color }]} />
+        </Animated.View>
+      </Animated.View>
+    </LongPressGestureHandler>
+  );
+};
+
+const styles = StyleSheet.create({
+  cursorContainer: {
+    width: CURSOR_CONTAINER_SIZE,
+    height: CURSOR_CONTAINER_SIZE,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...(DEBUG_CHART && { backgroundColor: 'rgba(100, 200, 300, 0.4)' }),
+  },
+  cursor: {
+    width: CURSOR_SIZE,
+    height: CURSOR_SIZE,
+    borderRadius: CURSOR_SIZE / 2,
+    // borderColor: '#367be2',
+    // borderWidth: 4,
+    // backgroundColor: COLOR,
+  },
+});

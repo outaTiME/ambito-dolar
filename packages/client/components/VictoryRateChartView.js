@@ -1,19 +1,13 @@
-import {
-  ChartPathProvider,
-  monotoneCubicInterpolation as interpolator,
-  ChartDot,
-  ChartPath,
-  useChartData,
-} from '@rainbow-me/animated-charts';
 import { useLayout } from '@react-native-community/hooks';
 import { processFontFamily } from 'expo-font';
-import React from 'react';
-import { View, Text, TextInput } from 'react-native';
 import Animated, {
   useDerivedValue,
   useAnimatedProps,
   useAnimatedStyle,
+  useSharedValue,
 } from 'react-native-reanimated';
+import { View, Text, TextInput } from 'react-native';
+import React from 'react';
 import {
   VictoryChart,
   VictoryArea,
@@ -24,6 +18,7 @@ import {
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
+import ChartAnimatedView from './ChartAnimatedView';
 
 const AXIS_FONT_SIZE = 10;
 const TICKS_X = Settings.MAX_NUMBER_OF_STATS;
@@ -31,69 +26,30 @@ const TICKS_Y = 5;
 const AXIS_TICK_SIZE = 5;
 const AXIS_LABEL_PADDING = Settings.PADDING - AXIS_TICK_SIZE;
 const AXIS_OFFSET = AXIS_TICK_SIZE + AXIS_LABEL_PADDING;
-// https://github.com/rainbow-me/react-native-animated-charts/blob/master/src/charts/linear/ChartPath.js#L663
-const ANIMATED_CHART_OFFSET = 10;
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
-const RateChartOverlayView = ({ color, style }) => {
-  const { onLayout, width, height } = useLayout();
-  const hasLayout = React.useMemo(() => width && height, [width, height]);
-  return (
-    <View style={style} {...(!hasLayout && { onLayout })}>
-      {hasLayout ? (
-        <>
-          <ChartPath
-            hitSlop={Settings.PADDING}
-            /* longPressGestureHandlerProps={{
-              minDurationMs: 60,
-            }} */
-            height={height - 20}
-            width={width}
-            stroke={__DEV__ ? 'magenta' : 'none'}
-            // stroke="none"
-            selectedOpacity={1}
-            strokeWidth={Settings.CHART_STROKE_WIDTH / 2}
-            selectedStrokeWidth={Settings.CHART_STROKE_WIDTH / 2}
-            strokeDasharray={[2, 4]}
-            timingAnimationConfig={{ duration: Settings.ANIMATION_DURATION }}
-          />
-          <ChartDot size={12} style={{ backgroundColor: color }} />
-        </>
-      ) : null}
-    </View>
-  );
-};
-
-const RateChartHeaderView = ({ stats }) => {
+const RateChartHeaderView = ({ stats, selectionIndex }) => {
   const { theme, fonts } = Helper.useTheme();
-  const { originalX } = useChartData();
+  // required for AnimatedTextInput
   const default_stat = React.useMemo(() => stats[stats.length - 1], [stats]);
-  const selected_stat = useDerivedValue(() => {
-    const value = originalX.value;
-    if (value !== '') {
-      const start = 0;
-      const range = stats.length - 1;
-      const index = Math.round(((value - start) / range) * (stats.length - 1));
-      return stats[index];
-    }
-    // last item by default
-    return default_stat;
-  }, [originalX, stats, default_stat]);
+  const selected_stat = useDerivedValue(() =>
+    selectionIndex.value === null ? default_stat : stats[selectionIndex.value]
+  );
   const timestamp_props = useAnimatedProps(() => {
     const stat = selected_stat.value;
     const timestamp = stat && stat.timestamp;
     return {
       text: timestamp || '',
     };
-  }, [selected_stat]);
+  });
   const rate_value_props = useAnimatedProps(() => {
     const stat = selected_stat.value;
     const value = stat && stat.value;
     return {
       text: value || '',
     };
-  }, [selected_stat]);
+  });
   const change_styles = useAnimatedStyle(() => {
     // FIXME: when no change_color use default black?
     const stat = selected_stat.value;
@@ -104,14 +60,14 @@ const RateChartHeaderView = ({ stats }) => {
       };
     }
     return {};
-  }, [selected_stat]);
+  });
   const change_props = useAnimatedProps(() => {
     const stat = selected_stat.value;
     const change = stat && stat.change;
     return {
       text: change || '',
     };
-  }, [selected_stat]);
+  });
   return (
     <>
       <AnimatedTextInput
@@ -178,44 +134,24 @@ const InteractiveRateChartView = ({
   height,
   stats,
   data,
-  yRange: y_range,
+  domain,
+  selectionIndex,
 }) => {
   const { theme } = Helper.useTheme();
-  // data normalization
-  const min_x = React.useMemo(() => {
-    return data[0].x;
-  }, [data]);
-  const max_x = React.useMemo(() => {
-    return data[data.length - 1].x;
-  }, [data]);
   const ticks_x = React.useMemo(() => {
+    const [min_x, max_x] = domain.x;
     return Helper.getTickValues(min_x, max_x, TICKS_X);
-  }, [min_x, max_x]);
+  }, [domain]);
   const ticks_y = React.useMemo(() => {
-    return Helper.getTickValues(y_range[0], y_range[1], TICKS_Y);
-  }, [y_range]);
+    const [min_y, max_y] = domain.y;
+    return Helper.getTickValues(min_y, max_y, TICKS_Y);
+  }, [domain]);
   // layout
   const { onLayout, width: axis_y_width } = useLayout();
   const victory_padding = React.useMemo(
     () => ({
       bottom: AXIS_OFFSET + AXIS_FONT_SIZE + Settings.CHART_STROKE_WIDTH,
       left: AXIS_OFFSET + axis_y_width,
-    }),
-    [axis_y_width]
-  );
-  const victory_domain = React.useMemo(
-    () => ({ x: [min_x, max_x], y: y_range }),
-    [min_x, max_x, y_range]
-  );
-  const overlay_style = React.useMemo(
-    () => ({
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      bottom: AXIS_OFFSET + AXIS_FONT_SIZE + Settings.CHART_STROKE_WIDTH,
-      left: AXIS_OFFSET + axis_y_width,
-      margin: Settings.PADDING,
-      marginVertical: Settings.PADDING - ANIMATED_CHART_OFFSET,
     }),
     [axis_y_width]
   );
@@ -280,9 +216,10 @@ const InteractiveRateChartView = ({
     }),
     [theme]
   );
-  const color = React.useMemo(() => stats[stats.length - 1].change_color, [
-    stats,
-  ]);
+  const color = React.useMemo(
+    () => stats[stats.length - 1].change_color,
+    [stats]
+  );
   const area_style = React.useMemo(
     () => ({
       data: {
@@ -309,7 +246,7 @@ const InteractiveRateChartView = ({
         }}
       >
         {/* WARNING: same as tickFormat */}
-        {Helper.getCurrency(y_range[1])}
+        {Helper.getCurrency(domain.y[1])}
       </Text>
     );
   }
@@ -322,7 +259,7 @@ const InteractiveRateChartView = ({
           singleQuadrantDomainPadding={false}
           domainPadding={Settings.PADDING}
           padding={victory_padding}
-          domain={victory_domain}
+          domain={domain}
           animate={false}
         >
           <VictoryAxis
@@ -348,35 +285,23 @@ const InteractiveRateChartView = ({
           />
         </VictoryChart>
       </View>
-      <RateChartOverlayView
+      <ChartAnimatedView
         {...{
+          data,
+          domain,
           color,
-          style: overlay_style,
+          selectionIndex,
+          style: {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: AXIS_OFFSET + AXIS_FONT_SIZE + Settings.CHART_STROKE_WIDTH,
+            left: AXIS_OFFSET + axis_y_width,
+            margin: Settings.PADDING,
+            // marginVertical: Settings.PADDING - Settings.CHART_STROKE_WIDTH / 2,
+          },
         }}
       />
-    </>
-  );
-};
-
-const RateChartView = ({ stats, data, yRange }) => {
-  const { onLayout, width, height } = useLayout();
-  const hasLayout = React.useMemo(() => width && height, [width, height]);
-  return (
-    <>
-      <RateChartHeaderView {...{ stats }} />
-      <View style={{ flex: 1 }} {...(!hasLayout && { onLayout })}>
-        {hasLayout ? (
-          <InteractiveRateChartView
-            {...{
-              width,
-              height,
-              stats,
-              data,
-              yRange,
-            }}
-          />
-        ) : null}
-      </View>
     </>
   );
 };
@@ -390,28 +315,18 @@ export default ({ stats }) => {
       })),
     [stats]
   );
-  const sell_rates = React.useMemo(() => {
-    return data.map(({ y }) => y);
-  }, [data]);
-  const y_range = React.useMemo(() => {
-    const min_y = Math.min(...sell_rates);
-    const max_y = Math.max(...sell_rates);
-    // prevent bad rendering when stable data
-    if (min_y === max_y) {
-      return [min_y - 0.1, max_y + 0.1];
-    }
-    return [min_y, max_y];
-  }, [sell_rates]);
-  const animatedChartData = React.useMemo(
+  // data normalization
+  const sell_rates = React.useMemo(() => data.map(({ y }) => y), [data]);
+  const min_x = React.useMemo(() => data[0].x, [data]);
+  const max_x = React.useMemo(() => data[data.length - 1].x, [data]);
+  const min_y = React.useMemo(() => Math.min(...sell_rates), [sell_rates]);
+  const max_y = React.useMemo(() => Math.max(...sell_rates), [sell_rates]);
+  const domain = React.useMemo(
     () => ({
-      points: interpolator({
-        data,
-        range: 80,
-      }),
-      yRange: y_range,
-      smoothingStrategy: 'bezier',
+      x: [min_x, max_x],
+      y: min_y === max_y ? [min_y - 0.1, max_y + 0.1] : [min_y, max_y],
     }),
-    [data, y_range]
+    [min_x, max_x, min_y, max_y]
   );
   // add formatted data to stats (required by worklets)
   const { theme } = Helper.useTheme();
@@ -429,15 +344,30 @@ export default ({ stats }) => {
       })),
     [stats, theme]
   );
+  // shared
+  const selection_index = useSharedValue(null);
+  // layout
+  const { onLayout, width, height } = useLayout();
+  const hasLayout = React.useMemo(() => width && height, [width, height]);
   return (
-    <ChartPathProvider data={animatedChartData}>
-      <RateChartView
-        {...{
-          stats: new_stats,
-          data,
-          yRange: y_range,
-        }}
+    <>
+      <RateChartHeaderView
+        {...{ stats: new_stats, selectionIndex: selection_index }}
       />
-    </ChartPathProvider>
+      <View style={{ flex: 1 }} {...(!hasLayout && { onLayout })}>
+        {hasLayout ? (
+          <InteractiveRateChartView
+            {...{
+              width,
+              height,
+              stats: new_stats,
+              data,
+              domain,
+              selectionIndex: selection_index,
+            }}
+          />
+        ) : null}
+      </View>
+    </>
   );
 };

@@ -2,10 +2,10 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
-import React from 'react';
-import { View, Text, Linking, Share } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
+import { View, Text, Linking, Share } from 'react-native';
 import { useSelector } from 'react-redux';
+import React from 'react';
 import { compose } from 'redux';
 
 import CardItemView from '../components/CardItemView';
@@ -30,12 +30,12 @@ const FACEBOOK_DEEP_LINK = `fb://${
   Platform.OS === 'ios' ? 'page?id=' : 'page/'
 }116047123558432`;
 const FACEBOOK_WEB_URL = 'https://facebook.com/pg/AmbitoDolar';
+const REDDIT_WEB_URL = 'https://www.reddit.com/r/AmbitoDolar';
 const GITHUB_WEB_URL = 'https://github.com/outaTiME/ambito-dolar';
 
 const SettingsScreen = ({ navigation }) => {
   const { theme, fonts } = Helper.useTheme();
   const processed_at = useSelector((state) => state.rates?.processed_at);
-  const [isConnected] = Helper.useSharedState('connected');
   const onPressTwitter = React.useCallback(() => {
     Linking.canOpenURL(TWITTER_DEEP_LINK).then((supported) =>
       supported
@@ -63,6 +63,9 @@ const SettingsScreen = ({ navigation }) => {
         ? Linking.openURL(FACEBOOK_DEEP_LINK)
         : Linking.openURL(FACEBOOK_WEB_URL)
     );
+  }, []);
+  const onPressReddit = React.useCallback(() => {
+    Linking.openURL(REDDIT_WEB_URL);
   }, []);
   const onPressGithub = React.useCallback(() => {
     Linking.openURL(GITHUB_WEB_URL);
@@ -152,6 +155,7 @@ const SettingsScreen = ({ navigation }) => {
             flexDirection: 'row',
           }}
         >
+          {/* TODO: export to links to helper */}
           <BorderlessButton
             onPress={onPressTwitter}
             style={{ marginRight: Settings.PADDING }}
@@ -192,6 +196,17 @@ const SettingsScreen = ({ navigation }) => {
           >
             <FontAwesome5
               name="facebook"
+              size={24}
+              color={Settings.getGrayColor(theme)}
+            />
+          </BorderlessButton>
+          <BorderlessButton
+            onPress={onPressReddit}
+            style={{ marginHorizontal: Settings.PADDING }}
+            hitSlop={Settings.HIT_SLOP}
+          >
+            <FontAwesome5
+              name="reddit-alien"
               size={24}
               color={Settings.getGrayColor(theme)}
             />
