@@ -15,7 +15,7 @@ i18n.translations = {
       'Imposible obtener las cotizaciones para el periodo seleccionado.',
     allow_permissions:
       'Tienes que permitir el acceso a las notificaciones para poder configurar este módulo.',
-    update_app: 'Tienes que actualizar la aplicación su versión mas reciente.',
+    update_app: 'Tienes que actualizar la aplicación su versión más reciente.',
     remind_me_later: 'Más tarde',
   },
 };

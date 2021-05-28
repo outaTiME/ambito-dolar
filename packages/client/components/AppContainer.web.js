@@ -103,6 +103,7 @@ const AppContainer = ({ title, rates, hasRates, processedAt }) => {
                       flexDirection: 'row',
                     }}
                   >
+                    {/* TODO: export socials to helper */}
                     <FontAwesome5
                       name="twitter"
                       size={17}
@@ -126,6 +127,14 @@ const AppContainer = ({ title, rates, hasRates, processedAt }) => {
                     />
                     <FontAwesome5
                       name="facebook"
+                      size={17}
+                      color={Settings.getGrayColor(theme)}
+                      style={{
+                        marginLeft: Settings.PADDING,
+                      }}
+                    />
+                    <FontAwesome5
+                      name="reddit-alien"
                       size={17}
                       color={Settings.getGrayColor(theme)}
                       style={{

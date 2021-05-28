@@ -116,6 +116,7 @@ export default ({ watermark = false, title, data, itemHeight }) => {
     ),
     [theme, data]
   );
+  const keyExtractor = React.useCallback((item) => item.id, []);
   const separatorComponent = React.useCallback(
     () => (
       <View
@@ -168,7 +169,7 @@ export default ({ watermark = false, title, data, itemHeight }) => {
       }}
       {...{ data }}
       renderItem={renderItem}
-      keyExtractor={(item) => item.id}
+      keyExtractor={keyExtractor}
       ItemSeparatorComponent={separatorComponent}
       ListHeaderComponent={headerComponent}
       ListFooterComponent={footerComponent}

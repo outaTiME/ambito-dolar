@@ -20,7 +20,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import Settings from '../config/settings';
 
-const DEBUG_CHART = true;
+const DEBUG_CHART = false;
 const CURSOR_SIZE = 10;
 const CURSOR_CONTAINER_SIZE = Settings.PADDING * 2;
 const EXTRA_OFFSET = Settings.PADDING;
@@ -71,12 +71,16 @@ const ChartOverlayPathView = ({
     }),
     [width, height]
   );
-  const d = d3Shape
-    .line()
-    .x(({ x }) => scale(x, domain.x, range.x))
-    .y(({ y }) => scale(y, domain.y, range.y))
-    .curve(d3Shape.curveMonotoneX)(data);
-  const path = parsePath(d);
+  const d = React.useMemo(
+    () =>
+      d3Shape
+        .line()
+        .x(({ x }) => scale(x, domain.x, range.x))
+        .y(({ y }) => scale(y, domain.y, range.y))
+        .curve(d3Shape.curveMonotoneX)(data),
+    [data, domain, range]
+  );
+  const path = React.useMemo(() => parsePath(d), [d]);
   const length = useSharedValue(width);
   const point = useDerivedValue(() => {
     const x_value = length.value;
@@ -84,21 +88,14 @@ const ChartOverlayPathView = ({
       x: x_value,
       y: getYForX(path, x_value) || 0,
     };
-    const result = {
+    return {
       coord,
       index: Math.round(scaleInvert(coord.x, domain.x, range.x)),
     };
-    // console.log('>>> derived data', result);
-    return result;
   }, [path, domain, range]);
   useAnimatedReaction(
     () => point.value,
     ({ index }) => {
-      /* console.log(
-        '>>> useAnimatedReaction (selectionIndex)',
-        index,
-        index === data.length - 1
-      ); */
       // reset selection when last data point
       selectionIndex.value = index === data.length - 1 ? null : index;
     },
@@ -120,6 +117,12 @@ const ChartOverlayPathView = ({
       <Cursor {...{ length, point, width, color }} />
     </>
   );
+};
+
+const springDefaultConfig = {
+  damping: 15,
+  mass: 1,
+  stiffness: 600,
 };
 
 const Cursor = ({ length, point, width, color }) => {
@@ -147,43 +150,27 @@ const Cursor = ({ length, point, width, color }) => {
         { translateX },
         { translateY },
         {
-          scale: withSpring(isActive.value ? 1.5 : 1, {
-            damping: 15,
-            mass: 1,
-            stiffness: 600,
-          }),
+          scale: withSpring(isActive.value ? 1.5 : 1, springDefaultConfig),
         },
       ],
     };
   });
   return (
-    <View style={StyleSheet.absoluteFill}>
-      <LongPressGestureHandler
-        onGestureEvent={onGestureEvent}
-        minDurationMs={60}
-        maxDist={Number.MAX_SAFE_INTEGER}
-        shouldCancelWhenOutside={false}
-        // hitSlop={Settings.PADDING}
+    <LongPressGestureHandler
+      onGestureEvent={onGestureEvent}
+      minDurationMs={60}
+      maxDist={Number.MAX_SAFE_INTEGER}
+      shouldCancelWhenOutside={false}
+      // hitSlop={Settings.PADDING}
+    >
+      <Animated.View
+        style={[StyleSheet.absoluteFill, { margin: -EXTRA_OFFSET }]}
       >
-        <Animated.View
-          style={[
-            StyleSheet.absoluteFill,
-            { margin: -EXTRA_OFFSET },
-            // DEBUG_CHART && { borderWidth: 1, borderColor: 'magenta' },
-          ]}
-        >
-          <Animated.View style={[styles.cursorContainer, style]}>
-            <View
-              style={[
-                styles.cursor,
-                // { backgroundColor: 'rgba(100, 200, 300, 0.4)' },
-                { backgroundColor: color },
-              ]}
-            />
-          </Animated.View>
+        <Animated.View style={[styles.cursorContainer, style]}>
+          <View style={[styles.cursor, { backgroundColor: color }]} />
         </Animated.View>
-      </LongPressGestureHandler>
-    </View>
+      </Animated.View>
+    </LongPressGestureHandler>
   );
 };
 
@@ -199,8 +186,5 @@ const styles = StyleSheet.create({
     width: CURSOR_SIZE,
     height: CURSOR_SIZE,
     borderRadius: CURSOR_SIZE / 2,
-    // borderColor: '#367be2',
-    // borderWidth: 1,
-    // backgroundColor: COLOR,
   },
 });

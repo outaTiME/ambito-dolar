@@ -189,9 +189,8 @@ const AppNavigationContainer = () => {
     MailComposer.isAvailableAsync().then(setContactAvailable);
   }, []);
   React.useEffect(() => {
-    // use installation id as user
     const uid = Constants.installationId;
-    // use same user data in both trackers for better association
+    // use same device identifier for better association
     Sentry.setUserContext({
       id: uid,
     });
@@ -422,8 +421,8 @@ const withFirebase = (Component) => (props) => {
       }
     });
     return () => {
-      Firebase.auth().signOut();
       subscription();
+      Firebase.auth().signOut();
     };
   }, []);
   return <Component {...props} />;
@@ -444,6 +443,7 @@ const hasNotificationPermissions = (settings) => {
   );
 };
 
+// TODO: use https://github.com/cassiozen/useStateMachine for orchestration
 const withUserActivity = (Component) => (props) => {
   const { push_token, loads, last_version_reviewed } = useSelector((state) => {
     const {

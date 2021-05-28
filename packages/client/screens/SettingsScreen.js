@@ -87,7 +87,7 @@ const SettingsScreen = ({ navigation }) => {
   }, []);
   const onPressShare = React.useCallback(() => {
     Share.share({
-      message: `Te recomiendo descargar ${Settings.APP_NAME}, es mi aplicación preferida para conocer las cotizaciones del dólar en la Argentina. https://${Settings.APP_DOMAIN}`,
+      message: `Te recomiendo descargar ${Settings.APP_NAME}, es mi aplicación preferida para conocer las distintas cotizaciones del dólar en la Argentina. https://${Settings.APP_DOMAIN}`,
     });
   }, []);
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
@@ -155,7 +155,7 @@ const SettingsScreen = ({ navigation }) => {
             flexDirection: 'row',
           }}
         >
-          {/* TODO: export to links to helper */}
+          {/* TODO: export socials to helper */}
           <BorderlessButton
             onPress={onPressTwitter}
             style={{ marginRight: Settings.PADDING }}
