@@ -1,6 +1,6 @@
 import { useLayout } from '@react-native-community/hooks';
-import { View } from 'react-native';
 import React from 'react';
+import { View } from 'react-native';
 import { VictoryGroup, VictoryArea } from 'victory-native';
 
 import Settings from '../config/settings';

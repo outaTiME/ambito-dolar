@@ -106,30 +106,28 @@ export const registerDeviceInteraction = () => async (dispatch, getState) => {
   });
 };
 
-export const registerDeviceForNotifications = () => async (
-  dispatch,
-  getState
-) => {
-  await dispatch({
-    type: NOTIFICATIONS_REGISTER_PENDING,
-  });
-  const current_state = getState();
-  return doRegisterDeviceForNotifications(dispatch, current_state)
-    .then((push_token) =>
-      dispatch({
-        type: NOTIFICATIONS_REGISTER_SUCCESS,
-        payload: push_token,
-      })
-    )
-    .catch((error) => {
-      if (__DEV__) {
-        console.warn('Unable to register device for notifications', error);
-      }
-      return dispatch({
-        type: NOTIFICATIONS_REGISTER_ERROR,
-      });
+export const registerDeviceForNotifications =
+  () => async (dispatch, getState) => {
+    await dispatch({
+      type: NOTIFICATIONS_REGISTER_PENDING,
     });
-};
+    const current_state = getState();
+    return doRegisterDeviceForNotifications(dispatch, current_state)
+      .then((push_token) =>
+        dispatch({
+          type: NOTIFICATIONS_REGISTER_SUCCESS,
+          payload: push_token,
+        })
+      )
+      .catch((error) => {
+        if (__DEV__) {
+          console.warn('Unable to register device for notifications', error);
+        }
+        return dispatch({
+          type: NOTIFICATIONS_REGISTER_ERROR,
+        });
+      });
+  };
 
 export const registerApplicationLoad = () => ({
   type: APP_LOAD,
@@ -140,22 +138,20 @@ export const registerApplicationReview = (payload) => ({
   payload,
 });
 
-export const updateNotificationSettings = (settings) => async (
-  dispatch,
-  getState
-) => {
-  await dispatch({
-    type: UPDATE_NOTIFICATION_SETTINGS,
-    payload: settings,
-  });
-  // get state after settings update
-  const current_state = getState();
-  return doRegisterDevice(dispatch, current_state).catch((error) => {
-    if (__DEV__) {
-      console.warn('Unable to update notification settings', settings, error);
-    }
-  });
-};
+export const updateNotificationSettings =
+  (settings) => async (dispatch, getState) => {
+    await dispatch({
+      type: UPDATE_NOTIFICATION_SETTINGS,
+      payload: settings,
+    });
+    // get state after settings update
+    const current_state = getState();
+    return doRegisterDevice(dispatch, current_state).catch((error) => {
+      if (__DEV__) {
+        console.warn('Unable to update notification settings', settings, error);
+      }
+    });
+  };
 
 export const registerApplicationUpdate = (payload) => ({
   type: APP_UPDATE,

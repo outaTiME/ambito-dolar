@@ -2,10 +2,10 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
-import { BorderlessButton } from 'react-native-gesture-handler';
-import { View, Text, Linking, Share } from 'react-native';
-import { useSelector } from 'react-redux';
 import React from 'react';
+import { View, Text, Linking, Share } from 'react-native';
+import { BorderlessButton } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
 import { compose } from 'redux';
 
 import CardItemView from '../components/CardItemView';

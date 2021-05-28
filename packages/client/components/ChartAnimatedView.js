@@ -1,6 +1,8 @@
 import { useLayout } from '@react-native-community/hooks';
 import * as d3Shape from 'd3-shape';
 import * as Haptics from 'expo-haptics';
+import React from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
 import { LongPressGestureHandler } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedGestureHandler,
@@ -15,12 +17,14 @@ import Animated, {
 } from 'react-native-reanimated';
 import { parse as parsePath, getYForX, clamp } from 'react-native-redash';
 import Svg, { Path } from 'react-native-svg';
-import { View, StyleSheet } from 'react-native';
-import React from 'react';
 
 import Settings from '../config/settings';
 
-const DEBUG_CHART = __DEV__;
+const DEBUG_CHART = true;
+const CURSOR_SIZE = 10;
+const CURSOR_CONTAINER_SIZE = Settings.PADDING * 2;
+const EXTRA_OFFSET = Settings.PADDING;
+const HAPTICS_ENABLED = Platform.OS === 'ios';
 
 export default ({ data, domain, color, selectionIndex, style }) => {
   const { onLayout, width, height } = useLayout();
@@ -84,17 +88,21 @@ const ChartOverlayPathView = ({
       coord,
       index: Math.round(scaleInvert(coord.x, domain.x, range.x)),
     };
-    // console.log('>>> derived data', result, data[result.index]);
+    // console.log('>>> derived data', result);
     return result;
-  });
+  }, [path, domain, range]);
   useAnimatedReaction(
-    () => {
-      return point.value;
+    () => point.value,
+    ({ index }) => {
+      /* console.log(
+        '>>> useAnimatedReaction (selectionIndex)',
+        index,
+        index === data.length - 1
+      ); */
+      // reset selection when last data point
+      selectionIndex.value = index === data.length - 1 ? null : index;
     },
-    (result) => {
-      // console.log('>>> useAnimatedReaction (selectionIndex)', result.index);
-      selectionIndex.value = result.index;
-    }
+    [data]
   );
   return (
     <>
@@ -114,27 +122,22 @@ const ChartOverlayPathView = ({
   );
 };
 
-const CURSOR_SIZE = 10;
-const CURSOR_CONTAINER_SIZE = Settings.PADDING * 2;
-const EXTRA_OFFSET = Settings.PADDING;
-
 const Cursor = ({ length, point, width, color }) => {
   const isActive = useSharedValue(false);
   const onGestureEvent = useAnimatedGestureHandler({
-    onActive: (event, ctx) => {
+    onActive: (event) => {
       if (!isActive.value) {
-        runOnJS(Haptics.selectionAsync)();
+        HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
       }
       isActive.value = true;
       length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
     },
     onEnd: () => {
       length.value = width;
-      runOnJS(Haptics.selectionAsync)();
+      HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
       isActive.value = false;
     },
   });
-
   const style = useAnimatedStyle(() => {
     const { coord } = point.value;
     const translateX = coord.x + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
@@ -152,28 +155,35 @@ const Cursor = ({ length, point, width, color }) => {
         },
       ],
     };
-  }, [point]);
-
+  });
   return (
-    <LongPressGestureHandler
-      onGestureEvent={onGestureEvent}
-      minDurationMs={60}
-      maxDist={Number.MAX_SAFE_INTEGER}
-      shouldCancelWhenOutside={false}
-      // hitSlop={Settings.PADDING}
-    >
-      <Animated.View
-        style={[
-          StyleSheet.absoluteFill,
-          { margin: -EXTRA_OFFSET },
-          DEBUG_CHART && { borderWidth: 1, borderColor: 'magenta' },
-        ]}
+    <View style={StyleSheet.absoluteFill}>
+      <LongPressGestureHandler
+        onGestureEvent={onGestureEvent}
+        minDurationMs={60}
+        maxDist={Number.MAX_SAFE_INTEGER}
+        shouldCancelWhenOutside={false}
+        // hitSlop={Settings.PADDING}
       >
-        <Animated.View style={[styles.cursorContainer, style]}>
-          <View style={[styles.cursor, { backgroundColor: color }]} />
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            { margin: -EXTRA_OFFSET },
+            // DEBUG_CHART && { borderWidth: 1, borderColor: 'magenta' },
+          ]}
+        >
+          <Animated.View style={[styles.cursorContainer, style]}>
+            <View
+              style={[
+                styles.cursor,
+                // { backgroundColor: 'rgba(100, 200, 300, 0.4)' },
+                { backgroundColor: color },
+              ]}
+            />
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
-    </LongPressGestureHandler>
+      </LongPressGestureHandler>
+    </View>
   );
 };
 
@@ -190,7 +200,7 @@ const styles = StyleSheet.create({
     height: CURSOR_SIZE,
     borderRadius: CURSOR_SIZE / 2,
     // borderColor: '#367be2',
-    // borderWidth: 4,
+    // borderWidth: 1,
     // backgroundColor: COLOR,
   },
 });

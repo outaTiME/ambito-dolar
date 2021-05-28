@@ -145,17 +145,12 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
           style={[
             {
               flexGrow: 1,
-              minHeight: 300,
+              minHeight: 310,
               padding: Settings.PADDING,
             },
           ]}
         >
-          <VictoryRateChartView
-            {...{
-              stats: chartStats,
-              loading,
-            }}
-          />
+          <VictoryRateChartView stats={chartStats} />
         </View>
         <CardItemView
           title="Mostrar detalle"

@@ -349,9 +349,10 @@ export default {
   },
   useTheme() {
     const context = React.useContext(ThemeContext);
-    const colorScheme = React.useMemo(() => context?.colorScheme || 'light', [
-      context,
-    ]);
+    const colorScheme = React.useMemo(
+      () => context?.colorScheme || 'light',
+      [context]
+    );
     const theme = React.useMemo(
       () => ({
         theme: colorScheme,

@@ -175,13 +175,14 @@ export default ({
     () => stats[stats.length - 1],
     [stats]
   );
-  const color = React.useMemo(() => Helper.getChangeColor(change, theme), [
-    change,
-    theme,
-  ]);
-  const value_fmt = React.useMemo(() => Helper.getInlineRateValue(value), [
-    value,
-  ]);
+  const color = React.useMemo(
+    () => Helper.getChangeColor(change, theme),
+    [change, theme]
+  );
+  const value_fmt = React.useMemo(
+    () => Helper.getInlineRateValue(value),
+    [value]
+  );
   const timestamp_fmt = React.useMemo(
     () => DateUtils.datetime(timestamp, { short: true }),
     [timestamp]

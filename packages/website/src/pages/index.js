@@ -1,16 +1,16 @@
 import { useStaticQuery, graphql } from 'gatsby';
+import React from 'react';
 import { IconContext } from 'react-icons';
 import {
   FaTwitter as Twitter,
   FaTelegramPlane as Telegram,
   FaInstagram as Insta,
   FaFacebook as Facebook,
-  FaTumblr as Tumblr,
+  // FaTumblr as Tumblr,
   FaRedditAlien as Reddit,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa';
-import React from 'react';
 
 import AppStore from '../components/app-store';
 import Icon from '../components/icon';

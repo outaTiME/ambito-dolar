@@ -54,9 +54,8 @@ const withScreenshotShareSheet = (Component) => (props) => {
                       // opts
                     }).then(
                       async (uri) => {
-                        const {
-                          uri: new_uri,
-                        } = await ImageManipulator.manipulateAsync(uri);
+                        const { uri: new_uri } =
+                          await ImageManipulator.manipulateAsync(uri);
                         // https://github.com/expo/expo/issues/6920#issuecomment-580966657
                         Sharing.shareAsync(new_uri, {
                           // pass

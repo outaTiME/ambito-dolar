@@ -1,13 +1,14 @@
 import { useLayout } from '@react-native-community/hooks';
 import { processFontFamily } from 'expo-font';
+import React from 'react';
+import { View, Text, TextInput } from 'react-native';
 import Animated, {
   useDerivedValue,
   useAnimatedProps,
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import { View, Text, TextInput } from 'react-native';
-import React from 'react';
+import { clamp } from 'react-native-redash';
 import {
   VictoryChart,
   VictoryArea,
@@ -31,46 +32,30 @@ const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 const RateChartHeaderView = ({ stats, selectionIndex }) => {
   const { theme, fonts } = Helper.useTheme();
-  // required for AnimatedTextInput
-  const default_stat = React.useMemo(() => stats[stats.length - 1], [stats]);
-  const selected_stat = useDerivedValue(() =>
-    selectionIndex.value === null ? default_stat : stats[selectionIndex.value]
+  // force valid index using clamp to avoid errors on fast change between details
+  const selected_stat = useDerivedValue(
+    () =>
+      selectionIndex.value === null
+        ? stats[stats.length - 1]
+        : stats[clamp(selectionIndex.value, 0, stats.length - 1)],
+    [stats]
   );
-  const timestamp_props = useAnimatedProps(() => {
-    const stat = selected_stat.value;
-    const timestamp = stat && stat.timestamp;
-    return {
-      text: timestamp || '',
-    };
-  });
-  const rate_value_props = useAnimatedProps(() => {
-    const stat = selected_stat.value;
-    const value = stat && stat.value;
-    return {
-      text: value || '',
-    };
-  });
-  const change_styles = useAnimatedStyle(() => {
-    // FIXME: when no change_color use default black?
-    const stat = selected_stat.value;
-    const change_color = stat && stat.change_color;
-    if (change_color) {
-      return {
-        color: change_color,
-      };
-    }
-    return {};
-  });
-  const change_props = useAnimatedProps(() => {
-    const stat = selected_stat.value;
-    const change = stat && stat.change;
-    return {
-      text: change || '',
-    };
-  });
+  const timestamp_props = useAnimatedProps(() => ({
+    text: selected_stat.value.timestamp,
+  }));
+  const rate_value_props = useAnimatedProps(() => ({
+    text: selected_stat.value.value,
+  }));
+  const change_styles = useAnimatedStyle(() => ({
+    color: selected_stat.value.change_color,
+  }));
+  const change_props = useAnimatedProps(() => ({
+    text: selected_stat.value.change,
+  }));
   return (
     <>
       <AnimatedTextInput
+        underlineColorAndroid="transparent"
         style={[
           fonts.subhead,
           {
@@ -82,7 +67,7 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
         ]}
         numberOfLines={1}
         animatedProps={timestamp_props}
-        defaultValue={default_stat.timestamp}
+        value={selected_stat.value.timestamp}
         editable={false}
       />
       <View
@@ -94,6 +79,7 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
         }}
       >
         <AnimatedTextInput
+          underlineColorAndroid="transparent"
           style={[
             fonts.title,
             {
@@ -105,10 +91,11 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           ]}
           numberOfLines={1}
           animatedProps={rate_value_props}
-          defaultValue={default_stat.value}
+          value={selected_stat.value.value}
           editable={false}
         />
         <AnimatedTextInput
+          underlineColorAndroid="transparent"
           style={[
             fonts.title,
             {
@@ -121,7 +108,7 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           ]}
           numberOfLines={1}
           animatedProps={change_props}
-          defaultValue={default_stat.change}
+          value={selected_stat.value.change}
           editable={false}
         />
       </View>
@@ -155,11 +142,20 @@ const InteractiveRateChartView = ({
     }),
     [axis_y_width]
   );
+  const overlay_style = React.useMemo(
+    () => ({
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: AXIS_OFFSET + AXIS_FONT_SIZE + Settings.CHART_STROKE_WIDTH,
+      left: AXIS_OFFSET + axis_y_width,
+      margin: Settings.PADDING,
+    }),
+    [axis_y_width]
+  );
   const axis_x_format = React.useCallback(
-    (value) => {
-      // invalid values when animated
-      return stats[Math.round(value)]?.timestamp_axis;
-    },
+    // invalid values when animated
+    (value) => stats[Math.round(value)]?.timestamp_axis,
     [stats]
   );
   const axis_x_style = React.useMemo(
@@ -291,15 +287,7 @@ const InteractiveRateChartView = ({
           domain,
           color,
           selectionIndex,
-          style: {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: AXIS_OFFSET + AXIS_FONT_SIZE + Settings.CHART_STROKE_WIDTH,
-            left: AXIS_OFFSET + axis_y_width,
-            margin: Settings.PADDING,
-            // marginVertical: Settings.PADDING - Settings.CHART_STROKE_WIDTH / 2,
-          },
+          style: overlay_style,
         }}
       />
     </>
