@@ -1,20 +1,30 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppState } from '@react-native-community/hooks';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  BottomTabBar,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createStackNavigator,
   HeaderStyleInterpolators,
 } from '@react-navigation/stack';
 import * as Amplitude from 'expo-analytics-amplitude';
+import { BlurView } from 'expo-blur';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
 import * as React from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  Platform,
+  Linking,
+} from 'react-native';
 import { shallowEqual, useSelector, useDispatch } from 'react-redux';
 import { compose } from 'redux';
 
@@ -49,8 +59,32 @@ const BackButton = ({ navigation }) => (
 
 const Tab = createBottomTabNavigator();
 
+const NavigatorBackgroundView = ({ style, children }) => {
+  const { theme } = Helper.useTheme();
+  return (
+    <BlurView tint={theme} intensity={100} style={style}>
+      {children}
+    </BlurView>
+  );
+};
+
 const StackNavigator = ({ children }) => {
-  const { fonts } = Helper.useTheme();
+  const { theme, fonts } = Helper.useTheme();
+  const navigation_header_background = React.useCallback(
+    () => (
+      <NavigatorBackgroundView
+        style={[
+          {
+            // height: Settings.HEADER_HEIGHT
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: Settings.getStrokeColor(theme),
+          },
+          StyleSheet.absoluteFill,
+        ]}
+      />
+    ),
+    [theme]
+  );
   return (
     <Stack.Navigator
       initialRouteName={INITIAL_ROUTE_NAME}
@@ -73,6 +107,10 @@ const StackNavigator = ({ children }) => {
           textTransform: 'uppercase',
         },
         headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
+        ...(Platform.OS === 'ios' && {
+          headerTransparent: true,
+          headerBackground: navigation_header_background,
+        }),
       }}
     >
       {children}
@@ -178,6 +216,21 @@ const AppNavigationContainer = () => {
     }),
     [theme]
   );
+  const navigation_tab_bar = React.useCallback(
+    (props) => (
+      <NavigatorBackgroundView
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
+      >
+        <BottomTabBar {...props} />
+      </NavigatorBackgroundView>
+    ),
+    []
+  );
   const [, setIsPhoneDevice] = Helper.useSharedState('isPhoneDevice');
   React.useEffect(() => {
     Device.getDeviceTypeAsync().then((device_type) =>
@@ -187,6 +240,10 @@ const AppNavigationContainer = () => {
   const [, setContactAvailable] = Helper.useSharedState('contactAvailable');
   React.useEffect(() => {
     MailComposer.isAvailableAsync().then(setContactAvailable);
+  }, []);
+  const [, setReviewAvailable] = Helper.useSharedState('reviewAvailable');
+  React.useEffect(() => {
+    Linking.canOpenURL(Settings.APP_REVIEW_URI).then(setReviewAvailable);
   }, []);
   React.useEffect(() => {
     const uid = Constants.installationId;
@@ -241,11 +298,15 @@ const AppNavigationContainer = () => {
           style: {
             elevation: 0,
             shadowOpacity: 0,
+            ...(Platform.OS === 'ios' && { backgroundColor: 'transparent' }),
           },
           activeTintColor: Settings.getForegroundColor(theme),
           inactiveTintColor: Settings.getStrokeColor(theme),
           allowFontScaling: Settings.ALLOW_FONT_SCALING,
         }}
+        {...(Platform.OS === 'ios' && {
+          tabBar: navigation_tab_bar,
+        })}
       >
         <Tab.Screen
           name={INITIAL_ROUTE_NAME}

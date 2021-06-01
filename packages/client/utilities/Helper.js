@@ -70,17 +70,16 @@ const getJson = async (url, opts = {}) => {
       },
     },
     timeout
-  )
-    .then((response) => {
-      if (!response.ok) {
-        // throw new Error(`${response.status}: ${response.statusText}`);
-        throw new Error(response.statusText || response.status);
-      }
-      return response.json();
-    })
-    .then((data) => {
+  ).then((response) => {
+    if (!response.ok) {
+      // throw new Error(`${response.status}: ${response.statusText}`);
+      throw new Error(response.statusText || response.status);
+    }
+    return response.json();
+  });
+  /* .then((data) => {
       return data;
-    });
+    }) */
 };
 
 // default delimiters are used for the web because the way to get them is not consistent

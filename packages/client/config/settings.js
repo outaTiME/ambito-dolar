@@ -1,11 +1,9 @@
 import Constants from 'expo-constants';
 import { Dimensions, Platform } from 'react-native';
-import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { human, iOSColors } from 'react-native-typography';
 
 export const PADDING = 16;
 export const HEADER_HEIGHT = 54 + Constants.statusBarHeight;
-export const FOOTER_HEIGHT = 54 + getBottomSpace();
 const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = Dimensions.get('window');
 export const SMALL_DISPLAY_HEIGHT = Math.round(DEVICE_HEIGHT) <= 731; // 5.0"
 const EXTRA_MARGIN_ON_LARGE_DISPLAY = true;
@@ -37,9 +35,13 @@ export const ANIMATION_DURATION = 250;
 // same as header fonts.title size
 export const ICON_SIZE = 24;
 export const APP_IGNORE_UPDATE_EXPIRATION = 30 * 24 * 60 * 60 * 1000; // 30 days
-export const { name: APP_NAME } = Constants.manifest;
+export const { name: APP_NAME, android } = Constants.manifest;
 export const APP_COPYRIGHT = `© ${new Date().getFullYear()} ${APP_NAME}`;
 export const APP_DOMAIN = 'ambito-dolar.app';
+export const APP_REVIEW_URI =
+  Platform.OS === 'ios'
+    ? `itms-apps://itunes.apple.com/app/viewContentsUserReviews/id1485120819?action=write-review`
+    : `market://details?id=${Constants.manifest.android.package}&showAllReviews=true`;
 export const HIT_SLOP = {
   top: PADDING,
   bottom: PADDING,
@@ -54,7 +56,6 @@ export const MAX_DEVICE_WIDTH = 551 + CARD_PADDING * 2;
 export default {
   PADDING,
   HEADER_HEIGHT,
-  FOOTER_HEIGHT,
   DEVICE_HEIGHT,
   DEVICE_WIDTH,
   SMALL_DISPLAY_HEIGHT,
@@ -83,6 +84,7 @@ export default {
   APP_NAME,
   APP_COPYRIGHT,
   APP_DOMAIN,
+  APP_REVIEW_URI,
   HIT_SLOP,
   CHART_STROKE_WIDTH,
   MAX_DEVICE_WIDTH,

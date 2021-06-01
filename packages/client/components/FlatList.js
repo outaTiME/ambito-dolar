@@ -1,3 +1,5 @@
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useHeaderHeight } from '@react-navigation/stack';
 import * as React from 'react';
 import {
   View,
@@ -6,16 +8,11 @@ import {
   Platform,
   FlatList as NativeFlatList,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Separator } from '../components/CardView';
 import Settings from '../config/settings';
-import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
-
-const WATERMARK_HEIGHT = 21;
-const BOTTOM_MARGIN_FOR_WATERMARK =
-  WATERMARK_HEIGHT + Settings.CARD_PADDING * 2;
 
 const HEADER_HEIGHT = Settings.CARD_PADDING + Settings.PADDING * 2 + 20; // fonts.subhead (lineheight)
 const SEPARATOR_HEIGHT = StyleSheet.hairlineWidth;
@@ -45,54 +42,20 @@ const HeaderComponent = ({ title }) => {
   );
 };
 
-const FooterComponent = ({ watermark }) => {
-  const { theme, fonts } = Helper.useTheme();
-  const processed_at = useSelector((state) => state.rates?.processed_at);
-  return (
-    <>
-      <View
-        style={{
-          flexGrow: 1,
-          marginTop: Settings.CARD_PADDING * 2,
-        }}
-      />
-      {watermark && (
-        <View
-          style={[
-            {
-              flexDirection: 'row',
-              height: WATERMARK_HEIGHT,
-              marginHorizontal: Settings.CARD_PADDING,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: Settings.CARD_PADDING * 2,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              fonts.subhead,
-              {
-                color: Settings.getGrayColor(theme),
-                textTransform: 'uppercase',
-              },
-            ]}
-            numberOfLines={1}
-          >
-            {Settings.APP_COPYRIGHT}
-            {processed_at &&
-              ` ${Settings.DASH_SEPARATOR} ${DateUtils.datetime(processed_at, {
-                short: true,
-              })}`}
-          </Text>
-        </View>
-      )}
-    </>
-  );
-};
+const FooterComponent = () => (
+  <View
+    style={{
+      flexGrow: 1,
+      marginTop: Settings.CARD_PADDING * 2,
+    }}
+  />
+);
 
-export default ({ watermark = false, title, data, itemHeight }) => {
+export default ({ title, data, itemHeight }) => {
   const { theme } = Helper.useTheme();
+  const headerHeight = useHeaderHeight();
+  const tabBarheight = useBottomTabBarHeight();
+  const insets = useSafeAreaInsets();
   const renderItem = React.useCallback(
     ({ item, index }) => (
       <View
@@ -134,10 +97,7 @@ export default ({ watermark = false, title, data, itemHeight }) => {
     () => <HeaderComponent {...{ title }} />,
     [title]
   );
-  const footerComponent = React.useCallback(
-    () => <FooterComponent {...{ watermark }} />,
-    [watermark]
-  );
+  const footerComponent = React.useCallback(() => <FooterComponent />, []);
   const itemLayout = React.useCallback(
     (data, index) => ({
       length: itemHeight,
@@ -148,32 +108,29 @@ export default ({ watermark = false, title, data, itemHeight }) => {
   );
   return (
     <NativeFlatList
-      bounces
-      showsVerticalScrollIndicator={Platform.OS === 'ios'}
-      overScrollMode="never"
-      style={[
-        watermark && {
-          marginBottom: -BOTTOM_MARGIN_FOR_WATERMARK,
-        },
-      ]}
+      scrollIndicatorInsets={{
+        top: headerHeight - insets.top,
+        bottom: tabBarheight - insets.bottom,
+      }}
       contentContainerStyle={[
         {
           flexGrow: 1,
           alignSelf: 'center',
           width: '100%',
           maxWidth: Settings.MAX_DEVICE_WIDTH,
+          // required when translucent bars
+          ...(Platform.OS === 'ios' && {
+            paddingTop: headerHeight,
+            paddingBottom: tabBarheight,
+          }),
         },
       ]}
-      scrollIndicatorInsets={{
-        ...(watermark && { bottom: BOTTOM_MARGIN_FOR_WATERMARK }),
-      }}
       {...{ data }}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       ItemSeparatorComponent={separatorComponent}
       ListHeaderComponent={headerComponent}
       ListFooterComponent={footerComponent}
-      ListFooterComponentStyle={{ flexGrow: 1 }}
       getItemLayout={itemLayout}
       initialNumToRender={12}
     />

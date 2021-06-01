@@ -80,8 +80,13 @@ const ChartOverlayPathView = ({
         .curve(d3Shape.curveMonotoneX)(data),
     [data, domain, range]
   );
-  const path = React.useMemo(() => parsePath(d), [d]);
   const length = useSharedValue(width);
+  const isLoading = useSharedValue(true);
+  const path = React.useMemo(() => {
+    // prevent cursor visualization gaps on parsing path
+    // isLoading.value = true;
+    return parsePath(d);
+  }, [d]);
   const point = useDerivedValue(() => {
     const x_value = length.value;
     const coord = {
@@ -96,6 +101,8 @@ const ChartOverlayPathView = ({
   useAnimatedReaction(
     () => point.value,
     ({ index }) => {
+      // done loading when point updated
+      // isLoading.value = false;
       // reset selection when last data point
       selectionIndex.value = index === data.length - 1 ? null : index;
     },
@@ -114,7 +121,7 @@ const ChartOverlayPathView = ({
           />
         </Svg>
       )}
-      <Cursor {...{ length, point, width, color }} />
+      <Cursor {...{ length, isLoading, point, width, color }} />
     </>
   );
 };
@@ -125,7 +132,7 @@ const springDefaultConfig = {
   stiffness: 600,
 };
 
-const Cursor = ({ length, point, width, color }) => {
+const Cursor = ({ length, isLoading, point, width, color }) => {
   const isActive = useSharedValue(false);
   const onGestureEvent = useAnimatedGestureHandler({
     onActive: (event) => {
@@ -146,6 +153,7 @@ const Cursor = ({ length, point, width, color }) => {
     const translateX = coord.x + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
     const translateY = coord.y + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
     return {
+      // opacity: isLoading.value ? 0 : withSpring(1),
       transform: [
         { translateX },
         { translateY },

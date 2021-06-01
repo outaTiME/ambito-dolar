@@ -3,7 +3,7 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
-import { View, Text, Linking, Share } from 'react-native';
+import { View, Text, Linking, Share, Platform } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { compose } from 'redux';
@@ -90,7 +90,11 @@ const SettingsScreen = ({ navigation }) => {
       message: `Te recomiendo descargar ${Settings.APP_NAME}, es mi aplicación preferida para conocer las distintas cotizaciones del dólar en la Argentina. https://${Settings.APP_DOMAIN}`,
     });
   }, []);
+  const onPressReview = React.useCallback(() => {
+    Linking.openURL(Settings.APP_REVIEW_URI);
+  }, []);
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
+  const [reviewAvailable] = Helper.useSharedState('reviewAvailable', false);
   return (
     <ScrollView>
       <CardView title="General" plain>
@@ -129,6 +133,14 @@ const SettingsScreen = ({ navigation }) => {
             useSwitch={false}
             chevron={false}
             onAction={onPressContact}
+          />
+        )}
+        {reviewAvailable && (
+          <CardItemView
+            title="Dejar reseña"
+            useSwitch={false}
+            chevron={false}
+            onAction={onPressReview}
           />
         )}
         <CardItemView
