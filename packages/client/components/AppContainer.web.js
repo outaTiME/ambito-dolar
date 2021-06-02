@@ -2,8 +2,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import React from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
-import Svg, { Defs, Pattern, Rect, Text as SvgText } from 'react-native-svg';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { compose } from 'redux';
 
 import MessageView from '../components/MessageView';
@@ -13,6 +12,7 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
+import WatermarkOverlayView from './WatermarkOverlayView';
 
 const { name: APP_NAME } = Constants.manifest;
 const LAYOUT_COLUMNS = 2;
@@ -168,30 +168,7 @@ const AppContainer = ({ title, rates, hasRates, processedAt }) => {
           );
         })}
       </View>
-      {/* http://thenewcode.com/1051/Generate-Page-Watermarks-with-SVG */}
-      <Svg style={StyleSheet.absoluteFillObject} width="100%" height="100%">
-        <Defs>
-          <Pattern
-            id="textstripe"
-            patternUnits="userSpaceOnUse"
-            width="225"
-            height="100"
-            patternTransform="rotate(-45)"
-          >
-            <SvgText
-              y="30"
-              fontFamily={Settings.getFontObject().fontFamily}
-              // same as fonts.title
-              fontSize="20"
-              opacity="0.1"
-              fill={Settings.getGrayColor(theme)}
-            >
-              {Settings.APP_COPYRIGHT}
-            </SvgText>
-          </Pattern>
-        </Defs>
-        <Rect width="100%" height="100%" fill="url(#textstripe)" />
-      </Svg>
+      <WatermarkOverlayView />
     </>
   );
 };

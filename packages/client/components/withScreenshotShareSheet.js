@@ -1,11 +1,9 @@
 import { connectActionSheet } from '@expo/react-native-action-sheet';
 import * as Amplitude from 'expo-analytics-amplitude';
-import { processFontFamily } from 'expo-font';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Sharing from 'expo-sharing';
 import * as React from 'react';
 import { StyleSheet, Keyboard, View, Text, Image } from 'react-native';
-import Svg, { Defs, Pattern, Rect, Text as SvgText } from 'react-native-svg';
 import { captureRef } from 'react-native-view-shot';
 import { useSelector } from 'react-redux';
 import { compose } from 'redux';
@@ -15,6 +13,7 @@ import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import { MaterialHeaderButtons, Item } from './HeaderButtons';
 import ScrollView from './ScrollView';
+import WatermarkOverlayView from './WatermarkOverlayView';
 
 const withScreenshotShareSheet = (Component) => (props) => {
   const { navigation, showActionSheetWithOptions, backgroundColor } = props;
@@ -101,7 +100,9 @@ const withScreenshotShareSheet = (Component) => (props) => {
       .then(
         async (uri) => {
           const { uri: new_uri } = await ImageManipulator.manipulateAsync(uri);
-          console.log('>>> capturedImageLoaded', new_uri);
+          if (__DEV__) {
+            console.log('Snapshot for sharing', new_uri);
+          }
           // https://github.com/expo/expo/issues/6920#issuecomment-580966657
           Sharing.shareAsync(new_uri, {
             // pass
@@ -171,39 +172,7 @@ const withScreenshotShareSheet = (Component) => (props) => {
                   )}`}
               </Text>
             </View>
-            {/* TODO: add svg overlay when react-native-svg fix the patternTransform */}
-            {false && (
-              <Svg
-                style={StyleSheet.absoluteFillObject}
-                width="100%"
-                height="100%"
-              >
-                <Defs>
-                  <Pattern
-                    id="textstripe"
-                    patternUnits="userSpaceOnUse"
-                    width="225"
-                    height="100"
-                    // patternTransform="rotate(-45)"
-                  >
-                    <SvgText
-                      y="30"
-                      // https://github.com/expo/expo/issues/1959#issuecomment-780198250
-                      fontFamily={processFontFamily(
-                        Settings.getFontObject().fontFamily
-                      )}
-                      // same as fonts.title
-                      fontSize="20"
-                      opacity="0.1"
-                      fill={Settings.getGrayColor(theme)}
-                    >
-                      {Settings.APP_COPYRIGHT}
-                    </SvgText>
-                  </Pattern>
-                </Defs>
-                <Rect width="100%" height="100%" fill="url(#textstripe)" />
-              </Svg>
-            )}
+            <WatermarkOverlayView />
           </View>
         </View>
       )}

@@ -41,7 +41,7 @@ export const APP_DOMAIN = 'ambito-dolar.app';
 export const APP_REVIEW_URI =
   Platform.OS === 'ios'
     ? `itms-apps://itunes.apple.com/app/viewContentsUserReviews/id1485120819?action=write-review`
-    : `market://details?id=${Constants.manifest.android.package}&showAllReviews=true`;
+    : `market://details?id=${Constants.manifest.android?.package}&showAllReviews=true`;
 export const HIT_SLOP = {
   top: PADDING,
   bottom: PADDING,
