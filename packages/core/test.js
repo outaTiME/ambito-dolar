@@ -7,12 +7,12 @@ const AmbitoDolar = require('.');
 // process.env.TZ = 'America/Los_Angeles';
 
 test('Dates should use the default timezone', function (t) {
-  const tz_date = AmbitoDolar.getTimezoneDate();
-  const utc_offset = tz_date.utcOffset();
+  const date_tz = AmbitoDolar.getTimezoneDate();
+  const utc_offset = date_tz.utcOffset();
   t.is(
+    date_tz.format(),
     // use valueOf to avoid timezone and use local
-    AmbitoDolar.getDate(tz_date.valueOf()).utcOffset(utc_offset).format(),
-    tz_date.format()
+    AmbitoDolar.getDate(date_tz.valueOf()).utcOffset(utc_offset).format()
   );
   t.is(
     AmbitoDolar.getTimezoneDate('2021-03-08').format(),
