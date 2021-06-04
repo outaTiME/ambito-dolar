@@ -27,5 +27,6 @@
     "type": "git",
     "url": "https://github.com/outaTiME/ambito-dolar.git",
     "directory": "packages/core"
-  }
+  },
+  "homepage": "https://github.com/outaTiME/ambito-dolar/tree/master/packages/core"
 }
