@@ -106,4 +106,4 @@ const NotificationsScreen = ({ navigation }) => {
   );
 };
 
-export default compose(withContainer)(NotificationsScreen);
+export default compose(withContainer())(NotificationsScreen);

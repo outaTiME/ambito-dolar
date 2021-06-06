@@ -34,6 +34,7 @@ export default {
     config: {
       usesNonExemptEncryption: false,
     },
+    appStoreUrl: 'https://apps.apple.com/app/id1485120819',
   },
   android: {
     package: 'im.outa.AmbitoDolar',
@@ -48,6 +49,8 @@ export default {
     allowBackup: false,
     softwareKeyboardLayoutMode: 'pan',
     useNextNotificationsApi: true,
+    playStoreUrl:
+      'https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar',
   },
   notification: {
     icon: './assets/icon.notification.png',

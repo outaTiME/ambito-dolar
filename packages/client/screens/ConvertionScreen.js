@@ -148,7 +148,7 @@ const ConvertionScreen = () => {
 };
 
 export default compose(
-  withContainer,
+  withContainer(),
   // withScreenshotShareSheet('Compartir resultados')
   withScreenshotShareSheet
 )(ConvertionScreen);

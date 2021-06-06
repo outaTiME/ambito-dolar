@@ -65,4 +65,4 @@ const AdvancedNotificationsScreen = ({ route: { params } }) => {
   );
 };
 
-export default compose(withContainer)(AdvancedNotificationsScreen);
+export default compose(withContainer())(AdvancedNotificationsScreen);

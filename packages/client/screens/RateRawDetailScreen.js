@@ -102,4 +102,4 @@ const RateRawDetailScreen = ({ route: { params } }) => {
   );
 };
 
-export default compose(withContainer)(RateRawDetailScreen);
+export default compose(withContainer())(RateRawDetailScreen);

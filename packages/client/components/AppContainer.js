@@ -30,6 +30,7 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import AdvancedNotificationsScreen from '../screens/AdvancedNotificationsScreen';
 import ConvertionScreen from '../screens/ConvertionScreen';
+import DeveloperScreen from '../screens/DeveloperScreen';
 import MainScreen from '../screens/MainScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import RateDetailScreen from '../screens/RateDetailScreen';
@@ -40,9 +41,6 @@ import DateUtils from '../utilities/Date';
 import Firebase from '../utilities/Firebase';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
-
-const { name: APP_NAME } = Constants.manifest;
-const INITIAL_ROUTE_NAME = 'Main';
 
 const BackButton = ({ navigation }) => (
   <MaterialHeaderButtons left>
@@ -80,7 +78,7 @@ const StackNavigator = ({ children }) => {
   );
   return (
     <MainStack.Navigator
-      // initialRouteName={INITIAL_ROUTE_NAME}
+      // initialRouteName={Settings.INITIAL_ROUTE_NAME}
       screenOptions={{
         // required by android
         headerTitleAlign: 'center',
@@ -114,9 +112,9 @@ const StackNavigator = ({ children }) => {
 const RateStackScreen = () => (
   <StackNavigator>
     <MainStack.Screen
-      name={INITIAL_ROUTE_NAME}
+      name={Settings.INITIAL_ROUTE_NAME}
       options={{
-        title: APP_NAME,
+        title: Settings.APP_NAME,
         headerLargeTitle: true,
       }}
       component={MainScreen}
@@ -183,6 +181,14 @@ const SettingsStackScreen = () => {
           component={AdvancedNotificationsScreen}
         />
       )}
+      <MainStack.Screen
+        name="Developer"
+        options={({ navigation }) => ({
+          title: I18n.t('developer'),
+          headerLeft: () => <BackButton {...{ navigation }} />,
+        })}
+        component={DeveloperScreen}
+      />
     </StackNavigator>
   );
 };
@@ -208,7 +214,7 @@ const MainStackScreen = () => {
   );
   return (
     <Tab.Navigator
-      // initialRouteName={INITIAL_ROUTE_NAME}
+      // initialRouteName={Settings.INITIAL_ROUTE_NAME}
       tabBarOptions={{
         showLabel: false,
         style: {
@@ -225,7 +231,7 @@ const MainStackScreen = () => {
       })}
     >
       <Tab.Screen
-        name={INITIAL_ROUTE_NAME}
+        name={Settings.INITIAL_ROUTE_NAME}
         options={{
           tabBarLabel: 'Inicio',
           tabBarIcon: ({ color, size }) => (
@@ -294,9 +300,9 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
   React.useEffect(() => {
     MailComposer.isAvailableAsync().then(setContactAvailable);
   }, []);
-  const [, setReviewAvailable] = Helper.useSharedState('reviewAvailable');
+  const [, setStoreAvailable] = Helper.useSharedState('storeAvailable');
   React.useEffect(() => {
-    Linking.canOpenURL(Settings.APP_REVIEW_URI).then(setReviewAvailable);
+    Linking.canOpenURL(Settings.APP_STORE_URI).then(setStoreAvailable);
   }, []);
   const trackScreen = React.useCallback((name) => {
     if (__DEV__) {
@@ -315,7 +321,7 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
     });
     Amplitude.setUserIdAsync(uid);
     // track initial screen
-    trackScreen(INITIAL_ROUTE_NAME);
+    trackScreen(Settings.INITIAL_ROUTE_NAME);
   }, []);
   // https://reactnavigation.org/docs/screen-tracking
   const routeNameRef = React.useRef();
@@ -329,14 +335,14 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
         Notifications.DEFAULT_ACTION_IDENTIFIER
     ) {
       Amplitude.logEventAsync('Select notification');
-      navigationRef.current?.navigate(INITIAL_ROUTE_NAME, {
-        screen: INITIAL_ROUTE_NAME,
+      navigationRef.current?.navigate(Settings.INITIAL_ROUTE_NAME, {
+        screen: Settings.INITIAL_ROUTE_NAME,
       });
     }
   }, [lastNotificationResponse]);
   React.useEffect(() => {
     if (showAppUpdateMessage === true) {
-      navigationRef.current?.navigate('UpdateAppModalScreen', {
+      navigationRef.current?.navigate('ApplicationUpdate', {
         // pass
       });
     }
@@ -362,11 +368,11 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
     >
       <RootStack.Navigator mode="modal" headerMode="none">
         <RootStack.Screen
-          name={INITIAL_ROUTE_NAME}
+          name={Settings.INITIAL_ROUTE_NAME}
           component={MainStackScreen}
         />
         <RootStack.Screen
-          name="UpdateAppModalScreen"
+          name="ApplicationUpdate"
           component={UpdateAppModalScreen}
           options={{
             gestureEnabled: false,
@@ -497,12 +503,9 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const hasNotificationPermissions = (settings) => {
-  return (
-    settings.granted ||
-    settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
-  );
-};
+const hasNotificationPermissions = (settings) =>
+  settings.granted ||
+  settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
 
 // TODO: use https://github.com/cassiozen/useStateMachine for orchestration
 const withUserActivity = (Component) => (props) => {
@@ -656,8 +659,9 @@ const withAppUpdateCheck = (Component) => (props) => {
 };
 
 export default compose(
+  // for plain messages
+  withContainer(true),
   withFirebase,
   withUserActivity,
-  withAppUpdateCheck,
-  withContainer
+  withAppUpdateCheck
 )(AppContainer);

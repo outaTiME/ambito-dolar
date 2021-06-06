@@ -38,10 +38,13 @@ export const APP_IGNORE_UPDATE_EXPIRATION = 30 * 24 * 60 * 60 * 1000; // 30 days
 export const { name: APP_NAME, android } = Constants.manifest;
 export const APP_COPYRIGHT = `© ${new Date().getFullYear()} ${APP_NAME}`;
 export const APP_DOMAIN = 'ambito-dolar.app';
-export const APP_REVIEW_URI =
+export const APP_STORE_URI =
   Platform.OS === 'ios'
-    ? `itms-apps://itunes.apple.com/app/viewContentsUserReviews/id1485120819?action=write-review`
-    : `market://details?id=${Constants.manifest.android?.package}&showAllReviews=true`;
+    ? `itms-apps://itunes.apple.com/app/id1485120819`
+    : `market://details?id=${Constants.manifest.android?.package}`;
+export const APP_REVIEW_URI = `${APP_STORE_URI}${
+  Platform.OS === 'ios' ? '?action=write-review' : '&showAllReviews=true'
+}`;
 export const HIT_SLOP = {
   top: PADDING,
   bottom: PADDING,
@@ -49,9 +52,9 @@ export const HIT_SLOP = {
   left: PADDING,
 };
 export const CHART_STROKE_WIDTH = 3 - 0.5;
-
 // iPad in landscape
 export const MAX_DEVICE_WIDTH = 551 + CARD_PADDING * 2;
+export const INITIAL_ROUTE_NAME = 'Main';
 
 export default {
   PADDING,
@@ -84,10 +87,12 @@ export default {
   APP_NAME,
   APP_COPYRIGHT,
   APP_DOMAIN,
+  APP_STORE_URI,
   APP_REVIEW_URI,
   HIT_SLOP,
   CHART_STROKE_WIDTH,
   MAX_DEVICE_WIDTH,
+  INITIAL_ROUTE_NAME,
   getLightColor(alternative = false) {
     if (alternative !== false) {
       return iOSColors.white;
@@ -103,18 +108,18 @@ export default {
     }
     return this.getDarkColor();
   },
-  getBackgroundColor(theme) {
+  getBackgroundColor(theme, alternative = false) {
     if (theme === 'dark') {
       return this.getDarkColor();
     }
-    return this.getLightColor();
+    return this.getLightColor(alternative);
   },
-  getContentColor(theme) {
+  getContentColor(theme, alternative = false) {
     // systemGray6
     if (theme === 'dark') {
       return 'rgb(28,28,30)';
     }
-    return this.getLightColor(true);
+    return this.getLightColor(!alternative);
   },
   getStrokeColor(theme, soft) {
     if (soft === true) {

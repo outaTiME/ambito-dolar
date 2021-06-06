@@ -9,10 +9,10 @@ import {
   UPDATE_NOTIFICATION_SETTINGS,
   PRUNE,
   APP_UPDATE,
-  APP_INVALID,
   APP_IGNORE_UPDATE,
-  APP_VALID,
-  FORCE_APP_INVALID,
+  APP_INVALID_VERSION,
+  APP_VALID_VERSION,
+  FORCE_APP_INVALID_VERSION,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -62,21 +62,21 @@ export default (state = INITIAL_STATE, action) => {
         invalid_version: { $set: false },
         ignore_update: { $set: null },
       });
-    case APP_INVALID:
-      return update(state, {
-        invalid_version: { $set: true },
-      });
     case APP_IGNORE_UPDATE:
       return update(state, {
         ignore_update: { $set: Date.now() },
       });
+    case APP_INVALID_VERSION:
+      return update(state, {
+        invalid_version: { $set: true },
+      });
     // same as APP_UPDATE but leave app version
-    case APP_VALID:
+    case APP_VALID_VERSION:
       return update(state, {
         invalid_version: { $set: false },
         ignore_update: { $set: null },
       });
-    case FORCE_APP_INVALID:
+    case FORCE_APP_INVALID_VERSION:
       return update(state, {
         invalid_version: { $set: true },
         ignore_update: { $set: null },

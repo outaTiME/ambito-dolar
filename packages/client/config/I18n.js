@@ -16,8 +16,10 @@ i18n.translations = {
     allow_permissions:
       'Tienes que permitir el acceso a las notificaciones para poder configurar este módulo.',
     update_app:
-      'Tienes que actualizar esta aplicación a su versión más reciente.',
+      'Tienes que actualizar esta aplicación a una versión más reciente.',
+    update: 'Actualizar',
     remind_me_later: 'Más tarde',
+    developer: 'Desarrollador',
   },
 };
 i18n.locale = Localization.locale;

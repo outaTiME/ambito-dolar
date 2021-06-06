@@ -5,14 +5,14 @@ import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
 import { View, Text, Linking, Share, Platform } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { compose } from 'redux';
 
-import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import ScrollView from '../components/ScrollView';
 import withContainer from '../components/withContainer';
+import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
@@ -95,8 +95,7 @@ const SettingsScreen = ({ navigation }) => {
     Linking.openURL(Settings.APP_REVIEW_URI);
   }, []);
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
-  const [reviewAvailable] = Helper.useSharedState('reviewAvailable', false);
-  const dispatch = useDispatch();
+  const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
   return (
     <ScrollView>
       <CardView title="General" plain>
@@ -118,19 +117,16 @@ const SettingsScreen = ({ navigation }) => {
           useSwitch={false}
           value={app_revision_id || app_version}
         />
-      </CardView>
-      {__DEV__ && (
-        <CardView title="Desarrollador" plain>
+        {__DEV__ && (
           <CardItemView
-            title="Aplicación inválida"
+            title={I18n.t('developer')}
             useSwitch={false}
-            chevron={false}
             onAction={() => {
-              dispatch(actions.forceInvalidApplication());
+              navigation.navigate('Developer');
             }}
           />
-        </CardView>
-      )}
+        )}
+      </CardView>
       {processed_at && (
         <CardView title="Cotizaciones" plain>
           <CardItemView
@@ -149,7 +145,7 @@ const SettingsScreen = ({ navigation }) => {
             onAction={onPressContact}
           />
         )}
-        {reviewAvailable && (
+        {storeAvailable && (
           <CardItemView
             title="Dejar reseña"
             useSwitch={false}
@@ -280,4 +276,4 @@ const SettingsScreen = ({ navigation }) => {
   );
 };
 
-export default compose(withContainer)(SettingsScreen);
+export default compose(withContainer())(SettingsScreen);

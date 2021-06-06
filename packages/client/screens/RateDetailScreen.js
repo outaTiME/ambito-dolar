@@ -193,7 +193,7 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
 };
 
 export default compose(
-  withContainer,
+  withContainer(),
   // withScreenshotShareSheet('Compartir cotización')
   withScreenshotShareSheet
 )(RateDetailScreen);

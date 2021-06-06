@@ -31,7 +31,7 @@ const MainScreen = ({ navigation }) => {
 };
 
 export default compose(
-  withContainer,
+  withContainer(),
   // withScreenshotShareSheet('Compartir cotizaciones')
   withScreenshotShareSheet
 )(MainScreen);

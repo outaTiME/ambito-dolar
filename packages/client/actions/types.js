@@ -6,10 +6,10 @@ export const APP_LOAD = 'app_load';
 export const APP_REVIEW = 'app_review';
 export const UPDATE_NOTIFICATION_SETTINGS = 'update_notification_settings';
 export const APP_UPDATE = 'app_update';
-export const APP_INVALID = 'app_invalid';
 export const APP_IGNORE_UPDATE = 'app_ignore_update';
-export const APP_VALID = 'app_valid';
-export const FORCE_APP_INVALID = 'force_app_invalid';
+export const APP_INVALID_VERSION = 'app_invalid_version';
+export const APP_VALID_VERSION = 'app_valid_version';
+export const FORCE_APP_INVALID_VERSION = 'force_app_invalid_version';
 
 // rates
 export const ADD_RATES = 'add_rates';

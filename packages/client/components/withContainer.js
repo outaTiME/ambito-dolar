@@ -4,29 +4,25 @@ import { View, StyleSheet } from 'react-native';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-export default (Component) =>
-  ({ alternativeBackground, ...props }) => {
-    const { theme } = Helper.useTheme();
-    const background_color = React.useMemo(
-      () =>
-        alternativeBackground
-          ? Settings.getContentColor(theme, true)
-          : Settings.getBackgroundColor(theme),
-      [alternativeBackground, theme]
-    );
-    return (
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: background_color,
-          },
-        ]}
-      >
-        <Component backgroundColor={background_color} {...props} />
-      </View>
-    );
-  };
+export default (alternativeBackground) => (Component) => (props) => {
+  const { theme } = Helper.useTheme();
+  const background_color = Settings.getBackgroundColor(
+    theme,
+    alternativeBackground
+  );
+  return (
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: background_color,
+        },
+      ]}
+    >
+      <Component backgroundColor={background_color} {...props} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

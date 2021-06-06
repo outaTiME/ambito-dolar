@@ -1,6 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { FontAwesome5 } from '@expo/vector-icons';
-import Constants from 'expo-constants';
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { compose } from 'redux';
@@ -14,7 +13,6 @@ import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import WatermarkOverlayView from './WatermarkOverlayView';
 
-const { name: APP_NAME } = Constants.manifest;
 const LAYOUT_COLUMNS = 2;
 
 const AppContainer = ({ title, rates, hasRates, processedAt }) => {
@@ -61,7 +59,7 @@ const AppContainer = ({ title, rates, hasRates, processedAt }) => {
             ]}
             numberOfLines={1}
           >
-            {title || APP_NAME}
+            {title || Settings.APP_NAME}
           </Text>
           <Text
             style={[
@@ -212,4 +210,4 @@ const withRates = (Component) => (props) => {
   );
 };
 
-export default compose(withContainer, withRates)(AppContainer);
+export default compose(withContainer(), withRates)(AppContainer);

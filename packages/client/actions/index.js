@@ -11,13 +11,12 @@ import {
   APP_REVIEW,
   UPDATE_NOTIFICATION_SETTINGS,
   APP_UPDATE,
-  APP_INVALID,
   APP_IGNORE_UPDATE,
-  // APP_VALID,
+  APP_INVALID_VERSION,
+  FORCE_APP_INVALID_VERSION,
   ADD_RATES,
   UPDATE_RATES_PROCESSED_AT,
   UPDATE_HISTORICAL_RATES,
-  FORCE_APP_INVALID,
 } from './types';
 
 export const addRates = (payload) => ({
@@ -79,13 +78,13 @@ const doRegisterDevice = async (dispatch, state, value = {}) => {
       }
       if (statusCode === 'update_app') {
         return dispatch({
-          type: APP_INVALID,
+          type: APP_INVALID_VERSION,
         });
       }
       return Promise.resolve();
       // TODO: clear invalid attributes when no statusCode?
       /* return dispatch({
-      type: APP_VALID,
+      type: APP_VALID_VERSION,
     }); */
     }
   );
@@ -163,6 +162,6 @@ export const ignoreApplicationUpdate = () => ({
   type: APP_IGNORE_UPDATE,
 });
 
-export const forceInvalidApplication = () => ({
-  type: FORCE_APP_INVALID,
+export const forceApplicationInvalidVersion = () => ({
+  type: FORCE_APP_INVALID_VERSION,
 });
