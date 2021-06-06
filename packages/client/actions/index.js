@@ -17,6 +17,7 @@ import {
   ADD_RATES,
   UPDATE_RATES_PROCESSED_AT,
   UPDATE_HISTORICAL_RATES,
+  FORCE_APP_INVALID,
 } from './types';
 
 export const addRates = (payload) => ({
@@ -158,8 +159,10 @@ export const registerApplicationUpdate = (payload) => ({
   payload,
 });
 
-export const ignoreApplicationUpdate = () => (dispatch) => {
-  return dispatch({
-    type: APP_IGNORE_UPDATE,
-  });
-};
+export const ignoreApplicationUpdate = () => ({
+  type: APP_IGNORE_UPDATE,
+});
+
+export const forceInvalidApplication = () => ({
+  type: FORCE_APP_INVALID,
+});

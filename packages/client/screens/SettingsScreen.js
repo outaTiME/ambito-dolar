@@ -5,9 +5,10 @@ import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
 import { View, Text, Linking, Share, Platform } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { compose } from 'redux';
 
+import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import ScrollView from '../components/ScrollView';
@@ -95,6 +96,7 @@ const SettingsScreen = ({ navigation }) => {
   }, []);
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
   const [reviewAvailable] = Helper.useSharedState('reviewAvailable', false);
+  const dispatch = useDispatch();
   return (
     <ScrollView>
       <CardView title="General" plain>
@@ -117,6 +119,18 @@ const SettingsScreen = ({ navigation }) => {
           value={app_revision_id || app_version}
         />
       </CardView>
+      {__DEV__ && (
+        <CardView title="Desarrollador" plain>
+          <CardItemView
+            title="Aplicación inválida"
+            useSwitch={false}
+            chevron={false}
+            onAction={() => {
+              dispatch(actions.forceInvalidApplication());
+            }}
+          />
+        </CardView>
+      )}
       {processed_at && (
         <CardView title="Cotizaciones" plain>
           <CardItemView

@@ -9,6 +9,7 @@ export const APP_UPDATE = 'app_update';
 export const APP_INVALID = 'app_invalid';
 export const APP_IGNORE_UPDATE = 'app_ignore_update';
 export const APP_VALID = 'app_valid';
+export const FORCE_APP_INVALID = 'force_app_invalid';
 
 // rates
 export const ADD_RATES = 'add_rates';

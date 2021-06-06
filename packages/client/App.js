@@ -12,8 +12,7 @@ import React from 'react';
 import { Text, TextInput, LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
+import { createStore, applyMiddleware, compose } from 'redux';
 import { createMigrate, persistReducer } from 'redux-persist';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import { createBlacklistFilter } from 'redux-persist-transform-filter';
@@ -76,14 +75,10 @@ const enhacers = [
   // pass
 ];
 
-const composeEnhancers = composeWithDevTools({
-  // specify name here, actionsBlacklist, actionsCreators and other options if needed
-});
-
 const store = createStore(
   reducer,
   initialState,
-  composeEnhancers(...enhacers, applyMiddleware(...middlewares))
+  compose(...enhacers, applyMiddleware(...middlewares))
 );
 
 // disable font scaling in whole app (iOS only)

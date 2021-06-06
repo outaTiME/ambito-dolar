@@ -18,18 +18,11 @@ import * as MailComposer from 'expo-mail-composer';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
 import * as React from 'react';
-import {
-  StyleSheet,
-  View,
-  ActivityIndicator,
-  Platform,
-  Linking,
-} from 'react-native';
+import { StyleSheet, ActivityIndicator, Platform, Linking } from 'react-native';
 import { shallowEqual, useSelector, useDispatch } from 'react-redux';
 import { compose } from 'redux';
 
 import * as actions from '../actions';
-import ActionButton from '../components/ActionButton';
 import { MaterialHeaderButtons, Item } from '../components/HeaderButtons';
 import MessageView from '../components/MessageView';
 import withContainer from '../components/withContainer';
@@ -42,6 +35,7 @@ import NotificationsScreen from '../screens/NotificationsScreen';
 import RateDetailScreen from '../screens/RateDetailScreen';
 import RateRawDetailScreen from '../screens/RateRawDetailScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import UpdateAppModalScreen from '../screens/UpdateAppModalScreen';
 import DateUtils from '../utilities/Date';
 import Firebase from '../utilities/Firebase';
 import Helper from '../utilities/Helper';
@@ -49,15 +43,12 @@ import Sentry from '../utilities/Sentry';
 
 const { name: APP_NAME } = Constants.manifest;
 const INITIAL_ROUTE_NAME = 'Main';
-const Stack = createStackNavigator();
 
 const BackButton = ({ navigation }) => (
   <MaterialHeaderButtons left>
     <Item title="back" iconName="arrow-back" onPress={navigation.goBack} />
   </MaterialHeaderButtons>
 );
-
-const Tab = createBottomTabNavigator();
 
 const NavigatorBackgroundView = ({ style, children }) => {
   const { theme } = Helper.useTheme();
@@ -68,9 +59,11 @@ const NavigatorBackgroundView = ({ style, children }) => {
   );
 };
 
+const MainStack = createStackNavigator();
+
 const StackNavigator = ({ children }) => {
   const { theme, fonts } = Helper.useTheme();
-  const navigation_header_background = React.useCallback(
+  const header_background = React.useCallback(
     () => (
       <NavigatorBackgroundView
         style={[
@@ -86,8 +79,8 @@ const StackNavigator = ({ children }) => {
     [theme]
   );
   return (
-    <Stack.Navigator
-      initialRouteName={INITIAL_ROUTE_NAME}
+    <MainStack.Navigator
+      // initialRouteName={INITIAL_ROUTE_NAME}
       screenOptions={{
         // required by android
         headerTitleAlign: 'center',
@@ -109,18 +102,18 @@ const StackNavigator = ({ children }) => {
         headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
         ...(Platform.OS === 'ios' && {
           headerTransparent: true,
-          headerBackground: navigation_header_background,
+          headerBackground: header_background,
         }),
       }}
     >
       {children}
-    </Stack.Navigator>
+    </MainStack.Navigator>
   );
 };
 
-const MainStack = () => (
+const RateStackScreen = () => (
   <StackNavigator>
-    <Stack.Screen
+    <MainStack.Screen
       name={INITIAL_ROUTE_NAME}
       options={{
         title: APP_NAME,
@@ -128,7 +121,7 @@ const MainStack = () => (
       }}
       component={MainScreen}
     />
-    <Stack.Screen
+    <MainStack.Screen
       name="RateDetail"
       options={({ route: { params }, navigation }) => ({
         title: AmbitoDolar.getRateTitle(params.type),
@@ -136,7 +129,7 @@ const MainStack = () => (
       })}
       component={RateDetailScreen}
     />
-    <Stack.Screen
+    <MainStack.Screen
       name="RateRawDetail"
       options={({ navigation }) => ({
         title: 'Detalle',
@@ -147,9 +140,9 @@ const MainStack = () => (
   </StackNavigator>
 );
 
-const ConvertionStack = () => (
+const ConvertionStackScreen = () => (
   <StackNavigator>
-    <Stack.Screen
+    <MainStack.Screen
       name="Convertion"
       options={{
         title: 'Conversor',
@@ -160,11 +153,11 @@ const ConvertionStack = () => (
   </StackNavigator>
 );
 
-const SettingsStack = () => {
+const SettingsStackScreen = () => {
   const [allowNotifications] = Helper.useSharedState('allowNotifications');
   return (
     <StackNavigator>
-      <Stack.Screen
+      <MainStack.Screen
         name="Settings"
         options={{
           title: 'Ajustes',
@@ -172,7 +165,7 @@ const SettingsStack = () => {
         }}
         component={SettingsScreen}
       />
-      <Stack.Screen
+      <MainStack.Screen
         name="Notifications"
         options={({ navigation }) => ({
           title: 'Notificaciones',
@@ -181,7 +174,7 @@ const SettingsStack = () => {
         component={NotificationsScreen}
       />
       {(!Constants.isDevice || allowNotifications) && (
-        <Stack.Screen
+        <MainStack.Screen
           name="AdvancedNotifications"
           options={({ route: { params }, navigation }) => ({
             title: AmbitoDolar.getNotificationTitle(params.type),
@@ -194,29 +187,11 @@ const SettingsStack = () => {
   );
 };
 
-const trackScreen = (name) => {
-  if (__DEV__) {
-    console.log('Analytics track screen', name);
-  }
-  Sentry.addBreadcrumb({
-    message: `${name} screen`,
-  });
-  Amplitude.logEventAsync(`${name} screen`);
-};
+const Tab = createBottomTabNavigator();
 
-const AppNavigationContainer = () => {
+const MainStackScreen = () => {
   const { theme } = Helper.useTheme();
-  const navigation_theme = React.useMemo(
-    () => ({
-      dark: theme === 'dark',
-      colors: {
-        card: Settings.getContentColor(theme),
-        border: Settings.getStrokeColor(theme),
-      },
-    }),
-    [theme]
-  );
-  const navigation_tab_bar = React.useCallback(
+  const tab_bar = React.useCallback(
     (props) => (
       <NavigatorBackgroundView
         style={{
@@ -231,6 +206,84 @@ const AppNavigationContainer = () => {
     ),
     []
   );
+  return (
+    <Tab.Navigator
+      // initialRouteName={INITIAL_ROUTE_NAME}
+      tabBarOptions={{
+        showLabel: false,
+        style: {
+          elevation: 0,
+          shadowOpacity: 0,
+          ...(Platform.OS === 'ios' && { backgroundColor: 'transparent' }),
+        },
+        activeTintColor: Settings.getForegroundColor(theme),
+        inactiveTintColor: Settings.getStrokeColor(theme),
+        allowFontScaling: Settings.ALLOW_FONT_SCALING,
+      }}
+      {...(Platform.OS === 'ios' && {
+        tabBar: tab_bar,
+      })}
+    >
+      <Tab.Screen
+        name={INITIAL_ROUTE_NAME}
+        options={{
+          tabBarLabel: 'Inicio',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="cards-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+        component={RateStackScreen}
+      />
+      <Tab.Screen
+        name="Convertion"
+        options={{
+          tabBarLabel: 'Conversor',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="filter-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+        component={ConvertionStackScreen}
+      />
+      <Tab.Screen
+        name="Settings"
+        options={{
+          tabBarLabel: 'Ajustes',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="cog-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+        component={SettingsStackScreen}
+      />
+    </Tab.Navigator>
+  );
+};
+
+const RootStack = createStackNavigator();
+
+const AppNavigationContainer = ({ showAppUpdateMessage }) => {
+  const { theme } = Helper.useTheme();
+  const navigation_theme = React.useMemo(
+    () => ({
+      dark: theme === 'dark',
+      colors: {
+        card: Settings.getContentColor(theme),
+        border: Settings.getStrokeColor(theme),
+      },
+    }),
+    [theme]
+  );
   const [, setIsPhoneDevice] = Helper.useSharedState('isPhoneDevice');
   React.useEffect(() => {
     Device.getDeviceTypeAsync().then((device_type) =>
@@ -244,6 +297,15 @@ const AppNavigationContainer = () => {
   const [, setReviewAvailable] = Helper.useSharedState('reviewAvailable');
   React.useEffect(() => {
     Linking.canOpenURL(Settings.APP_REVIEW_URI).then(setReviewAvailable);
+  }, []);
+  const trackScreen = React.useCallback((name) => {
+    if (__DEV__) {
+      console.log('Analytics track screen', name);
+    }
+    Sentry.addBreadcrumb({
+      message: `${name} screen`,
+    });
+    Amplitude.logEventAsync(`${name} screen`);
   }, []);
   React.useEffect(() => {
     const uid = Constants.installationId;
@@ -272,6 +334,13 @@ const AppNavigationContainer = () => {
       });
     }
   }, [lastNotificationResponse]);
+  React.useEffect(() => {
+    if (showAppUpdateMessage === true) {
+      navigationRef.current?.navigate('UpdateAppModalScreen', {
+        // pass
+      });
+    }
+  }, [showAppUpdateMessage]);
   return (
     <NavigationContainer
       {...{
@@ -291,72 +360,24 @@ const AppNavigationContainer = () => {
         theme: navigation_theme,
       }}
     >
-      <Tab.Navigator
-        initialRouteName={INITIAL_ROUTE_NAME}
-        tabBarOptions={{
-          showLabel: false,
-          style: {
-            elevation: 0,
-            shadowOpacity: 0,
-            ...(Platform.OS === 'ios' && { backgroundColor: 'transparent' }),
-          },
-          activeTintColor: Settings.getForegroundColor(theme),
-          inactiveTintColor: Settings.getStrokeColor(theme),
-          allowFontScaling: Settings.ALLOW_FONT_SCALING,
-        }}
-        {...(Platform.OS === 'ios' && {
-          tabBar: navigation_tab_bar,
-        })}
-      >
-        <Tab.Screen
+      <RootStack.Navigator mode="modal" headerMode="none">
+        <RootStack.Screen
           name={INITIAL_ROUTE_NAME}
-          options={{
-            tabBarLabel: 'Inicio',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="cards-outline"
-                color={color}
-                size={size}
-              />
-            ),
-          }}
-          component={MainStack}
+          component={MainStackScreen}
         />
-        <Tab.Screen
-          name="Convertion"
+        <RootStack.Screen
+          name="UpdateAppModalScreen"
+          component={UpdateAppModalScreen}
           options={{
-            tabBarLabel: 'Conversor',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="filter-outline"
-                color={color}
-                size={size}
-              />
-            ),
+            gestureEnabled: false,
           }}
-          component={ConvertionStack}
         />
-        <Tab.Screen
-          name="Settings"
-          options={{
-            tabBarLabel: 'Ajustes',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="cog-outline"
-                color={color}
-                size={size}
-              />
-            ),
-          }}
-          component={SettingsStack}
-        />
-      </Tab.Navigator>
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 };
 
 const AppContainer = ({ showAppUpdateMessage }) => {
-  const dispatch = useDispatch();
   const { theme } = Helper.useTheme();
   // STILL LOADING
   const [stillLoading, setStillLoading] = React.useState(false);
@@ -372,7 +393,7 @@ const AppContainer = ({ showAppUpdateMessage }) => {
     <>
       {rates ? (
         has_rates ? (
-          <AppNavigationContainer />
+          <AppNavigationContainer {...{ showAppUpdateMessage }} />
         ) : (
           <MessageView message={I18n.t('no_available_rates')} />
         )
@@ -390,27 +411,6 @@ const AppContainer = ({ showAppUpdateMessage }) => {
             />
           )}
         </>
-      )}
-      {/* use blocking style to preserve navigation state */}
-      {showAppUpdateMessage && (
-        <View
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            justifyContent: 'center',
-            backgroundColor: Settings.getBackgroundColor(theme),
-          }}
-        >
-          <MessageView
-            style={{
-              marginBottom: Settings.PADDING * 2,
-            }}
-            message={I18n.t('update_app')}
-          />
-          <ActionButton
-            title={I18n.t('remind_me_later')}
-            handleOnPress={() => dispatch(actions.ignoreApplicationUpdate())}
-          />
-        </View>
       )}
     </>
   );
@@ -615,6 +615,9 @@ const withUserActivity = (Component) => (props) => {
 };
 
 const withAppUpdateCheck = (Component) => (props) => {
+  const {
+    manifest: { version: current_app_version },
+  } = Constants;
   const { app_version, app_invalid_version, app_ignore_update } = useSelector(
     ({
       application: {
@@ -639,9 +642,6 @@ const withAppUpdateCheck = (Component) => (props) => {
   const show_app_update_message =
     app_invalid_version && ignore_update === false;
   React.useEffect(() => {
-    const {
-      manifest: { version: current_app_version },
-    } = Constants;
     if (current_app_version !== app_version) {
       if (__DEV__) {
         console.log('Application updated', app_version, current_app_version);
@@ -649,7 +649,7 @@ const withAppUpdateCheck = (Component) => (props) => {
       // updated and clean app_must_be_updated flag
       dispatch(actions.registerApplicationUpdate(current_app_version));
     }
-  }, []);
+  }, [current_app_version, app_version]);
   return (
     <Component showAppUpdateMessage={show_app_update_message} {...props} />
   );

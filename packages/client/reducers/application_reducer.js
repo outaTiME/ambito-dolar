@@ -12,6 +12,7 @@ import {
   APP_INVALID,
   APP_IGNORE_UPDATE,
   APP_VALID,
+  FORCE_APP_INVALID,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -73,6 +74,11 @@ export default (state = INITIAL_STATE, action) => {
     case APP_VALID:
       return update(state, {
         invalid_version: { $set: false },
+        ignore_update: { $set: null },
+      });
+    case FORCE_APP_INVALID:
+      return update(state, {
+        invalid_version: { $set: true },
         ignore_update: { $set: null },
       });
     case PRUNE:
