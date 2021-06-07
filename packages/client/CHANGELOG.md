@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@5.0.1...@ambito-dolar/client@5.1.0) (2021-06-07)
+
+
+### Features
+
+* **client:** add watermark overlay in share option ([c989508](https://github.com/outaTiME/ambito-dolar/commit/c989508c3513b0060c23b914b1a73d26761e094f))
+* **client:** new area chart using reanimated 2 directly instead of react-native-animated-charts ([489bf8c](https://github.com/outaTiME/ambito-dolar/commit/489bf8c9af347f82a9b2198597681b84f4ad93d1))
+* **client:** new modal screen to warn about application update ([95552ae](https://github.com/outaTiME/ambito-dolar/commit/95552ae471f861e281df11f00d9f194c4b9c7392))
+* **client:** translucent navigation bars on iOS ([9a956d1](https://github.com/outaTiME/ambito-dolar/commit/9a956d152979fa881218073bda5e4d6c4efc8eb6))
+
+
+
+
+
 ## [5.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@5.0.0...@ambito-dolar/client@5.0.1) (2021-05-13)
 
 

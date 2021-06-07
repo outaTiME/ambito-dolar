@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.2.0...@ambito-dolar/api@1.3.0) (2021-06-07)
+
+
+### Features
+
+* **client:** new area chart using reanimated 2 directly instead of react-native-animated-charts ([489bf8c](https://github.com/outaTiME/ambito-dolar/commit/489bf8c9af347f82a9b2198597681b84f4ad93d1))
+
+
+
+
+
 # [1.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.1.0...@ambito-dolar/api@1.2.0) (2021-05-17)
 
 
