@@ -54,17 +54,19 @@ const BackButton = ({ navigation }) => (
   </MaterialHeaderButtons>
 );
 
-const SOLID_BACKGROUND_FOR_APP_SCREENSHOT = false;
+// used for screenshots on android
+const SOLID_NAVIGATOR_BACKGROUND = false;
 
 const NavigatorBackgroundView = ({ style, children }) => {
   const { theme } = Helper.useTheme();
-  if (SOLID_BACKGROUND_FOR_APP_SCREENSHOT) {
+  const { colors } = useTheme();
+  if (SOLID_NAVIGATOR_BACKGROUND) {
     return (
       <View
         style={[
           style,
           {
-            backgroundColor: Settings.getContentColor(theme),
+            backgroundColor: colors.card,
           },
         ]}
       >
@@ -309,7 +311,8 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       dark: theme === 'dark',
       colors: {
         card: Settings.getContentColor(theme),
-        border: Settings.getStrokeColor(theme, Platform.OS === 'ios'),
+        // border: Settings.getStrokeColor(theme, Platform.OS === 'ios'),
+        border: Settings.getStrokeColor(theme),
       },
     }),
     [theme]
