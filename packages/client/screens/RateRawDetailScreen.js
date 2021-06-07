@@ -57,7 +57,7 @@ const RateRawDetailScreen = ({ route: { params } }) => {
         );
       } else {
         if (__DEV__) {
-          console.warn(`No historical stats for ${type} rate.`);
+          console.warn(`No historical stats for ${type} rate`);
         }
       }
     }

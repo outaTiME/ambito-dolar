@@ -78,6 +78,7 @@ const UpdateAppModalScreen = ({ navigation }) => {
         handleOnPress={() => {
           setConfirmed(true);
         }}
+        // small={storeAvailable}
       />
     </>
   );

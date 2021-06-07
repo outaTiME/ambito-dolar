@@ -5,7 +5,7 @@ import {
   BottomTabBar,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useTheme } from '@react-navigation/native';
 import {
   createStackNavigator,
   HeaderStyleInterpolators,
@@ -18,7 +18,13 @@ import * as MailComposer from 'expo-mail-composer';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
 import * as React from 'react';
-import { StyleSheet, ActivityIndicator, Platform, Linking } from 'react-native';
+import {
+  StyleSheet,
+  ActivityIndicator,
+  Platform,
+  Linking,
+  View,
+} from 'react-native';
 import { shallowEqual, useSelector, useDispatch } from 'react-redux';
 import { compose } from 'redux';
 
@@ -48,8 +54,24 @@ const BackButton = ({ navigation }) => (
   </MaterialHeaderButtons>
 );
 
+const SOLID_BACKGROUND_FOR_APP_SCREENSHOT = false;
+
 const NavigatorBackgroundView = ({ style, children }) => {
   const { theme } = Helper.useTheme();
+  if (SOLID_BACKGROUND_FOR_APP_SCREENSHOT) {
+    return (
+      <View
+        style={[
+          style,
+          {
+            backgroundColor: Settings.getContentColor(theme),
+          },
+        ]}
+      >
+        {children}
+      </View>
+    );
+  }
   return (
     <BlurView tint={theme} intensity={100} style={style}>
       {children}
@@ -61,14 +83,14 @@ const MainStack = createStackNavigator();
 
 const StackNavigator = ({ children }) => {
   const { theme, fonts } = Helper.useTheme();
+  const { colors } = useTheme();
   const header_background = React.useCallback(
     () => (
       <NavigatorBackgroundView
         style={[
           {
-            // height: Settings.HEADER_HEIGHT
             borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: Settings.getStrokeColor(theme),
+            borderBottomColor: colors.border,
           },
           StyleSheet.absoluteFill,
         ]}
@@ -92,6 +114,7 @@ const StackNavigator = ({ children }) => {
           shadowOpacity: 0,
           // https://github.com/react-navigation/react-navigation/blob/main/packages/stack/src/views/Header/HeaderBackground.tsx#L52
           borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.border,
         },
         headerTitleStyle: {
           ...fonts.title,
@@ -221,6 +244,7 @@ const MainStackScreen = () => {
           elevation: 0,
           shadowOpacity: 0,
           ...(Platform.OS === 'ios' && { backgroundColor: 'transparent' }),
+          borderTopWidth: StyleSheet.hairlineWidth,
         },
         activeTintColor: Settings.getForegroundColor(theme),
         inactiveTintColor: Settings.getStrokeColor(theme),
@@ -285,7 +309,7 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       dark: theme === 'dark',
       colors: {
         card: Settings.getContentColor(theme),
-        border: Settings.getStrokeColor(theme),
+        border: Settings.getStrokeColor(theme, Platform.OS === 'ios'),
       },
     }),
     [theme]

@@ -5,12 +5,12 @@ import { RectButton, BorderlessButton } from 'react-native-gesture-handler';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const ButtonText = ({ title }) => {
+const ButtonText = ({ title, small = false }) => {
   const { fonts } = Helper.useTheme();
   return (
     <Text
       style={[
-        fonts.subhead,
+        small === true ? fonts.footnote : fonts.subhead,
         {
           textAlign: 'center',
           textTransform: 'uppercase',
@@ -30,6 +30,7 @@ export default ({
   borderless,
   style,
   alternativeBackground,
+  small,
 }) => {
   const { theme } = Helper.useTheme();
   if (borderless) {
@@ -43,7 +44,7 @@ export default ({
         ]}
       >
         <BorderlessButton onPress={handleOnPress}>
-          <ButtonText {...{ title }} />
+          <ButtonText {...{ title, small }} />
         </BorderlessButton>
       </View>
     );
@@ -70,7 +71,7 @@ export default ({
         activeOpacity={1}
         underlayColor={Settings.getStrokeColor(theme, true)}
       >
-        <ButtonText {...{ title }} />
+        <ButtonText {...{ title, small }} />
       </RectButton>
     </View>
   );
