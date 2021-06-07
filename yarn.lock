@@ -9,7 +9,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ambito-dolar/api@workspace:packages/api"
   dependencies:
-    "@ambito-dolar/core": ^1.0.10
+    "@ambito-dolar/core": ^1.0.11
     "@zeit/fetch": ^6.0.0
     aws-sdk: ^2.553.0
     chrome-aws-lambda: ~6.0
@@ -29,7 +29,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ambito-dolar/client@workspace:packages/client"
   dependencies:
-    "@ambito-dolar/core": ^1.0.10
+    "@ambito-dolar/core": ^1.0.11
     "@babel/core": ~7.9.0
     "@expo/react-native-action-sheet": ^3.4.1
     "@expo/vector-icons": ^12.0.0
@@ -100,7 +100,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ambito-dolar/core@^1.0.10, @ambito-dolar/core@workspace:packages/core":
+"@ambito-dolar/core@^1.0.11, @ambito-dolar/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@ambito-dolar/core@workspace:packages/core"
   dependencies:
