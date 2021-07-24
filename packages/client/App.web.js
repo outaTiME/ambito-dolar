@@ -1,6 +1,6 @@
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import { useFonts } from '@use-expo/font';
 import AppLoading from 'expo-app-loading';
+import { useFonts } from 'expo-font';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 
