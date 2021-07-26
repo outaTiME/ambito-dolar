@@ -82,13 +82,13 @@ const NotificationsScreen = ({ navigation }) => {
             collapsed={notification_settings.enabled !== true}
           >
             <CardView
-              note="Recibirás una notificación cuando abra la jornada cambiara."
+              note="Recibirás una notificación cuando abra la jornada cambiaria."
               plain
             >
               {getItemView(AmbitoDolar.NOTIFICATION_OPEN_TYPE)}
             </CardView>
             <CardView
-              note="Recibirás una notificación cuando cierre la jornada cambiara."
+              note="Recibirás una notificación cuando cierre la jornada cambiaria."
               plain
             >
               {getItemView(AmbitoDolar.NOTIFICATION_CLOSE_TYPE)}
