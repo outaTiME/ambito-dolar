@@ -19,14 +19,7 @@ export default async (req, res) => {
     // add / override processed_at field
     // base_rates.processed_at = AmbitoDolar.getTimezoneDate().format();
     // save json files
-    await Promise.all([
-      // save rates in old-style (v1)
-      Shared.storeRateStats(base_rates.rates),
-      // save rates (v2)
-      Shared.storeRatesJsonObject(base_rates),
-      // save historical rates
-      Shared.storeHistoricalRatesJsonObject(base_rates),
-    ]);
+    await Shared.storeRatesJsonObject(base_rates, true);
     // firebase update should occur after saving json files
     // silent update
     await Shared.putFirebaseData('updated_at', base_rates.updated_at);

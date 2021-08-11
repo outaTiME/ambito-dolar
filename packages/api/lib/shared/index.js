@@ -38,6 +38,7 @@ const HISTORICAL_RATES_LEGACY_OBJECT_KEY =
 // 5.x
 const RATES_OBJECT_KEY = process.env.RATES_OBJECT_KEY;
 const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
+
 // run all calls in parallel
 const EXPO_CONCURRENT_REQUEST_LIMIT = 0;
 
@@ -243,7 +244,7 @@ const storeTickets = async (date, type, json) =>
 const getTickets = async (date, type) =>
   getJsonObject(`notifications/${date}-${type}`);
 
-const storeRatesJsonObject = async (rates) => {
+const storeRatesJsonObject = async (rates, is_updated) => {
   const legacy_rates = Object.entries(rates.rates || {}).reduce(
     (obj, [type, rate]) => {
       // ignore
@@ -259,11 +260,16 @@ const storeRatesJsonObject = async (rates) => {
     {}
   );
   return Promise.all([
+    // save rates in old-style (v1)
+    is_updated && storeRateStats(rates.rates),
+    // save rates (v2)
     storePublicJsonObject(RATES_OBJECT_KEY, rates),
     storePublicJsonObject(RATES_LEGACY_OBJECT_KEY, {
       ...rates,
       rates: legacy_rates,
     }),
+    // save historical rates
+    is_updated && storeHistoricalRatesJsonObject(rates),
   ]);
 };
 
