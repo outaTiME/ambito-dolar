@@ -20,11 +20,7 @@ module.exports = {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `Ámbito Dólar`,
-        short_name: `Ámbito Dólar`,
         start_url: `/`,
-        background_color: `#663399`,
-        theme_color: `#FF54AC`,
-        display: `minimal-ui`,
         icon: `${__dirname}/static/images/icon.png`, // This path is relative to the root of the site.
       },
     },
