@@ -6,8 +6,8 @@ import {
   FaTelegramPlane as Telegram,
   FaInstagram as Insta,
   FaFacebook as Facebook,
-  // FaTumblr as Tumblr,
   FaRedditAlien as Reddit,
+  FaDiscord as Discord,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa';
@@ -114,14 +114,14 @@ const IndexPage = () => {
                       >
                         <Reddit />
                       </a>
-                      {/* <a
+                      <a
                         className="icon"
-                        href="https://cafecito.app/ambitodolar"
+                        href="https://discord.gg/jwfDsy4EKe"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Cafecito />
-                      </a> */}
+                        <Discord />
+                      </a>
                       <a
                         className="icon"
                         href="https://github.com/outaTiME/ambito-dolar"
@@ -141,7 +141,7 @@ const IndexPage = () => {
                     </p>
 
                     <p className="donation">
-                      Esta aplicación es gratuita y de código abierto, podes
+                      Esta aplicación es gratuita y de código abierto, podés
                       contribuir con su desarrollo y mantenimiento haciendo tu
                       aporte en&nbsp;
                       <a
