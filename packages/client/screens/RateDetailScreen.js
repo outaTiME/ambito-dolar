@@ -15,21 +15,19 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const RANGE_TYPES = ['Semana', 'Mes', 'Año'];
+const RANGE_TYPES = [I18n.t('week'), I18n.t('month'), I18n.t('year')];
 
 const RateDetailScreen = ({ route: { params }, navigation }) => {
   const [rangeIndex, setRangeIndex] = React.useState(0);
   const prev_rangeIndex = Helper.usePrevious(rangeIndex);
-  const rates = useSelector((state) => state.rates?.rates);
+  const rates = useSelector((state) => state.rates.rates);
   const { type } = params;
   const rate = React.useMemo(() => rates[type], [rates, type]);
   const base_stats = rate.stats;
   const prev_base_stats = Helper.usePrevious(base_stats);
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
-  const historical_rates = useSelector(
-    (state) => state.rates?.historical_rates
-  );
+  const historical_rates = useSelector((state) => state.rates.historical_rates);
   const prev_historical_rates = Helper.usePrevious(historical_rates);
   const updateHistoricalRates = React.useCallback(async () => {
     const rates = await Helper.getHistoricalRates();
@@ -153,14 +151,14 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
           <VictoryRateChartView stats={chartStats} />
         </View>
         <CardItemView
-          title="Mostrar detalle"
+          title={I18n.t('show_detail')}
           useSwitch={false}
           onAction={onRawDetail}
         />
       </CardView>
-      <CardView title="Resumen de jornada" plain>
+      <CardView title={I18n.t('day_summary')} plain>
         <CardItemView
-          title="Variación"
+          title={I18n.t('variation')}
           useSwitch={false}
           value={Helper.getCurrency(
             Helper.getRateValue(base_stats[base_stats.length - 1]) -
@@ -168,24 +166,24 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
           )}
         />
         <CardItemView
-          title="Cierre anterior"
+          title={I18n.t('previous_close')}
           useSwitch={false}
           value={Helper.getCurrency(
             Helper.getRateValue(base_stats[base_stats.length - 2])
           )}
         />
       </CardView>
-      {rate.max && (
+      {rate.max_date && rate.max && (
         <CardView plain>
           <CardItemView
-            title="Máximo histórico"
+            title={I18n.t('all-time_high')}
             titleDetail={DateUtils.date(rate.max_date)}
             useSwitch={false}
             value={Helper.getCurrency(rate.max)}
           />
         </CardView>
       )}
-      <CardView title="Fuente" plain>
+      <CardView title={I18n.t('source')} plain>
         <CardItemView title={rate.provider} useSwitch={false} />
       </CardView>
     </>

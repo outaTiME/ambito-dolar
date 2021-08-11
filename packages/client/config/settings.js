@@ -2,6 +2,8 @@ import Constants from 'expo-constants';
 import { Dimensions, Platform } from 'react-native';
 import { human, iOSColors } from 'react-native-typography';
 
+const { manifest } = Constants;
+
 export const PADDING = 16;
 export const HEADER_HEIGHT = 54 + Constants.statusBarHeight;
 const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = Dimensions.get('window');
@@ -35,13 +37,19 @@ export const ANIMATION_DURATION = 250;
 // same as header fonts.title size
 export const ICON_SIZE = 24;
 export const APP_IGNORE_UPDATE_EXPIRATION = 30 * 24 * 60 * 60 * 1000; // 30 days
-export const { name: APP_NAME, android } = Constants.manifest;
+export const {
+  name: APP_NAME,
+  version: APP_VERSION,
+  revisionId: APP_REVISION_ID,
+  android,
+} = manifest;
 export const APP_COPYRIGHT = `© ${new Date().getFullYear()} ${APP_NAME}`;
 export const APP_DOMAIN = 'ambito-dolar.app';
+export const WEBSITE_URL = `https://${APP_DOMAIN}`;
 export const APP_STORE_URI =
   Platform.OS === 'ios'
     ? `itms-apps://itunes.apple.com/app/id1485120819`
-    : `market://details?id=${Constants.manifest.android?.package}`;
+    : `market://details?id=${manifest.android?.package}`;
 export const APP_REVIEW_URI = `${APP_STORE_URI}${
   Platform.OS === 'ios' ? '?action=write-review' : '&showAllReviews=true'
 }`;
@@ -85,8 +93,11 @@ export default {
   ICON_SIZE,
   APP_IGNORE_UPDATE_EXPIRATION,
   APP_NAME,
+  APP_VERSION,
+  APP_REVISION_ID,
   APP_COPYRIGHT,
   APP_DOMAIN,
+  WEBSITE_URL,
   APP_STORE_URI,
   APP_REVIEW_URI,
   HIT_SLOP,
@@ -134,6 +145,16 @@ export default {
       return 'rgb(58,58,60)';
     }
     return 'rgb(209,209,214)';
+  },
+  // adapt to the current appearance (dynamic colors on ios)
+  getSeparatorColor(theme) {
+    if (Platform.OS === 'ios') {
+      if (theme === 'dark') {
+        return 'rgba(255,255,255,0.15)';
+      }
+      return 'rgba(0,0,0,0.25)';
+    }
+    return this.getStrokeColor(theme);
   },
   // chart colors
   getBlueColor(theme) {

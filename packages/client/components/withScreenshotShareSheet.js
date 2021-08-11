@@ -8,6 +8,7 @@ import { captureRef } from 'react-native-view-shot';
 import { useSelector } from 'react-redux';
 import { compose } from 'redux';
 
+import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
@@ -20,7 +21,7 @@ const withScreenshotShareSheet = (Component) => (props) => {
   const { theme, fonts } = Helper.useTheme();
   const shareViewContainerRef = React.useRef();
   const [capturedImage, setCapturedImage] = React.useState(null);
-  const processed_at = useSelector((state) => state.rates?.processed_at);
+  const processedAt = useSelector((state) => state.rates.processed_at);
   const shareViewGeneratedContainerRef = React.useRef();
   const headerRight = React.useCallback(
     () => (
@@ -32,10 +33,10 @@ const withScreenshotShareSheet = (Component) => (props) => {
             Keyboard.dismiss();
             // required by ConvertionScreen when the TextInput has focus
             setTimeout(() => {
-              const share_opt = 'Compartir';
+              const share_opt = I18n.t('share');
               const crash_opt = 'Forzar crash';
               const action_sheet_opts = [share_opt];
-              const options = [...action_sheet_opts, 'Cancelar'];
+              const options = [...action_sheet_opts, I18n.t('cancel')];
               const cancelButtonIndex = options.length - 1;
               showActionSheetWithOptions(
                 {
@@ -147,10 +148,17 @@ const withScreenshotShareSheet = (Component) => (props) => {
               style={[
                 {
                   flexDirection: 'row',
-                  marginHorizontal: Settings.CARD_PADDING,
+                  marginHorizontal: Settings.CARD_PADDING * 2,
+                  marginBottom: Settings.CARD_PADDING * 2,
+                },
+                {
+                  borderColor: 'red',
+                  // borderWidth: 1,
+                },
+                {
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginBottom: Settings.CARD_PADDING * 2,
+                  paddingHorizontal: Settings.CARD_PADDING,
                 },
               ]}
             >
@@ -159,15 +167,15 @@ const withScreenshotShareSheet = (Component) => (props) => {
                   fonts.subhead,
                   {
                     color: Settings.getGrayColor(theme),
-                    textTransform: 'uppercase',
+                    // textTransform: 'uppercase',
+                    textAlign: 'center',
                   },
                 ]}
-                numberOfLines={1}
               >
                 {Settings.APP_COPYRIGHT}
-                {processed_at &&
+                {processedAt &&
                   ` ${Settings.DASH_SEPARATOR} ${DateUtils.datetime(
-                    processed_at,
+                    processedAt,
                     { short: true }
                   )}`}
               </Text>
@@ -180,7 +188,6 @@ const withScreenshotShareSheet = (Component) => (props) => {
         // required for better view shot (same as parent)
         backgroundColor={backgroundColor}
         contentContainerRef={shareViewContainerRef}
-        watermark
       >
         <Component {...props} />
       </ScrollView>

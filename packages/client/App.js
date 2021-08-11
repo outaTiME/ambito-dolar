@@ -6,6 +6,7 @@ import {
 } from '@expo/vector-icons';
 import * as Amplitude from 'expo-analytics-amplitude';
 import AppLoading from 'expo-app-loading';
+import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
@@ -25,12 +26,12 @@ import reducers from './reducers';
 import Helper from './utilities/Helper';
 import Sentry from './utilities/Sentry';
 
-if (Helper.isDev()) {
+if (__DEV__) {
   LogBox.ignoreLogs([
     // disable warning of firebase on android
     'Setting a timer for a long period of time',
     'Amplitude client has not been initialized',
-    'Constants.installationId has been deprecated in favor of generating and storing your own ID.',
+    'Constants.installationId has been deprecated',
   ]);
 } else {
   Sentry.configure(Settings.SENTRY_URI);
@@ -84,11 +85,14 @@ const store = createStore(
 // disable font scaling in whole app (iOS only)
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
+Text.defaultProps.maxFontSizeMultiplier = 1;
 TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
+TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
 export default function App() {
-  const [dataLoaded] = Helper.usePersistedData(store);
+  const dataLoaded = Helper.usePersistedData(store);
+  const [assetsLoaded] = useAssets([require('./assets/icon.png')]);
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
     ...MaterialCommunityIcons.font,
@@ -98,7 +102,7 @@ export default function App() {
   });
   const colorScheme = Helper.useColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
-  if (!dataLoaded || !fontsLoaded) {
+  if (!dataLoaded || !assetsLoaded || !fontsLoaded) {
     return <AppLoading />;
   }
   return (

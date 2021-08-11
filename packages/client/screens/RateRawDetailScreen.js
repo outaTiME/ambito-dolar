@@ -28,7 +28,7 @@ const RateRawDetailItem = ({ timestamp, value, change }) => {
 };
 
 const RateRawDetailScreen = ({ route: { params } }) => {
-  const rates = useSelector((state) => state.rates?.rates);
+  const rates = useSelector((state) => state.rates.rates);
   const { type, rangeIndex } = params;
   const rate = React.useMemo(() => rates[type], [rates, type]);
   const base_stats = rate.stats;
@@ -93,7 +93,6 @@ const RateRawDetailScreen = ({ route: { params } }) => {
   return (
     <FlatList
       {...{
-        watermark: true,
         title,
         data,
         itemHeight: ITEM_HEIGHT,

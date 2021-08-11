@@ -28,7 +28,16 @@ export default {
         'UIInterfaceOrientationLandscapeRight',
       ],
       UIRequiresFullScreen: true,
-      LSApplicationQueriesSchemes: ['twitter', 'tg', 'instagram', 'fb'],
+      LSApplicationQueriesSchemes: [
+        'twitter',
+        'tg',
+        'instagram',
+        'fb',
+        'reddit',
+        // alt
+        'tweetbot',
+        'apollo',
+      ],
     },
     supportsTablet: true,
     config: {
@@ -51,11 +60,14 @@ export default {
     useNextNotificationsApi: true,
     playStoreUrl:
       'https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar',
+    // https://github.com/expo/expo/issues/13488
+    userInterfaceStyle: 'automatic',
   },
   notification: {
     icon: './assets/icon.notification.png',
     color: '#2ECC71',
   },
+  plugins: ['sentry-expo'],
   hooks: {
     postPublish: [
       {

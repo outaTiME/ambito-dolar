@@ -1,10 +1,7 @@
-import { FontAwesome5 } from '@expo/vector-icons';
-import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
-import { View, Text, Linking, Share, Platform } from 'react-native';
-import { BorderlessButton } from 'react-native-gesture-handler';
+import { Linking, Share } from 'react-native';
 import { useSelector } from 'react-redux';
 import { compose } from 'redux';
 
@@ -17,105 +14,72 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const { installationId: installation_id, manifest } = Constants;
-const { version: app_version, revisionId: app_revision_id } = manifest;
-
-// social links
-const TWITTER_DEEP_LINK = 'twitter://user?screen_name=AmbitoDolar';
-const TWITTER_WEB_URL = 'https://twitter.com/AmbitoDolar';
-const TELEGRAM_DEEP_LINK = 'tg://resolve?domain=AmbitoDolar';
-const TELEGRAM_WEB_URL = 'https://telegram.me/AmbitoDolar';
-const INSTAGRAM_DEEP_LINK = 'instagram://user?username=ambitodolar';
-const INSTAGRAM_WEB_URL = 'https://instagram.com/ambitodolar';
-const FACEBOOK_DEEP_LINK = `fb://${
-  Platform.OS === 'ios' ? 'page?id=' : 'page/'
-}116047123558432`;
-const FACEBOOK_WEB_URL = 'https://facebook.com/pg/AmbitoDolar';
-const REDDIT_WEB_URL = 'https://www.reddit.com/r/AmbitoDolar';
-const GITHUB_WEB_URL = 'https://github.com/outaTiME/ambito-dolar';
-
 const SettingsScreen = ({ navigation }) => {
-  const { theme, fonts } = Helper.useTheme();
-  const processed_at = useSelector((state) => state.rates?.processed_at);
-  const onPressTwitter = React.useCallback(() => {
-    Linking.canOpenURL(TWITTER_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(TWITTER_DEEP_LINK)
-        : Linking.openURL(TWITTER_WEB_URL)
-    );
-  }, []);
-  const onPressTelegram = React.useCallback(() => {
-    Linking.canOpenURL(TELEGRAM_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(TELEGRAM_DEEP_LINK)
-        : Linking.openURL(TELEGRAM_WEB_URL)
-    );
-  }, []);
-  const onPressInstagram = React.useCallback(() => {
-    Linking.canOpenURL(INSTAGRAM_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(INSTAGRAM_DEEP_LINK)
-        : Linking.openURL(INSTAGRAM_WEB_URL)
-    );
-  }, []);
-  const onPressFacebook = React.useCallback(() => {
-    Linking.canOpenURL(FACEBOOK_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(FACEBOOK_DEEP_LINK)
-        : Linking.openURL(FACEBOOK_WEB_URL)
-    );
-  }, []);
-  const onPressReddit = React.useCallback(() => {
-    Linking.openURL(REDDIT_WEB_URL);
-  }, []);
-  const onPressGithub = React.useCallback(() => {
-    Linking.openURL(GITHUB_WEB_URL);
-  }, []);
+  const processedAt = useSelector((state) => state.rates.processed_at);
   const onPressContact = React.useCallback(() => {
     MailComposer.composeAsync({
       recipients: [`soporte@${Settings.APP_DOMAIN}`],
-      subject: `${Settings.APP_NAME} ${app_version}`,
+      subject: `${Settings.APP_NAME} ${Settings.APP_VERSION}`,
       body: [
         '',
         '',
         '—',
         '',
-        `Instalación: ${installation_id}`,
-        `Versión: ${app_revision_id || app_version}`,
-        `Dispositivo: ${Device.modelName} (${Device.osVersion})`,
+        `${I18n.t('app_version')}: ${
+          Settings.APP_REVISION_ID || Settings.APP_VERSION
+        }`,
+        `${I18n.t('device')}: ${Device.modelName} (${Device.osVersion})`,
       ].join('\n'),
-    });
-  }, []);
-  const onPressShare = React.useCallback(() => {
-    Share.share({
-      message: `Te recomiendo descargar ${Settings.APP_NAME}, es mi aplicación preferida para conocer las distintas cotizaciones del dólar en la Argentina. https://${Settings.APP_DOMAIN}`,
     });
   }, []);
   const onPressReview = React.useCallback(() => {
     Linking.openURL(Settings.APP_REVIEW_URI);
   }, []);
+  const onPressShare = React.useCallback(() => {
+    Share.share({
+      message: I18n.t('share_message', {
+        appName: Settings.APP_NAME,
+        websiteUrl: Settings.WEBSITE_URL,
+      }),
+    });
+  }, []);
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
+  const [tick, setTick] = React.useState();
+  const processedAtFromNow = React.useMemo(
+    () => DateUtils.get(processedAt).calendar(),
+    [tick]
+  );
+  const tickCallback = React.useCallback(
+    (tick) => {
+      setTick(tick);
+    },
+    [processedAt]
+  );
+  Helper.useInterval(tickCallback);
   return (
     <ScrollView>
-      <CardView title="General" plain>
+      <CardView
+        title={I18n.t('opts_general')}
+        note={I18n.t('opts_general_note', {
+          lastUpdate: processedAtFromNow,
+        })}
+        plain
+      >
         <CardItemView
-          title="Notificaciones"
+          title={I18n.t('notifications')}
+          // value="Si"
           useSwitch={false}
           onAction={() => {
             navigation.navigate('Notifications');
           }}
         />
         <CardItemView
-          title="Instalación"
+          title={I18n.t('statistics')}
           useSwitch={false}
-          value={installation_id}
-          selectable
-        />
-        <CardItemView
-          title="Versión"
-          useSwitch={false}
-          value={app_revision_id || app_version}
+          onAction={() => {
+            navigation.navigate('Statistics');
+          }}
         />
         {__DEV__ && (
           <CardItemView
@@ -127,19 +91,10 @@ const SettingsScreen = ({ navigation }) => {
           />
         )}
       </CardView>
-      {processed_at && (
-        <CardView title="Cotizaciones" plain>
-          <CardItemView
-            title="Actualización"
-            useSwitch={false}
-            value={DateUtils.datetime(processed_at, { short: true })}
-          />
-        </CardView>
-      )}
-      <CardView plain>
+      <CardView title={I18n.t('opts_support')} plain>
         {contactAvailable && (
           <CardItemView
-            title="Enviar comentarios"
+            title={I18n.t('send_app_feedback')}
             useSwitch={false}
             chevron={false}
             onAction={onPressContact}
@@ -147,131 +102,28 @@ const SettingsScreen = ({ navigation }) => {
         )}
         {storeAvailable && (
           <CardItemView
-            title="Dejar reseña"
+            title={I18n.t('leave_app_review')}
             useSwitch={false}
             chevron={false}
             onAction={onPressReview}
           />
         )}
         <CardItemView
-          title="Compartir"
+          title={I18n.t('share')}
           useSwitch={false}
           chevron={false}
           onAction={onPressShare}
         />
       </CardView>
-      <View
-        style={[
-          {
-            flexShrink: 0,
-            flexGrow: 1,
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            margin: Settings.CARD_PADDING,
-          },
-        ]}
-      >
-        <View
-          style={{
-            marginVertical: Settings.CARD_PADDING * 2,
-            flexDirection: 'row',
+      <CardView plain>
+        <CardItemView
+          title={I18n.t('about')}
+          useSwitch={false}
+          onAction={() => {
+            navigation.navigate('About');
           }}
-        >
-          {/* TODO: export socials to helper */}
-          <BorderlessButton
-            onPress={onPressTwitter}
-            style={{ marginRight: Settings.PADDING }}
-            hitSlop={Settings.HIT_SLOP}
-          >
-            <FontAwesome5
-              name="twitter"
-              size={24}
-              color={Settings.getGrayColor(theme)}
-            />
-          </BorderlessButton>
-          <BorderlessButton
-            onPress={onPressTelegram}
-            style={{ marginHorizontal: Settings.PADDING }}
-            hitSlop={Settings.HIT_SLOP}
-          >
-            <FontAwesome5
-              name="telegram-plane"
-              size={24}
-              color={Settings.getGrayColor(theme)}
-            />
-          </BorderlessButton>
-          <BorderlessButton
-            onPress={onPressInstagram}
-            style={{ marginHorizontal: Settings.PADDING }}
-            hitSlop={Settings.HIT_SLOP}
-          >
-            <FontAwesome5
-              name="instagram"
-              size={24}
-              color={Settings.getGrayColor(theme)}
-            />
-          </BorderlessButton>
-          <BorderlessButton
-            onPress={onPressFacebook}
-            style={{ marginHorizontal: Settings.PADDING }}
-            hitSlop={Settings.HIT_SLOP}
-          >
-            <FontAwesome5
-              name="facebook"
-              size={24}
-              color={Settings.getGrayColor(theme)}
-            />
-          </BorderlessButton>
-          <BorderlessButton
-            onPress={onPressReddit}
-            style={{ marginHorizontal: Settings.PADDING }}
-            hitSlop={Settings.HIT_SLOP}
-          >
-            <FontAwesome5
-              name="reddit-alien"
-              size={24}
-              color={Settings.getGrayColor(theme)}
-            />
-          </BorderlessButton>
-          <BorderlessButton
-            onPress={onPressGithub}
-            style={{ marginLeft: Settings.PADDING }}
-            hitSlop={Settings.HIT_SLOP}
-          >
-            <FontAwesome5
-              name="github"
-              size={24}
-              color={Settings.getGrayColor(theme)}
-            />
-          </BorderlessButton>
-        </View>
-        <Text
-          style={[
-            fonts.subhead,
-            {
-              color: Settings.getGrayColor(theme),
-              textTransform: 'uppercase',
-            },
-          ]}
-          numberOfLines={1}
-        >
-          {Settings.APP_COPYRIGHT}
-        </Text>
-        {false && (
-          <Text
-            style={[
-              fonts.subhead,
-              {
-                color: Settings.getGrayColor(theme),
-                textTransform: 'uppercase',
-              },
-            ]}
-            numberOfLines={1}
-          >
-            {app_revision_id || app_version}
-          </Text>
-        )}
-      </View>
+        />
+      </CardView>
     </ScrollView>
   );
 };

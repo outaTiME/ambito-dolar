@@ -4,7 +4,11 @@ import Constants from 'expo-constants';
 import * as Localization from 'expo-localization';
 import _ from 'lodash';
 import React from 'react';
-import { Platform, Appearance } from 'react-native';
+import {
+  Platform,
+  // Appearance,
+  useColorScheme,
+} from 'react-native';
 import { persistStore } from 'redux-persist';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
@@ -157,6 +161,9 @@ export default {
     }
     return formatRateCurrency(str);
   },
+  formatIntegerNumber(num) {
+    return formatNumber(num, 0, false);
+  },
   getNumber,
   formatFloatingPointNumber,
   getChange(num) {
@@ -230,14 +237,6 @@ export default {
   },
   getNotificationSettings,
   getNotificationSettingsSelector,
-  isDev() {
-    const {
-      manifest: { releaseChannel },
-    } = Constants;
-    return (
-      releaseChannel === undefined || releaseChannel.indexOf('staging') !== -1
-    );
-  },
   hasRates(rates) {
     const values = Object.values(rates || {});
     const rate_types = AmbitoDolar.getAvailableRateTypes();
@@ -309,8 +308,8 @@ export default {
         }
       }
       initializeAsync();
-    }, []);
-    return [dataLoaded];
+    }, [store]);
+    return dataLoaded;
   },
   // https://paco.im/blog/shared-hook-state-with-swr
   useSharedState: (key, initial) => {
@@ -321,10 +320,11 @@ export default {
   },
   // https://github.com/facebook/react-native/issues/28525#issuecomment-666244448
   // https://github.com/expo/expo/issues/10815#issuecomment-719083889
-  useColorScheme() {
+  /* useColorScheme() {
     const [colorScheme, setColorScheme] = React.useState(
       Appearance.getColorScheme()
     );
+    console.log('>>> useColorScheme', colorScheme);
     const onColorSchemeChange = React.useCallback(
       _.throttle(
         ({ colorScheme }) => {
@@ -345,7 +345,9 @@ export default {
       };
     }, []);
     return colorScheme;
-  },
+  }, */
+  // export same from native
+  useColorScheme,
   useTheme() {
     const context = React.useContext(ThemeContext);
     const colorScheme = React.useMemo(
@@ -369,5 +371,22 @@ export default {
       [colorScheme]
     );
     return theme;
+  },
+  useInterval: (callback, { leading = true, delay = 60 * 1000 } = {}) => {
+    const handler = React.useCallback(
+      (...args) => callback?.(...args),
+      [callback]
+    );
+    React.useEffect(() => {
+      if (leading === true) {
+        handler(Date.now());
+      }
+      if (delay !== null) {
+        const intervalId = setInterval(() => {
+          handler(Date.now());
+        }, delay);
+        return () => clearInterval(intervalId);
+      }
+    }, [handler, leading, delay]);
   },
 };

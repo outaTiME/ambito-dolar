@@ -10,10 +10,10 @@ export const APP_IGNORE_UPDATE = 'app_ignore_update';
 export const APP_INVALID_VERSION = 'app_invalid_version';
 export const APP_VALID_VERSION = 'app_valid_version';
 export const FORCE_APP_INVALID_VERSION = 'force_app_invalid_version';
+export const APP_USAGE_DAY = 'app_usage_day';
 
 // rates
 export const ADD_RATES = 'add_rates';
-export const UPDATE_RATES_PROCESSED_AT = 'update_rates_processed_at';
 export const UPDATE_HISTORICAL_RATES = 'update_historical_rates';
 
 // global

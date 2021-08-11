@@ -9,15 +9,16 @@ import CardView from '../components/CardView';
 import SegmentedControlTab from '../components/SegmentedControlTab';
 import withContainer from '../components/withContainer';
 import withScreenshotShareSheet from '../components/withScreenshotShareSheet';
+import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const CURRENCY_TYPES = ['Dólar', 'Peso'];
-const CONVERTION_TYPES = ['Compra', 'Promedio', 'Venta'];
+const CURRENCY_TYPES = [I18n.t('dolar'), I18n.t('peso')];
+const CONVERSION_TYPES = [I18n.t('buy'), I18n.t('average'), I18n.t('sell')];
 
 const DEFAULT_NUMBER = 1;
 
-const ConvertionScreen = () => {
+const ConversionScreen = () => {
   const { theme, fonts } = Helper.useTheme();
   const [numberValue, setNumberValue] = React.useState(DEFAULT_NUMBER);
   const [currencyIndex, setCurrencyIndex] = React.useState(0);
@@ -48,7 +49,7 @@ const ConvertionScreen = () => {
   const handleCurrencyTypeChange = React.useCallback((index) => {
     setCurrencyIndex(index);
   }, []);
-  const handleConvertionTypeChange = React.useCallback((index) => {
+  const handleConversionTypeChange = React.useCallback((index) => {
     setTypeIndex(index);
   }, []);
   const getValueFromType = React.useCallback((rate, typeIndex) => {
@@ -64,7 +65,7 @@ const ConvertionScreen = () => {
     return sell;
   }, []);
   const rateTypes = AmbitoDolar.getAvailableRateTypes();
-  const rates = useSelector((state) => state.rates?.rates);
+  const rates = useSelector((state) => state.rates.rates);
   const getItemView = React.useCallback(
     (type) => {
       const stats = rates[type].stats;
@@ -136,9 +137,9 @@ const ConvertionScreen = () => {
         onTabPress={handleCurrencyTypeChange}
       />
       <SegmentedControlTab
-        values={CONVERTION_TYPES}
+        values={CONVERSION_TYPES}
         selectedIndex={typeIndex}
-        onTabPress={handleConvertionTypeChange}
+        onTabPress={handleConversionTypeChange}
       />
       <CardView style={{ flex: 1 }} plain>
         {rateTypes.map((type) => getItemView(type))}
@@ -151,4 +152,4 @@ export default compose(
   withContainer(),
   // withScreenshotShareSheet('Compartir resultados')
   withScreenshotShareSheet
-)(ConvertionScreen);
+)(ConversionScreen);

@@ -45,7 +45,6 @@ const HeaderComponent = ({ title }) => {
 const FooterComponent = () => (
   <View
     style={{
-      flexGrow: 1,
       marginTop: Settings.CARD_PADDING * 2,
     }}
   />
@@ -53,8 +52,9 @@ const FooterComponent = () => (
 
 export default ({ title, data, itemHeight }) => {
   const { theme } = Helper.useTheme();
-  const headerHeight = useHeaderHeight();
-  const tabBarheight = useBottomTabBarHeight();
+  // add translucent hairline width
+  const headerHeight = useHeaderHeight() - StyleSheet.hairlineWidth;
+  const tabBarheight = useBottomTabBarHeight() - StyleSheet.hairlineWidth;
   const insets = useSafeAreaInsets();
   const renderItem = React.useCallback(
     ({ item, index }) => (

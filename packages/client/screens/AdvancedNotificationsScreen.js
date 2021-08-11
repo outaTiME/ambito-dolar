@@ -8,6 +8,7 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import ScrollView from '../components/ScrollView';
 import withContainer from '../components/withContainer';
+import I18n from '../config/I18n';
 import Helper from '../utilities/Helper';
 
 const AdvancedNotificationsScreen = ({ route: { params } }) => {
@@ -55,10 +56,7 @@ const AdvancedNotificationsScreen = ({ route: { params } }) => {
   );
   return (
     <ScrollView>
-      <CardView
-        note="Elige las cotizaciones que deseas incluir para esta notificación."
-        plain
-      >
+      <CardView note={I18n.t('notification_choose_rates_note')} plain>
         {rateTypes.map((type) => getItemView(type))}
       </CardView>
     </ScrollView>

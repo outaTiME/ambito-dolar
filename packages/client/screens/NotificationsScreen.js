@@ -64,13 +64,16 @@ const NotificationsScreen = ({ navigation }) => {
             ]}
             message={I18n.t('allow_permissions')}
           />
-          <ActionButton handleOnPress={Linking.openSettings} title="Permitir" />
+          <ActionButton
+            handleOnPress={Linking.openSettings}
+            title={I18n.t('allow')}
+          />
         </>
       ) : (
         <ScrollView>
           <CardView plain>
             <CardItemView
-              title="Notificaciones"
+              title={I18n.t('allow_notifications')}
               value={notification_settings.enabled}
               onValueChange={(value) => {
                 onValueChange(value);
@@ -81,22 +84,13 @@ const NotificationsScreen = ({ navigation }) => {
             duration={Settings.ANIMATION_DURATION}
             collapsed={notification_settings.enabled !== true}
           >
-            <CardView
-              note="Recibirás una notificación cuando abra la jornada cambiaria."
-              plain
-            >
+            <CardView note={I18n.t('notification_open_note')} plain>
               {getItemView(AmbitoDolar.NOTIFICATION_OPEN_TYPE)}
             </CardView>
-            <CardView
-              note="Recibirás una notificación cuando cierre la jornada cambiaria."
-              plain
-            >
+            <CardView note={I18n.t('notification_close_note')} plain>
               {getItemView(AmbitoDolar.NOTIFICATION_CLOSE_TYPE)}
             </CardView>
-            <CardView
-              note="Recibirás una notificación cuando exista una variación en alguna de las cotizaciones."
-              plain
-            >
+            <CardView note={I18n.t('notification_variation_note')} plain>
               {getItemView(AmbitoDolar.NOTIFICATION_VARIATION_TYPE)}
             </CardView>
           </Collapsible>

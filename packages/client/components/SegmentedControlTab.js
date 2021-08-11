@@ -19,7 +19,8 @@ export default (props) => {
       <SegmentedControlTab
         tabsContainerStyle={[props.tabsContainerStyle]}
         tabStyle={{
-          backgroundColor: Settings.getBackgroundColor(theme),
+          // backgroundColor: Settings.getBackgroundColor(theme),
+          backgroundColor: 'transparent',
           borderWidth: Settings.BORDER_WIDTH,
           borderColor: Settings.getStrokeColor(theme),
         }}

@@ -1,11 +1,6 @@
 import _ from 'lodash';
 
-import {
-  ADD_RATES,
-  UPDATE_RATES_PROCESSED_AT,
-  UPDATE_HISTORICAL_RATES,
-  PRUNE,
-} from '../actions/types';
+import { ADD_RATES, UPDATE_HISTORICAL_RATES, PRUNE } from '../actions/types';
 
 const INITIAL_STATE = {
   rates: null,
@@ -16,23 +11,22 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
     case ADD_RATES: {
-      const { rates } = payload;
-      // prevent when not updates on boot
+      const { rates, processed_at } = payload;
+      // prevent multiple updates
       if (!_.isEqual(state.rates, rates)) {
         return {
           ...state,
           rates,
-          // clean historical data
+          processed_at,
+          // remove historical data to force refresh
           historical_rates: null,
         };
       }
-      return state;
-    }
-    case UPDATE_RATES_PROCESSED_AT:
       return {
         ...state,
-        processed_at: payload || Date.now(),
+        processed_at,
       };
+    }
     case UPDATE_HISTORICAL_RATES:
       return {
         ...state,

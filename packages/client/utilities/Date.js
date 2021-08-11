@@ -36,7 +36,7 @@ export default {
         return date.format('DD/MM/YY HH:mm');
       }
       if (long === true) {
-        return date.format('ddd, D [de] MMM [de] YYYY HH:mm');
+        return date.format('dddd, D [de] MMM [de] YYYY HH:mm');
       }
       return date.format('ddd, DD/MM/YY HH:mm');
     }

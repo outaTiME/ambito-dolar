@@ -37,7 +37,7 @@ const UpdateAppModalScreen = ({ navigation }) => {
         navigation.goBack();
       })();
     }
-  }, [confirmed]);
+  }, [dispatch, confirmed]);
   const onPressUpdate = React.useCallback(() => {
     Linking.openURL(Settings.APP_STORE_URI);
   }, []);

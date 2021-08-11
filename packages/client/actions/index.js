@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
 
+import settings from '../config/settings';
 import Helper from '../utilities/Helper';
 import {
   NOTIFICATIONS_REGISTER_PENDING,
@@ -14,18 +14,14 @@ import {
   APP_IGNORE_UPDATE,
   APP_INVALID_VERSION,
   FORCE_APP_INVALID_VERSION,
+  APP_USAGE_DAY,
   ADD_RATES,
-  UPDATE_RATES_PROCESSED_AT,
   UPDATE_HISTORICAL_RATES,
+  PRUNE,
 } from './types';
 
 export const addRates = (payload) => ({
   type: ADD_RATES,
-  payload,
-});
-
-export const updateRatesProcessedAt = (payload) => ({
-  type: UPDATE_RATES_PROCESSED_AT,
   payload,
 });
 
@@ -35,27 +31,15 @@ export const updateHistoricalRates = (payload) => ({
 });
 
 const doRegisterDevice = async (dispatch, state, value = {}) => {
-  const { installationId, manifest } = Constants;
-  const { version: app_version, revisionId: app_revision_id } = manifest;
-  const { OS: platform_os, Version: platform_version } = Platform;
   // send notification settings in each call to avoid error handling
   const {
     application: { notification_settings },
   } = state;
-  const extra = {
+  const data = {
+    installation_id: Constants.installationId,
+    app_version: settings.APP_VERSION,
     notification_settings,
     ...value,
-  };
-  const data = {
-    installation_id: installationId,
-    device_name: Constants.deviceName,
-    app_version,
-    app_revision_id,
-    app_ownership: Constants.appOwnership,
-    platform_os,
-    platform_version,
-    ...Helper.getPlatformModel(),
-    ...extra,
   };
   if (__DEV__) {
     console.log('Registration or interaction on device');
@@ -164,4 +148,12 @@ export const ignoreApplicationUpdate = () => ({
 
 export const forceApplicationInvalidVersion = () => ({
   type: FORCE_APP_INVALID_VERSION,
+});
+
+export const registerApplicationUsageDay = () => ({
+  type: APP_USAGE_DAY,
+});
+
+export const clearStore = () => ({
+  type: PRUNE,
 });

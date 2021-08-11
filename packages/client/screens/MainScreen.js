@@ -13,7 +13,7 @@ const MainScreen = ({ navigation }) => {
     []
   );
   const rateTypes = AmbitoDolar.getAvailableRateTypes();
-  const rates = useSelector((state) => state.rates?.rates);
+  const rates = useSelector((state) => state.rates.rates);
   const getItemView = React.useCallback(
     (type) => (
       <RateView

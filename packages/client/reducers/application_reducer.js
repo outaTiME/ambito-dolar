@@ -13,7 +13,9 @@ import {
   APP_INVALID_VERSION,
   APP_VALID_VERSION,
   FORCE_APP_INVALID_VERSION,
+  APP_USAGE_DAY,
 } from '../actions/types';
+import DateUtils from '../utilities/Date';
 
 const INITIAL_STATE = {
   push_token: null,
@@ -21,6 +23,8 @@ const INITIAL_STATE = {
   loads: 0,
   last_version_reviewed: null,
   notification_settings: null,
+  last_day_used: null,
+  days_used: 0,
   // version check
   version: null,
   invalid_version: false,
@@ -81,6 +85,20 @@ export default (state = INITIAL_STATE, action) => {
         invalid_version: { $set: true },
         ignore_update: { $set: null },
       });
+    case APP_USAGE_DAY: {
+      const current_date = DateUtils.get();
+      if (
+        !state.last_day_used ||
+        !current_date.isSame(state.last_day_used, 'day')
+      ) {
+        const new_state = update(state, {
+          last_day_used: { $set: current_date.format() },
+          days_used: { $set: (state.days_used ?? 0) + 1 },
+        });
+        return new_state;
+      }
+      return state;
+    }
     case PRUNE:
       return INITIAL_STATE;
     default:

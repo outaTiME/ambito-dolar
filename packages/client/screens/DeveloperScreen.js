@@ -15,6 +15,14 @@ const DeveloperScreen = ({ navigation }) => {
     <ScrollView>
       <CardView title="Acciones" plain>
         <CardItemView
+          title="Limpiar store"
+          useSwitch={false}
+          chevron={false}
+          onAction={() => {
+            dispatch(actions.clearStore());
+          }}
+        />
+        <CardItemView
           title="Version inválida"
           useSwitch={false}
           chevron={false}
