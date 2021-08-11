@@ -43,15 +43,6 @@ const __weekdaysShort = moment
 moment.updateLocale(chosenLocale, {
   weekdays: __weekdays,
   weekdaysShort: __weekdaysShort,
-  calendar: {
-    nextWeek() {
-      return 'lll';
-    },
-    lastWeek() {
-      return 'lll';
-    },
-    sameElse: 'lll',
-  },
 });
 
 const getDate = (date, format, start_of_day) => {
