@@ -15,7 +15,9 @@ import WatermarkOverlayView from './WatermarkOverlayView';
 
 const LAYOUT_COLUMNS = 2;
 
-const AppContainer = ({ title, rates, hasRates, processedAt }) => {
+const AppContainer = ({ rates, processedAt }) => {
+  const urlParams = new URLSearchParams(document.location.search);
+  const title = urlParams.get('title');
   const { theme, fonts } = Helper.useTheme();
   const rateTypes = AmbitoDolar.getAvailableRateTypes();
   const getItemView = React.useCallback(
@@ -31,9 +33,6 @@ const AppContainer = ({ title, rates, hasRates, processedAt }) => {
     ),
     [rates]
   );
-  if (!hasRates) {
-    return <MessageView message={I18n.t('no_available_rates')} />;
-  }
   return (
     <>
       <View
@@ -101,7 +100,6 @@ const AppContainer = ({ title, rates, hasRates, processedAt }) => {
                       flexDirection: 'row',
                     }}
                   >
-                    {/* TODO: export socials to helper */}
                     <FontAwesome5
                       name="twitter"
                       size={17}
@@ -133,6 +131,14 @@ const AppContainer = ({ title, rates, hasRates, processedAt }) => {
                     />
                     <FontAwesome5
                       name="reddit-alien"
+                      size={17}
+                      color={Settings.getGrayColor(theme)}
+                      style={{
+                        marginLeft: Settings.PADDING,
+                      }}
+                    />
+                    <FontAwesome5
+                      name="discord"
                       size={17}
                       color={Settings.getGrayColor(theme)}
                       style={{
@@ -173,8 +179,6 @@ const AppContainer = ({ title, rates, hasRates, processedAt }) => {
 
 const withRates = (Component) => (props) => {
   const { theme } = Helper.useTheme();
-  const url_params = new URLSearchParams(document.location.search);
-  const title = url_params.get('title');
   const [data, setData] = React.useState();
   React.useEffect(() => {
     Helper.getRates()
@@ -183,30 +187,37 @@ const withRates = (Component) => (props) => {
       })
       .catch((error) => {
         console.warn('Unable to get rates from remote', error);
-        setData({});
+        setData({
+          rates: {
+            // display error message
+          },
+        });
       });
   }, []);
-  if (!data) {
-    return (
-      <ActivityIndicator
-        animating
-        color={Settings.getForegroundColor(theme)}
-        size="small"
-      />
-    );
-  }
-  const rates = data.rates || {};
-  const has_rates = Helper.hasRates(rates);
+  const rates = data?.rates;
+  const hasRates = React.useMemo(() => Helper.hasRates(rates), [rates]);
   return (
-    <Component
-      {...{
-        title,
-        rates,
-        hasRates: has_rates,
-        processedAt: data.processed_at,
-      }}
-      {...props}
-    />
+    <>
+      {rates ? (
+        hasRates ? (
+          <Component
+            {...{
+              rates,
+              processedAt: data.processed_at,
+            }}
+            {...props}
+          />
+        ) : (
+          <MessageView message={I18n.t('no_available_rates')} />
+        )
+      ) : (
+        <ActivityIndicator
+          animating
+          color={Settings.getForegroundColor(theme)}
+          size="small"
+        />
+      )}
+    </>
   );
 };
 
