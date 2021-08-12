@@ -4,11 +4,7 @@ import Constants from 'expo-constants';
 import * as Localization from 'expo-localization';
 import _ from 'lodash';
 import React from 'react';
-import {
-  Platform,
-  // Appearance,
-  useColorScheme,
-} from 'react-native';
+import { Platform, Appearance } from 'react-native';
 import { persistStore } from 'redux-persist';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
@@ -318,36 +314,22 @@ export default {
     });
     return [state, setState];
   },
-  // https://github.com/facebook/react-native/issues/28525#issuecomment-666244448
-  // https://github.com/expo/expo/issues/10815#issuecomment-719083889
-  /* useColorScheme() {
+  // https://github.com/expo/expo/issues/10815#issuecomment-897219483
+  useColorScheme() {
     const [colorScheme, setColorScheme] = React.useState(
       Appearance.getColorScheme()
     );
-    console.log('>>> useColorScheme', colorScheme);
-    const onColorSchemeChange = React.useCallback(
-      _.throttle(
-        ({ colorScheme }) => {
-          setColorScheme(colorScheme);
-        },
-        Settings.ANIMATION_DURATION * 2,
-        {
-          leading: false,
-        }
-      ),
-      []
-    );
+    const onColorSchemeChange = React.useCallback(() => {
+      setColorScheme(Appearance.getColorScheme());
+    }, []);
     React.useEffect(() => {
       Appearance.addChangeListener(onColorSchemeChange);
       return () => {
-        onColorSchemeChange.cancel();
         Appearance.removeChangeListener(onColorSchemeChange);
       };
     }, []);
     return colorScheme;
-  }, */
-  // export same from native
-  useColorScheme,
+  },
   useTheme() {
     const context = React.useContext(ThemeContext);
     const colorScheme = React.useMemo(
