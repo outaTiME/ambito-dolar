@@ -92,7 +92,9 @@ TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
 export default function App() {
   const dataLoaded = Helper.usePersistedData(store);
-  const [assetsLoaded] = useAssets([require('./assets/icon.png')]);
+  const [assetsLoaded] = useAssets([
+    require('./assets/about-icon-borderless.png'),
+  ]);
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
     ...MaterialCommunityIcons.font,
@@ -102,13 +104,17 @@ export default function App() {
   });
   const colorScheme = Helper.useColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+  const statusBarStyle = React.useMemo(
+    () => (colorScheme === 'dark' ? 'light' : 'dark'),
+    [colorScheme]
+  );
   if (!dataLoaded || !assetsLoaded || !fontsLoaded) {
     return <AppLoading />;
   }
   return (
     <SafeAreaProvider>
       <ThemeProvider theme={theme}>
-        <StatusBar style="auto" animated />
+        <StatusBar style={statusBarStyle} animated />
         <Provider store={store}>
           <ActionSheetProvider>
             <AppContainer />

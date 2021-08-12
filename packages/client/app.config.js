@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 const version = '5.2.0';
-const buildNumber = 54;
+const buildNumber = 56;
 
 export default {
   name: 'Ámbito Dólar',
@@ -29,14 +29,15 @@ export default {
       ],
       UIRequiresFullScreen: true,
       LSApplicationQueriesSchemes: [
+        'tweetbot',
         'twitter',
         'tg',
         'instagram',
         'fb',
-        'reddit',
-        // alt
-        'tweetbot',
         'apollo',
+        'reddit',
+        'com.hammerandchisel.discord',
+        'github',
       ],
     },
     supportsTablet: true,

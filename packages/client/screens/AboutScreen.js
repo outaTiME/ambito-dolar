@@ -3,7 +3,7 @@ import React from 'react';
 import { View, Image, Text, Linking, Platform } from 'react-native';
 import { compose } from 'redux';
 
-import appIcon from '../assets/icon.png';
+import appIcon from '../assets/about-icon-borderless.png';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import ScrollView from '../components/ScrollView';
@@ -12,6 +12,7 @@ import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
 // social links
+const TWEETBOT_DEEP_LINK = 'tweetbot:///user_profile/AmbitoDolar';
 const TWITTER_DEEP_LINK = 'twitter://user?screen_name=AmbitoDolar';
 const TWITTER_WEB_URL = 'https://twitter.com/AmbitoDolar';
 const TELEGRAM_DEEP_LINK = 'tg://resolve?domain=AmbitoDolar';
@@ -22,11 +23,12 @@ const FACEBOOK_DEEP_LINK = `fb://${
   Platform.OS === 'ios' ? 'page?id=' : 'page/'
 }116047123558432`;
 const FACEBOOK_WEB_URL = 'https://facebook.com/pg/AmbitoDolar';
-// const REDDIT_APOLLO_DEEP_LINK = 'apollo://www.reddit.com/r/AmbitoDolar';
+const APOLLO_DEEP_LINK = 'apollo://www.reddit.com/r/AmbitoDolar';
 const REDDIT_DEEP_LINK = 'reddit:///r/AmbitoDolar';
 const REDDIT_WEB_URL = 'https://www.reddit.com/r/AmbitoDolar';
+const DISCORD_DEEP_LINK = 'com.hammerandchisel.discord://discord.gg/jwfDsy4EKe';
 const DISCORD_WEB_URL = 'https://discord.gg/jwfDsy4EKe';
-// const DISCORD_WEB_URL = 'https://discord.link/AmbitoDolar';
+const GITHUB_DEEP_LINK = 'github://github.com/outaTiME/ambito-dolar';
 const GITHUB_WEB_URL = 'https://github.com/outaTiME/ambito-dolar';
 
 const SocialCardItemView = ({ title, iconName, iconColor, onAction }) => {
@@ -70,10 +72,14 @@ const AboutScreen = ({ navigation }) => {
     Linking.openURL(Settings.WEBSITE_URL);
   }, []);
   const onPressTwitter = React.useCallback(() => {
-    Linking.canOpenURL(TWITTER_DEEP_LINK).then((supported) =>
+    Linking.canOpenURL(TWEETBOT_DEEP_LINK).then((supported) =>
       supported
-        ? Linking.openURL(TWITTER_DEEP_LINK)
-        : Linking.openURL(TWITTER_WEB_URL)
+        ? Linking.openURL(TWEETBOT_DEEP_LINK)
+        : Linking.canOpenURL(TWITTER_DEEP_LINK).then((supported) =>
+            supported
+              ? Linking.openURL(TWITTER_DEEP_LINK)
+              : Linking.openURL(TWITTER_WEB_URL)
+          )
     );
   }, []);
   const onPressTelegram = React.useCallback(() => {
@@ -98,17 +104,29 @@ const AboutScreen = ({ navigation }) => {
     );
   }, []);
   const onPressReddit = React.useCallback(() => {
-    Linking.canOpenURL(REDDIT_DEEP_LINK).then((supported) =>
+    Linking.canOpenURL(APOLLO_DEEP_LINK).then((supported) =>
       supported
-        ? Linking.openURL(REDDIT_DEEP_LINK)
-        : Linking.openURL(REDDIT_WEB_URL)
+        ? Linking.openURL(APOLLO_DEEP_LINK)
+        : Linking.canOpenURL(REDDIT_DEEP_LINK).then((supported) =>
+            supported
+              ? Linking.openURL(REDDIT_DEEP_LINK)
+              : Linking.openURL(REDDIT_WEB_URL)
+          )
     );
   }, []);
   const onPressDiscord = React.useCallback(() => {
-    Linking.openURL(DISCORD_WEB_URL);
+    Linking.canOpenURL(DISCORD_DEEP_LINK).then((supported) =>
+      supported
+        ? Linking.openURL(DISCORD_DEEP_LINK)
+        : Linking.openURL(DISCORD_WEB_URL)
+    );
   }, []);
   const onPressGithub = React.useCallback(() => {
-    Linking.openURL(GITHUB_WEB_URL);
+    Linking.canOpenURL(GITHUB_DEEP_LINK).then((supported) =>
+      supported
+        ? Linking.openURL(GITHUB_DEEP_LINK)
+        : Linking.openURL(GITHUB_WEB_URL)
+    );
   }, []);
   return (
     <ScrollView>
@@ -123,8 +141,8 @@ const AboutScreen = ({ navigation }) => {
       >
         <Image
           style={{
-            width: 80,
-            height: 80,
+            width: 72,
+            height: 72,
             borderRadius: Settings.BORDER_RADIUS,
           }}
           source={appIcon}
