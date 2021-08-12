@@ -11,7 +11,7 @@ __metadata:
   dependencies:
     "@ambito-dolar/core": ^1.0.11
     "@zeit/fetch": ^6.0.0
-    aws-sdk: ^2.964.0
+    aws-sdk: ^2.966.0
     chrome-aws-lambda: ~6.0
     expo-server-sdk: ^3.6.0
     google-auth-library: ^7.5.0
@@ -7844,9 +7844,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.964.0":
-  version: 2.964.0
-  resolution: "aws-sdk@npm:2.964.0"
+"aws-sdk@npm:^2.966.0":
+  version: 2.966.0
+  resolution: "aws-sdk@npm:2.966.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -7857,7 +7857,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: 21e69e4fe1b2d329fa448442559c8d2ef96c7c4e59df96fce8f78b7745f3ffee5c4cc8e2e039e6dea241c14dc4865a6fc5fc435d75f7312669dd2811a6316cd5
+  checksum: 48fb96c727d501382ed6a2871f82a31d95bc8c4c9f866daeecb7932b4ae2e50c2d75d885027f033dd52092d11f5f95de687984113bf42bdc673feaded02b99ac
   languageName: node
   linkType: hard
 
