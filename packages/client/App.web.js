@@ -7,7 +7,7 @@ import { ThemeProvider } from 'styled-components';
 import AppContainer from './components/AppContainer';
 import Helper from './utilities/Helper';
 
-export default function App() {
+export default () => {
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
     ...FontAwesome5.font,
@@ -23,4 +23,4 @@ export default function App() {
       <AppContainer />
     </ThemeProvider>
   );
-}
+};

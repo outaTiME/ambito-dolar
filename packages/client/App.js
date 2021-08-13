@@ -90,7 +90,7 @@ TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
 TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
-export default function App() {
+export default () => {
   const dataLoaded = Helper.usePersistedData(store);
   const [assetsLoaded] = useAssets([
     require('./assets/about-icon-borderless.png'),
@@ -123,4 +123,4 @@ export default function App() {
       </ThemeProvider>
     </SafeAreaProvider>
   );
-}
+};
