@@ -134,24 +134,28 @@ const InteractiveRateChartView = ({
     return Helper.getTickValues(min_y, max_y, TICKS_Y);
   }, [domain]);
   // layout
-  const { onLayout, width: axis_y_width } = useLayout();
+  const {
+    onLayout,
+    width: axis_y_width,
+    height: axis_font_height,
+  } = useLayout();
   const victory_padding = React.useMemo(
     () => ({
-      bottom: AXIS_OFFSET + AXIS_FONT_SIZE + Settings.CHART_STROKE_WIDTH,
+      bottom: AXIS_OFFSET + axis_font_height,
       left: AXIS_OFFSET + axis_y_width,
     }),
-    [axis_y_width]
+    [axis_y_width, axis_font_height]
   );
   const overlay_style = React.useMemo(
     () => ({
       position: 'absolute',
       top: 0,
       right: 0,
-      bottom: AXIS_OFFSET + AXIS_FONT_SIZE + Settings.CHART_STROKE_WIDTH,
+      bottom: AXIS_OFFSET + axis_font_height,
       left: AXIS_OFFSET + axis_y_width,
       margin: Settings.PADDING,
     }),
-    [axis_y_width]
+    [axis_y_width, axis_font_height]
   );
   const axis_x_format = React.useCallback(
     // invalid values when animated
@@ -165,6 +169,7 @@ const InteractiveRateChartView = ({
         stroke: Settings.getStrokeColor(theme),
       },
       grid: {
+        strokeWidth: 1,
         stroke: Settings.getStrokeColor(theme, true),
         strokeLinecap: 'round',
         strokeDasharray: [2, 2],
@@ -195,10 +200,12 @@ const InteractiveRateChartView = ({
         stroke: Settings.getStrokeColor(theme),
       },
       grid: {
+        strokeWidth: 1,
         stroke: Settings.getStrokeColor(theme, true),
         strokeLinecap: 'round',
       },
       ticks: {
+        strokeWidth: 1,
         stroke: Settings.getStrokeColor(theme),
         size: 0,
       },
@@ -228,7 +235,7 @@ const InteractiveRateChartView = ({
     }),
     [color]
   );
-  if (!axis_y_width) {
+  if (!axis_y_width && !axis_font_height) {
     const fontSize = AXIS_FONT_SIZE;
     return (
       <Text
@@ -346,8 +353,8 @@ export default ({ stats }) => {
         {hasLayout ? (
           <InteractiveRateChartView
             {...{
-              width,
-              height,
+              width: Math.round(width),
+              height: Math.round(height),
               stats: new_stats,
               data,
               domain,
