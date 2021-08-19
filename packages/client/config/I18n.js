@@ -44,7 +44,7 @@ i18n.translations = {
     share_message: `Te recomiendo descargar %{appName}, es mi aplicación preferida para conocer las distintas cotizaciones del dólar en la Argentina. %{websiteUrl}`,
     opts_general: 'General',
     opts_general_note:
-      'Las cotizaciones se actualizarán automáticamente durante la jornada cambiaria. Última recepción: %{lastUpdate}',
+      'Las cotizaciones se actualizarán automáticamente durante la jornada cambiaria. Última actualización: %{lastUpdate}',
     device_identifier: 'Identificador',
     opts_statistics: 'Estadísticas',
     opts_support: 'Soporte y difusión',
