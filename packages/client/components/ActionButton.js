@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { View, Text } from 'react-native';
 import { RectButton, BorderlessButton } from 'react-native-gesture-handler';
 

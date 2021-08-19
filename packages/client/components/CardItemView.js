@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import * as React from 'react';
+import React from 'react';
 import { View, Text, Switch } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import { RectButton } from 'react-native-gesture-handler';

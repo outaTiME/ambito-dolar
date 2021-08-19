@@ -2,7 +2,7 @@ import { connectActionSheet } from '@expo/react-native-action-sheet';
 import * as Amplitude from 'expo-analytics-amplitude';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Sharing from 'expo-sharing';
-import * as React from 'react';
+import React from 'react';
 import { StyleSheet, Keyboard, View, Text, Image } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import { useSelector } from 'react-redux';

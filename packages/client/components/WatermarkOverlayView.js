@@ -1,5 +1,5 @@
 import { processFontFamily } from 'expo-font';
-import * as React from 'react';
+import React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import Svg, { Defs, Pattern, Rect, Text as SvgText } from 'react-native-svg';
 

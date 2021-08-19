@@ -18,7 +18,7 @@ import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
-import * as React from 'react';
+import React from 'react';
 import {
   StyleSheet,
   ActivityIndicator,

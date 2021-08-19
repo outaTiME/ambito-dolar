@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import * as React from 'react';
+import React from 'react';
 import { HeaderButtons, HeaderButton } from 'react-navigation-header-buttons';
 
 import Settings from '../config/settings';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 

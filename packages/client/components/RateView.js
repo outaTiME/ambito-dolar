@@ -1,6 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { MaterialIcons } from '@expo/vector-icons';
-import * as React from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import CardView from '../components/CardView';
