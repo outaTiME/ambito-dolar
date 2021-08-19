@@ -112,10 +112,6 @@ export default () => {
   // https://github.com/facebook/react-native/issues/28525
   const colorScheme = useDebouncedColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
-  /* const statusBarStyle = React.useMemo(
-    () => (colorScheme === 'dark' ? 'light' : 'dark'),
-    [colorScheme]
-  ); */
   if (!dataLoaded || !assetsLoaded || !fontsLoaded) {
     return <AppLoading />;
   }
