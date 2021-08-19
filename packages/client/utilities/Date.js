@@ -17,13 +17,16 @@ export default {
     }
     return `${from.format('ll')} al ${to.format('ll')}`;
   },
-  date(date, { short = false } = {}) {
+  date(date, { short = false, long = false } = {}) {
     if (date) {
       date = this.get(date);
-      if (short === false) {
-        return date.format('DD/MM/YY');
+      if (short === true) {
+        return date.format('D/M');
       }
-      return date.format('D/M');
+      if (long === true) {
+        return date.format('ll');
+      }
+      return date.format('DD/MM/YY');
     }
   },
   datetime(date, { short = false, seconds = false, long = false } = {}) {

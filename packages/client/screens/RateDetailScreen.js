@@ -177,7 +177,7 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
         <CardView plain>
           <CardItemView
             title={I18n.t('all-time_high')}
-            titleDetail={DateUtils.date(rate.max_date)}
+            titleDetail={DateUtils.date(rate.max_date, { long: true })}
             useSwitch={false}
             value={Helper.getCurrency(rate.max)}
           />
