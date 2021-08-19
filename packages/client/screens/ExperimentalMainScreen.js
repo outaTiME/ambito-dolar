@@ -49,8 +49,8 @@ const MainScreen = ({ navigation }) => {
     (type) => navigation.navigate('RateDetail', { type }),
     []
   );
-  const rateTypes = AmbitoDolar.getAvailableRateTypes();
   const rates = useSelector((state) => state.rates.rates);
+  const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);
   const getItemView = React.useCallback(
     (type) => (
       <RateView

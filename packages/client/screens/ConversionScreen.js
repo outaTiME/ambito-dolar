@@ -64,8 +64,8 @@ const ConversionScreen = () => {
     }
     return sell;
   }, []);
-  const rateTypes = AmbitoDolar.getAvailableRateTypes();
   const rates = useSelector((state) => state.rates.rates);
+  const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);
   const getItemView = React.useCallback(
     (type) => {
       const stats = rates[type].stats;

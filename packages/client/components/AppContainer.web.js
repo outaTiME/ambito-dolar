@@ -19,7 +19,7 @@ const AppContainer = ({ rates, processedAt }) => {
   const urlParams = new URLSearchParams(document.location.search);
   const title = urlParams.get('title');
   const { theme, fonts } = Helper.useTheme();
-  const rateTypes = AmbitoDolar.getAvailableRateTypes();
+  const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);
   const getItemView = React.useCallback(
     (type) => (
       <RateView
