@@ -13,7 +13,7 @@ export default () => {
     ...FontAwesome5.font,
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
   });
-  const colorScheme = Helper.useColorScheme();
+  const colorScheme = Helper.useColorSchemeDelay();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
   if (!fontsLoaded) {
     return <AppLoading />;

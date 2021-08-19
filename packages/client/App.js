@@ -10,7 +10,12 @@ import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Text, TextInput, LogBox } from 'react-native';
+import {
+  Text,
+  TextInput,
+  LogBox,
+  // useColorScheme
+} from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -22,6 +27,7 @@ import { ThemeProvider } from 'styled-components';
 
 import AppContainer from './components/AppContainer';
 import Settings from './config/settings';
+import useDebouncedColorScheme from './hooks/useDebouncedColorScheme';
 import reducers from './reducers';
 import Helper from './utilities/Helper';
 import Sentry from './utilities/Sentry';
@@ -102,19 +108,21 @@ export default () => {
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
     // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
-  const colorScheme = Helper.useColorScheme();
+  // const colorScheme = useColorScheme();
+  // https://github.com/facebook/react-native/issues/28525
+  const colorScheme = useDebouncedColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
-  const statusBarStyle = React.useMemo(
+  /* const statusBarStyle = React.useMemo(
     () => (colorScheme === 'dark' ? 'light' : 'dark'),
     [colorScheme]
-  );
+  ); */
   if (!dataLoaded || !assetsLoaded || !fontsLoaded) {
     return <AppLoading />;
   }
   return (
     <SafeAreaProvider>
       <ThemeProvider theme={theme}>
-        <StatusBar style={statusBarStyle} animated />
+        <StatusBar style="auto" animated />
         <Provider store={store}>
           <ActionSheetProvider>
             <AppContainer />

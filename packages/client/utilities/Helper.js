@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 import * as Localization from 'expo-localization';
 import _ from 'lodash';
 import React from 'react';
-import { Platform, Appearance } from 'react-native';
+import { Platform } from 'react-native';
 import { persistStore } from 'redux-persist';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
@@ -236,6 +236,7 @@ export default {
   hasRates(rates) {
     const values = Object.values(rates || {});
     const rate_types = AmbitoDolar.getAvailableRateTypes();
+    // TODO: review the following condition
     if (values.length === rate_types.length) {
       return (
         values
@@ -313,22 +314,6 @@ export default {
       initialData: initial,
     });
     return [state, setState];
-  },
-  // https://github.com/expo/expo/issues/10815#issuecomment-897219483
-  useColorScheme() {
-    const [colorScheme, setColorScheme] = React.useState(
-      Appearance.getColorScheme()
-    );
-    const onColorSchemeChange = React.useCallback(() => {
-      setColorScheme(Appearance.getColorScheme());
-    }, []);
-    React.useEffect(() => {
-      Appearance.addChangeListener(onColorSchemeChange);
-      return () => {
-        Appearance.removeChangeListener(onColorSchemeChange);
-      };
-    }, []);
-    return colorScheme;
   },
   useTheme() {
     const context = React.useContext(ThemeContext);
