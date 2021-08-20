@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@5.1.0...@ambito-dolar/client@5.2.0) (2021-08-20)
+
+
+### Bug Fixes
+
+* **client:** better cursor positioning on chart ([6ee3fec](https://github.com/outaTiME/ambito-dolar/commit/6ee3fec89b2ba5386e6d329efb15935bc7dc4e98))
+* **client:** export colorScheme workaround to a hook ([8a59d6a](https://github.com/outaTiME/ambito-dolar/commit/8a59d6afc1b27b78a60cf77666cf0e7e746780ce))
+* **client:** fix typo on notifications screen ([c3028bf](https://github.com/outaTiME/ambito-dolar/commit/c3028bfa35fd68dde36c9213abb36743d5ff94e8))
+* **client:** improve message of rate updates on settings screen ([024746d](https://github.com/outaTiME/ambito-dolar/commit/024746d71936067b7be44903fd2bf6504facfca6))
+* **client:** improved detection of appearance change ([2c60272](https://github.com/outaTiME/ambito-dolar/commit/2c60272b7794add7484f4aae6d6ce8583b6d6fca))
+* **client:** use rate types from local rates object ([cfea1c0](https://github.com/outaTiME/ambito-dolar/commit/cfea1c0dece19f84ecdc12853d38223e438fa922))
+
+
+### Features
+
+* **client:** improved api and firebase requests, new stat and about screens, lots of bug fixes ([7df7957](https://github.com/outaTiME/ambito-dolar/commit/7df7957209babc3b1d717cfff4ca0156168d0853))
+* **client:** tweetbot and apollo support on about screen ([1a834f7](https://github.com/outaTiME/ambito-dolar/commit/1a834f705bf215689ad464f0d25ef3e45a9e71f0))
+* **client:** update date format on all-time high ([27f5a06](https://github.com/outaTiME/ambito-dolar/commit/27f5a0636132c8ebd31b20fa1589e7f48af5c2d4))
+
+
+
+
+
 # [5.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@5.0.1...@ambito-dolar/client@5.1.0) (2021-06-07)
 
 

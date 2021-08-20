@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.1.1...@ambito-dolar/website@1.2.0) (2021-08-20)
+
+
+### Bug Fixes
+
+* **website:** update styles on gatsby-plugin-manifest ([ec37ddf](https://github.com/outaTiME/ambito-dolar/commit/ec37ddfd3b95a39b0256c4827869d445ea33bcb0))
+
+
+### Features
+
+* **website:** add discord link ([215ae4e](https://github.com/outaTiME/ambito-dolar/commit/215ae4ed5dbe0f7b4d6221ffac4a24ce4d1b6cdf))
+
+
+
+
+
 ## [1.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.1.0...@ambito-dolar/website@1.1.1) (2021-06-07)
 
 **Note:** Version bump only for package @ambito-dolar/website

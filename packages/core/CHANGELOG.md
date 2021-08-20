@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.12](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.11...@ambito-dolar/core@1.0.12) (2021-08-20)
+
+
+### Bug Fixes
+
+* **core:** remove calendar on moment locale ([05e8b50](https://github.com/outaTiME/ambito-dolar/commit/05e8b50c80f05f50649db3567b63a4ba6d3ebab8))
+
+
+
+
+
 ## [1.0.11](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@1.0.10...@ambito-dolar/core@1.0.11) (2021-06-07)
 
 
