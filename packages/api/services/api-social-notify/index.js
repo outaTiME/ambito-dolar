@@ -57,9 +57,15 @@ const generateScreenshot = async (type, title) => {
   });
   await browser.close();
   const duration = (Date.now() - start_time) / 1000;
-  // store image
-  const { link: target_url } = await Shared.storePublicBase64ImageFile(
+  // store image using imgur
+  /* const { link: target_url } = await Shared.storePublicBase64ImageFile(
     file.toString('base64')
+  ); */
+  // store image on s3
+  const key = `rate-images/${AmbitoDolar.getTimezoneDate().format()}-${type}`;
+  const { Location: target_url } = await Shared.storePublicFileObject(
+    key,
+    file
   );
   console.info(
     'Screenshot completed',

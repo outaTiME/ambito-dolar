@@ -2,6 +2,7 @@ const AmbitoDolar = require('@ambito-dolar/core');
 const Fetch = require('@zeit/fetch');
 const AWS = require('aws-sdk');
 const { Expo } = require('expo-server-sdk');
+const FileType = require('file-type');
 const { JWT } = require('google-auth-library');
 const _ = require('lodash');
 const semverLt = require('semver/functions/lt');
@@ -142,6 +143,36 @@ const getVariationThreshold = (type) => {
   }
   return 0;
 };
+
+const storeFileObject = async (
+  key,
+  buffer,
+  bucket = S3_BUCKET,
+  is_public = false
+) => {
+  // try {
+  // https://blog.jonathandion.com/posts/json-gzip-s3/
+  const { ext, mime } = await FileType.fromBuffer(buffer);
+  return s3
+    .upload({
+      Bucket: bucket,
+      Key: `${key}.${ext}`,
+      Body: buffer,
+      ...(is_public === true && { ACL: 'public-read' }),
+      ContentType: mime,
+    })
+    .promise();
+  /* } catch (error) {
+    console.warn(
+      'Unable to store object in bucket',
+      JSON.stringify({ bucket, key, json, error: error.message })
+    );
+    // trace and continue
+  } */
+};
+
+const storePublicFileObject = async (key, buffer, bucket) =>
+  storeFileObject(key, buffer, bucket, true);
 
 const storeJsonObject = async (
   key,
@@ -530,6 +561,7 @@ const Shared = {
   fetch,
   isSemverLt,
   getVariationThreshold,
+  storePublicFileObject,
   storeJsonObject,
   getJsonObject,
   storeRateStats,
