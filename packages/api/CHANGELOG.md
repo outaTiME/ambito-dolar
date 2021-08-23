@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.3.1...@ambito-dolar/api@1.4.0) (2021-08-23)
+
+
+### Features
+
+* use S3 to store generated rate images and bump dependencies ([f8aa919](https://github.com/outaTiME/ambito-dolar/commit/f8aa919b0e397cd3dd598248bb06b8cfcf3260a1))
+
+
+
+
+
 ## [1.3.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.3.0...@ambito-dolar/api@1.3.1) (2021-08-20)
 
 **Note:** Version bump only for package @ambito-dolar/api
