@@ -104,9 +104,6 @@ const ConversionScreen = () => {
           borderRadius: Settings.BORDER_RADIUS,
           borderWidth: Settings.BORDER_WIDTH,
           borderColor: Settings.getStrokeColor(theme),
-          // largeTitle size
-          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L25
-          minHeight: 34,
           margin: Settings.CARD_PADDING,
           padding: Settings.PADDING,
           backgroundColor: Settings.getContentColor(theme),
@@ -121,8 +118,9 @@ const ConversionScreen = () => {
           style={[
             fonts.largeTitle,
             {
-              textAlign: 'center',
-              flex: 1,
+              // forced lineHeight required by android
+              // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L25
+              height: 34,
             },
           ]}
           underlineColorAndroid="transparent"
@@ -131,6 +129,7 @@ const ConversionScreen = () => {
           maxLength={15}
           enablesReturnKeyAutomatically
           autoCorrect={false}
+          textAlign="center"
         />
       </View>
       <SegmentedControlTab
