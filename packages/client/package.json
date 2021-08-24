@@ -70,9 +70,9 @@
     "reselect": "^4.0.0",
     "semver": "^7.3.5",
     "sentry-expo": "^4.0.0",
-    "styled-components": "^5.3.0",
+    "styled-components": "^5.3.1",
     "swr": "^0.5.6",
-    "victory": "^35.10.1",
+    "victory": "^35.11.0",
     "victory-native": "^35.3.3"
   },
   "devDependencies": {

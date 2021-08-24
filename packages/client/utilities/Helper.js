@@ -280,6 +280,9 @@ export default {
     }
     return value_str;
   },
+  roundToEven(num) {
+    return Math.floor(num - (num % 2));
+  },
   // https://github.com/brentvatne/hour-power/blob/master/app/hooks/usePersistedData.ts
   usePersistedData(store) {
     const [dataLoaded, setDataLoaded] = React.useState(false);

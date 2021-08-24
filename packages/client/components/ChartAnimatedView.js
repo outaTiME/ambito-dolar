@@ -26,24 +26,59 @@ const CURSOR_CONTAINER_SIZE = Settings.PADDING * 2;
 const EXTRA_OFFSET = Settings.PADDING;
 const HAPTICS_ENABLED = Platform.OS === 'ios';
 
-export default ({ data, domain, color, selectionIndex, style }) => {
-  const { onLayout, width, height } = useLayout();
-  const hasLayout = React.useMemo(() => width && height, [width, height]);
+const springDefaultConfig = {
+  damping: 15,
+  mass: 1,
+  stiffness: 600,
+};
+
+const Cursor = ({ length, isLoading, point, width, color }) => {
+  const isActive = useSharedValue(false);
+  const onGestureEvent = useAnimatedGestureHandler({
+    onActive: (event) => {
+      if (!isActive.value) {
+        HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
+      }
+      isActive.value = true;
+      length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
+    },
+    onEnd: () => {
+      length.value = width;
+      HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
+      isActive.value = false;
+    },
+  });
+  const style = useAnimatedStyle(() => {
+    const { coord } = point.value;
+    const translateX = coord.x + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
+    const translateY = coord.y + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
+    return {
+      // opacity: isLoading.value ? 0 : withSpring(1),
+      transform: [
+        { translateX },
+        { translateY },
+        {
+          scale: withSpring(isActive.value ? 1.5 : 1, springDefaultConfig),
+        },
+      ],
+    };
+  });
   return (
-    <View style={style} {...(!hasLayout && { onLayout })}>
-      {hasLayout ? (
-        <ChartOverlayPathView
-          {...{
-            width,
-            height,
-            data,
-            domain,
-            color,
-            selectionIndex,
-          }}
-        />
-      ) : null}
-    </View>
+    <LongPressGestureHandler
+      onGestureEvent={onGestureEvent}
+      minDurationMs={60}
+      maxDist={Number.MAX_SAFE_INTEGER}
+      shouldCancelWhenOutside={false}
+      // hitSlop={Settings.PADDING}
+    >
+      <Animated.View
+        style={[StyleSheet.absoluteFill, { margin: -EXTRA_OFFSET }]}
+      >
+        <Animated.View style={[styles.cursorContainer, style]}>
+          <View style={[styles.cursor, { backgroundColor: color }]} />
+        </Animated.View>
+      </Animated.View>
+    </LongPressGestureHandler>
   );
 };
 
@@ -57,12 +92,12 @@ const scaleInvert = (y, d, r) => {
 };
 
 const ChartOverlayPathView = ({
-  width,
-  height,
   data,
   domain,
   color,
   selectionIndex,
+  width,
+  height,
 }) => {
   const range = React.useMemo(
     () => ({
@@ -126,61 +161,18 @@ const ChartOverlayPathView = ({
   );
 };
 
-const springDefaultConfig = {
-  damping: 15,
-  mass: 1,
-  stiffness: 600,
-};
-
-const Cursor = ({ length, isLoading, point, width, color }) => {
-  const isActive = useSharedValue(false);
-  const onGestureEvent = useAnimatedGestureHandler({
-    onActive: (event) => {
-      if (!isActive.value) {
-        HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
-      }
-      isActive.value = true;
-      length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
-    },
-    onEnd: () => {
-      length.value = width;
-      HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
-      isActive.value = false;
-    },
-  });
-  const style = useAnimatedStyle(() => {
-    const { coord } = point.value;
-    const translateX = coord.x + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
-    const translateY = coord.y + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
-    return {
-      // opacity: isLoading.value ? 0 : withSpring(1),
-      transform: [
-        { translateX },
-        { translateY },
-        {
-          scale: withSpring(isActive.value ? 1.5 : 1, springDefaultConfig),
-        },
-      ],
-    };
-  });
-  return (
-    <LongPressGestureHandler
-      onGestureEvent={onGestureEvent}
-      minDurationMs={60}
-      maxDist={Number.MAX_SAFE_INTEGER}
-      shouldCancelWhenOutside={false}
-      // hitSlop={Settings.PADDING}
-    >
-      <Animated.View
-        style={[StyleSheet.absoluteFill, { margin: -EXTRA_OFFSET }]}
-      >
-        <Animated.View style={[styles.cursorContainer, style]}>
-          <View style={[styles.cursor, { backgroundColor: color }]} />
-        </Animated.View>
-      </Animated.View>
-    </LongPressGestureHandler>
-  );
-};
+export default ({ data, domain, color, selectionIndex, width, height }) => (
+  <ChartOverlayPathView
+    {...{
+      data,
+      domain,
+      color,
+      selectionIndex,
+      width,
+      height,
+    }}
+  />
+);
 
 const styles = StyleSheet.create({
   cursorContainer: {

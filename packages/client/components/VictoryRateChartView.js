@@ -139,23 +139,28 @@ const InteractiveRateChartView = ({
     width: axis_y_width,
     height: axis_font_height,
   } = useLayout();
+  const axis_y_width_rounded = Helper.roundToEven(axis_y_width);
+  const axis_font_height_rounded = Helper.roundToEven(axis_font_height);
   const victory_padding = React.useMemo(
     () => ({
-      bottom: AXIS_OFFSET + axis_font_height,
-      left: AXIS_OFFSET + axis_y_width,
+      bottom: AXIS_OFFSET + axis_font_height_rounded,
+      left: AXIS_OFFSET + axis_y_width_rounded,
     }),
-    [axis_y_width, axis_font_height]
+    [axis_y_width_rounded, axis_font_height_rounded]
   );
   const overlay_style = React.useMemo(
     () => ({
       position: 'absolute',
-      top: 0,
-      right: 0,
-      bottom: AXIS_OFFSET + axis_font_height,
-      left: AXIS_OFFSET + axis_y_width,
-      margin: Settings.PADDING,
+      top: Settings.PADDING,
+      left: AXIS_OFFSET + axis_y_width_rounded + Settings.PADDING,
+      // size required by ChartAnimatedView
+      width:
+        width - (AXIS_OFFSET + axis_y_width_rounded + Settings.PADDING * 2),
+      height:
+        height -
+        (AXIS_OFFSET + axis_font_height_rounded + Settings.PADDING * 2),
     }),
-    [axis_y_width, axis_font_height]
+    [axis_y_width_rounded, axis_font_height_rounded]
   );
   const axis_x_format = React.useCallback(
     // invalid values when animated
@@ -235,7 +240,7 @@ const InteractiveRateChartView = ({
     }),
     [color]
   );
-  if (!axis_y_width && !axis_font_height) {
+  if (!axis_y_width_rounded && !axis_font_height_rounded) {
     const fontSize = AXIS_FONT_SIZE;
     return (
       <Text
@@ -277,7 +282,7 @@ const InteractiveRateChartView = ({
             tickValues={ticks_y}
             tickFormat={axis_y_format}
             tickLabelComponent={
-              <VictoryLabel x={axis_y_width} textAnchor="end" />
+              <VictoryLabel x={axis_y_width_rounded} textAnchor="end" />
             }
             style={axis_y_style}
           />
@@ -288,15 +293,18 @@ const InteractiveRateChartView = ({
           />
         </VictoryChart>
       </View>
-      <ChartAnimatedView
-        {...{
-          data,
-          domain,
-          color,
-          selectionIndex,
-          style: overlay_style,
-        }}
-      />
+      <View style={overlay_style}>
+        <ChartAnimatedView
+          {...{
+            data,
+            domain,
+            color,
+            selectionIndex,
+            width: overlay_style.width,
+            height: overlay_style.height,
+          }}
+        />
+      </View>
     </>
   );
 };
@@ -353,8 +361,8 @@ export default ({ stats }) => {
         {hasLayout ? (
           <InteractiveRateChartView
             {...{
-              width: Math.round(width),
-              height: Math.round(height),
+              width: Helper.roundToEven(width),
+              height: Helper.roundToEven(height),
               stats: new_stats,
               data,
               domain,
