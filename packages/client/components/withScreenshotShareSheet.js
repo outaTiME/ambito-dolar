@@ -147,7 +147,6 @@ const withScreenshotShareSheet = (Component) => (props) => {
             <View
               style={[
                 {
-                  flexDirection: 'row',
                   marginHorizontal: Settings.CARD_PADDING * 2,
                   marginBottom: Settings.CARD_PADDING * 2,
                 },

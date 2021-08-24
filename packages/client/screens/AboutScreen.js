@@ -218,6 +218,7 @@ const AboutScreen = ({ navigation }) => {
             flexShrink: 0,
             flexGrow: 1,
             margin: Settings.CARD_PADDING,
+            paddingVertical: Settings.PADDING,
           },
           {
             borderColor: 'red',
