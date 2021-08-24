@@ -104,9 +104,11 @@ const ConversionScreen = () => {
           borderRadius: Settings.BORDER_RADIUS,
           borderWidth: Settings.BORDER_WIDTH,
           borderColor: Settings.getStrokeColor(theme),
-          minHeight: 70,
+          // largeTitle size
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L25
+          minHeight: 34,
           margin: Settings.CARD_PADDING,
-          paddingHorizontal: Settings.PADDING,
+          padding: Settings.PADDING,
           backgroundColor: Settings.getContentColor(theme),
         }}
       >
