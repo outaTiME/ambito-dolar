@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.4.0...@ambito-dolar/api@1.5.0) (2021-08-30)
+
+
+### Features
+
+* add CCB rate type ([9fa984d](https://github.com/outaTiME/ambito-dolar/commit/9fa984dd3c1b3368bc400dbd36e33aecf687d3b6))
+
+
+
+
+
 # [1.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.3.1...@ambito-dolar/api@1.4.0) (2021-08-23)
 
 

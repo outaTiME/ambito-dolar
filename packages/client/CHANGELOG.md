@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-beta.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@5.2.0...@ambito-dolar/client@6.0.0-beta.0) (2021-08-30)
+
+
+### Bug Fixes
+
+* better fit of the footer for small screens on the about screen ([9cfa7e3](https://github.com/outaTiME/ambito-dolar/commit/9cfa7e3332ac4cbb9d8561de9fb0ca3ed9f3c637))
+* rate chart cursor positioning improvements ([8f1ab17](https://github.com/outaTiME/ambito-dolar/commit/8f1ab1794a94192a17c592bbf7bfd67816a29266))
+* use the lineHeight of the largeTitle for the textinput of the conversion screen ([7594d1a](https://github.com/outaTiME/ambito-dolar/commit/7594d1a9364f1650b1eaa6310a37a78efdee106b))
+
+
+### chore
+
+* bump client build number for major release ([7c9693a](https://github.com/outaTiME/ambito-dolar/commit/7c9693a224e741c8ff3bea55f4e291400f8b4a40))
+
+
+### Features
+
+* update react navigation to v6 and bump dependencies ([ab86e7d](https://github.com/outaTiME/ambito-dolar/commit/ab86e7d34b2c21a56f3ff192d4c1fab94bc849e9))
+
+
+### BREAKING CHANGES
+
+* CCB rate type support
+
+
+
+
+
 # [5.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@5.1.0...@ambito-dolar/client@5.2.0) (2021-08-20)
 
 
