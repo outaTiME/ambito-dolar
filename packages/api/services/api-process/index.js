@@ -210,13 +210,6 @@ const getNewRates = (rates, new_rates) =>
           new: new_rate,
         })
       );
-    } else {
-      console.info(
-        'Rate not updated',
-        JSON.stringify({
-          type,
-        })
-      );
     }
     return obj;
   }, {});
