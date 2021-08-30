@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 const version = '6.0.0';
-const buildNumber = 60;
+const buildNumber = 59;
 
 export default {
   name: 'Ámbito Dólar',
