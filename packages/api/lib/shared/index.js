@@ -247,7 +247,10 @@ const storeRateStats = async (rates) => {
   const base_rates = Object.entries(rates || {}).reduce(
     (obj, [type, { stats }]) => {
       // ignore
-      if (type === AmbitoDolar.WHOLESALER_TYPE) {
+      if (
+        type === AmbitoDolar.WHOLESALER_TYPE ||
+        type === AmbitoDolar.CCB_TYPE
+      ) {
         return obj;
       }
       if (type === AmbitoDolar.CCL_TYPE) {
@@ -288,7 +291,10 @@ const storeRatesJsonObject = async (rates, is_updated) => {
   const legacy_rates = Object.entries(rates.rates || {}).reduce(
     (obj, [type, rate]) => {
       // ignore
-      if (type === AmbitoDolar.WHOLESALER_TYPE) {
+      if (
+        type === AmbitoDolar.WHOLESALER_TYPE ||
+        type === AmbitoDolar.CCB_TYPE
+      ) {
         return obj;
       }
       if (type === AmbitoDolar.CCL_TYPE) {
@@ -352,7 +358,10 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
   const legacy_rates = Object.entries(base_rates || {}).reduce(
     (obj, [type, rate]) => {
       // ignore
-      if (type === AmbitoDolar.WHOLESALER_TYPE) {
+      if (
+        type === AmbitoDolar.WHOLESALER_TYPE ||
+        type === AmbitoDolar.CCB_TYPE
+      ) {
         return obj;
       }
       if (type === AmbitoDolar.CCL_TYPE) {
