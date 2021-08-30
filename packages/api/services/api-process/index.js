@@ -264,13 +264,25 @@ const notifyUpdates = (rates, has_rates_from_today, new_rates) => {
     const variation_rates = Object.entries(new_rates).reduce(
       (obj, [type, rate]) => {
         const prev_rate = rates[type];
-        const prev_rate_avg = _.mean([].concat(prev_rate[1]));
-        const rate_avg = _.mean([].concat(rate[1]));
-        const value_diff = Math.abs(prev_rate_avg - rate_avg);
-        const rate_threshold = Shared.getVariationThreshold(type);
-        if (value_diff !== 0 && value_diff >= rate_threshold) {
-          // variation found
-          obj[type] = rate;
+        if (prev_rate) {
+          const prev_rate_last = getRateValue(prev_rate[1]);
+          const rate_last = getRateValue(rate[1]);
+          const value_diff = Math.abs(prev_rate_last - rate_last);
+          const rate_threshold = Shared.getVariationThreshold(type);
+          if (value_diff !== 0 && value_diff >= rate_threshold) {
+            console.info(
+              'Rate variation detected',
+              JSON.stringify({
+                type,
+                diff: value_diff,
+                threshold: rate_threshold,
+              })
+            );
+            // variation found
+            obj[type] = rate;
+          }
+        } else {
+          // ignore
         }
         return obj;
       },
