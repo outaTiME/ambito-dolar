@@ -1,11 +1,12 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppState } from '@react-native-community/hooks';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
-  BottomTabBar,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
-import { NavigationContainer, useTheme } from '@react-navigation/native';
+  NavigationContainer,
+  useNavigationContainerRef,
+  useTheme,
+} from '@react-navigation/native';
 import {
   createStackNavigator,
   HeaderStyleInterpolators,
@@ -56,53 +57,45 @@ const BackButton = ({ navigation }) => (
   </MaterialHeaderButtons>
 );
 
-// used for app screenshots on android
-const SOLID_NAVIGATOR_BACKGROUND = false;
-const NavigatorBackgroundView = ({ style, children }) => {
+const NavigatorBackgroundView = ({ style }) => {
   const { theme } = Helper.useTheme();
   const { colors } = useTheme();
-  if (SOLID_NAVIGATOR_BACKGROUND) {
+  if (Platform.OS === 'android') {
     return (
       <View
         style={[
-          style,
+          StyleSheet.absoluteFill,
           {
             backgroundColor: colors.card,
           },
+          style,
         ]}
-      >
-        {children}
-      </View>
+      />
     );
   }
   return (
-    <BlurView tint={theme} intensity={100} style={style}>
-      {children}
-    </BlurView>
+    <BlurView
+      tint={theme}
+      intensity={100}
+      style={[StyleSheet.absoluteFill, style]}
+    />
   );
 };
 
 const useNavigatorScreenOptions = () => {
   const { fonts } = Helper.useTheme();
   const { colors } = useTheme();
-  const headerBackground = React.useCallback(() => {
-    const BackgroundView =
-      Platform.OS === 'ios' ? NavigatorBackgroundView : View;
-    return (
-      <BackgroundView
-        style={[
-          {
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: colors.border,
-          },
-          StyleSheet.absoluteFill,
-          Platform.OS === 'android' && {
-            backgroundColor: colors.card,
-          },
-        ]}
+  const headerBackground = React.useCallback(
+    () => (
+      <NavigatorBackgroundView
+        style={{
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.border,
+        }}
       />
-    );
-  }, [colors]);
+    ),
+    [colors]
+  );
   return {
     headerTitleAlign: 'center',
     headerTitleAllowFontScaling: Settings.ALLOW_FONT_SCALING,
@@ -110,9 +103,9 @@ const useNavigatorScreenOptions = () => {
     headerStyle: {
       // same height proportion for all devices
       height: Settings.HEADER_HEIGHT,
-      elevation: 0,
+      /* elevation: 0,
       shadowOpacity: 0,
-      borderBottomWidth: 0,
+      borderBottomWidth: 0, */
     },
     headerTitleStyle: {
       ...fonts.title,
@@ -187,19 +180,19 @@ const RateNativeStackScreen = () => {
   );
 }; */
 
-const RateStack = createStackNavigator();
-const RateStackScreen = () => {
+const RatesStack = createStackNavigator();
+const RatesStackScreen = () => {
   const navigatorScreenOptions = useNavigatorScreenOptions();
   return (
-    <RateStack.Navigator screenOptions={navigatorScreenOptions}>
-      <RateStack.Screen
+    <RatesStack.Navigator screenOptions={navigatorScreenOptions}>
+      <RatesStack.Screen
         name={Settings.INITIAL_ROUTE_NAME}
         options={{
           title: Settings.APP_NAME,
         }}
         component={MainScreen}
       />
-      <RateStack.Screen
+      <RatesStack.Screen
         name="RateDetail"
         options={({ route: { params }, navigation }) => ({
           title: AmbitoDolar.getRateTitle(params.type),
@@ -207,7 +200,7 @@ const RateStackScreen = () => {
         })}
         component={RateDetailScreen}
       />
-      <RateStack.Screen
+      <RatesStack.Screen
         name="RateRawDetail"
         options={({ navigation }) => ({
           title: I18n.t('detail'),
@@ -215,7 +208,7 @@ const RateStackScreen = () => {
         })}
         component={RateRawDetailScreen}
       />
-    </RateStack.Navigator>
+    </RatesStack.Navigator>
   );
 };
 
@@ -297,59 +290,41 @@ const SettingsStackScreen = () => {
 };
 
 const Tab = createBottomTabNavigator();
-
 const MainStackScreen = () => {
   const { theme } = Helper.useTheme();
   const { colors } = useTheme();
-  const tabBar = React.useCallback(
-    (props) => {
-      const BackgroundView =
-        Platform.OS === 'ios' ? NavigatorBackgroundView : View;
-      return (
-        <BackgroundView
-          style={[
-            {
-              borderTopWidth: StyleSheet.hairlineWidth,
-              borderTopColor: colors.border,
-            },
-            Platform.select({
-              ios: {
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-              },
-              android: {
-                backgroundColor: colors.card,
-              },
-            }),
-          ]}
-        >
-          <BottomTabBar {...props} />
-        </BackgroundView>
-      );
-    },
+  const tabBarBackground = React.useCallback(
+    () => (
+      <NavigatorBackgroundView
+        style={{
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: colors.border,
+        }}
+      />
+    ),
     [colors]
   );
   return (
     <Tab.Navigator
-      tabBar={tabBar}
-      tabBarOptions={{
-        showLabel: false,
-        style: {
-          elevation: 0,
-          shadowOpacity: 0,
-          // custom tabBar
-          backgroundColor: 'transparent',
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: Settings.getForegroundColor(theme),
+        tabBarInactiveTintColor: Settings.getStrokeColor(theme),
+        tabBarAllowFontScaling: Settings.ALLOW_FONT_SCALING,
+        tabBarStyle: {
+          ...(Platform.OS === 'ios' && {
+            position: 'absolute',
+          }),
+          // https://github.com/react-navigation/react-navigation/blob/main/packages/bottom-tabs/src/views/BottomTabBar.tsx#L382
           borderTopWidth: 0,
+          elevation: 0,
         },
-        activeTintColor: Settings.getForegroundColor(theme),
-        inactiveTintColor: Settings.getStrokeColor(theme),
-        allowFontScaling: Settings.ALLOW_FONT_SCALING,
+        tabBarBackground,
       }}
     >
       <Tab.Screen
-        name={Settings.INITIAL_ROUTE_NAME}
+        name="Rates"
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
@@ -359,7 +334,7 @@ const MainStackScreen = () => {
             />
           ),
         }}
-        component={RateStackScreen}
+        component={RatesStackScreen}
       />
       <Tab.Screen
         name="Conversion"
@@ -392,7 +367,6 @@ const MainStackScreen = () => {
 };
 
 const RootStack = createStackNavigator();
-
 const AppNavigationContainer = ({ showAppUpdateMessage }) => {
   const { theme } = Helper.useTheme();
   const navigationTheme = React.useMemo(
@@ -443,8 +417,8 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
     trackScreen(Settings.INITIAL_ROUTE_NAME);
   }, []);
   // https://reactnavigation.org/docs/screen-tracking
+  const navigationRef = useNavigationContainerRef();
   const routeNameRef = React.useRef();
-  const navigationRef = React.useRef();
   // NOTIFICATIONS (user interaction)
   const lastNotificationResponse = Notifications.useLastNotificationResponse();
   React.useEffect(() => {
@@ -454,14 +428,14 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
         Notifications.DEFAULT_ACTION_IDENTIFIER
     ) {
       Amplitude.logEventAsync('Select notification');
-      navigationRef.current?.navigate(Settings.INITIAL_ROUTE_NAME, {
-        screen: Settings.INITIAL_ROUTE_NAME,
+      navigationRef.navigate(Settings.INITIAL_ROUTE_NAME, {
+        screen: 'Rates',
       });
     }
   }, [lastNotificationResponse]);
   React.useEffect(() => {
     if (showAppUpdateMessage === true) {
-      navigationRef.current?.navigate('ApplicationUpdate', {
+      navigationRef.navigate('ApplicationUpdate', {
         // pass
       });
     }
@@ -471,11 +445,11 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       {...{
         ref: navigationRef,
         onReady: () => {
-          routeNameRef.current = navigationRef.current.getCurrentRoute().name;
+          routeNameRef.current = navigationRef.getCurrentRoute().name;
         },
         onStateChange: () => {
           const previousRouteName = routeNameRef.current;
-          const currentRouteName = navigationRef.current.getCurrentRoute().name;
+          const currentRouteName = navigationRef.getCurrentRoute().name;
           if (previousRouteName !== currentRouteName) {
             trackScreen(currentRouteName);
           }
@@ -485,18 +459,25 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
         theme: navigationTheme,
       }}
     >
-      <RootStack.Navigator mode="modal" headerMode="none">
-        <RootStack.Screen
-          name={Settings.INITIAL_ROUTE_NAME}
-          component={MainStackScreen}
-        />
-        <RootStack.Screen
-          name="ApplicationUpdate"
-          component={UpdateAppModalScreen}
-          options={{
-            gestureEnabled: false,
-          }}
-        />
+      <RootStack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <RootStack.Group>
+          <RootStack.Screen
+            name={Settings.INITIAL_ROUTE_NAME}
+            component={MainStackScreen}
+          />
+        </RootStack.Group>
+        <RootStack.Group
+          screenOptions={{ presentation: 'modal', gestureEnabled: false }}
+        >
+          <RootStack.Screen
+            name="ApplicationUpdate"
+            component={UpdateAppModalScreen}
+          />
+        </RootStack.Group>
       </RootStack.Navigator>
     </NavigationContainer>
   );

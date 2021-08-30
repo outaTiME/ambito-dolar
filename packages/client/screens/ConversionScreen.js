@@ -105,7 +105,8 @@ const ConversionScreen = () => {
           borderWidth: Settings.BORDER_WIDTH,
           borderColor: Settings.getStrokeColor(theme),
           margin: Settings.CARD_PADDING,
-          padding: Settings.PADDING,
+          // perfect size using diff between the lineHeight and size of font
+          padding: Settings.CARD_PADDING * 2 - (34 - 28) / 2,
           backgroundColor: Settings.getContentColor(theme),
         }}
       >

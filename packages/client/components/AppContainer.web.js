@@ -40,8 +40,8 @@ const AppContainer = ({ rates, processedAt }) => {
           padding: Settings.CARD_PADDING,
           alignSelf: 'center',
           // fixed size required by social notifier
-          height: AmbitoDolar.WEB_VIEWPORT_SIZE,
-          width: AmbitoDolar.WEB_VIEWPORT_SIZE,
+          width: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_WIDTH,
+          height: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_HEIGHT,
         }}
       >
         <View

@@ -36,7 +36,10 @@ const DeveloperScreen = ({ navigation }) => {
           chevron={false}
           onAction={() => {
             navigation.navigate(Settings.INITIAL_ROUTE_NAME, {
-              screen: Settings.INITIAL_ROUTE_NAME,
+              screen: 'Rates',
+              /* params: {
+                screen: 'Rates',
+              }, */
             });
           }}
         />

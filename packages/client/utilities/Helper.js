@@ -236,7 +236,6 @@ export default {
   hasRates(rates) {
     const values = Object.values(rates || {});
     const rate_types = AmbitoDolar.getAvailableRateTypes();
-    // TODO: review the following condition
     if (values.length === rate_types.length) {
       return (
         values
