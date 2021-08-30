@@ -5,7 +5,7 @@
   "dependencies": {
     "@ambito-dolar/core": "^1.1.0",
     "@zeit/fetch": "^6.0.0",
-    "aws-sdk": "^2.978.0",
+    "aws-sdk": "^2.979.0",
     "chrome-aws-lambda": "~6.0",
     "expo-server-sdk": "^3.6.0",
     "file-type": "^16.5.3",
