@@ -28,6 +28,7 @@ const sns = new AWS.SNS({
 
 const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
 const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
+const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
 const MAX_NUMBER_OF_STATS = 7; // 1 week
 const S3_BUCKET = process.env.S3_BUCKET;
 // 2.1.x
@@ -37,6 +38,9 @@ const RATES_LEGACY_OBJECT_KEY = process.env.RATES_LEGACY_OBJECT_KEY;
 const HISTORICAL_RATES_LEGACY_OBJECT_KEY =
   'historical-' + RATES_LEGACY_OBJECT_KEY;
 // 5.x
+const RATES_V5_OBJECT_KEY = process.env.RATES_V5_OBJECT_KEY;
+const HISTORICAL_RATES_V5_OBJECT_KEY = 'historical-' + RATES_V5_OBJECT_KEY;
+// 6.x
 const RATES_OBJECT_KEY = process.env.RATES_OBJECT_KEY;
 const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
 
@@ -138,7 +142,12 @@ const fetch = (url, opts) => Fetch()(url, opts);
 const isSemverLt = (v1, v2) => semverLt(v1, v2);
 
 const getVariationThreshold = (type) => {
-  if (type === AmbitoDolar.CCL_TYPE || type === AmbitoDolar.MEP_TYPE) {
+  const realtime_types = [
+    AmbitoDolar.CCL_TYPE,
+    AmbitoDolar.MEP_TYPE,
+    AmbitoDolar.CCB_TYPE,
+  ];
+  if (realtime_types.includes(type)) {
     return 0.75;
   }
   return 0;
@@ -291,14 +300,16 @@ const storeRatesJsonObject = async (rates, is_updated) => {
     {}
   );
   return Promise.all([
-    // save rates in old-style (v1)
     is_updated && storeRateStats(rates.rates),
-    // save rates (v2)
-    storePublicJsonObject(RATES_OBJECT_KEY, rates),
     storePublicJsonObject(RATES_LEGACY_OBJECT_KEY, {
       ...rates,
       rates: legacy_rates,
     }),
+    storePublicJsonObject(RATES_V5_OBJECT_KEY, {
+      ...rates,
+      rates: _.omit(rates.rates, [AmbitoDolar.CCB_TYPE]),
+    }),
+    storePublicJsonObject(RATES_OBJECT_KEY, rates),
     // save historical rates
     is_updated && storeHistoricalRatesJsonObject(rates),
   ]);
@@ -335,7 +346,7 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
         );
         return include;
       })
-      // leave new rate without hash
+      // leave new rate without rate open and hash
       .concat(stats.map((stat) => _.take(stat, 3)));
   });
   const legacy_rates = Object.entries(base_rates || {}).reduce(
@@ -353,8 +364,12 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
     {}
   );
   return Promise.all([
-    storePublicJsonObject(HISTORICAL_RATES_OBJECT_KEY, base_rates),
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
+    storePublicJsonObject(
+      HISTORICAL_RATES_V5_OBJECT_KEY,
+      _.omit(base_rates, [AmbitoDolar.CCB_TYPE])
+    ),
+    storePublicJsonObject(HISTORICAL_RATES_OBJECT_KEY, base_rates),
   ]);
 };
 
@@ -377,6 +392,8 @@ const getDataProviderForRate = (type) => {
     return 'Rava Bursátil';
   } else if (type === AmbitoDolar.FUTURE_TYPE) {
     return 'ROFEX';
+  } else if (type === AmbitoDolar.CCB_TYPE) {
+    return 'CriptoYa';
   }
   return 'Ámbito Financiero';
 };
@@ -407,6 +424,8 @@ const getHistoricalRateUrl = (type) => {
     path,
   });
 };
+
+const getCryptoRatesUrl = () => process.env.CRYPTO_RATES_URL;
 
 const getSocialScreenshotUrl = (title) => {
   return _.template(process.env.SOCIAL_SCREENSHOT_URL)({
@@ -531,8 +550,8 @@ const triggerSendSocialNotificationsEvent = async (caption, image_url) => {
   });
 };
 
-const storePublicBase64ImageFile = async (image) => {
-  return fetch('https://api.imgur.com/3/image', {
+const storeImgurFile = async (image) =>
+  fetch('https://api.imgur.com/3/image', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
@@ -545,7 +564,35 @@ const storePublicBase64ImageFile = async (image) => {
   }).then(async (response) => {
     if (response.ok) {
       const { data } = await response.json();
-      return data;
+      return data.link;
+    }
+    throw Error(response.statusText);
+  });
+
+const storeImgbbFile = async (image) => {
+  const params = {
+    key: process.env.IMGBB_KEY,
+    image,
+  };
+  const body = Object.entries(params)
+    .reduce(
+      (obj, [key, value]) => [
+        ...obj,
+        encodeURIComponent(key) + '=' + encodeURIComponent(value),
+      ],
+      []
+    )
+    .join('&');
+  return fetch('https://api.imgbb.com/1/upload', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+    },
+    body,
+  }).then(async (response) => {
+    if (response.ok) {
+      const { data } = await response.json();
+      return data.url;
     }
     throw Error(response.statusText);
   });
@@ -574,17 +621,20 @@ const Shared = {
   getDataProviderForRate,
   getRateUrl,
   getHistoricalRateUrl,
+  getCryptoRatesUrl,
   getSocialScreenshotUrl,
   getExpoClient,
   triggerNotifyEvent,
   triggerSocialNotifyEvent,
   triggerSendSocialNotificationsEvent,
-  storePublicBase64ImageFile,
+  storeImgurFile,
+  storeImgbbFile,
 };
 
 module.exports = {
   Shared,
   MIN_CLIENT_VERSION_FOR_MEP,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
+  MIN_CLIENT_VERSION_FOR_CCB,
   MAX_NUMBER_OF_STATS,
 };

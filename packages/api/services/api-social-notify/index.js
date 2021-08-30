@@ -23,8 +23,7 @@ const getPuppeteerOptions = async () => {
   };
 };
 
-// TODO: use microlink.io instead of local puppeteer (???)
-// https://github.com/MaximeHeckel/carbonara/blob/master/api/_lib/screenshot.ts
+// TODO: use microlink.io instead of puppeteer (???)
 const generateScreenshot = async (type, title) => {
   const start_time = Date.now();
   const screenshot_url = Shared.getSocialScreenshotUrl(title);
@@ -32,8 +31,10 @@ const generateScreenshot = async (type, title) => {
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   await page.setViewport({
-    width: AmbitoDolar.WEB_VIEWPORT_SIZE,
-    height: AmbitoDolar.WEB_VIEWPORT_SIZE,
+    width: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_WIDTH,
+    // TODO: leave until v6 release
+    height: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_WIDTH,
+    // height: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_HEIGHT,
     deviceScaleFactor: 2,
   });
   await page.emulateTimezone(AmbitoDolar.TIMEZONE);
@@ -48,8 +49,8 @@ const generateScreenshot = async (type, title) => {
     type: image_type,
   });
   await page.setViewport({
-    width: AmbitoDolar.WEB_VIEWPORT_SIZE,
-    height: AmbitoDolar.WEB_VIEWPORT_STORY_HEIGHT,
+    width: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_WIDTH,
+    height: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_STORY_HEIGHT,
     deviceScaleFactor: 2,
   });
   const story_file = await page.screenshot({
@@ -57,16 +58,14 @@ const generateScreenshot = async (type, title) => {
   });
   await browser.close();
   const duration = (Date.now() - start_time) / 1000;
-  // store image using imgur
-  /* const { link: target_url } = await Shared.storePublicBase64ImageFile(
-    file.toString('base64')
-  ); */
-  // store image on s3
-  const key = `rate-images/${AmbitoDolar.getTimezoneDate().format()}-${type}`;
+  // image hosting service
+  const target_url = await Shared.storeImgbbFile(file.toString('base64'));
+  // s3
+  /* const key = `rate-images/${AmbitoDolar.getTimezoneDate().format()}-${type}`;
   const { Location: target_url } = await Shared.storePublicFileObject(
     key,
     file
-  );
+  ); */
   console.info(
     'Screenshot completed',
     JSON.stringify({

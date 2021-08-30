@@ -5,6 +5,7 @@ const {
   Shared,
   MIN_CLIENT_VERSION_FOR_MEP,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
+  MIN_CLIENT_VERSION_FOR_CCB,
 } = require('../../lib/shared');
 
 const client = Shared.getDynamoDBClient();
@@ -100,6 +101,9 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_WHOLESALER)) {
           delete rates_for_settings[AmbitoDolar.WHOLESALER_TYPE];
         }
+        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_CCB)) {
+          delete rates_for_settings[AmbitoDolar.CCB_TYPE];
+        }
         const body = getBodyMessage(rates_for_settings);
         if (body) {
           return getMessage({
@@ -182,6 +186,8 @@ const notify = async (
     } else {
       // uses getRates when NOTIFICATION_CLOSE_TYPE
       rates = rates || (await Shared.getRates());
+      // TODO: remove AmbitoDolar.CCB_TYPE from rates until v6 release
+      delete rates[AmbitoDolar.CCB_TYPE];
       // useful for holidays when NOTIFICATION_CLOSE_TYPE
       const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
       if (has_rates_from_today) {

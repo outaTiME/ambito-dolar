@@ -17,6 +17,7 @@ numeral.locale(chosenLocale);
 // constants
 
 const TIMEZONE = 'America/Argentina/Buenos_Aires';
+
 const OFFICIAL_TYPE = 'oficial';
 const INFORMAL_TYPE = 'informal';
 const TOURIST_TYPE = 'turista';
@@ -25,13 +26,19 @@ const CCL_LEGACY_TYPE = 'cl';
 const MEP_TYPE = 'mep';
 const FUTURE_TYPE = 'futuro';
 const WHOLESALER_TYPE = 'mayorista';
+const CCB_TYPE = 'ccb';
+
 const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
 const NOTIFICATION_VARIATION_TYPE = 'variation';
 
-// must be proportional to 1080x1920 (IG feed and story)
-const WEB_VIEWPORT_SIZE = 630;
-const WEB_VIEWPORT_STORY_HEIGHT = 1120;
+// Square: 1080 x 1080 pixels, 1:1 aspect ratio
+// Portrait: 1080 x 1350 pixels, 4:5 aspect ratio
+// Portrait IGTV: 1080 x 1920 pixels, 9:16 aspect ratio
+
+const WEB_VIEWPORT_PORTRAIT_WIDTH = 630;
+const WEB_VIEWPORT_PORTRAIT_HEIGHT = 787.5;
+const WEB_VIEWPORT_PORTRAIT_STORY_HEIGHT = 1120;
 
 const getCapitalized = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -150,6 +157,7 @@ const getAvailableRateTypes = () => [
   MEP_TYPE,
   // FUTURE_TYPE,
   WHOLESALER_TYPE,
+  CCB_TYPE,
 ];
 
 const getRateTitle = (type) => {
@@ -168,6 +176,8 @@ const getRateTitle = (type) => {
     return 'Futuro';
   } else if (type === WHOLESALER_TYPE) {
     return 'Mayorista';
+  } else if (type === CCB_TYPE) {
+    return 'CCB';
   }
 };
 
@@ -221,11 +231,13 @@ module.exports = {
   MEP_TYPE,
   FUTURE_TYPE,
   WHOLESALER_TYPE,
+  CCB_TYPE,
   NOTIFICATION_OPEN_TYPE,
   NOTIFICATION_CLOSE_TYPE,
   NOTIFICATION_VARIATION_TYPE,
-  WEB_VIEWPORT_SIZE,
-  WEB_VIEWPORT_STORY_HEIGHT,
+  WEB_VIEWPORT_PORTRAIT_WIDTH,
+  WEB_VIEWPORT_PORTRAIT_HEIGHT,
+  WEB_VIEWPORT_PORTRAIT_STORY_HEIGHT,
   getCapitalized,
   getDate,
   getTimezoneDate,

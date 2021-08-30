@@ -30,12 +30,15 @@
     "IG_PASSWORD": "@ig-ambito-dolar-password",
     "SNS_TOPIC": "@sns-ambito-dolar-topic",
     "RATE_URL": "@rate-ambito-dolar-url",
+    "CRYPTO_RATES_URL": "@crypto-rates-ambito-dolar-url",
     "HISTORICAL_RATE_URL": "@historical-rate-ambito-dolar-url",
     "S3_BUCKET": "@s3-ambito-dolar-bucket",
     "RATE_STATS_OBJECT_KEY": "@rate-stats-ambito-dolar-object-key",
     "RATES_LEGACY_OBJECT_KEY": "@rates-legacy-ambito-dolar-object-key",
+    "RATES_V5_OBJECT_KEY": "@rates-v5-ambito-dolar-object-key",
     "RATES_OBJECT_KEY": "@rates-ambito-dolar-object-key",
     "SOCIAL_SCREENSHOT_URL": "@social-screenshot-ambito-dolar-url",
-    "IMGUR_CLIENT_ID": "@imgur-ambito-dolar-client-id"
+    "IMGUR_CLIENT_ID": "@imgur-ambito-dolar-client-id",
+    "IMGBB_KEY": "@imgbb-ambito-dolar-key"
   }
 }

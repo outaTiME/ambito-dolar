@@ -5,20 +5,20 @@ const hash = require('object-hash');
 
 const { Shared, MAX_NUMBER_OF_STATS } = require('../../lib/shared');
 
-const getRateHash = (rate) => hash(rate, { algorithm: 'md5' });
+const getRateValue = (rate_last) => _.max([].concat(rate_last));
 
-const getRate = (type) => {
-  return new Promise((resolve) => {
+const getRate = (type) =>
+  new Promise((resolve) => {
     const url = Shared.getRateUrl(type);
     Shared.fetch(url)
       .then(async (response) => {
         const data = await response.json();
         // validate
-        // https://hapi.dev/module/joi/tester/
+        // https://joi.dev/tester/
         const schema = Joi.object()
           .keys({
             fecha: Joi.string().required(),
-            variacion: Joi.string().required(),
+            // variacion: Joi.string().required(),
             compra: Joi.string().required(),
             venta: Joi.string().required(),
             // only when TOURIST_TYPE / CCL_TYPE / MEP_TYPE
@@ -29,23 +29,21 @@ const getRate = (type) => {
         if (error) {
           // log error and continue processing
           console.warn(
-            'Invalid schema validation',
+            'Invalid schema validation on rate',
             JSON.stringify({ type, data, error: error.message })
           );
           resolve();
         } else {
-          const rate = [
-            value.valor
-              ? AmbitoDolar.getNumber(value.valor)
-              : [
-                  AmbitoDolar.getNumber(value.compra),
-                  AmbitoDolar.getNumber(value.venta),
-                ],
-            AmbitoDolar.getPercentNumber(value.variacion),
-          ];
+          const identity = value.fecha;
+          const rate_last = value.valor
+            ? AmbitoDolar.getNumber(value.valor)
+            : [
+                AmbitoDolar.getNumber(value.compra),
+                AmbitoDolar.getNumber(value.venta),
+              ];
           const result = {
             type,
-            rate: [...rate, getRateHash([value.fecha, rate])],
+            rate: [identity, rate_last],
           };
           resolve(result);
         }
@@ -59,18 +57,59 @@ const getRate = (type) => {
         resolve();
       });
   });
-};
 
-const getHistoricalRate = (type, rate, { max, max_date }) => {
+const getCryptoRates = (type) =>
+  new Promise((resolve) => {
+    const url = Shared.getCryptoRatesUrl();
+    Shared.fetch(url)
+      .then(async (response) => {
+        const data = await response.json();
+        // validate
+        // https://joi.dev/tester/
+        const schema = Joi.object()
+          .keys({
+            [AmbitoDolar.CCB_TYPE]: Joi.number().required(),
+            time: Joi.number().integer().default(Date.now),
+          })
+          .unknown(true);
+        const { value, error } = schema.validate(data);
+        if (error) {
+          // log error and continue processing
+          console.warn(
+            'Invalid schema validation on crypto rates',
+            JSON.stringify({ type, data, error: error.message })
+          );
+          resolve();
+        } else {
+          const identity = value.time;
+          const rate_last = AmbitoDolar.getNumber(value[type]);
+          const result = {
+            type,
+            rate: [identity, rate_last],
+          };
+          resolve(result);
+        }
+      })
+      .catch((error) => {
+        // log error and continue processing
+        console.warn(
+          'Unable to fetch crypto rates',
+          JSON.stringify({ type, error: error.message })
+        );
+        resolve();
+      });
+  });
+
+const getHistoricalRate = (type, rate, { max = 0, max_date }) => {
   // initial fix
-  if (max === undefined) {
+  /* if (max === undefined) {
     return new Promise((resolve) => {
       const url = Shared.getHistoricalRateUrl(type);
       Shared.fetch(url)
         .then(async (response) => {
           const data = await response.json();
           // validate
-          // https://hapi.dev/module/joi/tester/
+          // https://joi.dev/tester/
           const schema = Joi.object()
             .keys({
               maximo: Joi.string().required(),
@@ -109,9 +148,9 @@ const getHistoricalRate = (type, rate, { max, max_date }) => {
           resolve();
         });
     });
-  }
+  } */
   // in-memory calculation
-  const value = _.max([].concat(rate[1]));
+  const value = getRateValue(rate[1]);
   if (value > max) {
     const result = {
       type,
@@ -134,35 +173,35 @@ const getObjectRates = (arr) =>
     return obj;
   }, {});
 
-const getRates = () =>
-  Promise.all([
-    getRate(AmbitoDolar.OFFICIAL_TYPE),
-    getRate(AmbitoDolar.TOURIST_TYPE),
-    getRate(AmbitoDolar.INFORMAL_TYPE),
-    // getRate(AmbitoDolar.FUTURE_TYPE),
-    getRate(AmbitoDolar.WHOLESALER_TYPE),
-  ]).then(getObjectRates);
-
-const getRealtimeRates = () =>
-  Promise.all([
-    getRate(AmbitoDolar.CCL_TYPE),
-    getRate(AmbitoDolar.MEP_TYPE),
-  ]).then(getObjectRates);
-
-const getHistoricalRates = (rates, base_rates) =>
-  Promise.all(
-    Object.entries(rates).map(([type, rate]) =>
-      getHistoricalRate(type, rate, base_rates[type])
-    )
-  ).then(getObjectRates);
+const getRateHash = (rate) => hash(rate, { algorithm: 'md5' });
 
 const getNewRates = (rates, new_rates) =>
-  Object.entries(new_rates).reduce((obj, [type, new_rate]) => {
-    // remove timestamp
-    const rate = _.tail(rates[type] || []);
-    // hash compare
-    if (new_rate[2] !== rate[2]) {
-      obj[type] = [AmbitoDolar.getTimezoneDate().format(), ...new_rate];
+  Object.entries(new_rates).reduce((obj, [type, [identity, rate_last]]) => {
+    // TODO: rate_last maybe excluded from hash for realtime rates
+    const rate_hash = getRateHash([identity, rate_last]);
+    // handle initial fix
+    const rate = rates[type];
+    // detect rate update using hash compare
+    if (rate_hash !== _.last(rate)) {
+      const rate_last_max = getRateValue(rate_last);
+      // get close rate when first rate of day (open)
+      const rate_open = rate
+        ? AmbitoDolar.isRateFromToday(rate)
+          ? rate[3]
+          : getRateValue(rate[1])
+        : rate_last_max;
+      // calculate from open / close rate
+      const rate_change_percent = AmbitoDolar.getNumber(
+        (rate_last_max / rate_open - 1) * 100.0
+      );
+      const new_rate = [
+        AmbitoDolar.getTimezoneDate().format(),
+        rate_last,
+        rate_change_percent,
+        rate_open,
+        rate_hash,
+      ];
+      obj[type] = new_rate;
       console.info(
         'Rate updated',
         JSON.stringify({
@@ -171,11 +210,44 @@ const getNewRates = (rates, new_rates) =>
           new: new_rate,
         })
       );
+    } else {
+      console.info(
+        'Rate not updated',
+        JSON.stringify({
+          type,
+        })
+      );
     }
     return obj;
   }, {});
 
-// TODO: remove hash from rates to reduce logging on trigger?
+const getRates = (rates) =>
+  Promise.all([
+    getRate(AmbitoDolar.OFFICIAL_TYPE),
+    getRate(AmbitoDolar.TOURIST_TYPE),
+    getRate(AmbitoDolar.INFORMAL_TYPE),
+    // updated on holidays, maybe it will be used later
+    // getRate(AmbitoDolar.FUTURE_TYPE),
+    getRate(AmbitoDolar.WHOLESALER_TYPE),
+  ])
+    .then(getObjectRates)
+    .then((new_rates) => getNewRates(rates, new_rates));
+
+const getRealtimeRates = (rates) =>
+  Promise.all([
+    getRate(AmbitoDolar.CCL_TYPE),
+    getRate(AmbitoDolar.MEP_TYPE),
+    getCryptoRates(AmbitoDolar.CCB_TYPE),
+  ])
+    .then(getObjectRates)
+    .then((new_rates) => getNewRates(rates, new_rates));
+
+const getHistoricalRates = (rates, base_rates) =>
+  Promise.all(
+    Object.entries(rates).map(([type, rate]) =>
+      getHistoricalRate(type, rate, base_rates[type])
+    )
+  ).then(getObjectRates);
 
 const notifyUpdates = (rates, has_rates_from_today, new_rates) => {
   const notifications = [];
@@ -242,7 +314,7 @@ export default async (req, res) => {
     // has rates when processing
     const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
     // leave new rates only (for realtime too)
-    const new_rates = getNewRates(rates, await getRates());
+    const new_rates = await getRates(rates);
     // took realtimes
     const in_time =
       AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
@@ -253,7 +325,7 @@ export default async (req, res) => {
       // on business day between REALTIME_PROCESSING_INTERVAL ticks
       (has_rates_from_today && in_time)
     ) {
-      const new_realtime_rates = getNewRates(rates, await getRealtimeRates());
+      const new_realtime_rates = await getRealtimeRates(rates);
       Object.assign(new_rates, new_realtime_rates);
     }
     const has_new_rates = !_.isEmpty(new_rates);
@@ -265,7 +337,7 @@ export default async (req, res) => {
         const stats = (((base_rates.rates || {})[type] || {}).stats || [])
           .reduce((obj, stat) => {
             if (!moment_rate.isSame(stat[0], 'day')) {
-              // leave hash only on new_rate to reduce the file size
+              // leave rate open and hash only on new_rate to reduce the file size
               obj.push(_.take(stat, 3));
             }
             return obj;
