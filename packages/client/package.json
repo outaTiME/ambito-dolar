@@ -73,7 +73,7 @@
     "sentry-expo": "^4.0.0",
     "styled-components": "^5.3.1",
     "swr": "^1.0.0",
-    "victory": "^35.11.0",
+    "victory": "^35.11.2",
     "victory-native": "^35.5.4"
   },
   "devDependencies": {
