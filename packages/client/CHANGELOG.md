@@ -13,11 +13,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * use the lineHeight of the largeTitle for the textinput of the conversion screen ([7594d1a](https://github.com/outaTiME/ambito-dolar/commit/7594d1a9364f1650b1eaa6310a37a78efdee106b))
 
 
-### chore
-
-* bump client build number for major release ([7c9693a](https://github.com/outaTiME/ambito-dolar/commit/7c9693a224e741c8ff3bea55f4e291400f8b4a40))
-
-
 ### Features
 
 * update react navigation to v6 and bump dependencies ([ab86e7d](https://github.com/outaTiME/ambito-dolar/commit/ab86e7d34b2c21a56f3ff192d4c1fab94bc849e9))
