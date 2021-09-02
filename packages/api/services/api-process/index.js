@@ -242,50 +242,66 @@ const getHistoricalRates = (rates, base_rates) =>
     )
   ).then(getObjectRates);
 
-const notifyUpdates = (rates, has_rates_from_today, new_rates) => {
+const notify = (
+  close_day,
+  rates,
+  has_rates_from_today,
+  new_rates,
+  has_new_rates
+) => {
   const notifications = [];
-  if (!has_rates_from_today) {
+  if (close_day !== undefined) {
     notifications.push([
-      AmbitoDolar.NOTIFICATION_OPEN_TYPE,
+      AmbitoDolar.NOTIFICATION_CLOSE_TYPE,
       {
         ...rates,
         ...new_rates,
       },
     ]);
-  } else {
-    // join variations in a single notification
-    const variation_rates = Object.entries(new_rates).reduce(
-      (obj, [type, rate]) => {
-        const prev_rate = rates[type];
-        if (prev_rate) {
-          const prev_rate_last = getRateValue(prev_rate[1]);
-          const rate_last = getRateValue(rate[1]);
-          const value_diff = Math.abs(prev_rate_last - rate_last);
-          const rate_threshold = Shared.getVariationThreshold(type);
-          if (value_diff !== 0 && value_diff >= rate_threshold) {
+  } else if (has_new_rates) {
+    if (!has_rates_from_today) {
+      notifications.push([
+        AmbitoDolar.NOTIFICATION_OPEN_TYPE,
+        {
+          ...rates,
+          ...new_rates,
+        },
+      ]);
+    } else {
+      const variation_rates = Object.entries(new_rates).reduce(
+        (obj, [type, rate]) => {
+          const prev_rate = rates[type];
+          if (prev_rate) {
+            const prev_rate_last = getRateValue(prev_rate[1]);
+            const rate_last = getRateValue(rate[1]);
+            const value_diff = Math.abs(prev_rate_last - rate_last);
+            const rate_threshold = Shared.getVariationThreshold(type);
             console.info(
-              'Rate variation detected',
+              'Looking for rate variation to notify',
               JSON.stringify({
                 type,
                 diff: value_diff,
                 threshold: rate_threshold,
               })
             );
-            // variation found
-            obj[type] = rate;
+            if (value_diff !== 0 && value_diff >= rate_threshold) {
+              // variation found
+              obj[type] = rate;
+            }
+          } else {
+            // ignore
           }
-        } else {
-          // ignore
-        }
-        return obj;
-      },
-      {}
-    );
-    if (!_.isEmpty(variation_rates)) {
-      notifications.push([
-        AmbitoDolar.NOTIFICATION_VARIATION_TYPE,
-        variation_rates,
-      ]);
+          return obj;
+        },
+        {}
+      );
+      if (!_.isEmpty(variation_rates)) {
+        // join variations in a single notification
+        notifications.push([
+          AmbitoDolar.NOTIFICATION_VARIATION_TYPE,
+          variation_rates,
+        ]);
+      }
     }
   }
   return Promise.all(
@@ -299,14 +315,17 @@ const notifyUpdates = (rates, has_rates_from_today, new_rates) => {
 };
 
 // in minutes
-const REALTIME_PROCESSING_INTERVAL = 30;
+const REALTIME_PROCESSING_INTERVAL = 15;
 
 export default async (req, res) => {
   try {
     // assertions
     Shared.assertAuthenticated(req);
     // process
-    const { notify = req.query.notify } = req.body || {};
+    const {
+      notify: trigger_notification = req.query.notify,
+      close: close_day = req.query.close,
+    } = req.body || {};
     const base_rates = await Shared.getRatesJsonObject().catch((error) => {
       if (error.code === 'NoSuchKey') {
         return {};
@@ -385,8 +404,14 @@ export default async (req, res) => {
     }
     await Shared.putFirebaseData('processed_at', base_rates.processed_at);
     // notifications should occur after saving json files
-    if (has_new_rates && notify !== undefined) {
-      await notifyUpdates(rates, has_rates_from_today, new_rates);
+    if (trigger_notification !== undefined) {
+      await notify(
+        close_day,
+        rates,
+        has_rates_from_today,
+        new_rates,
+        has_new_rates
+      );
     }
     Shared.serviceResponse(res, 200, new_rates);
   } catch (error) {
