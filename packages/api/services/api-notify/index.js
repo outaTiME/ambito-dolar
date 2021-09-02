@@ -268,30 +268,28 @@ const notify = async (
       );
       // save tickets to aws
       const notification_date = AmbitoDolar.getTimezoneDate().format();
-      try {
-        await Promise.all([
-          client
-            .put({
-              TableName: 'ambito-dolar-notifications',
-              Item: {
-                date: notification_date,
-                type,
-                rates,
-                tickets: tickets.length,
-                duration: sending_duration,
-              },
-            })
-            .promise(),
-          Shared.storeTickets(notification_date, type, tickets),
-        ]);
-      } catch (error) {
+      await Promise.all([
+        client
+          .put({
+            TableName: 'ambito-dolar-notifications',
+            Item: {
+              date: notification_date,
+              type,
+              rates,
+              tickets: tickets.length,
+              duration: sending_duration,
+            },
+          })
+          .promise(),
+        Shared.storeTickets(notification_date, type, tickets),
+      ]).catch((error) => {
         console.warn(
           'Unable to store notification tickets',
           JSON.stringify({
             error: error.message,
           })
         );
-      }
+      });
     }
   } else {
     console.warn('No messages to send');
@@ -359,50 +357,29 @@ export default async (req, res) => {
         ExpressionAttributeValues: expression_attribute_values,
       }),
     };
-    const items = [];
-    const onScan = async (error, data) => {
-      if (error) {
-        throw error;
-      } else {
-        items.push(...data.Items);
-        // continue scanning if we have more items, because scan can retrieve a maximum of 1MB of data
-        if (typeof data.LastEvaluatedKey !== 'undefined') {
-          params.ExclusiveStartKey = data.LastEvaluatedKey;
-          client.scan(params, onScan);
-        } else {
-          // done
-          try {
-            const results = await notify(
-              items,
-              type,
-              {
-                message,
-                rates,
-              },
-              !installation_id && process.env.NODE_ENV === 'production'
-            );
-            const duration = (Date.now() - start_time) / 1000;
-            console.info(
-              'Completed',
-              JSON.stringify({
-                ...results,
-                duration,
-              })
-            );
-            Shared.serviceResponse(res, 200, {
-              ...results,
-              duration,
-            });
-          } catch (error) {
-            // FIXME: handle error as warning instead of reject to allow retry in SNS
-            throw error;
-          }
-        }
-      }
-    };
-    client.scan(params, onScan);
+    const items = await Shared.getAllDataFromDynamoDB(params);
+    const results = await notify(
+      items,
+      type,
+      {
+        message,
+        rates,
+      },
+      !installation_id && process.env.NODE_ENV === 'production'
+    );
+    const duration = (Date.now() - start_time) / 1000;
+    console.info(
+      'Completed',
+      JSON.stringify({
+        ...results,
+        duration,
+      })
+    );
+    Shared.serviceResponse(res, 200, {
+      ...results,
+      duration,
+    });
   } catch (error) {
-    console.error('Failed', error);
     Shared.serviceResponse(res, error.code || 400, {
       error: error.message,
     });

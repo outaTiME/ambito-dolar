@@ -114,6 +114,16 @@ const serviceResponse = (res, code, json) => res.status(code).json(json);
 
 const getDynamoDBClient = () => dynamoDBClient;
 
+const getAllDataFromDynamoDB = async (params, allData = []) => {
+  const data = await dynamoDBClient.scan(params).promise();
+  return data.LastEvaluatedKey
+    ? getAllDataFromDynamoDB(
+        { ...params, ExclusiveStartKey: data.LastEvaluatedKey },
+        [...allData, ...data['Items']]
+      )
+    : [...allData, ...data['Items']];
+};
+
 const assertAuthenticated = (req, payload) => {
   const token =
     req.headers['x-access-token'] ||
@@ -612,6 +622,7 @@ const Shared = {
   putFirebaseData,
   serviceResponse,
   getDynamoDBClient,
+  getAllDataFromDynamoDB,
   assertAuthenticated,
   assertPost,
   fetch,

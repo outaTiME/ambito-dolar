@@ -55,45 +55,49 @@ export default async (req, res) => {
       ExpressionAttributeValues: expression_attribute_values,
       ReturnValues: 'ALL_NEW',
     };
-    client.update(params, (error, { Attributes: data }) => {
-      if (error) {
-        console.error(
-          'Registration or interaction for the device failed',
-          JSON.stringify({
-            data: {
-              installation_id,
-              ...payload,
-            },
-            error: error.message,
-          })
-        );
-        throw error;
-      } else {
-        const { notification_settings: notificationSettings } = data;
-        const results = {
-          statusCode: 'success',
-          // send notification settings when empty on registration (initial or after purge)
-          ...(!payload.notification_settings &&
-            notificationSettings && {
-              notificationSettings,
-            }),
-        };
-        const { app_version } = payload;
-        if (
-          process.env.NODE_ENV === 'development' &&
-          app_version &&
-          Shared.isSemverLt(app_version, MIN_CLIENT_VERSION)
-        ) {
-          results.statusCode = 'update_app';
-          results.statusMessage = `Device with client version ${MIN_CLIENT_VERSION} or later is required`;
+    await client
+      .update(params)
+      .promise()
+      .then(
+        function ({ Attributes: data }) {
+          const { notification_settings: notificationSettings } = data;
+          const results = {
+            statusCode: 'success',
+            // send notification settings when empty on registration (initial or after purge)
+            ...(!payload.notification_settings &&
+              notificationSettings && {
+                notificationSettings,
+              }),
+          };
+          const { app_version } = payload;
+          if (
+            process.env.NODE_ENV === 'development' &&
+            app_version &&
+            Shared.isSemverLt(app_version, MIN_CLIENT_VERSION)
+          ) {
+            results.statusCode = 'update_app';
+            results.statusMessage = `Device with client version ${MIN_CLIENT_VERSION} or later is required`;
+          }
+          console.info(
+            'Registration or interaction for the device completed',
+            JSON.stringify(data)
+          );
+          Shared.serviceResponse(res, 200, results);
+        },
+        function (error) {
+          console.error(
+            'Registration or interaction for the device failed',
+            JSON.stringify({
+              data: {
+                installation_id,
+                ...payload,
+              },
+              error: error.message,
+            })
+          );
+          throw error;
         }
-        console.info(
-          'Registration or interaction for the device completed',
-          JSON.stringify(data)
-        );
-        Shared.serviceResponse(res, 200, results);
-      }
-    });
+      );
   } catch (error) {
     Shared.serviceResponse(res, error.code || 400, {
       error: error.message,

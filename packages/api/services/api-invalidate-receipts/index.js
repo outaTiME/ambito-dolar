@@ -133,36 +133,21 @@ export default async (req, res) => {
         '#notification_type': 'type',
       },
     };
-    const items = [];
-    const onScan = async (error, data) => {
-      if (error) {
-        throw error;
-      } else {
-        items.push(...data.Items);
-        // continue scanning if we have more items, because scan can retrieve a maximum of 1MB of data
-        if (typeof data.LastEvaluatedKey !== 'undefined') {
-          params.ExclusiveStartKey = data.LastEvaluatedKey;
-          client.scan(params, onScan);
-        } else {
-          // done
-          const tickets = await Promise.all(
-            items.map(({ date, type }) =>
-              Shared.getTickets(date, type).catch((error) => {
-                console.warn(
-                  'Unable to get notification tickets from bucket',
-                  JSON.stringify({ date, type, error: error.message })
-                );
-              })
-            )
-          ).then((data) =>
-            _.chain(data).flatten().compact().uniqBy('installation_id').value()
+    const items = await Shared.getAllDataFromDynamoDB(params);
+    const tickets = await Promise.all(
+      items.map(({ date, type }) =>
+        Shared.getTickets(date, type).catch((error) => {
+          console.warn(
+            'Unable to get notification tickets from bucket',
+            JSON.stringify({ date, type, error: error.message })
           );
-          const results = await check(tickets, readonly !== undefined);
-          Shared.serviceResponse(res, 200, results);
-        }
-      }
-    };
-    client.scan(params, onScan);
+        })
+      )
+    ).then((data) =>
+      _.chain(data).flatten().compact().uniqBy('installation_id').value()
+    );
+    const results = await check(tickets, readonly !== undefined);
+    Shared.serviceResponse(res, 200, results);
   } catch (error) {
     Shared.serviceResponse(res, error.code || 400, {
       error: error.message,

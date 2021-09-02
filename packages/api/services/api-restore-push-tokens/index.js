@@ -15,19 +15,7 @@ const reactivateDevice = async ({ installation_id, push_token }, _date) => {
     },
     ReturnValues: 'ALL_NEW',
   };
-  return new Promise((resolve, reject) => {
-    client
-      .update(params)
-      .promise()
-      .then(
-        function (data) {
-          resolve(data);
-        },
-        function (error) {
-          reject(error);
-        }
-      );
-  });
+  return client.update(params).promise();
 };
 
 const check = async ({ tickets }, date, readonly) => {
@@ -79,24 +67,9 @@ export default async (req, res) => {
         '#notification_date': 'date',
       },
     };
-    const items = [];
-    const onScan = async (error, data) => {
-      if (error) {
-        throw error;
-      } else {
-        items.push(...data.Items);
-        // continue scanning if we have more items, because scan can retrieve a maximum of 1MB of data
-        if (typeof data.LastEvaluatedKey !== 'undefined') {
-          params.ExclusiveStartKey = data.LastEvaluatedKey;
-          client.scan(params, onScan);
-        } else {
-          // done
-          const results = await check(items[0], date, readonly !== undefined);
-          Shared.serviceResponse(res, 200, results);
-        }
-      }
-    };
-    client.scan(params, onScan);
+    const items = await Shared.getAllDataFromDynamoDB(params);
+    const results = await check(items[0], date, readonly !== undefined);
+    Shared.serviceResponse(res, 200, results);
   } catch (error) {
     Shared.serviceResponse(res, error.code || 400, {
       error: error.message,

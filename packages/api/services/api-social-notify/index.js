@@ -240,7 +240,6 @@ export default async (req, res) => {
       throw new Error('No data available');
     } */
   } catch (error) {
-    console.error('Failed', error);
     Shared.serviceResponse(res, error.code || 400, {
       error: error.message,
     });
