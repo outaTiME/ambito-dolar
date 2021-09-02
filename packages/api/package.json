@@ -1,7 +1,7 @@
 {
   "name": "@ambito-dolar/api",
   "private": true,
-  "version": "1.5.1",
+  "version": "1.6.0",
   "dependencies": {
     "@ambito-dolar/core": "^1.1.0",
     "@zeit/fetch": "^6.0.0",

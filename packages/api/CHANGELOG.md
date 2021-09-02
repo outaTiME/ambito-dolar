@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.5.1...@ambito-dolar/api@1.6.0) (2021-09-02)
+
+
+### Features
+
+* increase processing interval for realtime rates and trigger notifications from one place ([e76e07f](https://github.com/outaTiME/ambito-dolar/commit/e76e07fe8e019019fdd3c9fe1236f8b6d165ef44))
+* use of promises on aws-sdk queries for better error handling ([2c42f4b](https://github.com/outaTiME/ambito-dolar/commit/2c42f4b44af1caf4252b9d980963b0529f4e1ec2))
+
+
+
+
+
 ## [1.5.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.5.0...@ambito-dolar/api@1.5.1) (2021-08-30)
 
 
