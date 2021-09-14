@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.6.0...@ambito-dolar/api@1.7.0) (2021-09-14)
+
+
+### Features
+
+* improvement in the way push notifications are sent to Expo ([0e1f3dd](https://github.com/outaTiME/ambito-dolar/commit/0e1f3ddca0bb50612a4aef3f859aaf1aeaaffb5c))
+
+
+
+
+
 # [1.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.5.1...@ambito-dolar/api@1.6.0) (2021-09-02)
 
 
