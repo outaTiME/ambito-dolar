@@ -213,7 +213,7 @@ const notify = async (
           ...(await getMessagesFromCurrentRate(items, type, rates))
         );
       } else {
-        console.warn('No rates today for notification');
+        console.warn('No day rates for notification');
       }
     }
     const expo_start_time = Date.now();
@@ -226,43 +226,53 @@ const notify = async (
     if (messages.length > 0) {
       const expo = Shared.getExpoClient();
       // https://github.com/expo/expo-server-sdk-node/blob/master/src/ExpoClient.ts#L20
-      const chunks = expo.chunkPushNotifications(
-        // create messages array without (internal) source
-        messages.map((message) => _.omit(message, 'source'))
-      );
+      const chunks = expo.chunkPushNotifications(messages);
+      const failedChunks = [];
+      // FIXME: how to prevent "504 Gateway Time-out" errors?
       // concurrent requests using maxConcurrentRequests opt
       tickets.push(
         ...(await Promise.all(
-          chunks.map((chunk) => expo.sendPushNotificationsAsync(chunk))
-        )
-          // same order as input
-          .then((ticketChunks) => ticketChunks.flat())
-          .then((tickets) =>
-            tickets.map((ticket, index) => {
-              const { title, body: message, source } = messages[index];
-              return {
-                ...ticket,
-                title,
-                message,
-                ...source,
-              };
-            })
-          )
-          .catch((error) => {
-            console.error(
-              'Unable to send messages',
-              JSON.stringify({
-                error: error.message,
+          chunks.map((chunk) =>
+            expo
+              .sendPushNotificationsAsync(
+                // remove source from message
+                chunk.map((message) => _.omit(message, 'source'))
+              )
+              .then((tickets) =>
+                // same order as input
+                tickets.map((ticket, index) => {
+                  const { title, body: message, source } = chunk[index];
+                  return {
+                    ...ticket,
+                    title,
+                    message,
+                    ...source,
+                  };
+                })
+              )
+              .catch(() => {
+                // ignore when error
+                /* console.warn(
+                  'Unable to send the chunk of messages',
+                  JSON.stringify({
+                    chunk: index,
+                    error: error.message,
+                  })
+                ); */
+                failedChunks.push(chunk);
               })
-            );
-            throw error;
-          }))
+          )
+        ).then((ticketChunks) => _.compact(ticketChunks.flat())))
       );
       const sending_duration = (Date.now() - expo_start_time) / 1000;
       console.info(
         'Sent messages',
         JSON.stringify({
-          amount: `${tickets.length} (${AmbitoDolar.getBytes(chunks)})`,
+          chunks: chunks.length,
+          ...(failedChunks.length > 0 && {
+            failed: `${failedChunks.flat().length} (${failedChunks.length})`,
+          }),
+          tickets: tickets.length,
           duration: sending_duration,
         })
       );
@@ -284,7 +294,7 @@ const notify = async (
         Shared.storeTickets(notification_date, type, tickets),
       ]).catch((error) => {
         console.warn(
-          'Unable to store notification tickets',
+          'Unable to store the notification tickets',
           JSON.stringify({
             error: error.message,
           })

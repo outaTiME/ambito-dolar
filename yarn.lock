@@ -11,11 +11,11 @@ __metadata:
   dependencies:
     "@ambito-dolar/core": ^1.1.0
     "@zeit/fetch": ^6.0.0
-    aws-sdk: ^2.982.0
+    aws-sdk: ^2.989.0
     chrome-aws-lambda: ~6.0
     expo-server-sdk: ^3.6.0
     file-type: ^16.5.3
-    google-auth-library: ^7.9.0
+    google-auth-library: ^7.9.1
     instagram-private-api: ~1.42
     joi: ^17.4.2
     lodash: ^4.17.21
@@ -7866,9 +7866,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.982.0":
-  version: 2.982.0
-  resolution: "aws-sdk@npm:2.982.0"
+"aws-sdk@npm:^2.989.0":
+  version: 2.989.0
+  resolution: "aws-sdk@npm:2.989.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -7879,7 +7879,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: 899dabfc5a840d7e2f6b3ff986435dc8f00365967965e84a2341682d17f1a6b4e6b378ab7d8b86845450b7d0e25b8670981dff7799852434b60527f60a7d4291
+  checksum: 56245fba13e01649efcacd263aafb69d463acb3b60261cd7155574a8ad5c1c3c1f54c981820df7d312248a8f21cd5dff32d4886a7891c461ee4f3fcaaa1ea0de
   languageName: node
   linkType: hard
 
@@ -15683,9 +15683,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"google-auth-library@npm:^7.9.0":
-  version: 7.9.0
-  resolution: "google-auth-library@npm:7.9.0"
+"google-auth-library@npm:^7.9.1":
+  version: 7.9.1
+  resolution: "google-auth-library@npm:7.9.1"
   dependencies:
     arrify: ^2.0.0
     base64-js: ^1.3.0
@@ -15696,7 +15696,7 @@ fsevents@~2.3.2:
     gtoken: ^5.0.4
     jws: ^4.0.0
     lru-cache: ^6.0.0
-  checksum: 681ea41d5af3981bbf0890d5fb00c6150b4364612bec0bdc6f2247732d57470adf5ade961d77c45b400d47a2ed4dafae5fcc6134018d5d688368fbdd53c67c3b
+  checksum: b971e50eb86501f1de197d68b51eba8fcda4ce95cc4a7a553d0a118beaa4037cdc36101ed936059878d76d49dc68d62d7c22f537b58d4cef5ca2cba37ef63091
   languageName: node
   linkType: hard
 

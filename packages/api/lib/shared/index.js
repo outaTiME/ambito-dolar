@@ -44,9 +44,6 @@ const HISTORICAL_RATES_V5_OBJECT_KEY = 'historical-' + RATES_V5_OBJECT_KEY;
 const RATES_OBJECT_KEY = process.env.RATES_OBJECT_KEY;
 const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
 
-// run all calls in parallel
-const EXPO_CONCURRENT_REQUEST_LIMIT = 0;
-
 // exports
 
 const FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL;
@@ -454,7 +451,8 @@ const getSocialScreenshotUrl = (title) => {
 
 const getExpoClient = () =>
   new Expo({
-    maxConcurrentRequests: EXPO_CONCURRENT_REQUEST_LIMIT,
+    // disable concurrent HTTP requests
+    // maxConcurrentRequests: 0,
   });
 
 // SNS
