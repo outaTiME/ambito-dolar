@@ -16,20 +16,7 @@ const invalidateDevice = async (installation_id) => {
       ':invalidated': AmbitoDolar.getTimezoneDate().format(),
     },
   };
-  await client
-    .update(params)
-    .promise()
-    .then(
-      function (_data) {
-        console.info('Device invalidated', JSON.stringify({ installation_id }));
-      },
-      function (error) {
-        console.warn(
-          'Unable to invalidate device',
-          JSON.stringify({ installation_id, error: error.message })
-        );
-      }
-    );
+  return client.update(params).promise();
 };
 
 const check = async (items = [], readonly) => {
