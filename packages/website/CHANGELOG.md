@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.2.3...@ambito-dolar/website@1.3.0) (2021-10-19)
+
+
+### Features
+
+* update brand colors and resources ([289699b](https://github.com/outaTiME/ambito-dolar/commit/289699bfa71372f1b7618ba00763a1fcd2861e50))
+
+
+
+
+
 ## [1.2.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.2.2...@ambito-dolar/website@1.2.3) (2021-09-14)
 
 **Note:** Version bump only for package @ambito-dolar/website

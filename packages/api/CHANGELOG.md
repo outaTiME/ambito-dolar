@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.7.0...@ambito-dolar/api@1.8.0) (2021-10-19)
+
+
+### Bug Fixes
+
+* remove traces from invalidate ([284d5dd](https://github.com/outaTiME/ambito-dolar/commit/284d5dda082c1075aaad0274ce0c62c1b7ff1f13))
+
+
+### Features
+
+* future rate type added ([4760937](https://github.com/outaTiME/ambito-dolar/commit/47609379a1d175044e3bf2545b0f1948a1b38f88))
+
+
+
+
+
 # [1.7.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.6.0...@ambito-dolar/api@1.7.0) (2021-09-14)
 
 

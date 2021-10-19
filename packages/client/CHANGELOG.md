@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-beta.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.1...@ambito-dolar/client@6.0.0-beta.2) (2021-10-19)
+
+
+### Features
+
+* general updates and use SWR instead of firebase ([278b37b](https://github.com/outaTiME/ambito-dolar/commit/278b37b0d6bc1c6d72d2cf270d45f2522813cccd))
+* update brand colors and resources ([289699b](https://github.com/outaTiME/ambito-dolar/commit/289699bfa71372f1b7618ba00763a1fcd2861e50))
+
+
+
+
+
 # [6.0.0-beta.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.0...@ambito-dolar/client@6.0.0-beta.1) (2021-08-30)
 
 **Note:** Version bump only for package @ambito-dolar/client
