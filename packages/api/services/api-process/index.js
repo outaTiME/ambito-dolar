@@ -58,7 +58,7 @@ const getRate = (type) =>
       });
   });
 
-const getCryptoRates = (type) =>
+const getCryptoRate = (type) =>
   new Promise((resolve) => {
     const url = Shared.getCryptoRatesUrl();
     Shared.fetch(url)
@@ -68,7 +68,7 @@ const getCryptoRates = (type) =>
         // https://joi.dev/tester/
         const schema = Joi.object()
           .keys({
-            [AmbitoDolar.CCB_TYPE]: Joi.number().required(),
+            [type]: Joi.number().required(),
             time: Joi.number().integer().default(Date.now),
           })
           .unknown(true);
@@ -76,7 +76,7 @@ const getCryptoRates = (type) =>
         if (error) {
           // log error and continue processing
           console.warn(
-            'Invalid schema validation on crypto rates',
+            'Invalid schema validation on crypto rate',
             JSON.stringify({ type, data, error: error.message })
           );
           resolve();
@@ -93,7 +93,7 @@ const getCryptoRates = (type) =>
       .catch((error) => {
         // log error and continue processing
         console.warn(
-          'Unable to fetch crypto rates',
+          'Unable to fetch crypto rate',
           JSON.stringify({ type, error: error.message })
         );
         resolve();
@@ -219,21 +219,28 @@ const getRates = (rates) =>
     getRate(AmbitoDolar.OFFICIAL_TYPE),
     getRate(AmbitoDolar.TOURIST_TYPE),
     getRate(AmbitoDolar.INFORMAL_TYPE),
-    // updated on holidays, maybe it will be used later
-    // getRate(AmbitoDolar.FUTURE_TYPE),
     getRate(AmbitoDolar.WHOLESALER_TYPE),
   ])
     .then(getObjectRates)
     .then((new_rates) => getNewRates(rates, new_rates));
 
-const getRealtimeRates = (rates) =>
-  Promise.all([
-    getRate(AmbitoDolar.CCL_TYPE),
-    getRate(AmbitoDolar.MEP_TYPE),
-    getCryptoRates(AmbitoDolar.CCB_TYPE),
-  ])
+// process these rates only on business days
+const getBusinessDayRates = (rates, realtime) => {
+  const promises = [
+    // updated on holidays
+    getRate(AmbitoDolar.FUTURE_TYPE),
+  ];
+  if (realtime) {
+    promises.push(
+      getRate(AmbitoDolar.CCL_TYPE),
+      getRate(AmbitoDolar.MEP_TYPE),
+      getCryptoRate(AmbitoDolar.CCB_TYPE)
+    );
+  }
+  return Promise.all(promises)
     .then(getObjectRates)
     .then((new_rates) => getNewRates(rates, new_rates));
+};
 
 const getHistoricalRates = (rates, base_rates) =>
   Promise.all(
@@ -339,18 +346,17 @@ export default async (req, res) => {
     const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
     // leave new rates only (for realtime too)
     const new_rates = await getRates(rates);
-    // took realtimes
     const in_time =
       AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
       0;
     if (
       // initial process of business day
       (!has_rates_from_today && !_.isEmpty(new_rates)) ||
-      // on business day between REALTIME_PROCESSING_INTERVAL ticks
-      (has_rates_from_today && in_time)
+      // on business day
+      has_rates_from_today
     ) {
-      const new_realtime_rates = await getRealtimeRates(rates);
-      Object.assign(new_rates, new_realtime_rates);
+      const new_business_day_rates = await getBusinessDayRates(rates, in_time);
+      Object.assign(new_rates, new_business_day_rates);
     }
     const has_new_rates = !_.isEmpty(new_rates);
     if (has_new_rates) {

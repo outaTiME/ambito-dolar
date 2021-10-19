@@ -157,7 +157,7 @@ const getAvailableRateTypes = () => [
   INFORMAL_TYPE,
   CCL_TYPE,
   MEP_TYPE,
-  // FUTURE_TYPE,
+  FUTURE_TYPE,
   WHOLESALER_TYPE,
   CCB_TYPE,
 ];

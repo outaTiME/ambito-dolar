@@ -4,6 +4,7 @@ const _ = require('lodash');
 const {
   Shared,
   MIN_CLIENT_VERSION_FOR_MEP,
+  MIN_CLIENT_VERSION_FOR_FUTURE,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
   MIN_CLIENT_VERSION_FOR_CCB,
 } = require('../../lib/shared');
@@ -98,6 +99,9 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_MEP)) {
           delete rates_for_settings[AmbitoDolar.MEP_TYPE];
         }
+        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_FUTURE)) {
+          delete rates_for_settings[AmbitoDolar.FUTURE_TYPE];
+        }
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_WHOLESALER)) {
           delete rates_for_settings[AmbitoDolar.WHOLESALER_TYPE];
         }
@@ -186,7 +190,8 @@ const notify = async (
     } else {
       // uses getRates when NOTIFICATION_CLOSE_TYPE
       rates = rates || (await Shared.getRates());
-      // TODO: remove AmbitoDolar.CCB_TYPE from rates until v6 release
+      // TODO: remove FUTURE_TYPE and CCB_TYPE from rates until v6 release
+      delete rates[AmbitoDolar.FUTURE_TYPE];
       delete rates[AmbitoDolar.CCB_TYPE];
       // useful for holidays when NOTIFICATION_CLOSE_TYPE
       const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);

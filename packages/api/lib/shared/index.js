@@ -27,6 +27,7 @@ const sns = new AWS.SNS({
 // constants
 
 const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
+const MIN_CLIENT_VERSION_FOR_FUTURE = '6.0.0';
 const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
 const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
 const MAX_NUMBER_OF_STATS = 7; // 1 week
@@ -255,6 +256,7 @@ const storeRateStats = async (rates) => {
     (obj, [type, { stats }]) => {
       // ignore
       if (
+        type === AmbitoDolar.FUTURE_TYPE ||
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE
       ) {
@@ -299,6 +301,7 @@ const storeRatesJsonObject = async (rates, is_updated) => {
     (obj, [type, rate]) => {
       // ignore
       if (
+        type === AmbitoDolar.FUTURE_TYPE ||
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE
       ) {
@@ -320,7 +323,10 @@ const storeRatesJsonObject = async (rates, is_updated) => {
     }),
     storePublicJsonObject(RATES_V5_OBJECT_KEY, {
       ...rates,
-      rates: _.omit(rates.rates, [AmbitoDolar.CCB_TYPE]),
+      rates: _.omit(rates.rates, [
+        AmbitoDolar.FUTURE_TYPE,
+        AmbitoDolar.CCB_TYPE,
+      ]),
     }),
     storePublicJsonObject(RATES_OBJECT_KEY, rates),
     // save historical rates
@@ -366,6 +372,7 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
     (obj, [type, rate]) => {
       // ignore
       if (
+        type === AmbitoDolar.FUTURE_TYPE ||
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE
       ) {
@@ -383,7 +390,7 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
     storePublicJsonObject(
       HISTORICAL_RATES_V5_OBJECT_KEY,
-      _.omit(base_rates, [AmbitoDolar.CCB_TYPE])
+      _.omit(base_rates, [AmbitoDolar.FUTURE_TYPE, AmbitoDolar.CCB_TYPE])
     ),
     storePublicJsonObject(HISTORICAL_RATES_OBJECT_KEY, base_rates),
   ]);
@@ -652,6 +659,7 @@ const Shared = {
 module.exports = {
   Shared,
   MIN_CLIENT_VERSION_FOR_MEP,
+  MIN_CLIENT_VERSION_FOR_FUTURE,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
   MIN_CLIENT_VERSION_FOR_CCB,
   MAX_NUMBER_OF_STATS,
