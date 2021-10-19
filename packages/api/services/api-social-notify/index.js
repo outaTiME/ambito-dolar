@@ -31,10 +31,10 @@ const generateScreenshot = async (type, title) => {
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   await page.setViewport({
-    width: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_WIDTH,
+    width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
+    // height: AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
     // TODO: leave until v6 release
-    height: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_WIDTH,
-    // height: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_HEIGHT,
+    height: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
     deviceScaleFactor: 2,
   });
   await page.emulateTimezone(AmbitoDolar.TIMEZONE);
@@ -49,8 +49,8 @@ const generateScreenshot = async (type, title) => {
     type: image_type,
   });
   await page.setViewport({
-    width: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_WIDTH,
-    height: AmbitoDolar.WEB_VIEWPORT_PORTRAIT_STORY_HEIGHT,
+    width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
+    height: AmbitoDolar.VIEWPORT_PORTRAIT_STORY_HEIGHT,
     deviceScaleFactor: 2,
   });
   const story_file = await page.screenshot({
