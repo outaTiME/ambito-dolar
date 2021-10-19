@@ -17,15 +17,13 @@
     }
   },
   "devDependencies": {
-    "@commitlint/cli": "^13.1.0",
-    "@typescript-eslint/eslint-plugin": "^4.31.1",
-    "@typescript-eslint/parser": "^4.31.1",
+    "@commitlint/cli": "^13.2.1",
     "eslint": "^7.32.0",
     "eslint-config-universe": "^7.0.1",
     "husky": "^7.0.2",
     "lerna": "^4.0.0",
-    "prettier": "^2.4.0",
-    "typescript": "^4.4.3"
+    "prettier": "^2.4.1",
+    "typescript": "^4.4.4"
   },
   "scripts": {
     "test": "lerna run test",
@@ -46,5 +44,6 @@
   "resolutions": {
     "react": "16.13.1",
     "react-dom": "16.13.1"
-  }
+  },
+  "packageManager": "yarn@3.0.2"
 }
