@@ -1,10 +1,14 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import * as d3Array from 'd3-array';
+import * as Application from 'expo-application';
 import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 import * as Localization from 'expo-localization';
+import * as MailComposer from 'expo-mail-composer';
 import _ from 'lodash';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, Linking } from 'react-native';
+import { useSelector } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
@@ -14,6 +18,7 @@ import semverValid from 'semver/functions/valid';
 import { ThemeContext } from 'styled-components';
 import useSWR from 'swr';
 
+import I18n from '../config/I18n';
 import Settings from '../config/settings';
 
 const getNotificationSettings = (notification_settings, value, type) => {
@@ -233,13 +238,32 @@ export default {
   },
   getNotificationSettings,
   getNotificationSettingsSelector,
-  hasRates(rates) {
+  getAvailableRateTypes() {
+    return [
+      AmbitoDolar.OFFICIAL_TYPE,
+      AmbitoDolar.TOURIST_TYPE,
+      AmbitoDolar.INFORMAL_TYPE,
+      AmbitoDolar.CCL_TYPE,
+      AmbitoDolar.MEP_TYPE,
+      // AmbitoDolar.FUTURE_TYPE,
+      AmbitoDolar.WHOLESALER_TYPE,
+      // AmbitoDolar.CCB_TYPE,
+    ];
+  },
+  getAvailableRates(rates) {
+    return rates && _.pick(rates, this.getAvailableRateTypes());
+  },
+  useRates() {
+    const rates = useSelector((state) => state.rates?.rates);
+    return this.getAvailableRates(rates);
+  },
+  hasValidRates(rates) {
     const values = Object.values(rates || {});
-    const rate_types = AmbitoDolar.getAvailableRateTypes();
+    const rate_types = this.getAvailableRateTypes();
     if (values.length === rate_types.length) {
       return (
         values
-          // check one stat at least
+          // two stats at least
           .map(({ stats }) => stats?.length > 1)
           .every((value) => value === true)
       );
@@ -279,8 +303,23 @@ export default {
     }
     return value_str;
   },
+  getInlineChange(stats) {
+    const stat = stats[stats.length - 1];
+    const prev_stat = stats[stats.length - 2];
+    /* +0.53 (+0.95%) */
+    return (
+      this.getCurrency(this.getRateValue(stat) - this.getRateValue(prev_stat)) +
+      `${Settings.SPACE_SEPARATOR}(${formatRateChange(stat[2])})`
+    );
+  },
   roundToEven(num) {
     return Math.floor(num - (num % 2));
+  },
+  getAppearanceString(colorScheme) {
+    return I18n.t((colorScheme ?? 'system') + '_appearance');
+  },
+  getInvertedTheme(theme) {
+    return theme === 'light' ? 'dark' : 'light';
   },
   // https://github.com/brentvatne/hour-power/blob/master/app/hooks/usePersistedData.ts
   usePersistedData(store) {
@@ -313,7 +352,7 @@ export default {
   // https://paco.im/blog/shared-hook-state-with-swr
   useSharedState: (key, initial) => {
     const { data: state, mutate: setState } = useSWR(key, {
-      initialData: initial,
+      fallbackData: initial,
     });
     return [state, setState];
   },
@@ -334,6 +373,7 @@ export default {
           title: Settings.getFontObject(colorScheme, 'title3'), // 20
           largeTitle: Settings.getFontObject(colorScheme, 'title1'), // 28
         },
+        invertedTheme: this.getInvertedTheme(colorScheme),
         // TODO: add fonts with theme here ??
         // getFontObject: (name) => Settings.getFontObject(theme, name),
       }),
@@ -357,5 +397,39 @@ export default {
         return () => clearInterval(intervalId);
       }
     }, [handler, leading, delay]);
+  },
+  useApplicationConstants() {
+    const [constantsLoaded, setConstantsLoaded] = React.useState(false);
+    const [, setIsPhoneDevice] = this.useSharedState('isPhoneDevice');
+    const [, setContactAvailable] = this.useSharedState('contactAvailable');
+    const [, setStoreAvailable] = this.useSharedState('storeAvailable');
+    const [, setInstallationTime] = this.useSharedState('installationTime');
+    React.useEffect(() => {
+      Promise.all([
+        Device.getDeviceTypeAsync().then(
+          (deviceType) => deviceType === Device.DeviceType.PHONE
+        ),
+        MailComposer.isAvailableAsync(),
+        Linking.canOpenURL(Settings.APP_STORE_URI),
+        Application.getInstallationTimeAsync(),
+      ]).then((data) => {
+        if (__DEV__) {
+          console.log('Application constants', data);
+        }
+        const [
+          isPhoneDevice,
+          contactAvailable,
+          storeAvailable,
+          installationTime,
+        ] = data;
+        setIsPhoneDevice(isPhoneDevice);
+        setContactAvailable(contactAvailable);
+        setStoreAvailable(storeAvailable);
+        setInstallationTime(installationTime);
+        // done
+        setConstantsLoaded(true);
+      });
+    }, []);
+    return constantsLoaded;
   },
 };

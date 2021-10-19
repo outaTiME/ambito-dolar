@@ -28,7 +28,7 @@ const RateRawDetailItem = ({ timestamp, value, change }) => {
 };
 
 const RateRawDetailScreen = ({ route: { params } }) => {
-  const rates = useSelector((state) => state.rates.rates);
+  const rates = Helper.useRates();
   const { type, rangeIndex } = params;
   const rate = React.useMemo(() => rates[type], [rates, type]);
   const base_stats = rate.stats;

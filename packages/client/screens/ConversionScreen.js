@@ -1,9 +1,10 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import React from 'react';
 import { View, TextInput } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { compose } from 'redux';
 
+import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import SegmentedControlTab from '../components/SegmentedControlTab';
@@ -27,12 +28,16 @@ const ConversionScreen = () => {
   const onTextInputFocus = React.useCallback(() => {
     inputTextRef.current?.setNativeProps({ text: '' });
   }, []);
+  const dispatch = useDispatch();
   const onTextInputBlur = React.useCallback(
     ({ nativeEvent: { text } }) => {
       let number = Helper.getNumber(text);
       if (!number) {
         // rollback when invalid
         number = numberValue;
+      } else {
+        // only when value updated
+        dispatch(actions.registerApplicationConversion());
       }
       setNumberValue(number);
       inputTextRef.current?.setNativeProps({
@@ -64,7 +69,7 @@ const ConversionScreen = () => {
     }
     return sell;
   }, []);
-  const rates = useSelector((state) => state.rates.rates);
+  const rates = Helper.useRates();
   const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);
   const getItemView = React.useCallback(
     (type) => {
@@ -106,7 +111,7 @@ const ConversionScreen = () => {
           borderColor: Settings.getStrokeColor(theme),
           margin: Settings.CARD_PADDING,
           // perfect size using diff between the lineHeight and size of font
-          padding: Settings.CARD_PADDING * 2 - (34 - 28) / 2,
+          padding: Settings.PADDING - (34 - 28) / 2,
           backgroundColor: Settings.getContentColor(theme),
         }}
       >

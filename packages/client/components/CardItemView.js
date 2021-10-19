@@ -9,18 +9,29 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const ChevronView = () => {
+const ActionView = ({ iconName, color }) => {
   const { theme } = Helper.useTheme();
   return (
     <MaterialIcons
-      name="chevron-right"
+      name={iconName}
       size={Settings.ICON_SIZE}
-      color={Settings.getStrokeColor(theme)}
+      color={color ?? Settings.getStrokeColor(theme)}
       style={{
         marginLeft: Settings.PADDING,
         height: Settings.ICON_SIZE,
       }}
     />
+  );
+};
+
+const ChevronActionView = () => {
+  return <ActionView iconName="chevron-right" />;
+};
+
+const CheckActionView = () => {
+  const { theme } = Helper.useTheme();
+  return (
+    <ActionView iconName="check" color={Settings.getForegroundColor(theme)} />
   );
 };
 
@@ -34,7 +45,7 @@ export default ({
   useSwitch = true,
   selectable = false,
   chevron = true,
-  ActionIndicator = <ChevronView />,
+  check = false,
   ...extra
 }) => {
   const { theme, fonts } = Helper.useTheme();
@@ -87,11 +98,11 @@ export default ({
                       fonts.footnote,
                       {
                         color: Settings.getGrayColor(theme),
-                        marginTop: 2,
+                        marginTop: Settings.SMALL_PADDING,
                       },
                       extra.titleDetailStyle,
                     ]}
-                    numberOfLines={1}
+                    // numberOfLines={1}
                   >
                     {titleDetail}
                   </Text>
@@ -123,7 +134,10 @@ export default ({
           {useSwitch && (
             <Switch value={value === true} onValueChange={onValueChange} />
           )}
-          {!useSwitch && onAction && chevron && ActionIndicator}
+          {!useSwitch &&
+            onAction &&
+            (chevron || check) &&
+            (chevron ? <ChevronActionView /> : <CheckActionView />)}
         </>
       </CardContainer>
       {customization === true && (
@@ -159,7 +173,7 @@ export default ({
                   {I18n.t('customize')}
                 </Text>
               </View>
-              <ChevronView />
+              <ChevronActionView />
             </>
           </RectButton>
         </Collapsible>

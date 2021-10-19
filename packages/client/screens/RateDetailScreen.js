@@ -20,7 +20,7 @@ const RANGE_TYPES = [I18n.t('week'), I18n.t('month'), I18n.t('year')];
 const RateDetailScreen = ({ route: { params }, navigation }) => {
   const [rangeIndex, setRangeIndex] = React.useState(0);
   const prev_rangeIndex = Helper.usePrevious(rangeIndex);
-  const rates = useSelector((state) => state.rates.rates);
+  const rates = Helper.useRates();
   const { type } = params;
   const rate = React.useMemo(() => rates[type], [rates, type]);
   const base_stats = rate.stats;

@@ -1,7 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 
 import CardView from '../components/CardView';
 import MiniRateChartView from '../components/VictoryMiniRateChartView';
@@ -63,7 +63,8 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            marginTop: Settings.PADDING / 2,
+            // marginTop: Settings.PADDING / 2,
+            marginTop: Settings.SMALL_PADDING,
           }}
         >
           <Text
@@ -91,20 +92,17 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
           </Text>
         </View>
         {/* required by chart */}
-        <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flex: 1,
-              marginTop: Settings.PADDING,
-              flexDirection: 'row',
-              marginBottom: -Settings.PADDING + Settings.CHART_STROKE_WIDTH,
-              marginLeft: -(Settings.PADDING + Settings.CHART_STROKE_WIDTH),
-              marginRight: -(Settings.PADDING + Settings.CHART_STROKE_WIDTH),
-              ...StyleSheet.absoluteFillObject,
-            }}
-          >
-            <MiniRateChartView {...{ stats, color }} />
-          </View>
+        <View
+          style={{
+            flex: 1,
+            // marginTop: Settings.PADDING,
+            marginTop: Settings.SMALL_PADDING,
+            marginLeft: -Settings.PADDING,
+            marginRight: -Settings.PADDING,
+            marginBottom: -Settings.PADDING,
+          }}
+        >
+          <MiniRateChartView {...{ stats, color, borderless: true }} />
         </View>
       </>
     );
@@ -114,7 +112,8 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: Settings.PADDING / 2,
+        // marginTop: Settings.PADDING / 2,
+        marginTop: Settings.SMALL_PADDING,
       }}
     >
       <View
@@ -192,7 +191,9 @@ export default ({
   return (
     <CardView
       style={[
-        { flex: 1 },
+        {
+          flex: 1,
+        },
         highlight === false && {
           opacity: 0.3,
         },
@@ -205,7 +206,6 @@ export default ({
             type,
             value: value_fmt,
             onSelected,
-            large,
           }}
         />
         <InlineRateDetailView

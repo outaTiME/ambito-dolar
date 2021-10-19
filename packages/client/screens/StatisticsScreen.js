@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import { compose } from 'redux';
 
 import CardItemView from '../components/CardItemView';
@@ -12,10 +12,17 @@ import Helper from '../utilities/Helper';
 
 const StatisticsScreen = () => {
   const [installationTime] = Helper.useSharedState('installationTime');
-  const daysUsed = useSelector((state) => state.application.days_used);
+  const { daysUsed, conversions } = useSelector(
+    ({ application: { days_used: daysUsed, conversions } }) => ({
+      daysUsed,
+      conversions,
+    }),
+    shallowEqual
+  );
+
   return (
     <ScrollView>
-      <CardView title={I18n.t('opts_information')} plain>
+      <CardView title={I18n.t('opts_app')} plain>
         {installationTime && (
           <CardItemView
             title={I18n.t('app_installation_time')}
@@ -23,13 +30,16 @@ const StatisticsScreen = () => {
             value={DateUtils.datetime(installationTime, { short: true })}
           />
         )}
-        {daysUsed && (
-          <CardItemView
-            title={I18n.t('app_days_used')}
-            useSwitch={false}
-            value={Helper.formatIntegerNumber(daysUsed)}
-          />
-        )}
+        <CardItemView
+          title={I18n.t('app_days_used')}
+          useSwitch={false}
+          value={Helper.formatIntegerNumber(daysUsed ?? 0)}
+        />
+        <CardItemView
+          title={I18n.t('app_conversions')}
+          useSwitch={false}
+          value={Helper.formatIntegerNumber(conversions ?? 0)}
+        />
       </CardView>
     </ScrollView>
   );

@@ -89,7 +89,6 @@ export default ({
             borderRadius: Settings.BORDER_RADIUS,
             backgroundColor: Settings.getContentColor(theme),
             flexGrow: 1,
-            // required when Touchable
             overflow: 'hidden',
           },
         ]}

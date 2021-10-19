@@ -1,10 +1,10 @@
 import React from 'react';
-import { Image, Linking } from 'react-native';
+import { View, Image, Linking } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { compose } from 'redux';
 
 import * as actions from '../actions';
-import AppIcon from '../assets/icon.png';
+import appIcon from '../assets/about-icon-borderless.png';
 import ActionButton from '../components/ActionButton';
 import MessageView from '../components/MessageView';
 import withContainer from '../components/withContainer';
@@ -45,16 +45,22 @@ const UpdateAppModalScreen = ({ navigation }) => {
   return (
     <>
       {false && (
-        <Image
-          source={AppIcon}
+        <View
           style={{
-            width: 75,
-            height: 75,
-            alignSelf: 'center',
-            marginBottom: Settings.PADDING * 2,
-            borderRadius: Settings.BORDER_RADIUS,
+            marginBottom: Settings.CARD_PADDING * 2,
+            paddingVertical: Settings.PADDING,
           }}
-        />
+        >
+          <Image
+            style={{
+              width: 72,
+              height: 72,
+              alignSelf: 'center',
+              borderRadius: Settings.BORDER_RADIUS,
+            }}
+            source={appIcon}
+          />
+        </View>
       )}
       <MessageView
         style={{

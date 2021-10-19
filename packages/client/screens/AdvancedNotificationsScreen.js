@@ -31,7 +31,7 @@ const AdvancedNotificationsScreen = ({ route: { params } }) => {
     },
     [params, notification_settings]
   );
-  const rates = useSelector((state) => state.rates.rates);
+  const rates = Helper.useRates();
   const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);
   const getItemView = React.useCallback(
     (type) => {
@@ -57,7 +57,11 @@ const AdvancedNotificationsScreen = ({ route: { params } }) => {
   );
   return (
     <ScrollView>
-      <CardView note={I18n.t('notification_choose_rates_note')} plain>
+      <CardView
+        // title={I18n.t('opts_rates')}
+        note={I18n.t('notification_choose_rates_note')}
+        plain
+      >
         {rateTypes.map((type) => getItemView(type))}
       </CardView>
     </ScrollView>

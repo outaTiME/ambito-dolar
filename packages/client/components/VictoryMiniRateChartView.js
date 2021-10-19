@@ -6,7 +6,13 @@ import { VictoryGroup, VictoryArea } from 'victory-native';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const VictoryMiniRateChartView = ({ width, height, stats, color }) => {
+const VictoryMiniRateChartView = ({
+  width,
+  height,
+  stats,
+  color,
+  borderless,
+}) => {
   const data = React.useMemo(() => {
     return stats.map((datum, index) => ({
       x: index,
@@ -39,23 +45,25 @@ const VictoryMiniRateChartView = ({ width, height, stats, color }) => {
     [color]
   );
   return (
-    <View pointerEvents="none">
-      <VictoryGroup
-        width={width}
-        height={height}
-        singleQuadrantDomainPadding={false}
-        domainPadding={Settings.CHART_STROKE_WIDTH}
-        padding={0}
-        domain={domain}
-        animate={false}
-      >
-        <VictoryArea data={data} interpolation="monotoneX" style={area_style} />
-      </VictoryGroup>
-    </View>
+    <VictoryGroup
+      width={width}
+      height={height}
+      singleQuadrantDomainPadding={false}
+      domainPadding={{
+        x: Settings.CHART_STROKE_WIDTH,
+        y: borderless === true ? Settings.PADDING : Settings.CHART_STROKE_WIDTH,
+      }}
+      // domainPadding={Settings.CHART_STROKE_WIDTH}
+      padding={borderless === true ? -Settings.CHART_STROKE_WIDTH : 0}
+      domain={domain}
+      animate={false}
+    >
+      <VictoryArea data={data} interpolation="monotoneX" style={area_style} />
+    </VictoryGroup>
   );
 };
 
-export default ({ stats, color }) => {
+export default ({ stats, color, borderless }) => {
   // layout
   const { onLayout, width, height } = useLayout();
   const hasLayout = React.useMemo(() => width && height, [width, height]);
@@ -68,6 +76,7 @@ export default ({ stats, color }) => {
             height,
             stats,
             color,
+            borderless,
           }}
         />
       ) : null}

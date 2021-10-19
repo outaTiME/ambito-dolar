@@ -15,8 +15,11 @@ import {
   APP_INVALID_VERSION,
   FORCE_APP_INVALID_VERSION,
   APP_USAGE_DAY,
+  APP_CONVERSION,
+  CHANGE_APPEARANCE,
   ADD_RATES,
   UPDATE_HISTORICAL_RATES,
+  PRUNE_RATES,
   PRUNE,
 } from './types';
 
@@ -42,7 +45,7 @@ const doRegisterDevice = async (dispatch, state, value = {}) => {
     ...value,
   };
   if (__DEV__) {
-    console.log('Registration or interaction on device');
+    console.log('Registration or interaction on device', data);
   }
   return Helper.registerDevice(data).then(
     async ({ notificationSettings, statusCode }) => {
@@ -74,29 +77,30 @@ const doRegisterDevice = async (dispatch, state, value = {}) => {
   );
 };
 
-const doRegisterDeviceForNotifications = (dispatch, current_state) =>
-  Notifications.getExpoPushTokenAsync().then(({ data: push_token }) =>
+const doRegisterDeviceForNotifications = (
+  { data: push_token } = {},
+  dispatch,
+  current_state
+) => {
+  if (push_token) {
+    return doRegisterDevice(dispatch, current_state, {
+      push_token,
+    }).then(() => push_token);
+  }
+  return Notifications.getExpoPushTokenAsync().then(({ data: push_token }) =>
     doRegisterDevice(dispatch, current_state, { push_token }).then(
       () => push_token
     )
   );
-
-export const registerDeviceInteraction = () => async (dispatch, getState) => {
-  const current_state = getState();
-  return doRegisterDevice(dispatch, current_state).catch((error) => {
-    if (__DEV__) {
-      console.warn('Unable to register device interaction', error);
-    }
-  });
 };
 
 export const registerDeviceForNotifications =
-  () => async (dispatch, getState) => {
+  (push_token) => async (dispatch, getState) => {
     await dispatch({
       type: NOTIFICATIONS_REGISTER_PENDING,
     });
     const current_state = getState();
-    return doRegisterDeviceForNotifications(dispatch, current_state)
+    return doRegisterDeviceForNotifications(push_token, dispatch, current_state)
       .then((push_token) =>
         dispatch({
           type: NOTIFICATIONS_REGISTER_SUCCESS,
@@ -152,6 +156,19 @@ export const forceApplicationInvalidVersion = () => ({
 
 export const registerApplicationUsageDay = () => ({
   type: APP_USAGE_DAY,
+});
+
+export const registerApplicationConversion = () => ({
+  type: APP_CONVERSION,
+});
+
+export const changeAppearance = (payload) => ({
+  type: CHANGE_APPEARANCE,
+  payload,
+});
+
+export const clearRates = () => ({
+  type: PRUNE_RATES,
 });
 
 export const clearStore = () => ({

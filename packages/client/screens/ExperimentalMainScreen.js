@@ -15,7 +15,7 @@ import Helper from '../utilities/Helper';
 
 const TodayHeaderComponent = ({ title, style }) => {
   const { theme, fonts } = Helper.useTheme();
-  const processedAt = useSelector((state) => state.rates.processed_at);
+  const updatedAt = useSelector((state) => state.rates.updated_at);
   return (
     <View
       style={[
@@ -37,7 +37,7 @@ const TodayHeaderComponent = ({ title, style }) => {
           },
         ]}
       >
-        {DateUtils.get(processedAt).format('LLL')}
+        {DateUtils.get(updatedAt).format('LLL')}
       </Text>
     </View>
   );
@@ -48,7 +48,7 @@ const MainScreen = ({ navigation }) => {
     (type) => navigation.navigate('RateDetail', { type }),
     []
   );
-  const rates = useSelector((state) => state.rates.rates);
+  const rates = Helper.useRates();
   const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);
   const getItemView = React.useCallback(
     (type) => (

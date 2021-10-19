@@ -10,13 +10,16 @@ i18n.translations = {
     cancel: 'Cancelar',
     customize: 'Personalizar',
     no_available_rates: 'Sin cotizaciones disponibles.',
-    still_loading:
-      'Conectividad limitada, la carga se reanudará automáticamente...',
+    rates_loading_error: 'Imposible obtener las cotizaciones.',
+    // still_loading: 'Conectividad limitada, aguarde un momento...',
+    still_loading: 'Aguarde un momento...',
     update_app:
       'Tienes que actualizar esta aplicación a una versión más reciente.',
     update: 'Actualizar',
     remind_me_later: 'Más tarde',
+    retry: 'Reintentar',
     developer: 'Desarrollador',
+    text_copied: 'Texto copiado al portapapeles',
     // rate detail
     detail: 'Detalle',
     week: 'Semana',
@@ -43,8 +46,7 @@ i18n.translations = {
     device: 'Dispositivo',
     share_message: `Te recomiendo descargar %{appName}, es mi aplicación preferida para conocer las distintas cotizaciones del dólar en la Argentina. %{websiteUrl}`,
     opts_general: 'General',
-    opts_general_note:
-      'Las cotizaciones se actualizarán automáticamente durante la jornada cambiaria. Última actualización: %{lastUpdate}',
+    opts_general_note: 'Última actualización de cotizaciones: %{lastUpdate}',
     device_identifier: 'Identificador',
     opts_statistics: 'Estadísticas',
     opts_support: 'Soporte y difusión',
@@ -63,16 +65,25 @@ i18n.translations = {
       'Recibirás una notificación cuando cierre la jornada cambiaria.',
     notification_variation_note:
       'Recibirás una notificación cuando varíe alguna cotización durante la jornada cambiaria.',
+    notification_id: 'ID de notificación',
     // advanced notifications
+    opts_rates: 'Cotizaciones',
     notification_choose_rates_note:
-      'Elige las cotizaciones que deseas incluir para esta notificación.',
+      'Elige las cotizaciones que deseas incluir en esta notificación.',
     // statistics
     statistics: 'Estadísticas',
-    opts_information: 'Información',
+    opts_app: 'Aplicación',
     app_installation_time: 'Fecha de instalación',
     app_days_used: 'Días de uso',
+    app_conversions: 'Conversiones',
     // about
     about: 'Acerca de',
+    // appearance
+    appearance: 'Apariencia',
+    opts_appearance: 'Tema',
+    system_appearance: 'Sistema',
+    light_appearance: 'Claro',
+    dark_appearance: 'Oscuro',
   },
 };
 i18n.locale = Localization.locale;

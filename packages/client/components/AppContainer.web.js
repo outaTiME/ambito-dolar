@@ -65,7 +65,7 @@ const AppContainer = ({ rates, processedAt }) => {
               fonts.title,
               {
                 color: Settings.getGrayColor(theme),
-                marginTop: Settings.CARD_PADDING,
+                marginTop: Settings.SMALL_PADDING,
               },
             ]}
             numberOfLines={1}
@@ -90,82 +90,119 @@ const AppContainer = ({ rates, processedAt }) => {
                 <View
                   style={{
                     flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     margin: Settings.CARD_PADDING,
                   }}
                 >
                   <View
                     style={{
-                      flexDirection: 'row',
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'space-evenly',
+                      margin: Settings.CARD_PADDING,
                     }}
                   >
-                    <FontAwesome5
-                      name="twitter"
-                      size={17}
-                      color={Settings.getGrayColor(theme)}
-                    />
-                    <FontAwesome5
-                      name="telegram-plane"
-                      size={17}
-                      color={Settings.getGrayColor(theme)}
+                    <View
                       style={{
-                        marginLeft: Settings.PADDING,
+                        alignSelf: 'stretch',
+                        flexDirection: 'row',
+                        justifyContent: 'space-evenly',
                       }}
-                    />
-                    <FontAwesome5
-                      name="instagram"
-                      size={17}
-                      color={Settings.getGrayColor(theme)}
-                      style={{
-                        marginLeft: Settings.PADDING,
-                      }}
-                    />
-                    <FontAwesome5
-                      name="facebook"
-                      size={17}
-                      color={Settings.getGrayColor(theme)}
-                      style={{
-                        marginLeft: Settings.PADDING,
-                      }}
-                    />
-                    <FontAwesome5
-                      name="reddit-alien"
-                      size={17}
-                      color={Settings.getGrayColor(theme)}
-                      style={{
-                        marginLeft: Settings.PADDING,
-                      }}
-                    />
-                    <FontAwesome5
-                      name="discord"
-                      size={17}
-                      color={Settings.getGrayColor(theme)}
-                      style={{
-                        marginLeft: Settings.PADDING,
-                      }}
-                    />
-                    <FontAwesome5
-                      name="github"
-                      size={17}
-                      color={Settings.getGrayColor(theme)}
-                      style={{
-                        marginLeft: Settings.PADDING,
-                      }}
-                    />
+                    >
+                      <FontAwesome5
+                        name="twitter"
+                        size={17}
+                        color={Settings.getGrayColor(theme)}
+                      />
+                      <FontAwesome5
+                        name="telegram-plane"
+                        size={17}
+                        color={Settings.getGrayColor(theme)}
+                        style={
+                          {
+                            // marginLeft: Settings.PADDING,
+                          }
+                        }
+                      />
+                      <FontAwesome5
+                        name="instagram"
+                        size={17}
+                        color={Settings.getGrayColor(theme)}
+                        style={
+                          {
+                            // marginLeft: Settings.PADDING,
+                          }
+                        }
+                      />
+                      <FontAwesome5
+                        name="facebook"
+                        size={17}
+                        color={Settings.getGrayColor(theme)}
+                        style={
+                          {
+                            // marginLeft: Settings.PADDING,
+                          }
+                        }
+                      />
+                      <FontAwesome5
+                        name="reddit-alien"
+                        size={17}
+                        color={Settings.getGrayColor(theme)}
+                        style={
+                          {
+                            // marginLeft: Settings.PADDING,
+                          }
+                        }
+                      />
+                      <FontAwesome5
+                        name="discord"
+                        size={17}
+                        color={Settings.getGrayColor(theme)}
+                        style={
+                          {
+                            // marginLeft: Settings.PADDING,
+                          }
+                        }
+                      />
+                      <FontAwesome5
+                        name="github"
+                        size={17}
+                        color={Settings.getGrayColor(theme)}
+                        style={
+                          {
+                            // marginLeft: Settings.PADDING,
+                          }
+                        }
+                      />
+                    </View>
+                    {true && (
+                      <Text
+                        style={[
+                          fonts.body,
+                          {
+                            color: Settings.getGrayColor(theme),
+                            // marginTop: Settings.CARD_PADDING * 2,
+                          },
+                        ]}
+                        numberOfLines={1}
+                      >
+                        cafecito.app/ambitodolar
+                      </Text>
+                    )}
+                    {false && (
+                      <Text
+                        style={[
+                          fonts.body,
+                          {
+                            color: Settings.getGrayColor(theme),
+                            // marginTop: Settings.CARD_PADDING * 2,
+                          },
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {Settings.APP_COPYRIGHT}
+                      </Text>
+                    )}
                   </View>
-                  <Text
-                    style={[
-                      fonts.body,
-                      {
-                        color: Settings.getGrayColor(theme),
-                        marginTop: Settings.PADDING,
-                      },
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {Settings.APP_COPYRIGHT}
-                  </Text>
                 </View>
               )}
             </View>
@@ -194,8 +231,8 @@ const withRates = (Component) => (props) => {
         });
       });
   }, []);
-  const rates = data?.rates;
-  const hasRates = React.useMemo(() => Helper.hasRates(rates), [rates]);
+  const rates = Helper.getAvailableRates(data?.rates);
+  const hasRates = React.useMemo(() => Helper.hasValidRates(rates), [rates]);
   return (
     <>
       {rates ? (

@@ -15,19 +15,19 @@ const DeveloperScreen = ({ navigation }) => {
     <ScrollView>
       <CardView title="Acciones" plain>
         <CardItemView
-          title="Limpiar store"
-          useSwitch={false}
-          chevron={false}
-          onAction={() => {
-            dispatch(actions.clearStore());
-          }}
-        />
-        <CardItemView
           title="Version inválida"
           useSwitch={false}
           chevron={false}
           onAction={() => {
             dispatch(actions.forceApplicationInvalidVersion());
+          }}
+        />
+        <CardItemView
+          title="Limpiar cotizaciones"
+          useSwitch={false}
+          chevron={false}
+          onAction={() => {
+            dispatch(actions.clearRates());
           }}
         />
         <CardItemView
@@ -37,9 +37,9 @@ const DeveloperScreen = ({ navigation }) => {
           onAction={() => {
             navigation.navigate(Settings.INITIAL_ROUTE_NAME, {
               screen: 'Rates',
-              /* params: {
-                screen: 'Rates',
-              }, */
+              params: {
+                screen: Settings.INITIAL_ROUTE_NAME,
+              },
             });
           }}
         />

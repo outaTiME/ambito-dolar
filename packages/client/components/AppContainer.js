@@ -12,25 +12,18 @@ import {
   HeaderStyleInterpolators,
 } from '@react-navigation/stack';
 import * as Amplitude from 'expo-analytics-amplitude';
-import * as Application from 'expo-application';
 import { BlurView } from 'expo-blur';
 import Constants from 'expo-constants';
-import * as Device from 'expo-device';
-import * as MailComposer from 'expo-mail-composer';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
 import React from 'react';
-import {
-  StyleSheet,
-  ActivityIndicator,
-  Platform,
-  Linking,
-  View,
-} from 'react-native';
-import { shallowEqual, useSelector, useDispatch } from 'react-redux';
+import { StyleSheet, ActivityIndicator, Platform, View } from 'react-native';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { compose } from 'redux';
+import useSWR, { useSWRConfig } from 'swr';
 
 import * as actions from '../actions';
+import ActionButton from '../components/ActionButton';
 import { MaterialHeaderButtons, Item } from '../components/HeaderButtons';
 import MessageView from '../components/MessageView';
 import withContainer from '../components/withContainer';
@@ -38,6 +31,7 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import AboutScreen from '../screens/AboutScreen';
 import AdvancedNotificationsScreen from '../screens/AdvancedNotificationsScreen';
+import AppearanceScreen from '../screens/AppearanceScreen';
 import ConversionScreen from '../screens/ConversionScreen';
 import DeveloperScreen from '../screens/DeveloperScreen';
 import MainScreen from '../screens/MainScreen';
@@ -47,7 +41,6 @@ import RateRawDetailScreen from '../screens/RateRawDetailScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
 import UpdateAppModalScreen from '../screens/UpdateAppModalScreen';
-import Firebase from '../utilities/Firebase';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
 
@@ -102,14 +95,15 @@ const useNavigatorScreenOptions = () => {
     headerBackAllowFontScaling: Settings.ALLOW_FONT_SCALING,
     headerStyle: {
       // same height proportion for all devices
-      height: Settings.HEADER_HEIGHT,
+      // height: Settings.HEADER_HEIGHT,
       /* elevation: 0,
       shadowOpacity: 0,
       borderBottomWidth: 0, */
     },
     headerTitleStyle: {
       ...fonts.title,
-      textTransform: 'uppercase',
+      // ...fonts.body,
+      // textTransform: 'uppercase',
     },
     ...(Platform.OS === 'ios' && {
       headerTransparent: true,
@@ -285,6 +279,14 @@ const SettingsStackScreen = () => {
         })}
         component={StatisticsScreen}
       />
+      <SettingsStack.Screen
+        name="Appearance"
+        options={({ navigation }) => ({
+          title: I18n.t('appearance'),
+          headerLeft: () => <BackButton {...{ navigation }} />,
+        })}
+        component={AppearanceScreen}
+      />
     </SettingsStack.Navigator>
   );
 };
@@ -379,24 +381,6 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
     }),
     [theme]
   );
-  const [, setIsPhoneDevice] = Helper.useSharedState('isPhoneDevice');
-  React.useEffect(() => {
-    Device.getDeviceTypeAsync().then((device_type) =>
-      setIsPhoneDevice(device_type === Device.DeviceType.PHONE)
-    );
-  }, []);
-  const [, setContactAvailable] = Helper.useSharedState('contactAvailable');
-  React.useEffect(() => {
-    MailComposer.isAvailableAsync().then(setContactAvailable);
-  }, []);
-  const [, setStoreAvailable] = Helper.useSharedState('storeAvailable');
-  React.useEffect(() => {
-    Linking.canOpenURL(Settings.APP_STORE_URI).then(setStoreAvailable);
-  }, []);
-  const [, setInstallationTime] = Helper.useSharedState('installationTime');
-  React.useEffect(() => {
-    Application.getInstallationTimeAsync().then(setInstallationTime);
-  }, []);
   const trackScreen = React.useCallback((name) => {
     if (__DEV__) {
       console.log('Analytics track screen', name);
@@ -430,6 +414,9 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       Amplitude.logEventAsync('Select notification');
       navigationRef.navigate(Settings.INITIAL_ROUTE_NAME, {
         screen: 'Rates',
+        params: {
+          screen: Settings.INITIAL_ROUTE_NAME,
+        },
       });
     }
   }, [lastNotificationResponse]);
@@ -471,7 +458,10 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
           />
         </RootStack.Group>
         <RootStack.Group
-          screenOptions={{ presentation: 'modal', gestureEnabled: false }}
+          screenOptions={{
+            presentation: 'transparentModal',
+            gestureEnabled: false,
+          }}
         >
           <RootStack.Screen
             name="ApplicationUpdate"
@@ -485,129 +475,134 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
 
 const AppContainer = ({ showAppUpdateMessage }) => {
   const { theme } = Helper.useTheme();
-  // STILL LOADING
   const [stillLoading, setStillLoading] = React.useState(false);
-  React.useEffect(() => {
-    const timer_id = setTimeout(() => {
+  const {
+    // data,
+    error,
+    isValidating,
+    mutate: refetchRates,
+  } = useSWR('rates', () => Helper.getRates(), {
+    revalidateOnReconnect: false,
+    // refreshInterval: 1 * 60 * 1000,
+    shouldRetryOnError: false,
+    // focusThrottleInterval: 10 * 1000,
+    // loadingTimeout: 10 * 1000,
+    // ...(rates && { fallbackData: rates }),
+    onLoadingSlow: () => {
+      if (__DEV__) {
+        console.log('Rates still loading');
+      }
       setStillLoading(true);
-    }, Settings.STILL_LOADING_TIMEOUT);
-    return () => clearTimeout(timer_id);
+    },
+    onSuccess: (data) => {
+      if (__DEV__) {
+        console.log('Rates updated', data.processed_at);
+      }
+      dispatch(actions.addRates(data));
+      setStillLoading(false);
+    },
+    onError: (error) => {
+      if (__DEV__) {
+        console.warn('Unable to get rates', error);
+      }
+      setStillLoading(false);
+    },
+  });
+  const dispatch = useDispatch();
+  /* React.useEffect(() => {
+    if (data) {
+      if (__DEV__) {
+        console.log('Rates updated');
+      }
+      dispatch(actions.addRates(data));
+    }
+  }, [dispatch, data]);
+  React.useEffect(() => {
+    if (error) {
+      if (__DEV__) {
+        console.warn('Unable to get rates', error);
+      }
+    }
+  }, [error]); */
+  const [, setUpdatingRates] = Helper.useSharedState('updatingRates');
+  React.useEffect(() => {
+    // TODO: leave spinner only when focus or reconnect (use react ref)
+    setUpdatingRates(isValidating);
+    console.log('>>> useSWR (loading)', isValidating);
+  }, [isValidating]);
+  const rates = Helper.useRates();
+  const hasRates = React.useMemo(() => Helper.hasValidRates(rates), [rates]);
+  React.useEffect(() => {
+    if (rates && hasRates && error) {
+      // TODO: display error or silent ignore ???
+    }
+  }, [rates, hasRates, error]);
+  React.useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        if (__DEV__) {
+          console.log('Notification received', notification);
+        }
+        refetchRates();
+      }
+    );
+    return () => subscription.remove();
   }, []);
-  const rates = useSelector((state) => state.rates.rates);
-  const hasRates = React.useMemo(() => Helper.hasRates(rates), [rates]);
-  return (
-    <>
-      {rates ? (
-        hasRates ? (
-          <AppNavigationContainer {...{ showAppUpdateMessage }} />
-        ) : (
-          <MessageView message={I18n.t('no_available_rates')} />
-        )
-      ) : (
-        <>
-          <ActivityIndicator
-            animating
-            color={Settings.getForegroundColor(theme)}
-            size="small"
-          />
-          {stillLoading && (
-            <MessageView
-              style={{ marginTop: Settings.PADDING * 2 }}
-              message={I18n.t('still_loading')}
-            />
+  const prevRates = Helper.usePrevious(rates);
+  const { cache } = useSWRConfig();
+  React.useEffect(() => {
+    if (prevRates && !rates) {
+      if (__DEV__) {
+        console.log('Local store cleaned');
+      }
+      cache.delete('rates');
+      refetchRates();
+    }
+  }, [rates, prevRates]);
+  const errorOnBoot = !rates && error;
+  const invalidRates = rates && !hasRates;
+  if (errorOnBoot || invalidRates) {
+    return (
+      <>
+        <MessageView
+          style={{
+            marginBottom: Settings.PADDING * 2,
+          }}
+          message={I18n.t(
+            errorOnBoot ? 'rates_loading_error' : 'no_available_rates'
           )}
-        </>
-      )}
-    </>
-  );
+        />
+        <ActionButton
+          title={I18n.t('retry')}
+          handleOnPress={refetchRates}
+          alternativeBackground
+        />
+      </>
+    );
+  }
+  if (!rates) {
+    return (
+      <>
+        <ActivityIndicator
+          animating
+          color={Settings.getForegroundColor(theme)}
+          size="small"
+        />
+        {stillLoading && (
+          <MessageView
+            style={{ marginTop: Settings.PADDING * 2 }}
+            message={I18n.t('still_loading')}
+          />
+        )}
+      </>
+    );
+  }
+  return <AppNavigationContainer {...{ showAppUpdateMessage }} />;
 };
 
 // TODO: export to components to clean up
 
 // HOCs
-
-const withFirebase = (Component) => (props) => {
-  const dispatch = useDispatch();
-  const processedAt = useSelector((state) => state.rates.processed_at);
-  const processedAtRef = React.useRef(processedAt);
-  React.useEffect(() => {
-    processedAtRef.current = processedAt;
-  }, [processedAt]);
-  React.useEffect(() => {
-    Firebase.auth()
-      .signInAnonymously()
-      .catch((error) => {
-        console.error('Firebase user login error', error);
-      });
-    const subscription = Firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        const uid = user.uid;
-        if (__DEV__) {
-          console.log('Firebase user signed in', uid);
-        }
-        const db = Firebase.database();
-        db.ref('processed_at').on('value', (snapshot) => {
-          const remoteProcessedAt = snapshot.val();
-          Sentry.addBreadcrumb({
-            message: 'Firebase update message received',
-            data: remoteProcessedAt,
-          });
-          if (processedAtRef.current !== remoteProcessedAt) {
-            if (__DEV__) {
-              console.log(
-                'Updating rates',
-                remoteProcessedAt,
-                processedAtRef.current
-              );
-            }
-            Helper.getRates()
-              .then((data) => {
-                if (__DEV__) {
-                  console.log('Rates updated', data.processed_at);
-                }
-                dispatch(actions.addRates(data));
-              })
-              .catch((error) => {
-                // silent ignore when error or invalid data
-                if (__DEV__) {
-                  console.warn('Unable to get rates', error);
-                }
-                Sentry.addBreadcrumb({
-                  message: 'Unable to get rates',
-                  data: error.message,
-                });
-              });
-          } else {
-            if (__DEV__) {
-              console.log(
-                'Rates already updated',
-                remoteProcessedAt,
-                processedAtRef.current
-              );
-            }
-          }
-        });
-        // handle firebase connection
-        /* db.ref('.info/connected').on('value', (snapshot) => {
-          if (snapshot.val() === true) {
-            console.log('connected');
-          } else {
-            console.log('not connected');
-          }
-        }); */
-      } else {
-        if (__DEV__) {
-          console.log('Firebase user signed out');
-        }
-      }
-    });
-    return () => {
-      subscription();
-      Firebase.auth().signOut();
-    };
-  }, [dispatch]);
-  return <Component {...props} />;
-};
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -705,6 +700,16 @@ const withUserActivity = (Component) => (props) => {
       })();
     }
   }, [dispatch, currentAppState]);
+  // https://docs.expo.dev/versions/v43.0.0/sdk/notifications/#addpushtokenlistenerlistener-pushtokenlistener-subscription
+  /* React.useEffect(() => {
+    const subscription = Notifications.addPushTokenListener((push_token) => {
+      if (__DEV__) {
+        console.log('Device push token updated', push_token);
+      }
+      dispatch(actions.registerDeviceForNotifications(push_token));
+    });
+    return () => subscription.remove();
+  }, [dispatch]); */
   // REQUEST REVIEW
   React.useEffect(() => {
     // only took store state values when fresh start or app state is active
@@ -795,12 +800,45 @@ const withAppUpdateCheck = (Component) => (props) => {
     }
   }, [dispatch]);
   return <Component showAppUpdateMessage={showAppUpdateMessage} {...props} />;
+  /* const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
+  if (showAppUpdateMessage) {
+    return (
+      <>
+        <MessageView
+          style={{
+            marginBottom: Settings.PADDING * 2,
+          }}
+          message={I18n.t('update_app')}
+        />
+        {storeAvailable && (
+          <ActionButton
+            title={I18n.t('update')}
+            handleOnPress={() => {
+              Linking.openURL(Settings.APP_STORE_URI);
+            }}
+            style={{
+              marginBottom: Settings.PADDING,
+            }}
+            alternativeBackground
+          />
+        )}
+        <ActionButton
+          borderless={storeAvailable}
+          title={I18n.t('remind_me_later')}
+          handleOnPress={() => {
+            dispatch(actions.ignoreApplicationUpdate());
+          }}
+          // small={storeAvailable}
+        />
+      </>
+    );
+  }
+  return <Component {...props} />; */
 };
 
 export default compose(
   // only when plain messages, AppNavigationContainer uses from screens
   withContainer(true),
-  withFirebase,
   withUserActivity,
   withAppStatistics,
   withAppUpdateCheck

@@ -2,7 +2,7 @@ import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
 import { Linking, Share } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import { compose } from 'redux';
 
 import CardItemView from '../components/CardItemView';
@@ -15,7 +15,13 @@ import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
 const SettingsScreen = ({ navigation }) => {
-  const processedAt = useSelector((state) => state.rates.processed_at);
+  const { updatedAt, appearance } = useSelector(
+    ({ rates: { updated_at: updatedAt }, application: { appearance } }) => ({
+      updatedAt,
+      appearance,
+    }),
+    shallowEqual
+  );
   const onPressContact = React.useCallback(() => {
     MailComposer.composeAsync({
       recipients: [`soporte@${Settings.APP_DOMAIN}`],
@@ -46,15 +52,15 @@ const SettingsScreen = ({ navigation }) => {
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
   const [tick, setTick] = React.useState();
-  const processedAtFromNow = React.useMemo(
-    () => DateUtils.get(processedAt).calendar(),
+  const updatedAtFromNow = React.useMemo(
+    () => DateUtils.get(updatedAt).calendar(),
     [tick]
   );
   const tickCallback = React.useCallback(
     (tick) => {
       setTick(tick);
     },
-    [processedAt]
+    [updatedAt]
   );
   Helper.useInterval(tickCallback);
   return (
@@ -62,23 +68,23 @@ const SettingsScreen = ({ navigation }) => {
       <CardView
         title={I18n.t('opts_general')}
         note={I18n.t('opts_general_note', {
-          lastUpdate: processedAtFromNow,
+          lastUpdate: updatedAtFromNow,
         })}
         plain
       >
         <CardItemView
           title={I18n.t('notifications')}
-          // value="Si"
           useSwitch={false}
           onAction={() => {
             navigation.navigate('Notifications');
           }}
         />
         <CardItemView
-          title={I18n.t('statistics')}
+          title={I18n.t('appearance')}
           useSwitch={false}
+          value={Helper.getAppearanceString(appearance)}
           onAction={() => {
-            navigation.navigate('Statistics');
+            navigation.navigate('Appearance');
           }}
         />
         {__DEV__ && (
@@ -91,6 +97,16 @@ const SettingsScreen = ({ navigation }) => {
           />
         )}
       </CardView>
+      <CardView plain>
+        <CardItemView
+          title={I18n.t('statistics')}
+          useSwitch={false}
+          onAction={() => {
+            navigation.navigate('Statistics');
+          }}
+        />
+      </CardView>
+
       <CardView title={I18n.t('opts_support')} plain>
         {contactAvailable && (
           <CardItemView

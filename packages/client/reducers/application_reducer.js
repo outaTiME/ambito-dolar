@@ -14,6 +14,8 @@ import {
   APP_VALID_VERSION,
   FORCE_APP_INVALID_VERSION,
   APP_USAGE_DAY,
+  APP_CONVERSION,
+  CHANGE_APPEARANCE,
 } from '../actions/types';
 import DateUtils from '../utilities/Date';
 
@@ -25,6 +27,8 @@ const INITIAL_STATE = {
   notification_settings: null,
   last_day_used: null,
   days_used: 0,
+  conversions: 0,
+  appearance: null,
   // version check
   version: null,
   invalid_version: false,
@@ -99,6 +103,14 @@ export default (state = INITIAL_STATE, action) => {
       }
       return state;
     }
+    case APP_CONVERSION:
+      return update(state, {
+        conversions: { $set: (state.conversions ?? 0) + 1 },
+      });
+    case CHANGE_APPEARANCE:
+      return update(state, {
+        appearance: { $set: action.payload },
+      });
     case PRUNE:
       return INITIAL_STATE;
     default:

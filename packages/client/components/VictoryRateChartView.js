@@ -63,6 +63,7 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
             // required on android by reanimated
             // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L67
             height: 20,
+            lineHeight: undefined,
           },
         ]}
         numberOfLines={1}
@@ -73,9 +74,12 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
       <View
         style={{
           flexDirection: 'row',
-          alignItems: 'center',
-          paddingTop: Settings.PADDING / 2,
-          paddingBottom: Settings.PADDING + Settings.PADDING / 2,
+          marginTop: Settings.SMALL_PADDING,
+          // marginBottom: Settings.PADDING + Settings.PADDING / 2,
+          // marginBottom: Settings.PADDING,
+          // required on android by reanimated
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L39
+          height: 25,
         }}
       >
         <AnimatedTextInput
@@ -84,9 +88,7 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
             fonts.title,
             {
               flex: 1,
-              // required on android by reanimated
-              // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L39
-              height: 25,
+              lineHeight: undefined,
             },
           ]}
           numberOfLines={1}
@@ -96,13 +98,11 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
         />
         <AnimatedTextInput
           underlineColorAndroid="transparent"
+          textAlign="right"
           style={[
             fonts.title,
             {
-              textAlign: 'right',
-              // required on android by reanimated
-              // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L39
-              height: 25,
+              lineHeight: undefined,
             },
             change_styles,
           ]}
@@ -357,7 +357,17 @@ export default ({ stats }) => {
       <RateChartHeaderView
         {...{ stats: new_stats, selectionIndex: selection_index }}
       />
-      <View style={{ flex: 1 }} {...(!hasLayout && { onLayout })}>
+      <View
+        style={{
+          flex: 1,
+          // marginTop: Settings.PADDING + Settings.PADDING / 2,
+          marginTop: Settings.PADDING + Settings.SMALL_PADDING,
+          // marginTop: Settings.PADDING,
+          // borderWidth: 1,
+          // borderColor: 'red',
+        }}
+        {...(!hasLayout && { onLayout })}
+      >
         {hasLayout ? (
           <InteractiveRateChartView
             {...{

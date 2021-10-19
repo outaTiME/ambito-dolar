@@ -5,13 +5,14 @@ import { human, iOSColors } from 'react-native-typography';
 const { manifest } = Constants;
 
 export const PADDING = 16;
+export const SMALL_PADDING = PADDING / 4;
 export const HEADER_HEIGHT = 54 + Constants.statusBarHeight;
 const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = Dimensions.get('window');
 export const SMALL_DISPLAY_HEIGHT = Math.round(DEVICE_HEIGHT) <= 731; // 5.0"
 const EXTRA_MARGIN_ON_LARGE_DISPLAY = true;
 export const CARD_PADDING =
   Platform.OS === 'web'
-    ? PADDING - PADDING / 4
+    ? PADDING - SMALL_PADDING
     : !SMALL_DISPLAY_HEIGHT && EXTRA_MARGIN_ON_LARGE_DISPLAY
     ? PADDING / 1.5
     : PADDING / 2;
@@ -32,7 +33,6 @@ export const DASH_SEPARATOR = '‒';
 export const EM_DASH_SEPARATOR = '—';
 export const MAX_LOADS_FOR_REVIEW = 5;
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
-export const STILL_LOADING_TIMEOUT = 10 * 1000; // 10 secs
 export const ANIMATION_DURATION = 250;
 // same as header fonts.title size
 export const ICON_SIZE = 24;
@@ -66,6 +66,7 @@ export const INITIAL_ROUTE_NAME = 'Main';
 
 export default {
   PADDING,
+  SMALL_PADDING,
   HEADER_HEIGHT,
   DEVICE_HEIGHT,
   DEVICE_WIDTH,
@@ -88,7 +89,6 @@ export default {
   EM_DASH_SEPARATOR,
   MAX_LOADS_FOR_REVIEW,
   MAX_NUMBER_OF_STATS,
-  STILL_LOADING_TIMEOUT,
   ANIMATION_DURATION,
   ICON_SIZE,
   APP_IGNORE_UPDATE_EXPIRATION,

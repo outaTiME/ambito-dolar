@@ -1,4 +1,3 @@
-import { useLayout } from '@react-native-community/hooks';
 import * as d3Shape from 'd3-shape';
 import * as Haptics from 'expo-haptics';
 import React from 'react';

@@ -10,12 +10,8 @@ import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import {
-  Text,
-  TextInput,
-  LogBox,
-  // useColorScheme
-} from 'react-native';
+import { Text, TextInput, LogBox, AppState } from 'react-native';
+import { RootSiblingParent } from 'react-native-root-siblings';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -24,6 +20,7 @@ import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import { createBlacklistFilter } from 'redux-persist-transform-filter';
 import thunk from 'redux-thunk';
 import { ThemeProvider } from 'styled-components';
+import { SWRConfig } from 'swr';
 
 import AppContainer from './components/AppContainer';
 import Settings from './config/settings';
@@ -34,10 +31,9 @@ import Sentry from './utilities/Sentry';
 
 if (__DEV__) {
   LogBox.ignoreLogs([
-    // disable warning of firebase on android
-    'Setting a timer for a long period of time',
     'Amplitude client has not been initialized',
     'Constants.installationId has been deprecated',
+    'Found screens with the same name nested inside one another',
   ]);
 } else {
   Sentry.configure(Settings.SENTRY_URI);
@@ -51,13 +47,11 @@ const saveApplicationSubsetBlacklistFilter = createBlacklistFilter(
   ['push_token', 'sending_push_token']
 );
 
-const STORE_CONFIG_VERSION = 5;
+const STORE_CONFIG_VERSION = 6;
 
 const migrations = {
-  [STORE_CONFIG_VERSION]: ({ application: { notification_settings } }) => ({
-    application: {
-      notification_settings,
-    },
+  [STORE_CONFIG_VERSION]: ({ application }) => ({
+    application,
   }),
 };
 
@@ -96,7 +90,25 @@ TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
 TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
-export default () => {
+const ThemedApp = () => {
+  const colorScheme = useDebouncedColorScheme();
+  const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+  const statusBarStyle = colorScheme
+    ? Helper.getInvertedTheme(colorScheme)
+    : 'auto';
+  return (
+    <ThemeProvider theme={theme}>
+      <StatusBar style={statusBarStyle} animated />
+      <RootSiblingParent>
+        <ActionSheetProvider>
+          <AppContainer />
+        </ActionSheetProvider>
+      </RootSiblingParent>
+    </ThemeProvider>
+  );
+};
+
+const App = () => {
   const dataLoaded = Helper.usePersistedData(store);
   const [assetsLoaded] = useAssets([
     require('./assets/about-icon-borderless.png'),
@@ -108,23 +120,67 @@ export default () => {
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
     // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
-  // const colorScheme = useColorScheme();
-  // https://github.com/facebook/react-native/issues/28525
-  const colorScheme = useDebouncedColorScheme();
-  const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
-  if (!dataLoaded || !assetsLoaded || !fontsLoaded) {
+  const constantsLoaded = Helper.useApplicationConstants();
+  if (!dataLoaded || !assetsLoaded || !fontsLoaded || !constantsLoaded) {
     return <AppLoading />;
   }
   return (
     <SafeAreaProvider>
-      <ThemeProvider theme={theme}>
-        <StatusBar style="auto" animated />
-        <Provider store={store}>
-          <ActionSheetProvider>
-            <AppContainer />
-          </ActionSheetProvider>
-        </Provider>
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemedApp />
+      </Provider>
     </SafeAreaProvider>
   );
 };
+
+export default () => (
+  <SWRConfig
+    value={{
+      provider: () => new Map(),
+      isVisible: () => {
+        return true;
+      },
+      initFocus(callback) {
+        let appState = AppState.currentState;
+        const onAppStateChange = (nextAppState) => {
+          if (
+            appState.match(/inactive|background/) &&
+            nextAppState === 'active'
+          ) {
+            console.log('>>> SWR (initFocus) active');
+            callback();
+          }
+          appState = nextAppState;
+        };
+        const subscription = AppState.addEventListener(
+          'change',
+          onAppStateChange
+        );
+        return () => {
+          subscription.remove();
+        };
+      },
+      /* isOnline() {
+          return true;
+        },
+        initReconnect(callback) {
+          let networkState = true;
+          return Network.addEventListener((nextNetworkstate) => {
+            if (
+              networkState === false &&
+              nextNetworkstate.isConnected &&
+              nextNetworkstate.isInternetReachable
+            ) {
+              callback();
+            }
+            networkState =
+              nextNetworkstate.isConnected &&
+              nextNetworkstate.isInternetReachable;
+          });
+        }, */
+      // fetcher: (resource, opts) => Helper.getJson(resource, opts),
+    }}
+  >
+    <App />
+  </SWRConfig>
+);

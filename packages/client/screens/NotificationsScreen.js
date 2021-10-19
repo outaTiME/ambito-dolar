@@ -1,8 +1,13 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import * as Clipboard from 'expo-clipboard';
 import Constants from 'expo-constants';
+import * as Haptics from 'expo-haptics';
 import * as Linking from 'expo-linking';
 import React from 'react';
+import { View, Text } from 'react-native';
 import Collapsible from 'react-native-collapsible';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import Toast from 'react-native-root-toast';
 import { useSelector, useDispatch } from 'react-redux';
 import { compose } from 'redux';
 
@@ -18,6 +23,7 @@ import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
 const NotificationsScreen = ({ navigation }) => {
+  const { theme, fonts, invertedTheme } = Helper.useTheme();
   const dispatch = useDispatch();
   const notification_settings = useSelector(
     Helper.getNotificationSettingsSelector
@@ -35,23 +41,55 @@ const NotificationsScreen = ({ navigation }) => {
   );
   const getItemView = React.useCallback(
     (type) => (
-      <CardItemView
-        title={AmbitoDolar.getNotificationTitle(type)}
-        value={notification_settings[type].enabled}
-        onValueChange={(value) => {
-          onValueChange(value, type);
-        }}
-        customization
-        onAction={() => {
-          navigation.navigate('AdvancedNotifications', {
-            type,
-          });
-        }}
-      />
+      <CardView key={type} note={I18n.t(`notification_${type}_note`)} plain>
+        <CardItemView
+          title={AmbitoDolar.getNotificationTitle(type)}
+          // titleDetail={I18n.t(`notification_${type}_note`)}
+          value={notification_settings[type].enabled}
+          onValueChange={(value) => {
+            onValueChange(value, type);
+          }}
+          customization
+          onAction={() => {
+            navigation.navigate('AdvancedNotifications', {
+              type,
+            });
+          }}
+        />
+      </CardView>
     ),
     [notification_settings]
   );
   const [allowNotifications] = Helper.useSharedState('allowNotifications');
+  const pushToken = useSelector((state) => state.application.push_token);
+  const pushTokenId = pushToken && pushToken.replace(/(^.*\[|\].*$)/g, '');
+  const alreadyShowingToastRef = React.useRef(false);
+  const handleOnPress = React.useCallback(() => {
+    if (alreadyShowingToastRef.current === false) {
+      alreadyShowingToastRef.current = true;
+      Haptics.selectionAsync();
+      Toast.show(I18n.t('text_copied'), {
+        // duration: Settings.ANIMATION_DURATION,
+        // position: -(tabBarheight + Settings.CARD_PADDING),
+        position: Toast.positions.CENTER,
+        onHidden: () => {
+          alreadyShowingToastRef.current = false;
+        },
+        opacity: 1,
+        containerStyle: {
+          paddingHorizontal: 10 * 2,
+          // borderRadius: Settings.BORDER_RADIUS,
+          backgroundColor: Settings.getBackgroundColor(invertedTheme, true),
+        },
+        // force white
+        // textStyle: [Settings.getFontObject('dark', 'callout')],
+        textStyle: [Settings.getFontObject(invertedTheme, 'callout')],
+      });
+      // FIXME: update with pushTokenId on next release
+      Clipboard.setString(Constants.installationId);
+    }
+  }, [invertedTheme]);
+
   return (
     <>
       {Constants.isDevice && !allowNotifications ? (
@@ -84,16 +122,57 @@ const NotificationsScreen = ({ navigation }) => {
             duration={Settings.ANIMATION_DURATION}
             collapsed={notification_settings.enabled !== true}
           >
-            <CardView note={I18n.t('notification_open_note')} plain>
-              {getItemView(AmbitoDolar.NOTIFICATION_OPEN_TYPE)}
-            </CardView>
-            <CardView note={I18n.t('notification_close_note')} plain>
-              {getItemView(AmbitoDolar.NOTIFICATION_CLOSE_TYPE)}
-            </CardView>
-            <CardView note={I18n.t('notification_variation_note')} plain>
-              {getItemView(AmbitoDolar.NOTIFICATION_VARIATION_TYPE)}
-            </CardView>
+            {[
+              AmbitoDolar.NOTIFICATION_OPEN_TYPE,
+              AmbitoDolar.NOTIFICATION_CLOSE_TYPE,
+              AmbitoDolar.NOTIFICATION_VARIATION_TYPE,
+            ].map((type) => getItemView(type))}
           </Collapsible>
+          {pushTokenId && (
+            <View
+              style={[
+                {
+                  // flexShrink: 0,
+                  // flexGrow: 1,
+                  margin: Settings.CARD_PADDING,
+                  paddingVertical: Settings.PADDING,
+                },
+                {
+                  borderColor: 'red',
+                  // borderWidth: 1,
+                },
+                {
+                  alignItems: 'center',
+                  // justifyContent: 'flex-end',
+                  justifyContent: 'center',
+                  paddingHorizontal: Settings.CARD_PADDING,
+                },
+              ]}
+            >
+              <TouchableWithoutFeedback
+                onPress={handleOnPress}
+                hitSlop={{
+                  top: Settings.PADDING,
+                  bottom: Settings.PADDING,
+                  left: Settings.PADDING,
+                  right: Settings.PADDING,
+                }}
+              >
+                <Text
+                  style={[
+                    fonts.subhead,
+                    {
+                      color: Settings.getGrayColor(theme),
+                      // textTransform: 'uppercase',
+                      textAlign: 'center',
+                    },
+                  ]}
+                >
+                  {`${I18n.t('notification_id')}: ${pushTokenId}`}
+                </Text>
+              </TouchableWithoutFeedback>
+            </View>
+          )}
         </ScrollView>
       )}
     </>

@@ -5,7 +5,17 @@ import React from 'react';
 import { ThemeProvider } from 'styled-components';
 
 import AppContainer from './components/AppContainer';
-import Helper from './utilities/Helper';
+import useDebouncedColorScheme from './hooks/useDebouncedColorScheme';
+
+const ThemedApp = () => {
+  const colorScheme = useDebouncedColorScheme();
+  const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+  return (
+    <ThemeProvider theme={theme}>
+      <AppContainer />
+    </ThemeProvider>
+  );
+};
 
 export default () => {
   const [fontsLoaded] = useFonts({
@@ -13,14 +23,9 @@ export default () => {
     ...FontAwesome5.font,
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
   });
-  const colorScheme = Helper.useColorSchemeDelay();
-  const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+
   if (!fontsLoaded) {
     return <AppLoading />;
   }
-  return (
-    <ThemeProvider theme={theme}>
-      <AppContainer />
-    </ThemeProvider>
-  );
+  return <ThemedApp />;
 };

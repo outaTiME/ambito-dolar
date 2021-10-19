@@ -21,7 +21,7 @@ const withScreenshotShareSheet = (Component) => (props) => {
   const { theme, fonts } = Helper.useTheme();
   const shareViewContainerRef = React.useRef();
   const [capturedImage, setCapturedImage] = React.useState(null);
-  const processedAt = useSelector((state) => state.rates.processed_at);
+  const updatedAt = useSelector((state) => state.rates.updated_at);
   const shareViewGeneratedContainerRef = React.useRef();
   const headerRight = React.useCallback(
     () => (
@@ -86,14 +86,14 @@ const withScreenshotShareSheet = (Component) => (props) => {
     [theme]
   );
   const [isPhoneDevice] = Helper.useSharedState('isPhoneDevice', false);
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     isPhoneDevice &&
       Sharing.isAvailableAsync().then(() => {
         navigation.setOptions({
           headerRight,
         });
       });
-  }, [isPhoneDevice]);
+  }, [navigation, isPhoneDevice]);
   const capturedImageLoaded = React.useCallback(() => {
     captureRef(shareViewGeneratedContainerRef.current, {
       // opts
@@ -172,11 +172,10 @@ const withScreenshotShareSheet = (Component) => (props) => {
                 ]}
               >
                 {Settings.APP_COPYRIGHT}
-                {processedAt &&
-                  ` ${Settings.DASH_SEPARATOR} ${DateUtils.datetime(
-                    processedAt,
-                    { short: true }
-                  )}`}
+                {updatedAt &&
+                  ` ${Settings.DASH_SEPARATOR} ${DateUtils.datetime(updatedAt, {
+                    short: true,
+                  })}`}
               </Text>
             </View>
             <WatermarkOverlayView />
