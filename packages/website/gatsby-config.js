@@ -21,6 +21,7 @@ module.exports = {
       options: {
         name: `Ámbito Dólar`,
         start_url: `/`,
+        theme_color: `#00AE6B`,
         icon: `${__dirname}/static/images/icon.png`, // This path is relative to the root of the site.
       },
     },

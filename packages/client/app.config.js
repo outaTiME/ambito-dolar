@@ -13,7 +13,6 @@ export default {
   icon: './assets/icon.png',
   splash: {
     image: './assets/splash-dark-content.png',
-    resizeMode: 'contain',
     backgroundColor: '#FFFFFF',
   },
   userInterfaceStyle: 'automatic',
@@ -66,7 +65,7 @@ export default {
   },
   notification: {
     icon: './assets/icon.notification.png',
-    color: '#2ECC71',
+    color: '#00AE6B',
   },
   plugins: ['sentry-expo'],
   hooks: {

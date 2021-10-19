@@ -31,7 +31,7 @@ const AppStore = () => (
       <Img
         fluid={data.placeholderImage.childImageSharp.fluid}
         className="app-store"
-        imgStyle={{ objectFit: 'contain' }}
+        imgStyle={{ borderRadius: '8px' }}
       />
     )}
   />

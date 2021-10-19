@@ -19,7 +19,7 @@ const Icon = () => (
       query {
         placeholderImage: file(relativePath: { eq: "icon.png" }) {
           childImageSharp {
-            fluid(maxWidth: 64) {
+            fluid(maxWidth: 72) {
               ...GatsbyImageSharpFluid_withWebp
               ...GatsbyImageSharpFluidLimitPresentationSize
             }
@@ -30,7 +30,7 @@ const Icon = () => (
     render={(data) => (
       <Img
         fluid={data.placeholderImage.childImageSharp.fluid}
-        imgStyle={{ objectFit: 'contain' }}
+        imgStyle={{ borderRadius: '8px' }}
       />
     )}
   />

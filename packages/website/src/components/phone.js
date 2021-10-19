@@ -53,7 +53,6 @@ const Phone = () => (
               style={{
                 margin: `0 auto`,
               }}
-              imgStyle={{ objectFit: 'contain' }}
             />
           );
         }}
