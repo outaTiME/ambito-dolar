@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-beta.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.2...@ambito-dolar/client@6.0.0-beta.3) (2021-10-19)
+
+**Note:** Version bump only for package @ambito-dolar/client
+
+
+
+
+
 # [6.0.0-beta.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.1...@ambito-dolar/client@6.0.0-beta.2) (2021-10-19)
 
 
