@@ -256,7 +256,7 @@ module.exports = {
   isRateFromToday,
   hasRatesFromToday,
   parseNaturalDate,
-  getAvailableRateTypes,
+  // getAvailableRateTypes,
   getRateTitle,
   getNotificationTitle,
   getNotificationSettings,
