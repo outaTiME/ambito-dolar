@@ -11,7 +11,7 @@ __metadata:
   dependencies:
     "@ambito-dolar/core": ^1.2.2
     "@zeit/fetch": ^6.0.0
-    aws-sdk: ^2.1010.0
+    aws-sdk: ^2.1011.0
     chrome-aws-lambda: ~6.0.0
     expo-server-sdk: ^3.6.0
     file-type: ^16.5.3
@@ -34,7 +34,7 @@ __metadata:
     "@babel/core": ~7.9.6
     "@expo/react-native-action-sheet": ^3.12.0
     "@expo/vector-icons": ^12.0.5
-    "@react-native-community/hooks": ^2.7.0
+    "@react-native-community/hooks": ^2.8.0
     "@react-native-masked-view/masked-view": 0.2.4
     "@react-navigation/bottom-tabs": ^6.0.9
     "@react-navigation/elements": ^1.2.1
@@ -96,7 +96,7 @@ __metadata:
     reselect: ^4.0.0
     semver: ^7.3.5
     sentry-expo: ^4.0.3
-    styled-components: ^5.3.1
+    styled-components: ^5.3.3
     swr: ^1.0.1
     victory: ^36.0.1
     victory-native: ^35.5.5
@@ -4524,13 +4524,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/hooks@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "@react-native-community/hooks@npm:2.7.0"
+"@react-native-community/hooks@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "@react-native-community/hooks@npm:2.8.0"
   peerDependencies:
     react: ">=16.8.0"
     react-native: ">=0.59"
-  checksum: eaae57c40782aef816d6b69f970fa4dcaa24c5f216d1217660135e50967601e75c7a0eace4826742c8fb46c880cd5029ff1acca9103e43d47d788f01cb7ac8e9
+  checksum: 26f2a207f7b72e3957f8da71a75c0764e28d747a5b77be98e6d3daad1e6d1e301ad6d24104c57dda922f705896fb08887a8ce1db0958a35beba99a11d51c33a8
   languageName: node
   linkType: hard
 
@@ -6903,9 +6903,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.1010.0":
-  version: 2.1010.0
-  resolution: "aws-sdk@npm:2.1010.0"
+"aws-sdk@npm:^2.1011.0":
+  version: 2.1011.0
+  resolution: "aws-sdk@npm:2.1011.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -6916,7 +6916,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: 1eb6c3e237ec5c460bbd7b6b18664aa8aa89b055915a8819b8807de90bb440a4cc8f24188d9539fd1308fdc6805d5e5df8fa98a169a6a90a49400866b817f0ea
+  checksum: b7f77ce38fe418c36208a47ba5cd8aa13b4c90ef9e737a3dbfc0db2553465358b52194dd46880763b29e03a2155bd2d00c04047cc029a04c08a062259487fb37
   languageName: node
   linkType: hard
 
@@ -25729,9 +25729,9 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"styled-components@npm:^5.3.1":
-  version: 5.3.1
-  resolution: "styled-components@npm:5.3.1"
+"styled-components@npm:^5.3.3":
+  version: 5.3.3
+  resolution: "styled-components@npm:5.3.3"
   dependencies:
     "@babel/helper-module-imports": ^7.0.0
     "@babel/traverse": ^7.4.5
@@ -25747,7 +25747,7 @@ resolve@^2.0.0-next.3:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
     react-is: ">= 16.8.0"
-  checksum: 2d833d573c039f4af5c422ce33f06212dfa51a821994ec1d7a697355752b422cad6e92eeff712dbd9c0339aade8eb5bce10c30dfecb3c8e707530b6dda7dda10
+  checksum: a104341068fc39fa2c73950a34970d832dc7a511fc52b3df12f34e6746031f1f128f53b4d540bf39d9f0da043cf0d91517faf874d2c87de5e385f5c2e7620436
   languageName: node
   linkType: hard
 
