@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.3.0...@ambito-dolar/website@1.3.1) (2021-10-20)
+
+
+### Bug Fixes
+
+* force mozjpeg resolution to solve deployment on vercel ([b65e9d9](https://github.com/outaTiME/ambito-dolar/commit/b65e9d92fcc120e7780f5b33f2ee042b1333273a))
+
+
+
+
+
 # [1.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.2.3...@ambito-dolar/website@1.3.0) (2021-10-19)
 
 

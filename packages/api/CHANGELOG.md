@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.8.2...@ambito-dolar/api@1.9.0) (2021-10-20)
+
+
+### Features
+
+* update variation thresholds and truncate decimals between updates ([f33c90e](https://github.com/outaTiME/ambito-dolar/commit/f33c90e8c24f2a3748c5f0f142918d46ec1b9068))
+
+
+
+
+
 ## [1.8.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.8.1...@ambito-dolar/api@1.8.2) (2021-10-19)
 
 **Note:** Version bump only for package @ambito-dolar/api

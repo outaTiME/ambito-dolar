@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-beta.5](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.4...@ambito-dolar/client@6.0.0-beta.5) (2021-10-20)
+
+
+### Bug Fixes
+
+* rate cards rendering issues on web client ([0a54cfd](https://github.com/outaTiME/ambito-dolar/commit/0a54cfd397d8988667932e08c3b7a7c90efd8a54))
+
+
+
+
+
 # [6.0.0-beta.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.3...@ambito-dolar/client@6.0.0-beta.4) (2021-10-19)
 
 **Note:** Version bump only for package @ambito-dolar/client
