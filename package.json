@@ -33,6 +33,7 @@
     "client:build:android": "yarn workspace @ambito-dolar/client expo build:android",
     "client:build:web": "yarn workspace @ambito-dolar/client expo build:web",
     "client:publish": "yarn workspace @ambito-dolar/client expo publish",
+    "client:publish:web": "vercel packages/client/web-build",
     "client:upgrade": "yarn workspace @ambito-dolar/client expo upgrade",
     "api:start": "vercel dev packages/api",
     "api:publish": "vercel packages/api",
