@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Platform, View, Text, StyleSheet } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 
 import Settings from '../config/settings';
@@ -88,7 +88,17 @@ export default ({
           {
             borderRadius: Settings.BORDER_RADIUS,
             backgroundColor: Settings.getContentColor(theme),
-            flexGrow: 1,
+            // flexGrow: 1,
+            // TODO: flexGrow required when customization on CardItemView
+            ...Platform.select({
+              native: {
+                flexGrow: 1,
+              },
+              default: {
+                // required on web
+                flex: 1,
+              },
+            }),
             overflow: 'hidden',
           },
         ]}
