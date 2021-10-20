@@ -33,5 +33,8 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean"
+  },
+  "resolutions": {
+    "mozjpeg": "7.1.0"
   }
 }
