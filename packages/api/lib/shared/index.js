@@ -158,7 +158,7 @@ const getVariationThreshold = (type) => {
   if (realtime_types.includes(type)) {
     return 0.75;
   }
-  return 0;
+  return 0.01;
 };
 
 const storeFileObject = async (

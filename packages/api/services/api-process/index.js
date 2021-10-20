@@ -281,7 +281,10 @@ const notify = (
           if (prev_rate) {
             const prev_rate_last = getRateValue(prev_rate[1]);
             const rate_last = getRateValue(rate[1]);
-            const value_diff = Math.abs(prev_rate_last - rate_last);
+            // truncate decimals
+            const value_diff = AmbitoDolar.getNumber(
+              Math.abs(prev_rate_last - rate_last)
+            );
             const rate_threshold = Shared.getVariationThreshold(type);
             console.info(
               'Looking for rate variation to notify',
@@ -291,7 +294,7 @@ const notify = (
                 threshold: rate_threshold,
               })
             );
-            if (value_diff !== 0 && value_diff >= rate_threshold) {
+            if (value_diff !== 0 && value_diff > rate_threshold) {
               // variation found
               obj[type] = rate;
             }
