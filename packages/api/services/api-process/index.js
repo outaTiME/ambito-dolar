@@ -352,13 +352,10 @@ export default async (req, res) => {
     const in_time =
       AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
       0;
-    if (
-      // initial process of business day
-      (!has_rates_from_today && !_.isEmpty(new_rates)) ||
-      // on business day
-      has_rates_from_today
-    ) {
-      const new_business_day_rates = await getBusinessDayRates(rates, in_time);
+    const is_opening = !has_rates_from_today && !_.isEmpty(new_rates);
+    if (is_opening || has_rates_from_today) {
+      const realtime = is_opening || in_time;
+      const new_business_day_rates = await getBusinessDayRates(rates, realtime);
       Object.assign(new_rates, new_business_day_rates);
     }
     const has_new_rates = !_.isEmpty(new_rates);
