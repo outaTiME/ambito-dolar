@@ -11,7 +11,7 @@ __metadata:
   dependencies:
     "@ambito-dolar/core": ^1.2.2
     "@zeit/fetch": ^6.0.0
-    aws-sdk: ^2.1011.0
+    aws-sdk: ^2.1013.0
     chrome-aws-lambda: ~6.0.0
     expo-server-sdk: ^3.6.0
     file-type: ^16.5.3
@@ -133,7 +133,7 @@ __metadata:
     gatsby-plugin-no-sourcemaps: ^2.9.0
     gatsby-plugin-offline: ^3.10.2
     gatsby-plugin-react-helmet: ^3.10.0
-    gatsby-plugin-robots-txt: ^1.6.10
+    gatsby-plugin-robots-txt: ^1.6.13
     gatsby-plugin-sass: ^3.2.0
     gatsby-plugin-sharp: ^2.14.4
     gatsby-plugin-web-font-loader: ^1.0.4
@@ -144,7 +144,7 @@ __metadata:
     react-dom: ^17.0.2
     react-helmet: ^6.1.0
     react-icons: ^4.3.1
-    sass: ^1.43.2
+    sass: ^1.43.3
   languageName: unknown
   linkType: soft
 
@@ -6141,7 +6141,7 @@ __metadata:
     "@commitlint/cli": ^13.2.1
     eslint: ^7.32.0
     eslint-config-universe: ^7.0.1
-    husky: ^7.0.2
+    husky: ^7.0.4
     lerna: ^4.0.0
     prettier: ^2.4.1
     typescript: ^4.4.4
@@ -6903,9 +6903,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.1011.0":
-  version: 2.1011.0
-  resolution: "aws-sdk@npm:2.1011.0"
+"aws-sdk@npm:^2.1013.0":
+  version: 2.1013.0
+  resolution: "aws-sdk@npm:2.1013.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -6916,7 +6916,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: b7f77ce38fe418c36208a47ba5cd8aa13b4c90ef9e737a3dbfc0db2553465358b52194dd46880763b29e03a2155bd2d00c04047cc029a04c08a062259487fb37
+  checksum: b4728bad6cffe0fe0691155d344c1235c1f0e7d62a2798f2ae0c094c4f7bbbbcb1173bea4170929fdc3899092feeaef5fea31582454de987c69c19ea1138ce17
   languageName: node
   linkType: hard
 
@@ -13760,15 +13760,15 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"gatsby-plugin-robots-txt@npm:^1.6.10":
-  version: 1.6.10
-  resolution: "gatsby-plugin-robots-txt@npm:1.6.10"
+"gatsby-plugin-robots-txt@npm:^1.6.13":
+  version: 1.6.13
+  resolution: "gatsby-plugin-robots-txt@npm:1.6.13"
   dependencies:
     "@babel/runtime": ^7.14.0
     generate-robotstxt: ^8.0.3
   peerDependencies:
     gatsby: ^3.0.0 || ^2.0.0
-  checksum: 91efd4d2bc3352f3c69b59e17547726a3750b432d3e819d5a2778b2bfc7d1c8bb2578ee7a4fdebfd91b2fd0673e1376ff224efd0eb6974521bb9afd49b5baddd
+  checksum: 4d73faed19302324177d446e12d67fce6d43fae2704f75e9791d115cbe83bb80c2cd77daadf229d66bc62b2c2a698b04c87773b0145d858813427382abf8dc6b
   languageName: node
   linkType: hard
 
@@ -15561,12 +15561,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"husky@npm:^7.0.2":
-  version: 7.0.2
-  resolution: "husky@npm:7.0.2"
+"husky@npm:^7.0.4":
+  version: 7.0.4
+  resolution: "husky@npm:7.0.4"
   bin:
     husky: lib/bin.js
-  checksum: 2ccfe6ddc51dc05ae8ea1e2fbb893344e93a813e00c595d6b5f5e704b7b998d6b0e2adda7c57f99b5e46a60dc07c7d860269a2ea91661c6bacef0eca8e0b8e96
+  checksum: c6ec4af63da2c9522da8674a20ad9b48362cc92704896cc8a58c6a2a39d797feb2b806f93fbd83a6d653fbdceb2c3b6e0b602c6b2e8565206ffc2882ef7db9e9
   languageName: node
   linkType: hard
 
@@ -24214,14 +24214,14 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.43.2":
-  version: 1.43.2
-  resolution: "sass@npm:1.43.2"
+"sass@npm:^1.43.3":
+  version: 1.43.3
+  resolution: "sass@npm:1.43.3"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
   bin:
     sass: sass.js
-  checksum: 96bafc42f01395011347c54b31d974a5949866079bb511ec879d1fb56f88d5d8e0c19961aa37e5e4d039d5a3bc536f06159ff432a3de97dfd0e1315a94fbf45d
+  checksum: d253980cdafe6eab223cd57a44a49a43fc3123c0459c3d09d7f95ab4d4f2a8e3559996c6bfeed5be8dc428c85fd5b8f3cd165a0ede695df9fbd002f2094f8ea1
   languageName: node
   linkType: hard
 
