@@ -473,11 +473,29 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
   );
 };
 
-const AppContainer = ({ showAppUpdateMessage }) => {
+const AppLoadingView = ({ stillLoading }) => {
   const { theme } = Helper.useTheme();
+  return (
+    <>
+      <ActivityIndicator
+        animating
+        color={Settings.getForegroundColor(theme)}
+        size="small"
+      />
+      {stillLoading && (
+        <MessageView
+          style={{ marginTop: Settings.PADDING * 2 }}
+          message={I18n.t('still_loading')}
+        />
+      )}
+    </>
+  );
+};
+
+const AppContainer = ({ showAppUpdateMessage }) => {
   const [stillLoading, setStillLoading] = React.useState(false);
+  const dispatch = useDispatch();
   const {
-    // data,
     error,
     isValidating,
     mutate: refetchRates,
@@ -487,11 +505,7 @@ const AppContainer = ({ showAppUpdateMessage }) => {
     shouldRetryOnError: false,
     // focusThrottleInterval: 10 * 1000,
     // loadingTimeout: 10 * 1000,
-    // ...(rates && { fallbackData: rates }),
     onLoadingSlow: () => {
-      if (__DEV__) {
-        console.log('Rates still loading');
-      }
       setStillLoading(true);
     },
     onSuccess: (data) => {
@@ -508,27 +522,10 @@ const AppContainer = ({ showAppUpdateMessage }) => {
       setStillLoading(false);
     },
   });
-  const dispatch = useDispatch();
-  /* React.useEffect(() => {
-    if (data) {
-      if (__DEV__) {
-        console.log('Rates updated');
-      }
-      dispatch(actions.addRates(data));
-    }
-  }, [dispatch, data]);
-  React.useEffect(() => {
-    if (error) {
-      if (__DEV__) {
-        console.warn('Unable to get rates', error);
-      }
-    }
-  }, [error]); */
   const [, setUpdatingRates] = Helper.useSharedState('updatingRates');
   React.useEffect(() => {
-    // TODO: leave spinner only when focus or reconnect (use react ref)
+    // TODO: leave header spinner only when focus (use react ref)
     setUpdatingRates(isValidating);
-    console.log('>>> useSWR (loading)', isValidating);
   }, [isValidating]);
   const rates = Helper.useRates();
   const hasRates = React.useMemo(() => Helper.hasValidRates(rates), [rates]);
@@ -548,6 +545,7 @@ const AppContainer = ({ showAppUpdateMessage }) => {
     );
     return () => subscription.remove();
   }, []);
+  // for dev mode
   const prevRates = Helper.usePrevious(rates);
   const { cache } = useSWRConfig();
   React.useEffect(() => {
@@ -561,7 +559,12 @@ const AppContainer = ({ showAppUpdateMessage }) => {
   }, [rates, prevRates]);
   const errorOnBoot = !rates && error;
   const invalidRates = rates && !hasRates;
+  // when invalid state
   if (errorOnBoot || invalidRates) {
+    // retry
+    if (isValidating) {
+      return <AppLoadingView stillLoading={stillLoading} />;
+    }
     return (
       <>
         <MessageView
@@ -580,22 +583,9 @@ const AppContainer = ({ showAppUpdateMessage }) => {
       </>
     );
   }
+  // fresh boot
   if (!rates) {
-    return (
-      <>
-        <ActivityIndicator
-          animating
-          color={Settings.getForegroundColor(theme)}
-          size="small"
-        />
-        {stillLoading && (
-          <MessageView
-            style={{ marginTop: Settings.PADDING * 2 }}
-            message={I18n.t('still_loading')}
-          />
-        )}
-      </>
-    );
+    return <AppLoadingView stillLoading={stillLoading} />;
   }
   return <AppNavigationContainer {...{ showAppUpdateMessage }} />;
 };

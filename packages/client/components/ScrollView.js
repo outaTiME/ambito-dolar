@@ -6,10 +6,12 @@ import {
   ScrollView as NativeScrollView,
   Platform,
   StyleSheet,
+  RefreshControl,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Settings from '../config/settings';
+import Helper from '../utilities/Helper';
 
 export default ({
   children,
@@ -17,16 +19,18 @@ export default ({
   contentContainerRef,
   ...extra
 }) => {
+  const { theme } = Helper.useTheme();
   // add translucent hairline width
   const headerHeight = useHeaderHeight() - StyleSheet.hairlineWidth;
   const tabBarheight = useBottomTabBarHeight() - StyleSheet.hairlineWidth;
   const insets = useSafeAreaInsets();
+  const [refreshing, setRefreshing] = React.useState(false);
   return (
     <NativeScrollView
-      scrollIndicatorInsets={{
+      /* scrollIndicatorInsets={{
         top: headerHeight - insets.top,
         bottom: tabBarheight - insets.bottom,
-      }}
+      }} */
       contentContainerStyle={[
         {
           flexGrow: 1,
@@ -34,10 +38,10 @@ export default ({
           width: '100%',
           maxWidth: Settings.MAX_DEVICE_WIDTH,
           // required when translucent bars
-          ...(Platform.OS === 'ios' && {
+          /* ...(Platform.OS === 'ios' && {
             paddingTop: headerHeight,
             paddingBottom: tabBarheight,
-          }),
+          }), */
         },
       ]}
       // https://snack.expo.dev/@wolewicki/ios-header-height
@@ -58,6 +62,35 @@ export default ({
           }),
         },
       ]} */
+
+      contentInset={{
+        top: headerHeight,
+        bottom: tabBarheight,
+      }}
+      /* contentOffset={{ x: 0, y: -(headerHeight * 2) }} */
+      // contentInset={{ top: headerHeight }}
+      contentOffset={{ y: -headerHeight }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+            setTimeout(() => {
+              setRefreshing(false);
+            }, 1 * 1000);
+          }}
+          // ios
+          // tintColor={Settings.getGrayColor(theme)}
+          // tintColor={theme === 'dark' ? 'rgb(174,174,178)' : 'rgb(99,99,102)'}
+          tintColor="rgb(199,199,204)"
+          // android
+          colors={[Settings.getForegroundColor(theme)]}
+          progressBackgroundColor={Settings.getBackgroundColor(theme)}
+          progressViewOffset={headerHeight}
+        />
+      }
+      // contentInsetAdjustmentBehavior="automatic"
+      // automaticallyAdjustContentInsets={false}
       {...extra}
     >
       <View style={{ flex: 1, backgroundColor }} ref={contentContainerRef}>
