@@ -41,9 +41,9 @@ const AppContainer = ({ rates, processedAt }) => {
           alignSelf: 'center',
           // fixed size required by social notifier
           width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
-          // height: AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
+          height: AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
           // TODO: leave until v6 release
-          height: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
+          // height: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
         }}
       >
         <View
