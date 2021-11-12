@@ -2,13 +2,13 @@ import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import React from 'react';
+import { useColorScheme } from 'react-native';
 import { ThemeProvider } from 'styled-components';
 
 import AppContainer from './components/AppContainer';
-import useDebouncedColorScheme from './hooks/useDebouncedColorScheme';
 
 const ThemedApp = () => {
-  const colorScheme = useDebouncedColorScheme();
+  const colorScheme = useColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
   return (
     <ThemeProvider theme={theme}>

@@ -24,7 +24,7 @@ import { SWRConfig } from 'swr';
 
 import AppContainer from './components/AppContainer';
 import Settings from './config/settings';
-import useDebouncedColorScheme from './hooks/useDebouncedColorScheme';
+import useColorScheme from './hooks/useColorScheme';
 import reducers from './reducers';
 import Helper from './utilities/Helper';
 import Sentry from './utilities/Sentry';
@@ -91,7 +91,7 @@ TextInput.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
 TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
 const ThemedApp = () => {
-  const colorScheme = useDebouncedColorScheme();
+  const colorScheme = useColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
   const statusBarStyle = colorScheme
     ? Helper.getInvertedTheme(colorScheme)
