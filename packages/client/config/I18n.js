@@ -25,7 +25,7 @@ i18n.translations = {
     week: 'Semana',
     month: 'Mes',
     year: 'Año',
-    show_detail: 'Mostrar detalle',
+    show_detail: 'Ver detalle',
     day_summary: 'Resumen de jornada',
     variation: 'Variación',
     previous_close: 'Cierre anterior',
