@@ -1,7 +1,0 @@
-/*
-!services
-!services/**/*.js
-!lib
-!lib/**/*.js
-!package.json
-!yarn.lock

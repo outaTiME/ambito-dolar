@@ -1,8 +1,8 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
-const { Shared } = require('../../lib/shared');
+import Shared from '../libs/shared';
 
-export default async (_req, res) => {
+export async function handler() {
   try {
     const results = await Shared.getRates().then((data) => {
       if (!_.isEmpty(data)) {
@@ -10,10 +10,10 @@ export default async (_req, res) => {
       }
       throw new Error('No data available');
     });
-    Shared.serviceResponse(res, 200, results);
+    return Shared.serviceResponse(null, 200, results);
   } catch (error) {
-    Shared.serviceResponse(res, error.code || 400, {
+    return Shared.serviceResponse(null, error.code || 400, {
       error: error.message,
     });
   }
-};
+}

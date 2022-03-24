@@ -37,8 +37,8 @@
     "client:publish": "yarn workspace @ambito-dolar/client expo publish",
     "client:publish:web": "vercel packages/client/web-build",
     "client:upgrade": "yarn workspace @ambito-dolar/client expo upgrade",
-    "api:start": "vercel dev packages/api",
-    "api:publish": "vercel packages/api",
+    "api:start": "yarn workspace @ambito-dolar/api run start",
+    "api:publish": "yarn workspace @ambito-dolar/api run deploy",
     "website:start": "yarn workspace @ambito-dolar/website run start",
     "website:publish": "vercel packages/website",
     "publish": "lerna publish",
@@ -46,7 +46,8 @@
   },
   "resolutions": {
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "sharp": "^0.28.0"
   },
   "packageManager": "yarn@3.1.0"
 }

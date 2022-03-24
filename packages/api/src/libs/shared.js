@@ -1,16 +1,15 @@
-const AmbitoDolar = require('@ambito-dolar/core');
-const Fetch = require('@zeit/fetch');
-const AWS = require('aws-sdk');
-const { Expo } = require('expo-server-sdk');
-const FileType = require('file-type');
-const { JWT } = require('google-auth-library');
-const _ = require('lodash');
-const semverLt = require('semver/functions/lt');
-const zlib = require('zlib');
+import AmbitoDolar from '@ambito-dolar/core';
+import { parallelScan } from '@shelf/dynamodb-parallel-scan';
+import AWS from 'aws-sdk';
+import { Expo } from 'expo-server-sdk';
+// const FileType = require('file-type');
+import { JWT } from 'google-auth-library';
+import _ from 'lodash';
+import fetch from 'node-fetch';
+import semverLt from 'semver/functions/lt';
+import zlib from 'zlib';
 
 // defaults
-
-AWS.config.update(JSON.parse(process.env.AWS_CONFIG_JSON));
 
 const dynamoDBClient = new AWS.DynamoDB.DocumentClient({
   // pass
@@ -26,11 +25,11 @@ const sns = new AWS.SNS({
 
 // constants
 
-const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
-const MIN_CLIENT_VERSION_FOR_FUTURE = '6.0.0';
-const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
-const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
-const MAX_NUMBER_OF_STATS = 7; // 1 week
+export const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
+export const MIN_CLIENT_VERSION_FOR_FUTURE = '6.0.0';
+export const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
+export const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
+export const MAX_NUMBER_OF_STATS = 7; // 1 week
 const S3_BUCKET = process.env.S3_BUCKET;
 // 2.1.x
 const RATE_STATS_OBJECT_KEY = process.env.RATE_STATS_OBJECT_KEY;
@@ -45,13 +44,10 @@ const HISTORICAL_RATES_V5_OBJECT_KEY = 'historical-' + RATES_V5_OBJECT_KEY;
 const RATES_OBJECT_KEY = process.env.RATES_OBJECT_KEY;
 const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
 
-// exports
-
-const FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL;
-const FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY;
+let FIREBASE_CREDENTIALS;
 
 const getFirebaseAccessToken = async () => {
-  const { access_token, expiry_date } = this._firebase_token || {};
+  const { access_token, expiry_date } = FIREBASE_CREDENTIALS || {};
   if (!expiry_date || (expiry_date && Date.now() >= expiry_date)) {
     // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
     const scopes = [
@@ -60,8 +56,8 @@ const getFirebaseAccessToken = async () => {
     ];
     return new Promise((resolve, reject) => {
       const jwtClient = new JWT({
-        email: FIREBASE_CLIENT_EMAIL,
-        key: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        email: process.env.FIREBASE_CLIENT_EMAIL,
+        key: process.env.FIREBASE_PRIVATE_KEY,
         scopes,
       });
       jwtClient.authorize((err, token) => {
@@ -70,7 +66,7 @@ const getFirebaseAccessToken = async () => {
           return;
         }
         // internal
-        this._firebase_token = token;
+        FIREBASE_CREDENTIALS = token;
         resolve(token.access_token);
       });
     });
@@ -78,11 +74,9 @@ const getFirebaseAccessToken = async () => {
   return access_token;
 };
 
-const FIREBASE_DATABASE_URL = process.env.FIREBASE_DATABASE_URL;
-
 const fetchFirebaseData = async (uri, opts = {}) => {
   const access_token = await getFirebaseAccessToken();
-  const url = new URL(`${FIREBASE_DATABASE_URL}${uri}`);
+  const url = new URL(`${process.env.FIREBASE_DATABASE_URL}${uri}`);
   url.pathname = url.pathname + '.json';
   url.searchParams.set('access_token', access_token);
   return fetch(url.href, opts).then(async (response) => {
@@ -108,11 +102,20 @@ const putFirebaseData = async (uri, payload = {}) => {
   }
 };
 
-const serviceResponse = (res, code, json) => res.status(code).json(json);
+const serviceResponse = (res, code, json) => {
+  if (res) {
+    return res.status(code).json(json);
+  }
+  return {
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify(json),
+    statusCode: code,
+  };
+};
 
 const getDynamoDBClient = () => dynamoDBClient;
 
-const getAllDataFromDynamoDB = async (params, allData = []) => {
+/* const getAllDataFromDynamoDB = async (params, allData = []) => {
   const data = await dynamoDBClient.scan(params).promise();
   return data.LastEvaluatedKey
     ? getAllDataFromDynamoDB(
@@ -120,32 +123,10 @@ const getAllDataFromDynamoDB = async (params, allData = []) => {
         [...allData, ...data['Items']]
       )
     : [...allData, ...data['Items']];
-};
+}; */
 
-const assertAuthenticated = (req, payload) => {
-  const token =
-    req.headers['x-access-token'] ||
-    req.headers['authorization'] ||
-    (payload || req.body || {}).access_token ||
-    req.query.access_token;
-  if (process.env.SECRET_KEY !== token) {
-    const error = new Error(
-      'The access token provided is malformed, missing or has an invalid value'
-    );
-    error.code = 401;
-    throw error;
-  }
-};
-
-const assertPost = (req) => {
-  if (req.method !== 'POST') {
-    const error = new Error('Method not allowed');
-    error.code = 405;
-    throw error;
-  }
-};
-
-const fetch = (url, opts) => Fetch()(url, opts);
+const getAllDataFromDynamoDB = async (params) =>
+  parallelScan(params, { concurrency: 15 });
 
 const isSemverLt = (v1, v2) => semverLt(v1, v2);
 
@@ -161,35 +142,53 @@ const getVariationThreshold = (type) => {
   return 0.01;
 };
 
-const storeFileObject = async (
-  key,
-  buffer,
-  bucket = S3_BUCKET,
-  is_public = false
-) => {
+const getJsonObject = async (key, bucket = S3_BUCKET) => {
   // try {
-  // https://blog.jonathandion.com/posts/json-gzip-s3/
-  const { ext, mime } = await FileType.fromBuffer(buffer);
   return s3
-    .upload({
+    .getObject({
       Bucket: bucket,
-      Key: `${key}.${ext}`,
-      Body: buffer,
-      ...(is_public === true && { ACL: 'public-read' }),
-      ContentType: mime,
+      Key: `${key}.json`,
     })
-    .promise();
+    .promise()
+    .then((data) => {
+      const uncompressed = zlib.gunzipSync(data.Body);
+      return JSON.parse(uncompressed);
+      /* const buffer = new Buffer.from(data.Body.toString());
+        const uncompressed = zlib.gunzipSync(buffer);
+        return JSON.parse(uncompressed); */
+    });
   /* } catch (error) {
+    // error.code === 'NoSuchKey'
     console.warn(
-      'Unable to store object in bucket',
-      JSON.stringify({ bucket, key, json, error: error.message })
+      'Unable to get object from bucket',
+      JSON.stringify({ bucket, key, error: error.message })
     );
     // trace and continue
   } */
 };
 
-const storePublicFileObject = async (key, buffer, bucket) =>
-  storeFileObject(key, buffer, bucket, true);
+const getTickets = async (date, type) =>
+  getJsonObject(`notifications/${date}-${type}`);
+
+const getRatesJsonObject = async () => getJsonObject(RATES_OBJECT_KEY);
+
+const getRates = async (base_rates) => {
+  // took only available rates
+  base_rates =
+    base_rates ||
+    (await getRatesJsonObject().catch(() => {
+      // ignore
+    }));
+  // reduce rate_stats to the last ones
+  const rates = Object.entries(base_rates.rates || {}).reduce(
+    (obj, [type, rate]) => {
+      obj[type] = _.last(rate.stats);
+      return obj;
+    },
+    {}
+  );
+  return rates;
+};
 
 const storeJsonObject = async (
   key,
@@ -223,33 +222,11 @@ const storeJsonObject = async (
   } */
 };
 
+const storeTickets = async (date, type, json) =>
+  storeJsonObject(`notifications/${date}-${type}`, json);
+
 const storePublicJsonObject = async (key, json, bucket) =>
   storeJsonObject(key, json, bucket, true);
-
-const getJsonObject = async (key, bucket = S3_BUCKET) => {
-  // try {
-  return s3
-    .getObject({
-      Bucket: bucket,
-      Key: `${key}.json`,
-    })
-    .promise()
-    .then((data) => {
-      const uncompressed = zlib.gunzipSync(data.Body);
-      return JSON.parse(uncompressed);
-      /* const buffer = new Buffer.from(data.Body.toString());
-        const uncompressed = zlib.gunzipSync(buffer);
-        return JSON.parse(uncompressed); */
-    });
-  /* } catch (error) {
-    // error.code === 'NoSuchKey'
-    console.warn(
-      'Unable to get object from bucket',
-      JSON.stringify({ bucket, key, error: error.message })
-    );
-    // trace and continue
-  } */
-};
 
 const storeRateStats = async (rates) => {
   const base_rates = Object.entries(rates || {}).reduce(
@@ -289,52 +266,6 @@ const storeRateStats = async (rates) => {
   );
   return storePublicJsonObject(RATE_STATS_OBJECT_KEY, base_rates);
 };
-
-const storeTickets = async (date, type, json) =>
-  storeJsonObject(`notifications/${date}-${type}`, json);
-
-const getTickets = async (date, type) =>
-  getJsonObject(`notifications/${date}-${type}`);
-
-const storeRatesJsonObject = async (rates, is_updated) => {
-  const legacy_rates = Object.entries(rates.rates || {}).reduce(
-    (obj, [type, rate]) => {
-      // ignore
-      if (
-        type === AmbitoDolar.FUTURE_TYPE ||
-        type === AmbitoDolar.WHOLESALER_TYPE ||
-        type === AmbitoDolar.CCB_TYPE
-      ) {
-        return obj;
-      }
-      if (type === AmbitoDolar.CCL_TYPE) {
-        type = AmbitoDolar.CCL_LEGACY_TYPE;
-      }
-      obj[type] = rate;
-      return obj;
-    },
-    {}
-  );
-  return Promise.all([
-    is_updated && storeRateStats(rates.rates),
-    storePublicJsonObject(RATES_LEGACY_OBJECT_KEY, {
-      ...rates,
-      rates: legacy_rates,
-    }),
-    storePublicJsonObject(RATES_V5_OBJECT_KEY, {
-      ...rates,
-      rates: _.omit(rates.rates, [
-        AmbitoDolar.FUTURE_TYPE,
-        AmbitoDolar.CCB_TYPE,
-      ]),
-    }),
-    storePublicJsonObject(RATES_OBJECT_KEY, rates),
-    // save historical rates
-    is_updated && storeHistoricalRatesJsonObject(rates),
-  ]);
-};
-
-const getRatesJsonObject = async () => getJsonObject(RATES_OBJECT_KEY);
 
 const storeHistoricalRatesJsonObject = async ({ rates }) => {
   const base_rates = await getJsonObject(HISTORICAL_RATES_OBJECT_KEY).catch(
@@ -396,18 +327,42 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
   ]);
 };
 
-const getRates = async (base_rates) => {
-  // took only available rates
-  base_rates = base_rates || (await getRatesJsonObject().catch(() => {}));
-  // reduce rate_stats to the last ones
-  const rates = Object.entries(base_rates.rates || {}).reduce(
+const storeRatesJsonObject = async (rates, is_updated) => {
+  const legacy_rates = Object.entries(rates.rates || {}).reduce(
     (obj, [type, rate]) => {
-      obj[type] = _.last(rate.stats);
+      // ignore
+      if (
+        type === AmbitoDolar.FUTURE_TYPE ||
+        type === AmbitoDolar.WHOLESALER_TYPE ||
+        type === AmbitoDolar.CCB_TYPE
+      ) {
+        return obj;
+      }
+      if (type === AmbitoDolar.CCL_TYPE) {
+        type = AmbitoDolar.CCL_LEGACY_TYPE;
+      }
+      obj[type] = rate;
       return obj;
     },
     {}
   );
-  return rates;
+  return Promise.all([
+    is_updated && storeRateStats(rates.rates),
+    storePublicJsonObject(RATES_LEGACY_OBJECT_KEY, {
+      ...rates,
+      rates: legacy_rates,
+    }),
+    storePublicJsonObject(RATES_V5_OBJECT_KEY, {
+      ...rates,
+      rates: _.omit(rates.rates, [
+        AmbitoDolar.FUTURE_TYPE,
+        AmbitoDolar.CCB_TYPE,
+      ]),
+    }),
+    storePublicJsonObject(RATES_OBJECT_KEY, rates),
+    // save historical rates
+    is_updated && storeHistoricalRatesJsonObject(rates),
+  ]);
 };
 
 const getDataProviderForRate = (type) => {
@@ -441,20 +396,12 @@ const getRateUrl = (type) => {
   });
 };
 
-const getHistoricalRateUrl = (type) => {
-  const path = getPathForRate(type);
-  return _.template(process.env.HISTORICAL_RATE_URL)({
-    path,
-  });
-};
-
 const getCryptoRatesUrl = () => process.env.CRYPTO_RATES_URL;
 
-const getSocialScreenshotUrl = (title) => {
-  return _.template(process.env.SOCIAL_SCREENSHOT_URL)({
+const getSocialScreenshotUrl = (title) =>
+  _.template(process.env.SOCIAL_SCREENSHOT_URL)({
     title: encodeURIComponent(title),
   });
-};
 
 const getExpoClient = () =>
   new Expo({
@@ -464,18 +411,19 @@ const getExpoClient = () =>
 
 // SNS
 
-const publishMessageToTopic = async (event, payload) => {
+const publishMessageToTopic = async (event, payload = {}) => {
   const start_time = Date.now();
   console.info(
     'Publising message to sns topic',
     JSON.stringify({
       event,
-      payload: _.omit(payload, ['access_token']),
+      payload,
     })
   );
   return sns
     .publish({
       Message: JSON.stringify(payload),
+      MessageStructure: 'string',
       // https://docs.aws.amazon.com/sns/latest/dg/sns-subscription-filter-policies.html
       MessageAttributes: {
         event: {
@@ -506,12 +454,17 @@ const publishMessageToTopic = async (event, payload) => {
     });
 };
 
-const publishMessageToTopicSecured = (event, payload) =>
-  publishMessageToTopic(event, {
-    ...payload,
-    // attach access token on payload
-    access_token: process.env.SECRET_KEY,
-  });
+const triggerProcessEvent = async (payload) =>
+  publishMessageToTopic('process', payload);
+
+const triggerInvalidateReceiptsEvent = async (payload) =>
+  publishMessageToTopic('invalidate-receipts', payload);
+
+const triggerNotifyEvent = async (payload) =>
+  publishMessageToTopic('notify', payload);
+
+const triggerSocialNotifyEvent = async (payload) =>
+  publishMessageToTopic('social-notify', payload);
 
 // IFTTT
 
@@ -521,7 +474,7 @@ const triggerEvent = async (event, payload) => {
     'Triggering event',
     JSON.stringify({
       event,
-      payload: _.omit(payload, ['access_token']),
+      payload,
     })
   );
   return fetch(
@@ -560,12 +513,6 @@ const triggerEvent = async (event, payload) => {
     });
 };
 
-const triggerNotifyEvent = async (payload) =>
-  publishMessageToTopicSecured('notify', payload);
-
-const triggerSocialNotifyEvent = async (payload) =>
-  publishMessageToTopicSecured('social-notify', payload);
-
 const triggerSendSocialNotificationsEvent = async (caption, image_url) => {
   const event = 'send-social-notifications';
   return triggerEvent(image_url ? event + '-with-photo' : event, {
@@ -575,7 +522,8 @@ const triggerSendSocialNotificationsEvent = async (caption, image_url) => {
 };
 
 const storeImgurFile = async (image) =>
-  fetch('https://api.imgur.com/3/image', {
+  // fetch('https://api.imgur.com/3/image', {
+  fetch('https://api.imgur.com/3/upload', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
@@ -593,74 +541,31 @@ const storeImgurFile = async (image) =>
     throw Error(response.statusText);
   });
 
-const storeImgbbFile = async (image) => {
-  const params = {
-    key: process.env.IMGBB_KEY,
-    image,
-  };
-  const body = Object.entries(params)
-    .reduce(
-      (obj, [key, value]) => [
-        ...obj,
-        encodeURIComponent(key) + '=' + encodeURIComponent(value),
-      ],
-      []
-    )
-    .join('&');
-  return fetch('https://api.imgbb.com/1/upload', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-    },
-    body,
-  }).then(async (response) => {
-    if (response.ok) {
-      const { data } = await response.json();
-      return data.url;
-    }
-    throw Error(response.statusText);
-  });
-};
-
-const Shared = {
-  fetchFirebaseData,
+export default {
+  // fetchFirebaseData,
   putFirebaseData,
   serviceResponse,
   getDynamoDBClient,
   getAllDataFromDynamoDB,
-  assertAuthenticated,
-  assertPost,
   fetch,
   isSemverLt,
   getVariationThreshold,
-  storePublicFileObject,
-  storeJsonObject,
   getJsonObject,
-  storeRateStats,
-  storeTickets,
   getTickets,
-  storeRatesJsonObject,
   getRatesJsonObject,
-  storeHistoricalRatesJsonObject,
   getRates,
+  storeJsonObject,
+  storeTickets,
+  storeRatesJsonObject,
   getDataProviderForRate,
   getRateUrl,
-  getHistoricalRateUrl,
   getCryptoRatesUrl,
   getSocialScreenshotUrl,
   getExpoClient,
+  triggerProcessEvent,
+  triggerInvalidateReceiptsEvent,
   triggerNotifyEvent,
   triggerSocialNotifyEvent,
   triggerSendSocialNotificationsEvent,
   storeImgurFile,
-  storeImgbbFile,
-};
-
-module.exports = {
-  Shared,
-  MIN_CLIENT_VERSION_FOR_MEP,
-  MIN_CLIENT_VERSION_FOR_FUTURE,
-  MIN_CLIENT_VERSION_FOR_WHOLESALER,
-  MIN_CLIENT_VERSION_FOR_CCB,
-  MAX_NUMBER_OF_STATS,
 };

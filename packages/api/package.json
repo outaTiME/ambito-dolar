@@ -2,20 +2,33 @@
   "name": "@ambito-dolar/api",
   "private": true,
   "version": "1.9.0",
+  "scripts": {
+    "test": "sst test",
+    "start": "sst start",
+    "build": "sst build",
+    "deploy": "sst deploy",
+    "remove": "sst remove"
+  },
   "dependencies": {
     "@ambito-dolar/core": "^1.2.2",
-    "@zeit/fetch": "^6.0.0",
-    "aws-sdk": "^2.1018.0",
-    "chrome-aws-lambda": "~6.0.0",
+    "@serverless-stack/cli": "0.69.2",
+    "@serverless-stack/resources": "0.69.2",
+    "@shelf/dynamodb-parallel-scan": "^2.2.3",
+    "aws-cdk-lib": "2.15.0",
+    "aws-sdk": "^2.1099.0",
+    "boolean": "^3.2.0",
+    "chrome-aws-lambda": "^10.1.0",
     "expo-server-sdk": "^3.6.0",
-    "file-type": "^16.5.3",
-    "google-auth-library": "^7.10.1",
-    "instagram-private-api": "~1.42.1",
-    "joi": "^17.4.2",
+    "google-auth-library": "^7.14.1",
+    "instagram-private-api": "^1.45.3",
+    "joi": "^17.6.0",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.5",
-    "object-hash": "^2.2.0",
-    "puppeteer-core": "~6.0.0",
+    "node-fetch": "^3.2.3",
+    "object-hash": "^3.0.0",
+    "puppeteer-core": "^10.1.0",
     "semver": "^7.3.5"
+  },
+  "devDependencies": {
+    "puppeteer": "^10.1.0"
   }
 }

@@ -26,10 +26,6 @@ web-build
 google-services.json
 __generated__
 
-# IDE specific
-.vscode
-.nova
-
 # Node
 #
 node_modules
@@ -38,10 +34,15 @@ yarn-error.log
 
 # Yarn 2
 #
+.pnp.*
 .yarn/*
-!.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# SST build output
+#
+.build
+.sst

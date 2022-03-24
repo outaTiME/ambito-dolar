@@ -1,13 +1,12 @@
-const AmbitoDolar = require('@ambito-dolar/core');
-const _ = require('lodash');
+import AmbitoDolar from '@ambito-dolar/core';
+import _ from 'lodash';
 
-const {
-  Shared,
+import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,
   MIN_CLIENT_VERSION_FOR_FUTURE,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
   MIN_CLIENT_VERSION_FOR_CCB,
-} = require('../../lib/shared');
+} from '../libs/shared';
 
 const client = Shared.getDynamoDBClient();
 
@@ -66,13 +65,7 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
   try {
     const title = AmbitoDolar.getNotificationTitle(type);
     const messages = items.map(
-      ({
-        notification_settings,
-        installation_id,
-        push_token,
-        device_name,
-        app_version,
-      }) => {
+      ({ installation_id, app_version, push_token, notification_settings }) => {
         const settings = AmbitoDolar.getNotificationSettings(
           notification_settings
         )[type];
@@ -117,9 +110,8 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
             // internal
             source: {
               installation_id,
-              push_token,
-              device_name,
               app_version,
+              push_token,
             },
           });
         }
@@ -154,6 +146,9 @@ const notify = async (
   console.info(
     'New notification',
     JSON.stringify({
+      type,
+      body_message,
+      rates,
       social,
     })
   );
@@ -171,8 +166,7 @@ const notify = async (
       .value();
     if (body_message) {
       // TODO: custom message support for broadcasting?
-      const { installation_id, push_token, device_name, app_version } =
-        items[0];
+      const { installation_id, app_version, push_token } = items[0];
       // single item only allowed (installation_id as parameter)
       messages.push(
         getMessage({
@@ -181,9 +175,8 @@ const notify = async (
           // internal
           source: {
             installation_id,
-            push_token,
-            device_name,
             app_version,
+            push_token,
           },
         })
       );
@@ -197,7 +190,7 @@ const notify = async (
       const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
       if (has_rates_from_today) {
         // leave testing device only for new notifications when development
-        if (process.env.NODE_ENV === 'development' && items.length > 1) {
+        if (process.env.IS_LOCAL && items.length > 1) {
           throw new Error(
             'Only single message can be sent when running on development mode.'
           );
@@ -218,16 +211,16 @@ const notify = async (
           ...(await getMessagesFromCurrentRate(items, type, rates))
         );
       } else {
-        console.warn('No day rates for notification');
+        console.warn('No day rates to notify');
       }
     }
-    const expo_start_time = Date.now();
     console.info(
       'Generated messages',
       JSON.stringify({
         amount: messages.length,
       })
     );
+    const expo_start_time = Date.now();
     if (messages.length > 0) {
       const expo = Shared.getExpoClient();
       // https://github.com/expo/expo-server-sdk-node/blob/master/src/ExpoClient.ts#L20
@@ -286,7 +279,7 @@ const notify = async (
       await Promise.all([
         client
           .put({
-            TableName: 'ambito-dolar-notifications',
+            TableName: process.env.NOTIFICATIONS_TABLE_NAME,
             Item: {
               date: notification_date,
               type,
@@ -314,89 +307,48 @@ const notify = async (
   };
 };
 
-export default async (req, res) => {
-  try {
-    // TODO: export SNS payload processing to generic
-    let payload = req.body;
-    // https://stackoverflow.com/a/22871339/460939
-    // parse body when request comes from SNS as text/plain
-    // force content type when request comes from SNS
-    const sns_message_type = req.headers['x-amz-sns-message-type'];
-    if (sns_message_type) {
-      // console.debug('Message received', sns_message_type, req.body);
-      // some logs lost when "manually" change the content-type
-      // req.headers['content-type'] = 'application/json; charset=utf-8';
-      // req.headers['content-type'] = 'application/json';
-      payload = JSON.parse(req.body);
-      if (
-        sns_message_type === 'SubscriptionConfirmation' ||
-        sns_message_type === 'UnsubscribeConfirmation'
-      ) {
-        console.debug('Confirmation message received', payload);
-        return Shared.serviceResponse(res, 200, payload);
-      }
-    }
-    Shared.assertAuthenticated(req, payload);
-    const {
-      type = req.query.type,
-      installation_id = req.query.installation_id,
-      message = req.query.message,
-      rates = req.query.rates,
-    } = payload || {};
-    console.info(
-      'Message received',
-      JSON.stringify({
-        type,
-        installation_id,
-        message,
-        rates,
-      })
-    );
-    const start_time = Date.now();
-    let filter_expression =
-      'attribute_exists(push_token) AND attribute_not_exists(invalidated)';
-    const expression_attribute_values = {
-      // pass
-    };
-    if (installation_id) {
-      filter_expression =
-        'installation_id = :installation_id AND ' + filter_expression;
-      expression_attribute_values[':installation_id'] = installation_id;
-    }
-    const params = {
-      TableName: 'ambito-dolar-devices',
-      ProjectionExpression:
-        'installation_id, device_name, push_token, notification_settings, last_update, app_version',
-      FilterExpression: filter_expression,
-      ...(!_.isEmpty(expression_attribute_values) && {
-        ExpressionAttributeValues: expression_attribute_values,
-      }),
-    };
-    const items = await Shared.getAllDataFromDynamoDB(params);
-    const results = await notify(
-      items,
+export async function handler(event) {
+  const { type, installation_id, message, rates } = JSON.parse(
+    event.Records[0].Sns.Message
+  );
+  console.info(
+    'Message received',
+    JSON.stringify({
       type,
-      {
-        message,
-        rates,
-      },
-      !installation_id && process.env.NODE_ENV === 'production'
-    );
-    const duration = (Date.now() - start_time) / 1000;
-    console.info(
-      'Completed',
-      JSON.stringify({
-        ...results,
-        duration,
-      })
-    );
-    Shared.serviceResponse(res, 200, {
-      ...results,
-      duration,
-    });
-  } catch (error) {
-    Shared.serviceResponse(res, error.code || 400, {
-      error: error.message,
-    });
+      installation_id,
+      message,
+      rates,
+    })
+  );
+  let filter_expression =
+    'attribute_exists(push_token) AND attribute_not_exists(invalidated)';
+  const expression_attribute_values = {
+    // pass
+  };
+  if (installation_id) {
+    filter_expression =
+      'installation_id = :installation_id AND ' + filter_expression;
+    expression_attribute_values[':installation_id'] = installation_id;
   }
-};
+  const params = {
+    TableName: process.env.DEVICES_TABLE_NAME,
+    ProjectionExpression:
+      'installation_id, app_version, push_token, notification_settings, last_update',
+    FilterExpression: filter_expression,
+    ...(!_.isEmpty(expression_attribute_values) && {
+      ExpressionAttributeValues: expression_attribute_values,
+    }),
+  };
+  const items = await Shared.getAllDataFromDynamoDB(params);
+  const results = await notify(
+    items,
+    type,
+    {
+      message,
+      rates,
+    },
+    !installation_id && !process.env.IS_LOCAL
+  );
+  console.info('Completed', JSON.stringify(results));
+  return results;
+}
