@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-beta.6](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.5...@ambito-dolar/client@6.0.0-beta.6) (2022-03-24)
+
+
+### Features
+
+* add new future rate type ([915dbb2](https://github.com/outaTiME/ambito-dolar/commit/915dbb282d116ec9bc52417bef42bd8d81dbb340))
+* Improve SWR usage ([9a93671](https://github.com/outaTiME/ambito-dolar/commit/9a93671dc889509c7bb84a3142b3242656efd506))
+* remove debounce for useColorScheme ([1bde5ee](https://github.com/outaTiME/ambito-dolar/commit/1bde5eea03915cc94c573d7faddcf478beffed2a))
+* update viewport size for the new rate ([874295c](https://github.com/outaTiME/ambito-dolar/commit/874295ce0fa15d8c9e429f88f8b9eb727a050ca2))
+* update wording for rate details ([8482480](https://github.com/outaTiME/ambito-dolar/commit/8482480b10632e978e5a22cb2c3d945429356583))
+
+
+
+
+
 # [6.0.0-beta.5](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.4...@ambito-dolar/client@6.0.0-beta.5) (2021-10-20)
 
 

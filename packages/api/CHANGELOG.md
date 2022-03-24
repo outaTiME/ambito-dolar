@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.9.0...@ambito-dolar/api@2.0.0) (2022-03-24)
+
+
+### Bug Fixes
+
+* move API services to AWS using SST ([2692668](https://github.com/outaTiME/ambito-dolar/commit/2692668df5b643acb96bac91e8db26b5faf01d90))
+* realtime rates when opening ([ef965f9](https://github.com/outaTiME/ambito-dolar/commit/ef965f94f0aed1e3d60176622c471ecad789f937))
+
+
+### BREAKING CHANGES
+
+* migrate to AWS using SST due to limited execution times in Vercel
+
+
+
+
+
 # [1.9.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.8.2...@ambito-dolar/api@1.9.0) (2021-10-20)
 
 
