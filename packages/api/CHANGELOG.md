@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.0.0...@ambito-dolar/api@2.1.0) (2022-03-25)
+
+
+### Features
+
+* update to v3 of AWS SDK ([78f7db9](https://github.com/outaTiME/ambito-dolar/commit/78f7db93b1f5423ada039801637d178cfdd93c53))
+
+
+
+
+
 # [2.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@1.9.0...@ambito-dolar/api@2.0.0) (2022-03-24)
 
 
