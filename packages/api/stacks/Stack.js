@@ -32,23 +32,25 @@ export default class Stack extends sst.Stack {
 
     // existing resources
 
-    const bucket = s3.Bucket.fromBucketName(
-      this,
-      'Bucket',
-      process.env.S3_BUCKET
-    );
+    const bucket =
+      process.env.S3_BUCKET &&
+      s3.Bucket.fromBucketName(this, 'Bucket', process.env.S3_BUCKET);
 
-    const devicesTable = dynamodb.Table.fromTableName(
-      this,
-      'Devices',
-      process.env.DEVICES_TABLE_NAME
-    );
+    const devicesTable =
+      process.env.DEVICES_TABLE_NAME &&
+      dynamodb.Table.fromTableName(
+        this,
+        'Devices',
+        process.env.DEVICES_TABLE_NAME
+      );
 
-    const notificationsTable = dynamodb.Table.fromTableName(
-      this,
-      'Notifications',
-      process.env.NOTIFICATIONS_TABLE_NAME
-    );
+    const notificationsTable =
+      process.env.NOTIFICATIONS_TABLE_NAME &&
+      dynamodb.Table.fromTableName(
+        this,
+        'Notifications',
+        process.env.NOTIFICATIONS_TABLE_NAME
+      );
 
     // sns
 
