@@ -10,6 +10,7 @@ import { LayerVersion } from 'aws-cdk-lib/aws-lambda';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { SubscriptionFilter } from 'aws-cdk-lib/aws-sns';
+import _ from 'lodash';
 
 const getApiRoute = (method, name, authorize) => ({
   [`${method} /${name}`]: {
@@ -131,7 +132,10 @@ export default class Stack extends sst.Stack {
       },
     ]);
 
-    topic.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
+    // remove falsey values
+    topic.attachPermissions(
+      _.compact([bucket, devicesTable, notificationsTable, topic])
+    );
 
     // jobs
 
@@ -234,7 +238,10 @@ export default class Stack extends sst.Stack {
       ),
     });
 
-    api.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
+    // remove falsey values
+    api.attachPermissions(
+      _.compact([bucket, devicesTable, notificationsTable, topic])
+    );
 
     // show the endpoint in the output
     this.addOutputs({
