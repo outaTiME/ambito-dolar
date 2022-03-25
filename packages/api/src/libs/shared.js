@@ -1,6 +1,12 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
+import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { parallelScan } from '@shelf/dynamodb-parallel-scan';
-import AWS from 'aws-sdk';
 import { Expo } from 'expo-server-sdk';
 // const FileType = require('file-type');
 import { JWT } from 'google-auth-library';
@@ -11,15 +17,15 @@ import zlib from 'zlib';
 
 // defaults
 
-const dynamoDBClient = new AWS.DynamoDB.DocumentClient({
+const ddbClient = new DynamoDBClient({
   // pass
 });
 
-const s3 = new AWS.S3({
+const s3Client = new S3Client({
   // pass
 });
 
-const sns = new AWS.SNS({
+const snsClient = new SNSClient({
   // pass
 });
 
@@ -113,10 +119,10 @@ const serviceResponse = (res, code, json) => {
   };
 };
 
-const getDynamoDBClient = () => dynamoDBClient;
+const getDynamoDBClient = () => ddbClient;
 
 /* const getAllDataFromDynamoDB = async (params, allData = []) => {
-  const data = await dynamoDBClient.scan(params).promise();
+  const data = await ddbClient.send(new ScanCommand(params));
   return data.LastEvaluatedKey
     ? getAllDataFromDynamoDB(
         { ...params, ExclusiveStartKey: data.LastEvaluatedKey },
@@ -142,16 +148,36 @@ const getVariationThreshold = (type) => {
   return 0.01;
 };
 
+// https://transang.me/modern-fetch-and-how-to-get-buffer-output-from-aws-sdk-v3-getobjectcommand/
+const streamToBuffer = (stream) =>
+  new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on('data', (chunk) => chunks.push(chunk));
+    stream.on('error', reject);
+    stream.on('end', () => resolve(Buffer.concat(chunks)));
+  });
+
+// Create a helper function to convert a ReadableStream to a string.
+/* const streamToString = (stream) =>
+new Promise((resolve, reject) => {
+  const chunks = [];
+  stream.on('data', (chunk) => chunks.push(chunk));
+  stream.on('error', reject);
+  stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+}); */
+
+// https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/s3-example-creating-buckets.html#s3-example-creating-buckets-get-object
 const getJsonObject = async (key, bucket = S3_BUCKET) => {
+  const bucketParams = {
+    Bucket: bucket,
+    Key: `${key}.json`,
+  };
   // try {
-  return s3
-    .getObject({
-      Bucket: bucket,
-      Key: `${key}.json`,
-    })
-    .promise()
-    .then((data) => {
-      const uncompressed = zlib.gunzipSync(data.Body);
+  return s3Client
+    .send(new GetObjectCommand(bucketParams))
+    .then(async (data) => {
+      const bodyContents = await streamToBuffer(data.Body);
+      const uncompressed = zlib.gunzipSync(bodyContents);
       return JSON.parse(uncompressed);
       /* const buffer = new Buffer.from(data.Body.toString());
         const uncompressed = zlib.gunzipSync(buffer);
@@ -190,6 +216,7 @@ const getRates = async (base_rates) => {
   return rates;
 };
 
+// https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/s3-example-creating-buckets.html#s3-example-creating-buckets-upload-file
 const storeJsonObject = async (
   key,
   json,
@@ -200,19 +227,18 @@ const storeJsonObject = async (
   // https://blog.jonathandion.com/posts/json-gzip-s3/
   const buffer = new Buffer.from(JSON.stringify(json));
   const compressed = zlib.gzipSync(buffer);
-  return s3
-    .putObject({
-      Bucket: bucket,
-      Key: `${key}.json`,
-      Body: compressed,
-      ContentType: 'application/json; charset=utf-8',
-      ...(is_public === true && { ACL: 'public-read' }),
-      CacheControl: 'no-cache',
-      // brotli-compressed
-      // ContentEncoding: 'br',
-      ContentEncoding: 'gzip',
-    })
-    .promise();
+  const bucketParams = {
+    Bucket: bucket,
+    Key: `${key}.json`,
+    Body: compressed,
+    ContentType: 'application/json; charset=utf-8',
+    ...(is_public === true && { ACL: 'public-read' }),
+    CacheControl: 'no-cache',
+    // brotli-compressed
+    // ContentEncoding: 'br',
+    ContentEncoding: 'gzip',
+  };
+  return s3Client.send(new PutObjectCommand(bucketParams));
   /* } catch (error) {
     console.warn(
       'Unable to store object in bucket',
@@ -420,20 +446,20 @@ const publishMessageToTopic = async (event, payload = {}) => {
       payload,
     })
   );
-  return sns
-    .publish({
-      Message: JSON.stringify(payload),
-      MessageStructure: 'string',
-      // https://docs.aws.amazon.com/sns/latest/dg/sns-subscription-filter-policies.html
-      MessageAttributes: {
-        event: {
-          DataType: 'String',
-          StringValue: event,
-        },
+  const params = {
+    Message: JSON.stringify(payload),
+    MessageStructure: 'string',
+    // https://docs.aws.amazon.com/sns/latest/dg/sns-subscription-filter-policies.html
+    MessageAttributes: {
+      event: {
+        DataType: 'String',
+        StringValue: event,
       },
-      TopicArn: process.env.SNS_TOPIC,
-    })
-    .promise()
+    },
+    TopicArn: process.env.SNS_TOPIC,
+  };
+  return snsClient
+    .send(new PublishCommand(params))
     .then((data) => {
       const duration = (Date.now() - start_time) / 1000;
       console.info(

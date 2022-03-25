@@ -1,9 +1,12 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import _ from 'lodash';
 
 import Shared from '../libs/shared';
 
-const client = Shared.getDynamoDBClient();
+const ddbClient = Shared.getDynamoDBClient();
+const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
+
 const MIN_CLIENT_VERSION = '3.0.0';
 
 export async function handler(event) {
@@ -57,7 +60,9 @@ export async function handler(event) {
       ExpressionAttributeValues: expression_attribute_values,
       ReturnValues: 'ALL_NEW',
     };
-    const { Attributes: data } = await client.update(params).promise();
+    const { Attributes: data } = await ddbDocClient.send(
+      new UpdateCommand(params)
+    );
     const { notification_settings: notificationSettings } = data;
     const results = {
       statusCode: 'success',

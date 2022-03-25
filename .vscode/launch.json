@@ -9,7 +9,8 @@
       "runtimeArgs": ["start", "--increase-timeout"],
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"],
-      "cwd": "${workspaceFolder}/packages/api"
+      "cwd": "${workspaceFolder}/packages/api",
+      "env": { "NODE_OPTIONS": "--throw-deprecation" },
     },
     {
       "name": "Debug SST Tests",

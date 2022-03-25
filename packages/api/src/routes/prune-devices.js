@@ -1,3 +1,4 @@
+import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import _ from 'lodash';
 
 import Shared from '../libs/shared';
@@ -14,6 +15,9 @@ const attributes = [
   'platform_version',
 ];
 
+const ddbClient = Shared.getDynamoDBClient();
+const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
+
 const pruneDevice = async (installation_id) => {
   const params = {
     TableName: process.env.DEVICES_TABLE_NAME,
@@ -22,7 +26,7 @@ const pruneDevice = async (installation_id) => {
     },
     UpdateExpression: `REMOVE ${attributes.join()}`,
   };
-  return client.update(params).promise();
+  return ddbDocClient.send(new UpdateCommand(params));
 };
 
 export async function handler(event) {

@@ -1,4 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import _ from 'lodash';
 
 import Shared, {
@@ -8,7 +9,8 @@ import Shared, {
   MIN_CLIENT_VERSION_FOR_CCB,
 } from '../libs/shared';
 
-const client = Shared.getDynamoDBClient();
+const ddbClient = Shared.getDynamoDBClient();
+const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 const getChangeMessage = (rate) => {
   const body = [];
@@ -276,19 +278,22 @@ const notify = async (
       );
       // save tickets to aws
       const notification_date = AmbitoDolar.getTimezoneDate().format();
+      const params = {
+        TableName: process.env.NOTIFICATIONS_TABLE_NAME,
+        // remove nil values
+        Item: _.omitBy(
+          {
+            date: notification_date,
+            type,
+            rates,
+            tickets: tickets.length,
+            duration: sending_duration,
+          },
+          _.isNil
+        ),
+      };
       await Promise.all([
-        client
-          .put({
-            TableName: process.env.NOTIFICATIONS_TABLE_NAME,
-            Item: {
-              date: notification_date,
-              type,
-              rates,
-              tickets: tickets.length,
-              duration: sending_duration,
-            },
-          })
-          .promise(),
+        ddbDocClient.send(new PutCommand(params)),
         Shared.storeTickets(notification_date, type, tickets),
       ]).catch((error) => {
         console.warn(

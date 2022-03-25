@@ -1,9 +1,11 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import _ from 'lodash';
 
 import Shared from '../libs/shared';
 
-const client = Shared.getDynamoDBClient();
+const ddbClient = Shared.getDynamoDBClient();
+const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 const invalidateDevice = async (installation_id) => {
   const params = {
@@ -16,7 +18,7 @@ const invalidateDevice = async (installation_id) => {
       ':invalidated': AmbitoDolar.getTimezoneDate().format(),
     },
   };
-  return client.update(params).promise();
+  return ddbDocClient.send(new UpdateCommand(params));
 };
 
 const check = async (items = [], readonly) => {
