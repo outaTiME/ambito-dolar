@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.1.0...@ambito-dolar/api@2.1.1) (2022-03-29)
+
+
+### Bug Fixes
+
+* reduce the number of parallel scans ([78f078b](https://github.com/outaTiME/ambito-dolar/commit/78f078b0c5fa868a77bea01a7af2595527d1ad6f))
+
+
+
+
+
 # [2.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.0.0...@ambito-dolar/api@2.1.0) (2022-03-25)
 
 

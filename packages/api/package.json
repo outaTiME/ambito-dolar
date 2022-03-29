@@ -1,7 +1,7 @@
 {
   "name": "@ambito-dolar/api",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.1.1",
   "scripts": {
     "test": "sst test",
     "start": "sst start",
