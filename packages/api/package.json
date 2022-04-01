@@ -17,7 +17,7 @@
     "@aws-sdk/lib-dynamodb": "^3.58.0",
     "@serverless-stack/cli": "0.69.3",
     "@serverless-stack/resources": "0.69.3",
-    "@shelf/dynamodb-parallel-scan": "^2.2.3",
+    "@shelf/dynamodb-parallel-scan": "^2.3.0",
     "aws-cdk-lib": "2.15.0",
     "boolean": "^3.2.0",
     "chrome-aws-lambda": "^10.1.0",
