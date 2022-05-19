@@ -82,7 +82,7 @@ const getFirebaseAccessToken = async () => {
 
 const fetchFirebaseData = async (uri, opts = {}) => {
   const access_token = await getFirebaseAccessToken();
-  const url = new URL(`${process.env.FIREBASE_DATABASE_URL}${uri}`);
+  const url = new URL(`${process.env.FIREBASE_DATABASE_URL}/${uri}`);
   url.pathname = url.pathname + '.json';
   url.searchParams.set('access_token', access_token);
   return fetch(url.href, opts).then(async (response) => {
