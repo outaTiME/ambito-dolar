@@ -313,6 +313,9 @@ export async function handler(event) {
     Object.assign(new_rates, new_business_day_rates);
   }
   const has_new_rates = !_.isEmpty(new_rates);
+  const processed_at = AmbitoDolar.getTimezoneDate();
+  const processed_at_fmt = processed_at.format();
+  const processed_at_unix = processed_at.unix();
   if (has_new_rates) {
     // add new_rates to base_rates
     Object.entries(new_rates).forEach(([type, rate]) => {
@@ -350,17 +353,25 @@ export async function handler(event) {
       Object.assign(base_rates.rates[type], historical_rate);
     });
     // add / override updated_at field
-    base_rates.updated_at = AmbitoDolar.getTimezoneDate().format();
+    base_rates.updated_at = processed_at_fmt;
   }
   // add / override processed_at field
-  base_rates.processed_at = AmbitoDolar.getTimezoneDate().format();
+  base_rates.processed_at = processed_at_fmt;
   // save json files
   await Shared.storeRatesJsonObject(base_rates, has_new_rates);
   // firebase update should occur after saving json files
-  if (has_new_rates) {
-    await Shared.putFirebaseData('updated_at', base_rates.updated_at);
-  }
-  await Shared.putFirebaseData('processed_at', base_rates.processed_at);
+  await Promise.all([
+    Shared.putFirebaseData('processed_at', processed_at_fmt),
+    Shared.putFirebaseData('p', processed_at_unix),
+    ...(has_new_rates
+      ? [
+          Shared.putFirebaseData('updated_at', processed_at_fmt),
+          Shared.putFirebaseData('u', processed_at_unix),
+        ]
+      : [
+          // ignore
+        ]),
+  ]);
   // notifications should occur after saving json files
   if (trigger_notification !== undefined) {
     await notify(
