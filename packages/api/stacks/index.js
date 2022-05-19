@@ -25,8 +25,6 @@ export default function main(app) {
       IMGUR_CLIENT_ID: process.env.IMGUR_CLIENT_ID,
       IG_USERNAME: process.env.IG_USERNAME,
       IG_PASSWORD: process.env.IG_PASSWORD,
-      CHROME_LAYER_ARN: process.env.CHROME_LAYER_ARN,
-      DOMAIN_CERTIFICATE_ARN: process.env.DOMAIN_CERTIFICATE_ARN,
       RATE_URL: process.env.RATE_URL,
       CRYPTO_RATES_URL: process.env.CRYPTO_RATES_URL,
       FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
