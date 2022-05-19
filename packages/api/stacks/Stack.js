@@ -10,7 +10,7 @@ import { LayerVersion } from 'aws-cdk-lib/aws-lambda';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { SubscriptionFilter } from 'aws-cdk-lib/aws-sns';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 const getApiRoute = (method, name, authorize) => ({
   [`${method} /${name}`]: {

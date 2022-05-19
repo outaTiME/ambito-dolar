@@ -1,6 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,

@@ -1,6 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import Joi from 'joi';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import hash from 'object-hash';
 
 import Shared, { MAX_NUMBER_OF_STATS } from '../libs/shared';

@@ -10,7 +10,7 @@ import { parallelScan } from '@shelf/dynamodb-parallel-scan';
 import { Expo } from 'expo-server-sdk';
 // const FileType = require('file-type');
 import { JWT } from 'google-auth-library';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import fetch from 'node-fetch';
 import semverLt from 'semver/functions/lt';
 import zlib from 'zlib';
