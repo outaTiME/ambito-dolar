@@ -52,7 +52,7 @@ __metadata:
     babel-plugin-module-resolver: ^4.1.0
     d3-array: ^1.2.4
     d3-shape: ^1.3.7
-    dotenv: ^16.0.1
+    dotenv: ^10.0.0
     expo: ^43.0.1
     expo-analytics-amplitude: ~11.0.3
     expo-app-loading: ~1.2.1
@@ -101,7 +101,7 @@ __metadata:
     redux-persist-transform-filter: ^0.0.20
     redux-thunk: ^2.4.0
     reselect: ^4.1.1
-    semver: ^7.3.7
+    semver: ^7.3.5
     sentry-expo: ^4.0.4
     styled-components: ^5.3.3
     swr: ^1.0.1
@@ -13987,7 +13987,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0, dotenv@npm:^16.0.1":
+"dotenv@npm:^16.0.0":
   version: 16.0.1
   resolution: "dotenv@npm:16.0.1"
   checksum: f459ffce07b977b7f15d8cc4ee69cdff77d4dd8c5dc8c85d2d485ee84655352c2415f9dd09d42b5b5985ced3be186130871b34e2f3e2569ebc72fbc2e8096792
@@ -30806,11 +30806,11 @@ __metadata:
   linkType: hard
 
 "ssri@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "ssri@npm:9.0.0"
+  version: 9.0.1
+  resolution: "ssri@npm:9.0.1"
   dependencies:
     minipass: ^3.1.1
-  checksum: bf33174232d07cc64e77ab1c51b55d28352273380c503d35642a19627e88a2c5f160039bb0a28608a353485075dda084dbf0390c7070f9f284559eb71d01b84b
+  checksum: fb58f5e46b6923ae67b87ad5ef1c5ab6d427a17db0bead84570c2df3cd50b4ceb880ebdba2d60726588272890bae842a744e1ecce5bd2a2a582fccd5068309eb
   languageName: node
   linkType: hard
 
