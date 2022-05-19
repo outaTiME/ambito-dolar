@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.1.1...@ambito-dolar/api@2.2.0) (2022-05-19)
+
+
+### Features
+
+* add new optimized attributes in firebase ([e203014](https://github.com/outaTiME/ambito-dolar/commit/e2030142064597b62c989b35c987ad49f7434c7a))
+
+
+
+
+
 ## [2.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.1.0...@ambito-dolar/api@2.1.1) (2022-03-29)
 
 
