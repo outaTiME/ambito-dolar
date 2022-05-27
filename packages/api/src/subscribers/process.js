@@ -7,6 +7,14 @@ import Shared, { MAX_NUMBER_OF_STATS } from '../libs/shared';
 
 const getRateValue = (rate_last) => _.max([].concat(rate_last));
 
+const numberValidator = (value, helpers) => {
+  const number = AmbitoDolar.getNumber(value);
+  if (number > 0) {
+    return number;
+  }
+  return helpers.error('any.invalid');
+};
+
 const getRate = (type) =>
   new Promise((resolve) => {
     const url = Shared.getRateUrl(type);
@@ -19,10 +27,10 @@ const getRate = (type) =>
           .keys({
             fecha: Joi.string().required(),
             // variacion: Joi.string().required(),
-            compra: Joi.string().required(),
-            venta: Joi.string().required(),
+            compra: Joi.string().required().custom(numberValidator),
+            venta: Joi.string().required().custom(numberValidator),
             // only when TOURIST_TYPE / CCL_TYPE / MEP_TYPE
-            valor: Joi.string(),
+            valor: Joi.string().custom(numberValidator),
           })
           .unknown(true);
         const { value, error } = schema.validate(data);
