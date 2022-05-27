@@ -9,5 +9,5 @@ test('Test Stack', () => {
   const stack = new Stack(app, 'test-stack');
   // THEN
   const template = Template.fromStack(stack);
-  template.resourceCountIs('AWS::Lambda::Function', 14);
+  template.resourceCountIs('AWS::Lambda::Function', 15);
 });
