@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.2.0...@ambito-dolar/api@2.3.0) (2022-05-27)
+
+
+### Bug Fixes
+
+* exclude zero values from processing ([8d4e3a2](https://github.com/outaTiME/ambito-dolar/commit/8d4e3a2a70b793731b56e2387c68ed3e8daab5b9))
+
+
+### Features
+
+* new endpoint to update rates ([b7dc070](https://github.com/outaTiME/ambito-dolar/commit/b7dc070b3b7a621178a2a79bd12e73a8d1857239))
+
+
+
+
+
 # [2.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.1.1...@ambito-dolar/api@2.2.0) (2022-05-19)
 
 
