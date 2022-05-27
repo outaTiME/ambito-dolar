@@ -195,6 +195,7 @@ export default class Stack extends sst.Stack {
         ...getApiRoute('GET', 'notify', true),
         ...getApiRoute('GET', 'invalidate-receipts', true),
         ...getApiRoute('GET', 'social-notify', true),
+        ...getApiRoute('POST', 'update-rates', true),
         // public
         ...getApiRoute('GET', 'test'),
         ...getApiRoute('GET', 'fetch'),
