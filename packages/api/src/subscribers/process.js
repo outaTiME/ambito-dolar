@@ -17,6 +17,7 @@ const numberValidator = (value, helpers) => {
 
 const getRate = (type) =>
   new Promise((resolve) => {
+    const start_time = Date.now();
     const url = Shared.getRateUrl(type);
     Shared.fetch(url)
       .then(async (response) => {
@@ -63,11 +64,22 @@ const getRate = (type) =>
           JSON.stringify({ type, error: error.message })
         );
         resolve();
+      })
+      .finally(() => {
+        const duration = (Date.now() - start_time) / 1000;
+        console.info(
+          'Fetch rate completed',
+          JSON.stringify({
+            type,
+            duration,
+          })
+        );
       });
   });
 
 const getCryptoRate = (type) =>
   new Promise((resolve) => {
+    const start_time = Date.now();
     const url = Shared.getCryptoRatesUrl();
     Shared.fetch(url)
       .then(async (response) => {
@@ -105,6 +117,16 @@ const getCryptoRate = (type) =>
           JSON.stringify({ type, error: error.message })
         );
         resolve();
+      })
+      .finally(() => {
+        const duration = (Date.now() - start_time) / 1000;
+        console.info(
+          'Fetch crypto rate completed',
+          JSON.stringify({
+            type,
+            duration,
+          })
+        );
       });
   });
 
