@@ -239,7 +239,7 @@ const notify = (
   has_new_rates
 ) => {
   const notifications = [];
-  if (close_day !== undefined) {
+  if (close_day === true) {
     notifications.push([
       AmbitoDolar.NOTIFICATION_CLOSE_TYPE,
       {
@@ -403,7 +403,7 @@ export async function handler(event) {
         ]),
   ]);
   // notifications should occur after saving json files
-  if (trigger_notification !== undefined) {
+  if (trigger_notification === true) {
     await notify(
       close_day,
       rates,
