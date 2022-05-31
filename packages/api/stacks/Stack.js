@@ -64,8 +64,8 @@ export default class Stack extends sst.Stack {
           environment: {
             SNS_TOPIC: topic.snsTopic.topicArn,
           },
-          // ~10s
-          timeout: Duration.seconds(20),
+          // ~30s
+          timeout: Duration.seconds(60),
         }),
         subscriberProps: {
           filterPolicy: {
