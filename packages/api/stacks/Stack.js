@@ -65,7 +65,7 @@ export default class Stack extends sst.Stack {
             SNS_TOPIC: topic.snsTopic.topicArn,
           },
           // ~30s
-          timeout: Duration.seconds(60),
+          timeout: Duration.minutes(1),
         }),
         subscriberProps: {
           filterPolicy: {
@@ -78,8 +78,8 @@ export default class Stack extends sst.Stack {
       {
         function: new sst.Function(this, 'InvalidateReceiptsSubscriber', {
           handler: 'src/subscribers/invalidate-receipts.handler',
-          // ~10s
-          timeout: Duration.seconds(20),
+          // ~15s
+          timeout: Duration.seconds(30),
         }),
         subscriberProps: {
           filterPolicy: {
