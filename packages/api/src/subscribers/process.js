@@ -319,6 +319,10 @@ export async function handler(event) {
       close_day,
     })
   );
+  // avoid fetch delays
+  const in_time =
+    AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
+    0;
   const base_rates = await Shared.getRatesJsonObject().catch((error) => {
     if (error.code === 'NoSuchKey') {
       return {};
@@ -332,9 +336,6 @@ export async function handler(event) {
   const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
   // leave new rates only (for realtime too)
   const new_rates = await getRates(rates);
-  const in_time =
-    AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
-    0;
   const is_opening = !has_rates_from_today && !_.isEmpty(new_rates);
   if (is_opening || has_rates_from_today) {
     const realtime = is_opening || in_time;
