@@ -8,8 +8,10 @@ import Shared, { MAX_NUMBER_OF_STATS } from '../libs/shared';
 const getRateValue = (rate_last) => _.max([].concat(rate_last));
 
 const numberValidator = (value, helpers) => {
+  // convert to number and truncate
   const number = AmbitoDolar.getNumber(value);
   if (number > 0) {
+    // replace value with a new value
     return number;
   }
   return helpers.error('any.invalid');
@@ -45,11 +47,8 @@ const getRate = (type) =>
         } else {
           const identity = value.fecha;
           const rate_last = value.valor
-            ? AmbitoDolar.getNumber(value.valor)
-            : [
-                AmbitoDolar.getNumber(value.compra),
-                AmbitoDolar.getNumber(value.venta),
-              ];
+            ? value.valor
+            : [value.compra, value.venta];
           const result = {
             type,
             rate: [identity, rate_last],
@@ -88,7 +87,7 @@ const getCryptoRate = (type) =>
         // https://joi.dev/tester/
         const schema = Joi.object()
           .keys({
-            [type]: Joi.number().required(),
+            [type]: Joi.number().required().custom(numberValidator),
             time: Joi.number().integer().default(Date.now),
           })
           .unknown(true);
@@ -102,7 +101,7 @@ const getCryptoRate = (type) =>
           resolve();
         } else {
           const identity = value.time;
-          const rate_last = AmbitoDolar.getNumber(value[type]);
+          const rate_last = value[type];
           const result = {
             type,
             rate: [identity, rate_last],
@@ -172,9 +171,9 @@ const getNewRates = (rates, new_rates) =>
           ? rate[3]
           : getRateValue(rate[1])
         : rate_last_max;
-      // calculate from open / close rate
+      // calculate from open / close rate and truncate
       const rate_change_percent = AmbitoDolar.getNumber(
-        (rate_last_max / rate_open - 1) * 100.0
+        (rate_last_max / rate_open - 1) * 100
       );
       const new_rate = [
         AmbitoDolar.getTimezoneDate().format(),
