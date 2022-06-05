@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.3.0...@ambito-dolar/api@2.4.0) (2022-06-05)
+
+
+### Bug Fixes
+
+* force boolean values in process message ([5c02537](https://github.com/outaTiME/ambito-dolar/commit/5c0253703ce98b0f68926bb44c240e21537fa6de))
+* improve use of getNumber for process ([4d1a89e](https://github.com/outaTiME/ambito-dolar/commit/4d1a89eabcf4f06037dd9c528be706255203572e))
+* update timeout for process ([75586a8](https://github.com/outaTiME/ambito-dolar/commit/75586a8bd42d49d4da36cadcefcca340b89d1c3c))
+
+
+### Features
+
+* update process to get multiple crypto rates in a single call ([5b1ae26](https://github.com/outaTiME/ambito-dolar/commit/5b1ae26387b6367f74f9d2061e93b5669f8fc72e))
+* update variation threshold for non-realtime notifications ([b2cbe67](https://github.com/outaTiME/ambito-dolar/commit/b2cbe6779c6a13747abeca82920790e83bf709d2))
+
+
+### Performance Improvements
+
+* add duration traces for the process ([3c3bcda](https://github.com/outaTiME/ambito-dolar/commit/3c3bcda6203a09b09bf248d74f004f41b5d51329))
+
+
+
+
+
 # [2.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.2.0...@ambito-dolar/api@2.3.0) (2022-05-27)
 
 
