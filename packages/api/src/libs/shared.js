@@ -145,7 +145,7 @@ const getVariationThreshold = (type) => {
   if (realtime_types.includes(type)) {
     return 0.75;
   }
-  return 0.01;
+  return 0.05;
 };
 
 // https://transang.me/modern-fetch-and-how-to-get-buffer-output-from-aws-sdk-v3-getobjectcommand/
