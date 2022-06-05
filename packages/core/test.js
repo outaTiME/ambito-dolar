@@ -49,6 +49,10 @@ test('Dates should use the default timezone', function (t) {
       '[)'
     )
   );
+  t.is(
+    AmbitoDolar.getTimezoneDate('2022-05-13T18:00:39-03:00').unix(),
+    1652475639
+  );
 });
 
 test('Should parse date from a natural language string', function (t) {
@@ -66,24 +70,33 @@ test('Should parse date from a natural language string', function (t) {
 
 test('Number should be formatted as a percentage', function (t) {
   t.is(AmbitoDolar.formatRateChange(10), '+10,00%');
-  t.is(AmbitoDolar.formatRateChange(0), '0,00%');
   t.is(AmbitoDolar.formatRateChange(-10), '-10,00%');
+  t.is(AmbitoDolar.formatRateChange(0), '0,00%');
+  t.is(AmbitoDolar.formatRateChange(''), null);
 });
 
 test('Number should be formatted as currency', function (t) {
   t.is(AmbitoDolar.formatRateCurrency(1000.5), '1.000,50');
+  t.is(AmbitoDolar.formatRateCurrency(-1.0094462868053427), '-1,00');
+  t.is(AmbitoDolar.formatRateCurrency(0), '0,00');
+  t.is(AmbitoDolar.formatRateCurrency(''), null);
+  t.is(AmbitoDolar.formatCurrency(0), '$0,00');
+  t.is(AmbitoDolar.formatCurrency(''), null);
+});
+
+test('Number should be truncated without rounding', function (t) {
+  t.is(AmbitoDolar.getNumber(1.0094462868053427), 1);
+  t.is(AmbitoDolar.getNumber(-0.39812243262198876), -0.39);
+  t.is(AmbitoDolar.getNumber(0.43640854206165614), 0.43);
 });
 
 test('Should return a number from a string', function (t) {
   t.is(AmbitoDolar.getNumber('1,00'), 1);
   t.is(AmbitoDolar.getNumber('0,04'), 0.04);
   t.is(AmbitoDolar.getNumber(), 0);
-});
-
-test('Should return a number from a percentage string', function (t) {
-  t.is(AmbitoDolar.getPercentNumber('1,00%'), 1);
-  t.is(AmbitoDolar.getPercentNumber('0,04%'), 0.04);
-  t.is(AmbitoDolar.getPercentNumber(), 0);
+  t.is(AmbitoDolar.getNumber(''), null);
+  t.is(AmbitoDolar.getNumber(' '), null);
+  t.is(AmbitoDolar.getNumber('a'), null);
 });
 
 test('Rate should be of the current day', function (t) {

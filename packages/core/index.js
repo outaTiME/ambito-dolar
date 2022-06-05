@@ -92,48 +92,66 @@ const getDelimiters = () => {
   return localeData.delimiters;
 };
 
+const toFixedNoRounding = function (num, n) {
+  const reg = new RegExp('^-?\\d+(?:\\.\\d{0,' + n + '})?', 'g');
+  const a = num.toString().match(reg)[0];
+  const dot = a.indexOf('.');
+  if (dot === -1) {
+    // integer, insert decimal dot and pad up zeros
+    return a + '.' + '0'.repeat(n);
+  }
+  const b = n - (a.length - dot) + 1;
+  return b > 0 ? a + '0'.repeat(b) : a;
+};
+
+const getNumber = (value, maxDigits = FRACTION_DIGITS) => {
+  value = numeral(value).value();
+  if (typeof value === 'number') {
+    // return +value.toFixed(maxDigits);
+    // truncate to max digits
+    return +toFixedNoRounding(value, maxDigits);
+  }
+  return value;
+};
+
 const formatNumber = (
   num,
   maxDigits = FRACTION_DIGITS,
   forceFractionDigits = true
 ) => {
-  // https://github.com/NickKaramoff/pretty-money/issues/11
-  /* const number_fmt = prettyMoney(
-    {
-      decimalDelimiter: DECIMAL_SEPARATOR,
-      thousandsDelimiter: DIGIT_GROUPING_SEPARATOR,
-      minDecimal: forceFractionDigits === true ? maxDigits : 0,
-      maxDecimal: maxDigits,
-    },
-    num
-  ); */
-  const decimal_digits = '0'.repeat(maxDigits);
-  let fmt = '0,0.' + decimal_digits;
-  if (forceFractionDigits !== true) {
-    fmt = '0,0[.][' + decimal_digits + ']';
+  // truncate to prevent rounding issues
+  num = getNumber(num, maxDigits);
+  if (typeof num === 'number') {
+    const decimal_digits = '0'.repeat(maxDigits);
+    let fmt = '0,0.' + decimal_digits;
+    if (forceFractionDigits !== true) {
+      fmt = '0,0[.][' + decimal_digits + ']';
+    }
+    return numeral(num).format(fmt);
   }
-  return numeral(num).format(fmt);
+  return num;
 };
-
-// TODO: should return undefined when value is null?
-const getNumber = (value, maxDigits = FRACTION_DIGITS) =>
-  +numeral(value || 0)
-    .value()
-    .toFixed(maxDigits);
 
 const formatRateCurrency = (num) => formatNumber(num);
 
-const formatRateChange = (num) =>
-  (num > 0 ? '+' : '') + formatRateCurrency(num) + '%';
-
-const formatCurrency = (num, usd) =>
-  (usd === true ? 'US$' : '$') + formatRateCurrency(num);
+const formatRateChange = (num) => {
+  const formatted = formatRateCurrency(num);
+  if (formatted) {
+    return (num > 0 ? '+' : '') + formatted + '%';
+  }
+  return formatted;
+};
+const formatCurrency = (num, usd) => {
+  const formatted = formatRateCurrency(num);
+  if (formatted) {
+    return (usd === true ? 'US$' : '$') + formatted;
+  }
+  return formatted;
+};
 
 const formatBytes = (num) => numeral(num).format('0 b');
 
 const getBytes = (obj) => formatBytes(bytes(JSON.stringify(obj)));
-
-const getPercentNumber = (str) => getNumber((str || '').replace('%', ''));
 
 const isRateFromToday = (rate) => {
   const date = getTimezoneDate(undefined, undefined, true);
@@ -246,13 +264,12 @@ module.exports = {
   FRACTION_DIGITS,
   setDelimiters,
   getDelimiters,
-  formatNumber,
   getNumber,
+  formatNumber,
   formatRateChange,
   formatRateCurrency,
   formatCurrency,
   getBytes,
-  getPercentNumber,
   isRateFromToday,
   hasRatesFromToday,
   parseNaturalDate,
