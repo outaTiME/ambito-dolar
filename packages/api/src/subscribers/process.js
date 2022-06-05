@@ -76,9 +76,15 @@ const getRate = (type) =>
       });
   });
 
-const getCryptoRate = (type) =>
+const getCryptoRates = (rates) =>
   new Promise((resolve) => {
     const start_time = Date.now();
+    // normalize data
+    rates = [].concat(rates).reduce((obj, rate) => {
+      const [type, target_type = type] = [].concat(rate);
+      obj[type] = target_type;
+      return obj;
+    }, {});
     const url = Shared.getCryptoRatesUrl();
     Shared.fetch(url)
       .then(async (response) => {
@@ -87,7 +93,9 @@ const getCryptoRate = (type) =>
         // https://joi.dev/tester/
         const schema = Joi.object()
           .keys({
-            [type]: Joi.number().required().custom(numberValidator),
+            ..._.mapValues(rates, () =>
+              Joi.number().required().custom(numberValidator)
+            ),
             time: Joi.number().integer().default(Date.now),
           })
           .unknown(true);
@@ -95,34 +103,33 @@ const getCryptoRate = (type) =>
         if (error) {
           // log error and continue processing
           console.warn(
-            'Invalid schema validation on crypto rate',
-            JSON.stringify({ type, data, error: error.message })
+            'Invalid schema validation on crypto rates',
+            JSON.stringify({ rates, data, error: error.message })
           );
           resolve();
         } else {
           const identity = value.time;
-          const rate_last = value[type];
-          const result = {
-            type,
-            rate: [identity, rate_last],
-          };
+          const result = Object.entries(rates).map(([type, target_type]) => ({
+            type: target_type,
+            rate: [identity, value[type]],
+          }));
           resolve(result);
         }
       })
       .catch((error) => {
         // log error and continue processing
         console.warn(
-          'Unable to fetch crypto rate',
-          JSON.stringify({ type, error: error.message })
+          'Unable to fetch crypto rates',
+          JSON.stringify({ rates, error: error.message })
         );
         resolve();
       })
       .finally(() => {
         const duration = (Date.now() - start_time) / 1000;
         console.info(
-          'Fetch crypto rate completed',
+          'Fetch crypto rates completed',
           JSON.stringify({
-            type,
+            rates,
             duration,
           })
         );
@@ -215,7 +222,11 @@ const getBusinessDayRates = (rates, realtime) => {
     promises.push(
       getRate(AmbitoDolar.CCL_TYPE),
       getRate(AmbitoDolar.MEP_TYPE),
-      getCryptoRate(AmbitoDolar.CCB_TYPE)
+      getCryptoRates([
+        // ['cclgd30', AmbitoDolar.CCL_TYPE],
+        // ['mepgd30', AmbitoDolar.MEP_TYPE],
+        AmbitoDolar.CCB_TYPE,
+      ])
     );
   }
   return Promise.all(promises)
