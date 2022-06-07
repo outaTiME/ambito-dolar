@@ -1,6 +1,6 @@
 {
   "name": "@ambito-dolar/core",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "dependencies": {
     "chrono-node": "^1.4.8",
     "lodash.isempty": "^4.4.0",

@@ -1,7 +1,7 @@
 {
   "name": "@ambito-dolar/api",
   "private": true,
-  "version": "2.4.0",
+  "version": "2.5.0",
   "scripts": {
     "test": "sst test",
     "start": "sst start",
@@ -10,7 +10,7 @@
     "remove": "sst remove"
   },
   "dependencies": {
-    "@ambito-dolar/core": "^2.0.0",
+    "@ambito-dolar/core": "^2.1.0",
     "@aws-sdk/client-dynamodb": "^3.94.0",
     "@aws-sdk/client-s3": "^3.94.0",
     "@aws-sdk/client-sns": "^3.94.0",

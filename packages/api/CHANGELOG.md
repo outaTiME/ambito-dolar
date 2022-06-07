@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.4.0...@ambito-dolar/api@2.5.0) (2022-06-07)
+
+
+### Features
+
+* new notification style for beta clients ([402045e](https://github.com/outaTiME/ambito-dolar/commit/402045e3d32d09ee73678d1c1f879c07c147d591))
+
+
+
+
+
 # [2.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.3.0...@ambito-dolar/api@2.4.0) (2022-06-05)
 
 
