@@ -1,3 +1,4 @@
+/* eslint-disable no-sparse-arrays */
 const test = require('ava');
 
 const AmbitoDolar = require('.');
@@ -73,6 +74,10 @@ test('Number should be formatted as a percentage', function (t) {
   t.is(AmbitoDolar.formatRateChange(-10), '-10,00%');
   t.is(AmbitoDolar.formatRateChange(0), '0,00%');
   t.is(AmbitoDolar.formatRateChange(''), null);
+  t.is(AmbitoDolar.getRateChange(1), '+1,00%');
+  t.is(AmbitoDolar.getRateChange(1, true), '+1,00% ↑');
+  t.is(AmbitoDolar.getRateChange([, 208.89, 0.14, 208.58]), '+0,30 (+0,14%)');
+  t.is(AmbitoDolar.getRateChange([, [201, 205], 0, 205]), '0,00 (0,00%)');
 });
 
 test('Number should be formatted as currency', function (t) {

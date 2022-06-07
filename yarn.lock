@@ -117,6 +117,7 @@ __metadata:
     ava: ^3.15.0
     chrono-node: ^1.4.8
     lodash.isempty: ^4.4.0
+    lodash.max: ^4.0.1
     lodash.merge: ^4.6.2
     lodash.pickby: ^4.6.0
     moment-timezone: ^0.5.33
@@ -22715,6 +22716,13 @@ __metadata:
   version: 4.6.0
   resolution: "lodash.map@npm:4.6.0"
   checksum: 7369a41d7d24d15ce3bbd02a7faa3a90f6266c38184e64932571b9b21b758bd10c04ffd117d1859be1a44156f29b94df5045eff172bf8a97fddf68bf1002d12f
+  languageName: node
+  linkType: hard
+
+"lodash.max@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "lodash.max@npm:4.0.1"
+  checksum: f887b68db054edabe3a4f4877a7b7d0bef6e4a29e9371ea4d711a6ed0ca2393659a879158c609649aabd0337528ec58ed5b1e9581fed536ec0b8ae45a6e5f278
   languageName: node
   linkType: hard
 

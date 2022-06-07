@@ -1,5 +1,6 @@
 const chrono = require('chrono-node');
 const isEmpty = require('lodash.isempty');
+const max = require('lodash.max');
 const merge = require('lodash.merge');
 const pickBy = require('lodash.pickby');
 const moment = require('moment-timezone');
@@ -134,13 +135,14 @@ const formatNumber = (
 
 const formatRateCurrency = (num) => formatNumber(num);
 
-const formatRateChange = (num) => {
+const formatRateChange = (num, percentage = true) => {
   const formatted = formatRateCurrency(num);
   if (formatted) {
-    return (num > 0 ? '+' : '') + formatted + '%';
+    return (num > 0 ? '+' : '') + formatted + (percentage === true ? '%' : '');
   }
   return formatted;
 };
+
 const formatCurrency = (num, usd) => {
   const formatted = formatRateCurrency(num);
   if (formatted) {
@@ -241,6 +243,35 @@ const getNotificationSettings = (notification_settings) => {
   );
 };
 
+const getRateValue = (stat) => max([].concat(stat[1]));
+
+const getRateChange = (stat, include_symbol = false) => {
+  const str = [];
+  let change = stat;
+  if (typeof stat !== 'number') {
+    // datum
+    const prev_value = stat[3];
+    if (prev_value) {
+      const value = getRateValue(stat);
+      const formatted_diff = formatRateChange(value - prev_value, false);
+      if (formatted_diff) {
+        str.push(formatted_diff);
+      }
+    }
+    change = stat[2];
+  }
+  const formatted_change = formatRateChange(change);
+  if (formatted_change) {
+    const show_as_detail = str.length > 0;
+    show_as_detail && str.push(' (');
+    str.push(formatted_change);
+    show_as_detail && str.push(')');
+    const symbol = change === 0 ? '=' : change > 0 ? '↑' : '↓';
+    include_symbol === true && str.push(` ${symbol}`);
+  }
+  return str.join('');
+};
+
 module.exports = {
   TIMEZONE,
   OFFICIAL_TYPE,
@@ -277,4 +308,6 @@ module.exports = {
   getRateTitle,
   getNotificationTitle,
   getNotificationSettings,
+  getRateValue,
+  getRateChange,
 };
