@@ -5,8 +5,6 @@ import hash from 'object-hash';
 
 import Shared, { MAX_NUMBER_OF_STATS } from '../libs/shared';
 
-const getRateValue = (rate_last) => _.max([].concat(rate_last));
-
 const numberValidator = (value, helpers) => {
   // convert to number and truncate
   const number = AmbitoDolar.getNumber(value);
@@ -138,7 +136,7 @@ const getCryptoRates = (rates) =>
 
 const getHistoricalRate = (type, rate, { max = 0, max_date }) => {
   // in-memory calculation
-  const value = getRateValue(rate[1]);
+  const value = AmbitoDolar.getRateValue(rate);
   if (value > max) {
     const result = {
       type,
@@ -171,12 +169,13 @@ const getNewRates = (rates, new_rates) =>
     const rate = rates[type];
     // detect rate update using hash compare
     if (rate_hash !== _.last(rate)) {
-      const rate_last_max = getRateValue(rate_last);
+      // eslint-disable-next-line no-sparse-arrays
+      const rate_last_max = AmbitoDolar.getRateValue([, rate_last]);
       // get close rate when first rate of day (open)
       const rate_open = rate
         ? AmbitoDolar.isRateFromToday(rate)
           ? rate[3]
-          : getRateValue(rate[1])
+          : AmbitoDolar.getRateValue(rate)
         : rate_last_max;
       // calculate from open / close rate and truncate
       const rate_change_percent = AmbitoDolar.getNumber(
@@ -271,8 +270,8 @@ const notify = (
         (obj, [type, rate]) => {
           const prev_rate = rates[type];
           if (prev_rate) {
-            const prev_rate_last = getRateValue(prev_rate[1]);
-            const rate_last = getRateValue(rate[1]);
+            const prev_rate_last = AmbitoDolar.getRateValue(prev_rate);
+            const rate_last = AmbitoDolar.getRateValue(rate);
             // truncate decimals
             const value_diff = AmbitoDolar.getNumber(
               Math.abs(prev_rate_last - rate_last)

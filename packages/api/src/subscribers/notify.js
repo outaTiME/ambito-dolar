@@ -12,9 +12,23 @@ import Shared, {
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
-const getChangeMessage = (rate) => {
+const getChangeMessage = (rate, app_version) => {
   const body = [];
   const value = rate[1];
+  if (app_version && Shared.isSemverGet(app_version, '6.0.0')) {
+    if (Array.isArray(value)) {
+      body.push(
+        `${AmbitoDolar.formatRateCurrency(
+          value[0]
+        )} - ${AmbitoDolar.formatRateCurrency(value[1])}`
+      );
+    } else {
+      body.push(`${AmbitoDolar.formatRateCurrency(value)}`);
+    }
+    body.push(` ${AmbitoDolar.getRateChange(rate)}`);
+    return body.join('');
+  }
+  // old-style
   const change = rate[2];
   if (Array.isArray(value)) {
     body.push(
@@ -29,16 +43,19 @@ const getChangeMessage = (rate) => {
   return body.join('');
 };
 
-const getRateMessage = (type, rate) => {
+const getRateMessage = (type, rate, app_version) => {
   const rate_title = AmbitoDolar.getRateTitle(type);
   if (rate_title) {
-    return `${rate_title.toUpperCase()}: ${getChangeMessage(rate)}`;
+    return `${rate_title.toUpperCase()}: ${getChangeMessage(
+      rate,
+      app_version
+    )}`;
   }
 };
 
-const getBodyMessage = (rates) => {
+const getBodyMessage = (rates, app_version) => {
   const body = Object.entries(rates).reduce((obj, [type, rate]) => {
-    const rate_message = getRateMessage(type, rate);
+    const rate_message = getRateMessage(type, rate, app_version);
     if (rate_message) {
       obj.push(rate_message);
     }
@@ -90,7 +107,7 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
           },
           {}
         );
-        // remove rates on outdated clients
+        // remove rates not available in app version
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_MEP)) {
           delete rates_for_settings[AmbitoDolar.MEP_TYPE];
         }
@@ -103,7 +120,7 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_CCB)) {
           delete rates_for_settings[AmbitoDolar.CCB_TYPE];
         }
-        const body = getBodyMessage(rates_for_settings);
+        const body = getBodyMessage(rates_for_settings, app_version);
         if (body) {
           return getMessage({
             to: push_token,
@@ -185,28 +202,30 @@ const notify = async (
     } else {
       // uses getRates when NOTIFICATION_CLOSE_TYPE
       rates = rates || (await Shared.getRates());
-      // TODO: remove FUTURE_TYPE and CCB_TYPE from rates until v6 release
-      delete rates[AmbitoDolar.FUTURE_TYPE];
-      delete rates[AmbitoDolar.CCB_TYPE];
       // useful for holidays when NOTIFICATION_CLOSE_TYPE
       const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
       if (has_rates_from_today) {
+        // filter the items that have this type of notification enabled
+        items = _.filter(items, ({ notification_settings }) =>
+          checkForSetting(notification_settings, type)
+        );
         // leave testing device only for new notifications when development
         if (process.env.IS_LOCAL && items.length > 1) {
           throw new Error(
             'Only single message can be sent when running on development mode.'
           );
         }
-        // filter the items that have this type of notification enabled
-        items = _.filter(items, ({ notification_settings }) =>
-          checkForSetting(notification_settings, type)
-        );
         // exclude when installation_id
         if (social === true) {
+          const social_rates = _.omit(rates, [
+            // TODO: leave empty on next release
+            AmbitoDolar.FUTURE_TYPE,
+            AmbitoDolar.CCB_TYPE,
+          ]);
           await Shared.triggerSocialNotifyEvent({
             type,
             title: AmbitoDolar.getNotificationTitle(type),
-            caption: getSocialCaption(type, rates),
+            caption: getSocialCaption(type, social_rates),
           });
         }
         messages.push(

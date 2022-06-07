@@ -12,6 +12,7 @@ import { Expo } from 'expo-server-sdk';
 import { JWT } from 'google-auth-library';
 import * as _ from 'lodash';
 import fetch from 'node-fetch';
+import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import zlib from 'zlib';
 
@@ -135,6 +136,8 @@ const getAllDataFromDynamoDB = async (params) =>
   parallelScan(params, { concurrency: 10 }); // ~4000 items per scan (1 MB of data)
 
 const isSemverLt = (v1, v2) => semverLt(v1, v2);
+
+const isSemverGte = (v1, v2) => semverGte(v1, v2);
 
 const getVariationThreshold = (type) => {
   const realtime_types = [
@@ -575,6 +578,7 @@ export default {
   getAllDataFromDynamoDB,
   fetch,
   isSemverLt,
+  isSemverGte,
   getVariationThreshold,
   getJsonObject,
   getTickets,
