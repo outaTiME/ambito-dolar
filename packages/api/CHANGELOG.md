@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.5.0...@ambito-dolar/api@2.6.0) (2022-06-09)
+
+
+### Features
+
+* future rate type removed ([d3c388d](https://github.com/outaTiME/ambito-dolar/commit/d3c388df9301c02122b750728b488009c70902a0))
+* update notification style for beta clients ([c5e5c34](https://github.com/outaTiME/ambito-dolar/commit/c5e5c3437bbb49227d7cf3332073a54a931a157a))
+
+
+
+
+
 # [2.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.4.0...@ambito-dolar/api@2.5.0) (2022-06-07)
 
 

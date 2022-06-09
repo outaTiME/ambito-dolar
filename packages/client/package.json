@@ -11,7 +11,7 @@
     "postinstall": "expo-yarn-workspaces postinstall"
   },
   "dependencies": {
-    "@ambito-dolar/core": "^2.1.0",
+    "@ambito-dolar/core": "^2.2.0",
     "@expo/react-native-action-sheet": "^3.12.0",
     "@expo/vector-icons": "^12.0.5",
     "@react-native-community/hooks": "^2.8.0",
@@ -84,5 +84,5 @@
     "dotenv": "^10.0.0",
     "expo-yarn-workspaces": "^1.6.0"
   },
-  "version": "6.0.0-beta.8"
+  "version": "6.0.0-beta.9"
 }

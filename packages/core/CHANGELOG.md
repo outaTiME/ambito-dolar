@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@2.1.0...@ambito-dolar/core@2.2.0) (2022-06-09)
+
+
+### Features
+
+* future rate type removed ([d3c388d](https://github.com/outaTiME/ambito-dolar/commit/d3c388df9301c02122b750728b488009c70902a0))
+
+
+
+
+
 # [2.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@2.0.0...@ambito-dolar/core@2.1.0) (2022-06-07)
 
 
