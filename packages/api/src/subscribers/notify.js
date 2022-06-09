@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 
 import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,
-  MIN_CLIENT_VERSION_FOR_FUTURE,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
   MIN_CLIENT_VERSION_FOR_CCB,
 } from '../libs/shared';
@@ -111,9 +110,6 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_MEP)) {
           delete rates_for_settings[AmbitoDolar.MEP_TYPE];
         }
-        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_FUTURE)) {
-          delete rates_for_settings[AmbitoDolar.FUTURE_TYPE];
-        }
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_WHOLESALER)) {
           delete rates_for_settings[AmbitoDolar.WHOLESALER_TYPE];
         }
@@ -219,7 +215,6 @@ const notify = async (
         if (social === true) {
           const social_rates = _.omit(rates, [
             // TODO: leave empty on next release
-            AmbitoDolar.FUTURE_TYPE,
             AmbitoDolar.CCB_TYPE,
           ]);
           await Shared.triggerSocialNotifyEvent({

@@ -25,7 +25,6 @@ const TOURIST_TYPE = 'turista';
 const CCL_TYPE = 'ccl';
 const CCL_LEGACY_TYPE = 'cl';
 const MEP_TYPE = 'mep';
-const FUTURE_TYPE = 'futuro';
 const WHOLESALER_TYPE = 'mayorista';
 const CCB_TYPE = 'ccb';
 
@@ -177,7 +176,6 @@ const getAvailableRateTypes = () => [
   INFORMAL_TYPE,
   CCL_TYPE,
   MEP_TYPE,
-  FUTURE_TYPE,
   WHOLESALER_TYPE,
   CCB_TYPE,
 ];
@@ -194,8 +192,6 @@ const getRateTitle = (type) => {
     return 'CCL';
   } else if (type === MEP_TYPE) {
     return 'MEP';
-  } else if (type === FUTURE_TYPE) {
-    return 'Futuro';
   } else if (type === WHOLESALER_TYPE) {
     return 'Mayorista';
   } else if (type === CCB_TYPE) {
@@ -280,7 +276,6 @@ module.exports = {
   CCL_TYPE,
   CCL_LEGACY_TYPE,
   MEP_TYPE,
-  FUTURE_TYPE,
   WHOLESALER_TYPE,
   CCB_TYPE,
   NOTIFICATION_OPEN_TYPE,

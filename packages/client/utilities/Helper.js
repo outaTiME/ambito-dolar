@@ -245,7 +245,6 @@ export default {
       AmbitoDolar.INFORMAL_TYPE,
       AmbitoDolar.CCL_TYPE,
       AmbitoDolar.MEP_TYPE,
-      AmbitoDolar.FUTURE_TYPE,
       AmbitoDolar.WHOLESALER_TYPE,
       // AmbitoDolar.CCB_TYPE,
     ];

@@ -33,7 +33,6 @@ const snsClient = new SNSClient({
 // constants
 
 export const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
-export const MIN_CLIENT_VERSION_FOR_FUTURE = '6.0.0';
 export const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
 export const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
@@ -262,7 +261,6 @@ const storeRateStats = async (rates) => {
     (obj, [type, { stats }]) => {
       // ignore
       if (
-        type === AmbitoDolar.FUTURE_TYPE ||
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE
       ) {
@@ -332,7 +330,6 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
     (obj, [type, rate]) => {
       // ignore
       if (
-        type === AmbitoDolar.FUTURE_TYPE ||
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE
       ) {
@@ -350,7 +347,7 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
     storePublicJsonObject(
       HISTORICAL_RATES_V5_OBJECT_KEY,
-      _.omit(base_rates, [AmbitoDolar.FUTURE_TYPE, AmbitoDolar.CCB_TYPE])
+      _.omit(base_rates, [AmbitoDolar.CCB_TYPE])
     ),
     storePublicJsonObject(HISTORICAL_RATES_OBJECT_KEY, base_rates),
   ]);
@@ -361,7 +358,6 @@ const storeRatesJsonObject = async (rates, is_updated) => {
     (obj, [type, rate]) => {
       // ignore
       if (
-        type === AmbitoDolar.FUTURE_TYPE ||
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE
       ) {
@@ -383,10 +379,7 @@ const storeRatesJsonObject = async (rates, is_updated) => {
     }),
     storePublicJsonObject(RATES_V5_OBJECT_KEY, {
       ...rates,
-      rates: _.omit(rates.rates, [
-        AmbitoDolar.FUTURE_TYPE,
-        AmbitoDolar.CCB_TYPE,
-      ]),
+      rates: _.omit(rates.rates, [AmbitoDolar.CCB_TYPE]),
     }),
     storePublicJsonObject(RATES_OBJECT_KEY, rates),
     // save historical rates
@@ -397,8 +390,6 @@ const storeRatesJsonObject = async (rates, is_updated) => {
 const getDataProviderForRate = (type) => {
   if (type === AmbitoDolar.CCL_TYPE || type === AmbitoDolar.MEP_TYPE) {
     return 'Rava Bursátil';
-  } else if (type === AmbitoDolar.FUTURE_TYPE) {
-    return 'ROFEX';
   } else if (type === AmbitoDolar.CCB_TYPE) {
     return 'CriptoYa';
   }
@@ -412,8 +403,6 @@ const getPathForRate = (type) => {
     return 'dolarrava/cl';
   } else if (type === AmbitoDolar.MEP_TYPE) {
     return 'dolarrava/mep';
-  } else if (type === AmbitoDolar.FUTURE_TYPE) {
-    return 'dolarfuturo';
   }
   return `dolar/${type}`;
 };

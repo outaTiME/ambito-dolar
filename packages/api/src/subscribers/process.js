@@ -214,8 +214,7 @@ const getRates = (rates) =>
 // process these rates only on business days
 const getBusinessDayRates = (rates, realtime) => {
   const promises = [
-    // updated on holidays
-    getRate(AmbitoDolar.FUTURE_TYPE),
+    // pass
   ];
   if (realtime) {
     promises.push(
