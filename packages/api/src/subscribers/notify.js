@@ -14,8 +14,8 @@ const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 const getChangeMessage = (rate, app_version) => {
   const body = [];
   const value = rate[1];
-  if (app_version && Shared.isSemverGet(app_version, '6.0.0')) {
-    if (Array.isArray(value)) {
+  if (app_version && Shared.isSemverGte(app_version, '6.0.0')) {
+    /* if (Array.isArray(value)) {
       body.push(
         `${AmbitoDolar.formatRateCurrency(
           value[0]
@@ -23,9 +23,11 @@ const getChangeMessage = (rate, app_version) => {
       );
     } else {
       body.push(`${AmbitoDolar.formatRateCurrency(value)}`);
-    }
-    body.push(` ${AmbitoDolar.getRateChange(rate)}`);
-    return body.join('');
+    } */
+    const value = AmbitoDolar.getRateValue(rate);
+    body.push(`${AmbitoDolar.formatRateCurrency(value)}`);
+    body.push(`${AmbitoDolar.getRateChange(rate)}`);
+    return body.join(' ');
   }
   // old-style
   const change = rate[2];
