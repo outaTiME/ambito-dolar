@@ -1,6 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 import Shared from '../libs/shared';
 

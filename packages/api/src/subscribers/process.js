@@ -1,14 +1,23 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import Joi from 'joi';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import hash from 'object-hash';
 
 import Shared, { MAX_NUMBER_OF_STATS } from '../libs/shared';
 
-const getRateValue = (rate_last) => _.max([].concat(rate_last));
+const numberValidator = (value, helpers) => {
+  // convert to number and truncate
+  const number = AmbitoDolar.getNumber(value);
+  if (number > 0) {
+    // replace value with a new value
+    return number;
+  }
+  return helpers.error('any.invalid');
+};
 
 const getRate = (type) =>
   new Promise((resolve) => {
+    const start_time = Date.now();
     const url = Shared.getRateUrl(type);
     Shared.fetch(url)
       .then(async (response) => {
@@ -19,10 +28,10 @@ const getRate = (type) =>
           .keys({
             fecha: Joi.string().required(),
             // variacion: Joi.string().required(),
-            compra: Joi.string().required(),
-            venta: Joi.string().required(),
+            compra: Joi.string().required().custom(numberValidator),
+            venta: Joi.string().required().custom(numberValidator),
             // only when TOURIST_TYPE / CCL_TYPE / MEP_TYPE
-            valor: Joi.string(),
+            valor: Joi.string().custom(numberValidator),
           })
           .unknown(true);
         const { value, error } = schema.validate(data);
@@ -36,11 +45,8 @@ const getRate = (type) =>
         } else {
           const identity = value.fecha;
           const rate_last = value.valor
-            ? AmbitoDolar.getNumber(value.valor)
-            : [
-                AmbitoDolar.getNumber(value.compra),
-                AmbitoDolar.getNumber(value.venta),
-              ];
+            ? value.valor
+            : [value.compra, value.venta];
           const result = {
             type,
             rate: [identity, rate_last],
@@ -55,11 +61,28 @@ const getRate = (type) =>
           JSON.stringify({ type, error: error.message })
         );
         resolve();
+      })
+      .finally(() => {
+        const duration = (Date.now() - start_time) / 1000;
+        console.info(
+          'Fetch rate completed',
+          JSON.stringify({
+            type,
+            duration,
+          })
+        );
       });
   });
 
-const getCryptoRate = (type) =>
+const getCryptoRates = (rates) =>
   new Promise((resolve) => {
+    const start_time = Date.now();
+    // normalize data
+    rates = [].concat(rates).reduce((obj, rate) => {
+      const [type, target_type = type] = [].concat(rate);
+      obj[type] = target_type;
+      return obj;
+    }, {});
     const url = Shared.getCryptoRatesUrl();
     Shared.fetch(url)
       .then(async (response) => {
@@ -68,7 +91,9 @@ const getCryptoRate = (type) =>
         // https://joi.dev/tester/
         const schema = Joi.object()
           .keys({
-            [type]: Joi.number().required(),
+            ..._.mapValues(rates, () =>
+              Joi.number().required().custom(numberValidator)
+            ),
             time: Joi.number().integer().default(Date.now),
           })
           .unknown(true);
@@ -76,33 +101,42 @@ const getCryptoRate = (type) =>
         if (error) {
           // log error and continue processing
           console.warn(
-            'Invalid schema validation on crypto rate',
-            JSON.stringify({ type, data, error: error.message })
+            'Invalid schema validation on crypto rates',
+            JSON.stringify({ rates, data, error: error.message })
           );
           resolve();
         } else {
           const identity = value.time;
-          const rate_last = AmbitoDolar.getNumber(value[type]);
-          const result = {
-            type,
-            rate: [identity, rate_last],
-          };
+          const result = Object.entries(rates).map(([type, target_type]) => ({
+            type: target_type,
+            rate: [identity, value[type]],
+          }));
           resolve(result);
         }
       })
       .catch((error) => {
         // log error and continue processing
         console.warn(
-          'Unable to fetch crypto rate',
-          JSON.stringify({ type, error: error.message })
+          'Unable to fetch crypto rates',
+          JSON.stringify({ rates, error: error.message })
         );
         resolve();
+      })
+      .finally(() => {
+        const duration = (Date.now() - start_time) / 1000;
+        console.info(
+          'Fetch crypto rates completed',
+          JSON.stringify({
+            rates,
+            duration,
+          })
+        );
       });
   });
 
 const getHistoricalRate = (type, rate, { max = 0, max_date }) => {
   // in-memory calculation
-  const value = getRateValue(rate[1]);
+  const value = AmbitoDolar.getRateValue(rate);
   if (value > max) {
     const result = {
       type,
@@ -135,16 +169,17 @@ const getNewRates = (rates, new_rates) =>
     const rate = rates[type];
     // detect rate update using hash compare
     if (rate_hash !== _.last(rate)) {
-      const rate_last_max = getRateValue(rate_last);
+      // eslint-disable-next-line no-sparse-arrays
+      const rate_last_max = AmbitoDolar.getRateValue([, rate_last]);
       // get close rate when first rate of day (open)
       const rate_open = rate
         ? AmbitoDolar.isRateFromToday(rate)
           ? rate[3]
-          : getRateValue(rate[1])
+          : AmbitoDolar.getRateValue(rate)
         : rate_last_max;
-      // calculate from open / close rate
+      // calculate from open / close rate and truncate
       const rate_change_percent = AmbitoDolar.getNumber(
-        (rate_last_max / rate_open - 1) * 100.0
+        (rate_last_max / rate_open - 1) * 100
       );
       const new_rate = [
         AmbitoDolar.getTimezoneDate().format(),
@@ -179,14 +214,17 @@ const getRates = (rates) =>
 // process these rates only on business days
 const getBusinessDayRates = (rates, realtime) => {
   const promises = [
-    // updated on holidays
-    getRate(AmbitoDolar.FUTURE_TYPE),
+    // pass
   ];
   if (realtime) {
     promises.push(
       getRate(AmbitoDolar.CCL_TYPE),
       getRate(AmbitoDolar.MEP_TYPE),
-      getCryptoRate(AmbitoDolar.CCB_TYPE)
+      getCryptoRates([
+        // ['cclgd30', AmbitoDolar.CCL_TYPE],
+        // ['mepgd30', AmbitoDolar.MEP_TYPE],
+        AmbitoDolar.CCB_TYPE,
+      ])
     );
   }
   return Promise.all(promises)
@@ -209,7 +247,7 @@ const notify = (
   has_new_rates
 ) => {
   const notifications = [];
-  if (close_day !== undefined) {
+  if (close_day === true) {
     notifications.push([
       AmbitoDolar.NOTIFICATION_CLOSE_TYPE,
       {
@@ -231,8 +269,8 @@ const notify = (
         (obj, [type, rate]) => {
           const prev_rate = rates[type];
           if (prev_rate) {
-            const prev_rate_last = getRateValue(prev_rate[1]);
-            const rate_last = getRateValue(rate[1]);
+            const prev_rate_last = AmbitoDolar.getRateValue(prev_rate);
+            const rate_last = AmbitoDolar.getRateValue(rate);
             // truncate decimals
             const value_diff = AmbitoDolar.getNumber(
               Math.abs(prev_rate_last - rate_last)
@@ -290,6 +328,10 @@ export async function handler(event) {
       close_day,
     })
   );
+  // avoid fetch delays
+  const in_time =
+    AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
+    0;
   const base_rates = await Shared.getRatesJsonObject().catch((error) => {
     if (error.code === 'NoSuchKey') {
       return {};
@@ -303,9 +345,6 @@ export async function handler(event) {
   const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
   // leave new rates only (for realtime too)
   const new_rates = await getRates(rates);
-  const in_time =
-    AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
-    0;
   const is_opening = !has_rates_from_today && !_.isEmpty(new_rates);
   if (is_opening || has_rates_from_today) {
     const realtime = is_opening || in_time;
@@ -313,6 +352,9 @@ export async function handler(event) {
     Object.assign(new_rates, new_business_day_rates);
   }
   const has_new_rates = !_.isEmpty(new_rates);
+  const processed_at = AmbitoDolar.getTimezoneDate();
+  const processed_at_fmt = processed_at.format();
+  const processed_at_unix = processed_at.unix();
   if (has_new_rates) {
     // add new_rates to base_rates
     Object.entries(new_rates).forEach(([type, rate]) => {
@@ -350,19 +392,27 @@ export async function handler(event) {
       Object.assign(base_rates.rates[type], historical_rate);
     });
     // add / override updated_at field
-    base_rates.updated_at = AmbitoDolar.getTimezoneDate().format();
+    base_rates.updated_at = processed_at_fmt;
   }
   // add / override processed_at field
-  base_rates.processed_at = AmbitoDolar.getTimezoneDate().format();
+  base_rates.processed_at = processed_at_fmt;
   // save json files
   await Shared.storeRatesJsonObject(base_rates, has_new_rates);
   // firebase update should occur after saving json files
-  if (has_new_rates) {
-    await Shared.putFirebaseData('updated_at', base_rates.updated_at);
-  }
-  await Shared.putFirebaseData('processed_at', base_rates.processed_at);
+  await Promise.all([
+    Shared.putFirebaseData('processed_at', processed_at_fmt),
+    Shared.putFirebaseData('p', processed_at_unix),
+    ...(has_new_rates
+      ? [
+          Shared.putFirebaseData('updated_at', processed_at_fmt),
+          Shared.putFirebaseData('u', processed_at_unix),
+        ]
+      : [
+          // ignore
+        ]),
+  ]);
   // notifications should occur after saving json files
-  if (trigger_notification !== undefined) {
+  if (trigger_notification === true) {
     await notify(
       close_day,
       rates,

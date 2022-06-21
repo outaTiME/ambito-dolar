@@ -1,5 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import chrome from 'chrome-aws-lambda';
+import chrome from '@sparticuz/chrome-aws-lambda';
 import { IgApiClient } from 'instagram-private-api';
 
 import Shared from '../libs/shared';
@@ -125,6 +125,7 @@ const publishToInstagram = async (file, story_file, caption) => {
           is_sticker: true,
           media_id,
         },
+        // link: 'https://cafecito.app/ambitodolar',
       });
     }
     const duration = (Date.now() - start_time) / 1000;

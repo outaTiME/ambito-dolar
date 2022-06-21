@@ -9,21 +9,7 @@
       "runtimeArgs": ["start", "--increase-timeout"],
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"],
-      "cwd": "${workspaceFolder}/packages/api",
       "env": { "NODE_OPTIONS": "--throw-deprecation" },
-    },
-    {
-      "name": "Debug SST Tests",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/sst",
-      "args": ["test", "--runInBand", "--no-cache", "--watchAll=false"],
-      "cwd": "${workspaceRoot}/packages/api",
-      "protocol": "inspector",
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "env": { "CI": "true" },
-      "disableOptimisticBPs": true
     }
   ]
 }

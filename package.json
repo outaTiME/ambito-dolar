@@ -17,15 +17,9 @@
     }
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.2.3",
-    "@typescript-eslint/eslint-plugin": "^5.17.0",
-    "@typescript-eslint/parser": "^5.17.0",
-    "eslint": "^8.12.0",
-    "eslint-config-universe": "^11.0.0-beta.0",
-    "husky": "^7.0.4",
-    "lerna": "^4.0.0",
-    "prettier": "^2.6.1",
-    "typescript": "^4.6.3"
+    "@serverless-stack/cli": "1.2.26",
+    "@serverless-stack/resources": "1.2.26",
+    "aws-cdk-lib": "2.24.0",
   },
   "scripts": {
     "test": "lerna run test",
@@ -38,9 +32,9 @@
     "client:publish:web": "vercel packages/client/web-build",
     "client:upgrade": "yarn workspace @ambito-dolar/client expo upgrade",
     "api:start": "yarn workspace @ambito-dolar/api run start",
-    "api:publish": "yarn workspace @ambito-dolar/api run deploy",
-    "website:start": "yarn workspace @ambito-dolar/website run start",
-    "website:publish": "vercel packages/website",
+    "api:start": "yarn sst start",
+    "api:publish": "yarn sst deploy",
+    "api:remove": "yarn sst remove --debug-stack",
     "publish": "lerna publish",
     "version": "yarn install && git stage yarn.lock",
     "depcheck": "yarn workspaces foreach --verbose exec npx depcheck"

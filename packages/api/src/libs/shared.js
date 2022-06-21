@@ -10,8 +10,9 @@ import { parallelScan } from '@shelf/dynamodb-parallel-scan';
 import { Expo } from 'expo-server-sdk';
 // const FileType = require('file-type');
 import { JWT } from 'google-auth-library';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import fetch from 'node-fetch';
+import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import zlib from 'zlib';
 
@@ -32,7 +33,6 @@ const snsClient = new SNSClient({
 // constants
 
 export const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
-export const MIN_CLIENT_VERSION_FOR_FUTURE = '6.0.0';
 export const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
 export const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
@@ -44,11 +44,11 @@ const RATES_LEGACY_OBJECT_KEY = process.env.RATES_LEGACY_OBJECT_KEY;
 const HISTORICAL_RATES_LEGACY_OBJECT_KEY =
   'historical-' + RATES_LEGACY_OBJECT_KEY;
 // 5.x
-const RATES_V5_OBJECT_KEY = process.env.RATES_V5_OBJECT_KEY;
-const HISTORICAL_RATES_V5_OBJECT_KEY = 'historical-' + RATES_V5_OBJECT_KEY;
-// 6.x
 const RATES_OBJECT_KEY = process.env.RATES_OBJECT_KEY;
 const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
+// 6.x
+const QUOTES_OBJECT_KEY = process.env.QUOTES_OBJECT_KEY;
+const HISTORICAL_QUOTES_OBJECT_KEY = 'historical-' + QUOTES_OBJECT_KEY;
 
 let FIREBASE_CREDENTIALS;
 
@@ -82,7 +82,7 @@ const getFirebaseAccessToken = async () => {
 
 const fetchFirebaseData = async (uri, opts = {}) => {
   const access_token = await getFirebaseAccessToken();
-  const url = new URL(`${process.env.FIREBASE_DATABASE_URL}${uri}`);
+  const url = new URL(`${process.env.FIREBASE_DATABASE_URL}/${uri}`);
   url.pathname = url.pathname + '.json';
   url.searchParams.set('access_token', access_token);
   return fetch(url.href, opts).then(async (response) => {
@@ -136,6 +136,8 @@ const getAllDataFromDynamoDB = async (params) =>
 
 const isSemverLt = (v1, v2) => semverLt(v1, v2);
 
+const isSemverGte = (v1, v2) => semverGte(v1, v2);
+
 const getVariationThreshold = (type) => {
   const realtime_types = [
     AmbitoDolar.CCL_TYPE,
@@ -145,7 +147,7 @@ const getVariationThreshold = (type) => {
   if (realtime_types.includes(type)) {
     return 0.75;
   }
-  return 0.01;
+  return 0.05;
 };
 
 // https://transang.me/modern-fetch-and-how-to-get-buffer-output-from-aws-sdk-v3-getobjectcommand/
@@ -196,7 +198,7 @@ const getJsonObject = async (key, bucket = S3_BUCKET) => {
 const getTickets = async (date, type) =>
   getJsonObject(`notifications/${date}-${type}`);
 
-const getRatesJsonObject = async () => getJsonObject(RATES_OBJECT_KEY);
+const getRatesJsonObject = async () => getJsonObject(QUOTES_OBJECT_KEY);
 
 const getRates = async (base_rates) => {
   // took only available rates
@@ -259,7 +261,6 @@ const storeRateStats = async (rates) => {
     (obj, [type, { stats }]) => {
       // ignore
       if (
-        type === AmbitoDolar.FUTURE_TYPE ||
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE
       ) {
@@ -294,7 +295,7 @@ const storeRateStats = async (rates) => {
 };
 
 const storeHistoricalRatesJsonObject = async ({ rates }) => {
-  const base_rates = await getJsonObject(HISTORICAL_RATES_OBJECT_KEY).catch(
+  const base_rates = await getJsonObject(HISTORICAL_QUOTES_OBJECT_KEY).catch(
     (error) => {
       if (error.code === 'NoSuchKey') {
         return {};
@@ -329,7 +330,6 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
     (obj, [type, rate]) => {
       // ignore
       if (
-        type === AmbitoDolar.FUTURE_TYPE ||
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE
       ) {
@@ -346,10 +346,10 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
   return Promise.all([
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
     storePublicJsonObject(
-      HISTORICAL_RATES_V5_OBJECT_KEY,
-      _.omit(base_rates, [AmbitoDolar.FUTURE_TYPE, AmbitoDolar.CCB_TYPE])
+      HISTORICAL_RATES_OBJECT_KEY,
+      _.omit(base_rates, [AmbitoDolar.CCB_TYPE])
     ),
-    storePublicJsonObject(HISTORICAL_RATES_OBJECT_KEY, base_rates),
+    storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_rates),
   ]);
 };
 
@@ -358,7 +358,6 @@ const storeRatesJsonObject = async (rates, is_updated) => {
     (obj, [type, rate]) => {
       // ignore
       if (
-        type === AmbitoDolar.FUTURE_TYPE ||
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE
       ) {
@@ -378,14 +377,11 @@ const storeRatesJsonObject = async (rates, is_updated) => {
       ...rates,
       rates: legacy_rates,
     }),
-    storePublicJsonObject(RATES_V5_OBJECT_KEY, {
+    storePublicJsonObject(RATES_OBJECT_KEY, {
       ...rates,
-      rates: _.omit(rates.rates, [
-        AmbitoDolar.FUTURE_TYPE,
-        AmbitoDolar.CCB_TYPE,
-      ]),
+      rates: _.omit(rates.rates, [AmbitoDolar.CCB_TYPE]),
     }),
-    storePublicJsonObject(RATES_OBJECT_KEY, rates),
+    storePublicJsonObject(QUOTES_OBJECT_KEY, rates),
     // save historical rates
     is_updated && storeHistoricalRatesJsonObject(rates),
   ]);
@@ -394,8 +390,6 @@ const storeRatesJsonObject = async (rates, is_updated) => {
 const getDataProviderForRate = (type) => {
   if (type === AmbitoDolar.CCL_TYPE || type === AmbitoDolar.MEP_TYPE) {
     return 'Rava Bursátil';
-  } else if (type === AmbitoDolar.FUTURE_TYPE) {
-    return 'ROFEX';
   } else if (type === AmbitoDolar.CCB_TYPE) {
     return 'CriptoYa';
   }
@@ -409,8 +403,6 @@ const getPathForRate = (type) => {
     return 'dolarrava/cl';
   } else if (type === AmbitoDolar.MEP_TYPE) {
     return 'dolarrava/mep';
-  } else if (type === AmbitoDolar.FUTURE_TYPE) {
-    return 'dolarfuturo';
   }
   return `dolar/${type}`;
 };
@@ -425,9 +417,7 @@ const getRateUrl = (type) => {
 const getCryptoRatesUrl = () => process.env.CRYPTO_RATES_URL;
 
 const getSocialScreenshotUrl = (title) =>
-  _.template(process.env.SOCIAL_SCREENSHOT_URL)({
-    title: encodeURIComponent(title),
-  });
+  process.env.SOCIAL_SCREENSHOT_URL + '?title=' + encodeURIComponent(title);
 
 const getExpoClient = () =>
   new Expo({
@@ -575,6 +565,7 @@ export default {
   getAllDataFromDynamoDB,
   fetch,
   isSemverLt,
+  isSemverGte,
   getVariationThreshold,
   getJsonObject,
   getTickets,
