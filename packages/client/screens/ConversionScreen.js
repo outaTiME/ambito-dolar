@@ -1,8 +1,9 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { useFocusEffect } from '@react-navigation/native';
+import { compose } from '@reduxjs/toolkit';
 import React from 'react';
-import { View, TextInput } from 'react-native';
+import { View, TextInput, InteractionManager } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { compose } from 'redux';
 
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
@@ -19,7 +20,11 @@ const CONVERSION_TYPES = [I18n.t('buy'), I18n.t('average'), I18n.t('sell')];
 
 const DEFAULT_NUMBER = 1;
 
-const ConversionScreen = () => {
+const ConversionScreen = ({
+  scrollViewRef,
+  route: { params },
+  navigation: { setParams },
+}) => {
   const { theme, fonts } = Helper.useTheme();
   const [numberValue, setNumberValue] = React.useState(DEFAULT_NUMBER);
   const [currencyIndex, setCurrencyIndex] = React.useState(0);
@@ -101,6 +106,22 @@ const ConversionScreen = () => {
       );
     },
     [rates, typeIndex, theme, currencyIndex, numberValue, fonts]
+  );
+  useFocusEffect(
+    React.useCallback(() => {
+      // FIXME: update params on quick action to force force when app state change
+      const task = InteractionManager.runAfterInteractions(() => {
+        if (params?.focus === true) {
+          scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+          inputTextRef.current?.focus();
+          // TODO: update param to false ???
+          setParams({
+            focus: false,
+          });
+        }
+      });
+      return () => task.cancel();
+    }, [params])
   );
   return (
     <>

@@ -28,6 +28,10 @@ import QuickActions from 'react-native-quick-actions';
 import { useSelector, shallowEqual, useDispatch, batch } from 'react-redux';
 
 import * as actions from '../actions';
+import ActionButton from '../components/ActionButton';
+import { MaterialHeaderButtons, Item } from '../components/HeaderButtons';
+import MessageView from '../components/MessageView';
+import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import useAppState from '../hooks/useAppState';
@@ -46,10 +50,6 @@ import UpdateAppModalScreen from '../screens/UpdateAppModalScreen';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
-import ActionButton from './ActionButton';
-import { MaterialHeaderButtons, Item } from './HeaderButtons';
-import MessageView from './MessageView';
-import withContainer from './withContainer';
 
 const BackButton = ({ navigation }) => (
   <MaterialHeaderButtons left>
@@ -409,13 +409,11 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       subscription.remove();
     };
   }, []);
-  // const [isPhoneDevice] = Helper.useSharedState('isPhoneDevice', true);
   return (
     <NavigationContainer
       {...{
         ref: navigationRef,
         onReady: () => {
-          // TODO: send signal to remove splash screen ???
           routeNameRef.current = navigationRef.getCurrentRoute().name;
         },
         onStateChange: () => {
@@ -433,9 +431,6 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       <RootStack.Navigator
         screenOptions={{
           headerShown: false,
-          // https://github.com/expo/expo/issues/17700#issuecomment-1154686011
-          // presentation: 'fullScreenModal',
-          // orientation: isPhoneDevice ? 'portrait_up' : 'landscape',
         }}
       >
         <RootStack.Group>
@@ -460,6 +455,134 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
     </NavigationContainer>
   );
 };
+
+initializeApp(JSON.parse(Settings.FIREBASE_CONFIG_JSON));
+
+const AppContainer = ({ showAppUpdateMessage }) => {
+  const { theme } = Helper.useTheme();
+  const rates = Helper.useRates();
+  const hasRates = React.useMemo(() => Helper.hasValidRates(rates), [rates]);
+  const isInitial = !rates;
+  const dispatch = useDispatch();
+  const [, setUpdatingRates] = Helper.useSharedState('updatingRates');
+  const [error, setError] = React.useState(false);
+  const [stillLoading, setStillLoading] = React.useState(false);
+  const fetchRates = React.useCallback(
+    (initial) => {
+      if (__DEV__) {
+        console.log('💫 Fetching rates', initial);
+      }
+      setUpdatingRates(true);
+      setError(false);
+      setStillLoading(false);
+      const timer_id = setTimeout(() => {
+        setStillLoading(true);
+      }, Settings.STILL_LOADING_TIMEOUT);
+      return Helper.getRates(initial)
+        .then((data) => {
+          batch(() => {
+            dispatch(actions.addRates(data));
+            dispatch(actions.registerApplicationDownloadRates());
+          });
+        })
+        .catch(() => {
+          setError(true);
+        })
+        .finally(() => {
+          setUpdatingRates(false);
+          clearTimeout(timer_id);
+        });
+    },
+    [dispatch]
+  );
+  // UPDATE CHECK
+  const updatedAt = useSelector((state) => state.rates?.updated_at);
+  const updatedAtRef = React.useRef();
+  React.useEffect(() => {
+    updatedAtRef.current = updatedAt;
+  }, [updatedAt]);
+  React.useEffect(() => {
+    if (!isInitial) {
+      if (__DEV__) {
+        console.log('🚀 Connect to firebase');
+      }
+      const db = getDatabase();
+      return onValue(ref(db, 'u'), (snapshot) => {
+        // use rates file format
+        const updated_at = AmbitoDolar.getTimezoneDate(
+          snapshot.val() * 1000
+        ).format();
+        Sentry.addBreadcrumb({
+          message: 'Firebase update event',
+          data: updated_at,
+        });
+        if (__DEV__) {
+          console.log('⚡️ Firebase updated', updated_at, updatedAtRef.current);
+        }
+        if (updated_at !== updatedAtRef.current) {
+          fetchRates(false);
+        } else {
+          if (__DEV__) {
+            console.log('Rates already updated', updated_at);
+          }
+        }
+      });
+    }
+    if (__DEV__) {
+      console.log('🚀 Initial fetch');
+    }
+    fetchRates(true);
+  }, [isInitial]);
+  if (isInitial && error) {
+    return (
+      <>
+        <MessageView
+          style={{
+            marginBottom: Settings.PADDING * 2,
+          }}
+          message={I18n.t('rates_loading_error')}
+        />
+        <ActionButton
+          title={I18n.t('retry')}
+          handleOnPress={() => fetchRates(true)}
+          alternativeBackground
+        />
+      </>
+    );
+  }
+  if (!rates) {
+    return (
+      <>
+        <ActivityIndicator
+          animating
+          color={Settings.getForegroundColor(theme)}
+          size="small"
+        />
+        {stillLoading && (
+          <MessageView
+            style={{ marginTop: Settings.PADDING * 2 }}
+            message={I18n.t('still_loading')}
+          />
+        )}
+      </>
+    );
+  }
+  if (rates && !hasRates) {
+    return (
+      <MessageView
+        style={{
+          marginBottom: Settings.PADDING * 2,
+        }}
+        message={I18n.t('no_available_rates')}
+      />
+    );
+  }
+  return <AppNavigationContainer {...{ showAppUpdateMessage }} />;
+};
+
+// TODO: export for code splitting
+
+// HOCs
 
 const withAppUpdateCheck = (Component) => (props) => {
   const { version, invalidVersion, ignoreUpdate } = useSelector(
@@ -621,6 +744,7 @@ const withUserActivity = (Component) => (props) => {
       })();
     }
   }, [dispatch, isActiveAppState]);
+
   // REQUEST REVIEW
   React.useEffect(() => {
     // only took values from the store when the app state is active or on startup
@@ -664,137 +788,10 @@ const withUserActivity = (Component) => (props) => {
   return <Component {...props} />;
 };
 
-const EnhancedAppNavigationContainer = compose(
+export default compose(
+  // only when plain messages, AppNavigationContainer uses from screens
+  withContainer(true),
   withAppUpdateCheck,
   withAppStatistics,
   withUserActivity
-)(AppNavigationContainer);
-
-initializeApp(JSON.parse(Settings.FIREBASE_CONFIG_JSON));
-
-const AppContainer = () => {
-  const { theme } = Helper.useTheme();
-  const rates = Helper.useRates();
-  const hasRates = React.useMemo(() => Helper.hasValidRates(rates), [rates]);
-  const isInitial = !rates;
-  const dispatch = useDispatch();
-  const [, setUpdatingRates] = Helper.useSharedState('updatingRates');
-  const [error, setError] = React.useState(false);
-  const [stillLoading, setStillLoading] = React.useState(false);
-  const fetchRates = React.useCallback(
-    (initial) => {
-      if (__DEV__) {
-        console.log('💫 Fetching rates', initial);
-      }
-      setUpdatingRates(true);
-      setError(false);
-      setStillLoading(false);
-      const timer_id = setTimeout(() => {
-        setStillLoading(true);
-      }, Settings.STILL_LOADING_TIMEOUT);
-      return Helper.getRates(initial)
-        .then((data) => {
-          batch(() => {
-            dispatch(actions.addRates(data));
-            dispatch(actions.registerApplicationDownloadRates());
-          });
-        })
-        .catch(() => {
-          setError(true);
-        })
-        .finally(() => {
-          setUpdatingRates(false);
-          clearTimeout(timer_id);
-        });
-    },
-    [dispatch]
-  );
-  // UPDATE CHECK
-  const updatedAt = useSelector((state) => state.rates?.updated_at);
-  const updatedAtRef = React.useRef();
-  React.useEffect(() => {
-    updatedAtRef.current = updatedAt;
-  }, [updatedAt]);
-  React.useEffect(() => {
-    if (!isInitial) {
-      if (__DEV__) {
-        console.log('🚀 Connect to firebase');
-      }
-      const db = getDatabase();
-      return onValue(ref(db, 'u'), (snapshot) => {
-        // use rates file format
-        const updated_at = AmbitoDolar.getTimezoneDate(
-          snapshot.val() * 1000
-        ).format();
-        Sentry.addBreadcrumb({
-          message: 'Firebase update event',
-          data: updated_at,
-        });
-        if (__DEV__) {
-          console.log('⚡️ Firebase updated', updated_at, updatedAtRef.current);
-        }
-        if (updated_at !== updatedAtRef.current) {
-          fetchRates(false);
-        } else {
-          if (__DEV__) {
-            console.log('Rates already updated', updated_at);
-          }
-        }
-      });
-    }
-    if (__DEV__) {
-      console.log('🚀 Initial fetch');
-    }
-    fetchRates(true);
-  }, [isInitial]);
-  if (isInitial && error) {
-    return (
-      <>
-        <MessageView
-          style={{
-            marginBottom: Settings.PADDING * 2,
-          }}
-          message={I18n.t('rates_loading_error')}
-        />
-        <ActionButton
-          title={I18n.t('retry')}
-          handleOnPress={() => fetchRates(true)}
-          alternativeBackground
-        />
-      </>
-    );
-  }
-  if (!rates) {
-    return (
-      <>
-        <ActivityIndicator
-          animating
-          color={Settings.getForegroundColor(theme)}
-          size="small"
-        />
-        {stillLoading && (
-          <MessageView
-            style={{ marginTop: Settings.PADDING * 2 }}
-            message={I18n.t('still_loading')}
-          />
-        )}
-      </>
-    );
-  }
-  if (rates && !hasRates) {
-    return (
-      <MessageView
-        style={{
-          marginBottom: Settings.PADDING * 2,
-        }}
-        message={I18n.t('no_available_rates')}
-      />
-    );
-  }
-  return <EnhancedAppNavigationContainer />;
-};
-
-export default compose(
-  // only when plain messages, AppNavigationContainer uses from screens
-  withContainer(true)
 )(AppContainer);

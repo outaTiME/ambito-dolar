@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 import {
   ADD_RATES,
@@ -9,7 +9,6 @@ import {
 
 const INITIAL_STATE = {
   rates: null,
-  processed_at: null,
   updated_at: null,
   historical_rates: null,
 };
@@ -17,23 +16,18 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
     case ADD_RATES: {
-      const { rates, processed_at } = payload;
-      // prevent multiple updates
+      const { rates, updated_at } = payload;
+      // rates should update only on firebase changes
       if (!_.isEqual(state.rates, rates)) {
         return {
           ...state,
           rates,
-          processed_at,
-          updated_at: Date.now(),
-          // remove historical data to force refresh
+          updated_at,
+          // remove historical data to force refetch
           historical_rates: null,
         };
       }
-      return {
-        ...state,
-        processed_at,
-        updated_at: Date.now(),
-      };
+      return state;
     }
     case UPDATE_HISTORICAL_RATES:
       return {

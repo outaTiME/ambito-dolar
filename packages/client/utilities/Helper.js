@@ -1,15 +1,13 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import * as d3Array from 'd3-array';
 import * as Application from 'expo-application';
-import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Localization from 'expo-localization';
 import * as MailComposer from 'expo-mail-composer';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import React from 'react';
 import { Platform, Linking } from 'react-native';
 import { useSelector } from 'react-redux';
-import { persistStore } from 'redux-persist';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
 import semverDiff from 'semver/functions/diff';
@@ -20,6 +18,7 @@ import useSWR from 'swr';
 
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
+import Sentry from '../utilities/Sentry';
 
 const getNotificationSettings = (notification_settings, value, type) => {
   notification_settings = AmbitoDolar.getNotificationSettings(
@@ -44,9 +43,10 @@ const getNotificationSettingsSelector = createSelector(
   (notification_settings) => getNotificationSettings(notification_settings)
 );
 
-const fetchRetry = require('@zeit/fetch-retry')(fetch);
+const fetchRetry = require('@vercel/fetch-retry')(fetch);
 
-const fetchTimeout = async (url, opts = {}, ms = Settings.FETCH_TIMEOUT) => {
+const fetchTimeout = (url, opts = {}, ms = Settings.FETCH_TIMEOUT) => {
+  // eslint-disable-next-line no-undef
   const controller = new AbortController();
   const timeout = setTimeout(() => {
     controller.abort();
@@ -59,7 +59,7 @@ const fetchTimeout = async (url, opts = {}, ms = Settings.FETCH_TIMEOUT) => {
   });
 };
 
-const getJson = async (url, opts = {}) => {
+const getJson = (url, opts = {}) => {
   if (__DEV__) {
     console.log('Get json', url, opts);
   }
@@ -130,7 +130,7 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
   if (parsed.indexOf(DECIMAL_SEPARATOR) === 0) {
     head = 0;
   }
-  // Avoid rounding errors at toLocaleString as when user enters 1.239 and maxDigits=2 we
+  // avoid rounding errors at toLocaleString as when user enters 1.239 and maxDigits=2 we
   // must not to convert it to 1.24, it must stay 1.23
   const scaledTail = tail != null ? tail.slice(0, maxDigits) : '';
   const number = Number.parseFloat(`${head}.${scaledTail}`);
@@ -153,7 +153,7 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
 };
 
 export default {
-  getCurrency(str, include_symbol = true, usd = false) {
+  getCurrency(str, include_symbol = false, usd = false) {
     if (include_symbol === true) {
       if (usd === true) {
         return formatCurrency(str, true);
@@ -167,10 +167,6 @@ export default {
   },
   getNumber,
   formatFloatingPointNumber,
-  getChange(num) {
-    const sign = num === 0 ? '=' : num > 0 ? '↑' : '↓';
-    return formatRateChange(num) + Settings.SPACE_SEPARATOR + sign;
-  },
   getChangeColor(num, theme) {
     if (num === 0) {
       return Settings.getBlueColor(theme);
@@ -197,31 +193,44 @@ export default {
       }),
     ]);
   },
-  async registerDevice(data) {
+  registerDevice(data) {
     return getJson(Settings.REGISTER_DEVICE_URI, {
       method: 'POST',
       body: JSON.stringify(data),
       retry: true,
     });
   },
-  async getRates() {
-    return getJson(Settings.RATES_URI, { retry: true });
+  getRates(initial) {
+    initial = initial === true;
+    const opts = {
+      ...(initial === true
+        ? { timeout: Settings.FETCH_TIMEOUT }
+        : { retry: true }),
+    };
+    return getJson(Settings.RATES_URI, opts)
+      .then((data) => {
+        if (__DEV__) {
+          console.log('Rate stats updated', initial, data.updated_at);
+        }
+        return data;
+      })
+      .catch((error) => {
+        // silent ignore when error or invalid data
+        if (__DEV__) {
+          console.warn('Unable to update rate stats', initial, error);
+        }
+        Sentry.addBreadcrumb({
+          message: 'Unable to update rate stats',
+          initial,
+          data: error.message,
+        });
+        throw error;
+      });
   },
-  async getHistoricalRates() {
+  getHistoricalRates() {
     return getJson(Settings.HISTORICAL_RATES_URI, {
       timeout: Settings.FETCH_TIMEOUT,
     });
-  },
-  getPlatformModel() {
-    if (Platform.OS === 'ios') {
-      return {
-        platform_model_identifier: Constants.platform.ios.platform,
-        platform_model_name: Constants.platform.ios.model,
-      };
-    }
-    return {
-      // pass
-    };
   },
   cleanVersion(version) {
     return semverValid(semverCoerce(version));
@@ -239,16 +248,12 @@ export default {
   getNotificationSettings,
   getNotificationSettingsSelector,
   getAvailableRateTypes() {
-    return [
-      AmbitoDolar.OFFICIAL_TYPE,
-      AmbitoDolar.TOURIST_TYPE,
-      AmbitoDolar.INFORMAL_TYPE,
-      AmbitoDolar.CCL_TYPE,
-      AmbitoDolar.MEP_TYPE,
-      AmbitoDolar.FUTURE_TYPE,
-      AmbitoDolar.WHOLESALER_TYPE,
-      // AmbitoDolar.CCB_TYPE,
-    ];
+    const availableRateTypes = AmbitoDolar.getAvailableRateTypes();
+    // TODO: leave until v6 release
+    if (Platform.OS === 'web') {
+      return _.without(availableRateTypes, AmbitoDolar.CCB_TYPE);
+    }
+    return availableRateTypes;
   },
   getAvailableRates(rates) {
     return rates && _.pick(rates, this.getAvailableRateTypes());
@@ -277,9 +282,6 @@ export default {
     });
     return ref.current;
   },
-  getRateValue(datum) {
-    return _.max([].concat(datum[1]));
-  },
   getChartTicks() {
     return 4;
   },
@@ -303,15 +305,6 @@ export default {
     }
     return value_str;
   },
-  getInlineChange(stats) {
-    const stat = stats[stats.length - 1];
-    const prev_stat = stats[stats.length - 2];
-    /* +0.53 (+0.95%) */
-    return (
-      this.getCurrency(this.getRateValue(stat) - this.getRateValue(prev_stat)) +
-      `${Settings.SPACE_SEPARATOR}(${formatRateChange(stat[2])})`
-    );
-  },
   roundToEven(num) {
     return Math.floor(num - (num % 2));
   },
@@ -321,33 +314,9 @@ export default {
   getInvertedTheme(theme) {
     return theme === 'light' ? 'dark' : 'light';
   },
-  // https://github.com/brentvatne/hour-power/blob/master/app/hooks/usePersistedData.ts
-  usePersistedData(store) {
-    const [dataLoaded, setDataLoaded] = React.useState(false);
-    React.useEffect(() => {
-      async function initializeAsync() {
-        try {
-          // https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md
-          persistStore(
-            store,
-            {
-              // pass
-            },
-            () => {
-              if (__DEV__) {
-                console.log('State restored');
-              }
-              setDataLoaded(true);
-            }
-          );
-          // ).purge();
-        } catch (error) {
-          console.error('Unable to restore application state', error);
-        }
-      }
-      initializeAsync();
-    }, [store]);
-    return dataLoaded;
+  getScreenTitle(title) {
+    // return title?.toUpperCase();
+    return title;
   },
   // https://paco.im/blog/shared-hook-state-with-swr
   useSharedState: (key, initial) => {
@@ -366,12 +335,18 @@ export default {
       () => ({
         theme: colorScheme,
         fonts: {
-          footnote: Settings.getFontObject(colorScheme, 'footnote'), // 13
-          subhead: Settings.getFontObject(colorScheme, 'subhead'), // 15
-          // callout: Settings.getFontObject(theme, 'callout'), // 16
-          body: Settings.getFontObject(colorScheme, 'body'), // 17
-          title: Settings.getFontObject(colorScheme, 'title3'), // 20
-          largeTitle: Settings.getFontObject(colorScheme, 'title1'), // 28
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L72
+          footnote: Settings.getFontObject(colorScheme, 'footnote'), // 13 (18)
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L65
+          subhead: Settings.getFontObject(colorScheme, 'subhead'), // 15 (20)
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L58
+          callout: Settings.getFontObject(colorScheme, 'callout'), // 16 (21)
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L51
+          body: Settings.getFontObject(colorScheme, 'body'), // 17 (22)
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L37
+          title: Settings.getFontObject(colorScheme, 'title3'), // 20 (25)
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L16
+          largeTitle: Settings.getFontObject(colorScheme, 'title1'), // 28 (41)
         },
         invertedTheme: this.getInvertedTheme(colorScheme),
         // TODO: add fonts with theme here ??
@@ -431,5 +406,9 @@ export default {
       });
     }, []);
     return constantsLoaded;
+  },
+  useIndicatorStyle() {
+    const { theme } = this.useTheme();
+    return theme === 'light' ? 'black' : 'white';
   },
 };

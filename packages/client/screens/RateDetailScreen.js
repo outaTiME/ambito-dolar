@@ -1,7 +1,8 @@
+import AmbitoDolar from '@ambito-dolar/core';
+import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Alert } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { compose } from 'redux';
+import { useSelector, useDispatch, batch } from 'react-redux';
 
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
@@ -24,15 +25,25 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
   const { type } = params;
   const rate = React.useMemo(() => rates[type], [rates, type]);
   const base_stats = rate.stats;
+  const stat = base_stats[base_stats.length - 1];
   const prev_base_stats = Helper.usePrevious(base_stats);
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
-  const historical_rates = useSelector((state) => state.rates.historical_rates);
+  const historical_rates = useSelector(
+    (state) => state.rates?.historical_rates
+  );
   const prev_historical_rates = Helper.usePrevious(historical_rates);
-  const updateHistoricalRates = React.useCallback(async () => {
-    const rates = await Helper.getHistoricalRates();
-    dispatch(actions.updateHistoricalRates(rates));
-  }, []);
+  const updateHistoricalRates = React.useCallback(() => {
+    if (__DEV__) {
+      console.log('💫 Fetching historical rates');
+    }
+    return Helper.getHistoricalRates().then((rates) => {
+      batch(() => {
+        dispatch(actions.updateHistoricalRates(rates));
+        dispatch(actions.registerApplicationDownloadHistoricalRates());
+      });
+    });
+  }, [dispatch]);
   const [chartStats, setChartStats] = React.useState(base_stats);
   React.useEffect(() => {
     // ignore initial
@@ -80,7 +91,9 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
     const must_revalidate =
       prev_base_stats !== undefined && base_stats !== prev_base_stats;
     if (must_revalidate && (rangeIndex === 1 || rangeIndex === 2)) {
-      updateHistoricalRates();
+      updateHistoricalRates().catch(() => {
+        // silent ignore when error
+      });
     }
   }, [base_stats, rangeIndex]);
   // update data on charts
@@ -95,10 +108,7 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
       setLoading(true);
       // wait at least ANIMATION_DURATION before request to prevent fast dialogs on fails
       Helper.delay(Settings.ANIMATION_DURATION).then(() =>
-        Helper.getHistoricalRates()
-          .then((rates) => {
-            dispatch(actions.updateHistoricalRates(rates));
-          })
+        updateHistoricalRates()
           .catch(() => {
             setRangeIndex(prev_rangeIndex);
             Alert.alert(
@@ -143,7 +153,7 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
           style={[
             {
               flexGrow: 1,
-              minHeight: 310,
+              height: Settings.moderateScale(300),
               padding: Settings.PADDING,
             },
           ]}
@@ -160,24 +170,19 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
         <CardItemView
           title={I18n.t('variation')}
           useSwitch={false}
-          value={Helper.getCurrency(
-            Helper.getRateValue(base_stats[base_stats.length - 1]) -
-              Helper.getRateValue(base_stats[base_stats.length - 2])
-          )}
+          value={AmbitoDolar.getRateChange([null, stat[1], null, stat[3]])}
         />
         <CardItemView
           title={I18n.t('previous_close')}
           useSwitch={false}
-          value={Helper.getCurrency(
-            Helper.getRateValue(base_stats[base_stats.length - 2])
-          )}
+          value={Helper.getCurrency(stat[3])}
         />
       </CardView>
       {rate.max_date && rate.max && (
         <CardView plain>
           <CardItemView
             title={I18n.t('all-time_high')}
-            titleDetail={DateUtils.date(rate.max_date, { long: true })}
+            titleDetail={DateUtils.humanize(rate.max_date, 4)}
             useSwitch={false}
             value={Helper.getCurrency(rate.max)}
           />

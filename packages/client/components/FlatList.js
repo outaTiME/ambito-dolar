@@ -1,5 +1,4 @@
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { useHeaderHeight } from '@react-navigation/elements';
+import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import {
   View,
@@ -13,8 +12,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Separator } from '../components/CardView';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
+import withDividersOverlay from './withDividersOverlay';
 
-const HEADER_HEIGHT = Settings.CARD_PADDING + Settings.PADDING * 2 + 20; // fonts.subhead (lineheight)
+// fonts.subhead (lineheight)
+/* const HEADER_HEIGHT = Math.round(
+  Settings.CARD_PADDING + Settings.PADDING * 2 + 20
+); */
+const HEADER_HEIGHT = Settings.CARD_PADDING + Settings.PADDING * 2 + 20;
 const SEPARATOR_HEIGHT = StyleSheet.hairlineWidth;
 
 const HeaderComponent = ({ title }) => {
@@ -25,6 +29,9 @@ const HeaderComponent = ({ title }) => {
         padding: Settings.PADDING,
         marginTop: Settings.CARD_PADDING,
         marginHorizontal: Settings.CARD_PADDING * 2,
+        justifyContent: 'flex-end',
+        // fixed header size
+        // height: HEADER_HEIGHT - Settings.CARD_PADDING,
       }}
     >
       <Text
@@ -50,12 +57,10 @@ const FooterComponent = () => (
   />
 );
 
-export default ({ title, data, itemHeight }) => {
+const FlatList = ({ title, data, itemHeight, headerHeight, tabBarheight }) => {
   const { theme } = Helper.useTheme();
-  // add translucent hairline width
-  const headerHeight = useHeaderHeight() - StyleSheet.hairlineWidth;
-  const tabBarheight = useBottomTabBarHeight() - StyleSheet.hairlineWidth;
   const insets = useSafeAreaInsets();
+  const indicatorStyle = Helper.useIndicatorStyle();
   const renderItem = React.useCallback(
     ({ item, index }) => (
       <View
@@ -109,15 +114,15 @@ export default ({ title, data, itemHeight }) => {
   return (
     <NativeFlatList
       scrollIndicatorInsets={{
-        top: headerHeight - insets.top,
+        // top: headerHeight - insets.top,
         bottom: tabBarheight - insets.bottom,
       }}
+      indicatorStyle={indicatorStyle}
       contentContainerStyle={[
         {
           flexGrow: 1,
           alignSelf: 'center',
-          width: '100%',
-          maxWidth: Settings.MAX_DEVICE_WIDTH,
+          width: Math.min(Settings.DEVICE_WIDTH, Settings.MAX_DEVICE_WIDTH),
           // required when translucent bars
           ...(Platform.OS === 'ios' && {
             paddingTop: headerHeight,
@@ -125,6 +130,7 @@ export default ({ title, data, itemHeight }) => {
           }),
         },
       ]}
+      // contentInsetAdjustmentBehavior="automatic"
       {...{ data }}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
@@ -136,3 +142,5 @@ export default ({ title, data, itemHeight }) => {
     />
   );
 };
+
+export default compose(withDividersOverlay)(FlatList);

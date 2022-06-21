@@ -31,6 +31,7 @@ export default ({
   plain,
   separatorStyle,
   extraTopSpace,
+  transparent,
 }) => {
   const { theme, fonts } = Helper.useTheme();
   const row_items = React.useMemo(
@@ -87,7 +88,9 @@ export default ({
         style={[
           {
             borderRadius: Settings.BORDER_RADIUS,
-            backgroundColor: Settings.getContentColor(theme),
+            ...(transparent !== true && {
+              backgroundColor: Settings.getContentColor(theme),
+            }),
             // flexGrow: 1,
             // TODO: flexGrow required when customization on CardItemView
             ...Platform.select({

@@ -1,3 +1,4 @@
+import AmbitoDolar from '@ambito-dolar/core';
 import { useLayout } from '@react-native-community/hooks';
 import { processFontFamily } from 'expo-font';
 import React from 'react';
@@ -60,10 +61,11 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           fonts.subhead,
           {
             color: Settings.getGrayColor(theme),
-            // required on android by reanimated
+            lineHeight: undefined,
             // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L67
             height: 20,
-            lineHeight: undefined,
+            // borderWidth: 1,
+            // borderColor: 'pink',
           },
         ]}
         numberOfLines={1}
@@ -77,9 +79,10 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           marginTop: Settings.SMALL_PADDING,
           // marginBottom: Settings.PADDING + Settings.PADDING / 2,
           // marginBottom: Settings.PADDING,
-          // required on android by reanimated
           // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L39
-          height: 25,
+          // height: 25,
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
         }}
       >
         <AnimatedTextInput
@@ -87,8 +90,12 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           style={[
             fonts.title,
             {
-              flex: 1,
+              // flex: 1,
               lineHeight: undefined,
+              // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L39
+              height: 25,
+              // borderWidth: 1,
+              // borderColor: 'blue',
             },
           ]}
           numberOfLines={1}
@@ -100,9 +107,15 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           underlineColorAndroid="transparent"
           textAlign="right"
           style={[
-            fonts.title,
+            fonts.body,
             {
+              // prevent flicker when cursor changes
+              flex: 1,
               lineHeight: undefined,
+              // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L53
+              height: 22,
+              // borderWidth: 1,
+              // borderColor: 'red',
             },
             change_styles,
           ]}
@@ -228,6 +241,14 @@ const InteractiveRateChartView = ({
     () => stats[stats.length - 1].change_color,
     [stats]
   );
+  const transparent_axis_style = React.useMemo(
+    () => ({
+      axis: { stroke: 'transparent' },
+      ticks: { stroke: 'transparent' },
+      tickLabels: { fill: 'transparent' },
+    }),
+    []
+  );
   const area_style = React.useMemo(
     () => ({
       data: {
@@ -271,6 +292,8 @@ const InteractiveRateChartView = ({
           animate={false}
         >
           <VictoryAxis
+            // prevent rendering issues when values are close to 0
+            offsetY={Settings.PADDING + AXIS_LABEL_PADDING + 1}
             tickValues={ticks_x}
             tickFormat={axis_x_format}
             tickLabelComponent={<VictoryLabel dy={AXIS_LABEL_PADDING} />}
@@ -286,12 +309,64 @@ const InteractiveRateChartView = ({
             }
             style={axis_y_style}
           />
-          <VictoryArea
-            data={data}
-            interpolation="monotoneX"
-            style={area_style}
+          {/* app watermark */}
+          <VictoryLabel
+            text={Settings.APP_COPYRIGHT}
+            // exclude cursor width (half) and the last axis width
+            x={width - Settings.PADDING - 10 / 2 - 1}
+            // exclude the last axis width
+            // x={width - Settings.PADDING - 1}
+            y={
+              height -
+              (AXIS_OFFSET + axis_font_height_rounded + Settings.PADDING)
+            }
+            textAnchor="end"
+            verticalAnchor="middle"
+            backgroundPadding={{
+              top: Settings.SMALL_PADDING,
+              bottom: Settings.SMALL_PADDING,
+              left: Settings.SMALL_PADDING * 2 + 2,
+              right: Settings.SMALL_PADDING,
+            }}
+            backgroundStyle={{
+              fill: Settings.getContentColor(theme),
+            }}
+            // adjustments for background padding
+            dx={-Settings.SMALL_PADDING}
+            dy={-Settings.SMALL_PADDING}
+            style={{
+              fontSize: AXIS_FONT_SIZE,
+              // fill: Settings.getStrokeColor(theme, true),
+              fill: Settings.getStrokeColor(theme),
+              // https://github.com/expo/expo/issues/1959#issuecomment-780198250
+              fontFamily: processFontFamily(
+                Settings.getFontObject().fontFamily
+              ),
+            }}
           />
         </VictoryChart>
+        {/* split is required for watermark */}
+        {true && (
+          <View style={{ position: 'absolute' }}>
+            <VictoryChart
+              width={width}
+              height={height}
+              singleQuadrantDomainPadding={false}
+              domainPadding={Settings.PADDING}
+              padding={victory_padding}
+              domain={domain}
+              animate={false}
+            >
+              <VictoryAxis style={transparent_axis_style} />
+              <VictoryAxis dependentAxis style={transparent_axis_style} />
+              <VictoryArea
+                data={data}
+                interpolation="monotoneX"
+                style={area_style}
+              />
+            </VictoryChart>
+          </View>
+        )}
       </View>
       <View style={overlay_style}>
         <ChartAnimatedView
@@ -314,7 +389,9 @@ export default ({ stats }) => {
     () =>
       stats.map((datum, index) => ({
         x: index,
-        y: Helper.getRateValue(datum),
+        y: AmbitoDolar.getRateValue(datum),
+        // prevent rendering issues when values are close to 0
+        y0: -Settings.PADDING * 2,
       })),
     [stats]
   );
@@ -336,12 +413,13 @@ export default ({ stats }) => {
   const new_stats = React.useMemo(
     () =>
       stats.map((stat) => ({
-        timestamp: DateUtils.datetime(stat[0], { long: true }),
-        timestamp_axis: DateUtils.date(stat[0], { short: true }),
+        timestamp: DateUtils.humanize(stat[0], 2),
+        timestamp_axis: DateUtils.humanize(stat[0], 3),
         value: Helper.getInlineRateValue(stat[1]),
         // ignore when empty
         ...(stat[2] !== undefined && {
-          change: Helper.getChange(stat[2]),
+          change: AmbitoDolar.getRateChange(stat[2]),
+          // change: Helper.getDynamicChange(stat),
           change_color: Helper.getChangeColor(stat[2], theme),
         }),
       })),

@@ -8,11 +8,14 @@ i18n.translations = {
     // general
     accept: 'Aceptar',
     cancel: 'Cancelar',
+    search: 'Buscar',
     customize: 'Personalizar',
     no_available_rates: 'Sin cotizaciones disponibles.',
     rates_loading_error: 'Imposible obtener las cotizaciones.',
     // still_loading: 'Conectividad limitada, aguarde un momento...',
-    still_loading: 'Aguarde un momento...',
+    // still_loading: 'Aguarde un momento...',
+    still_loading:
+      'Conectividad limitada, la carga se reanudará automáticamente.',
     update_app:
       'Tienes que actualizar esta aplicación a una versión más reciente.',
     update: 'Actualizar',
@@ -42,17 +45,22 @@ i18n.translations = {
     sell: 'Venta',
     // settings
     settings: 'Ajustes',
+    installation: 'Instalación',
     app_version: 'Versión',
     device: 'Dispositivo',
     share_message: `Te recomiendo descargar %{appName}, es mi aplicación preferida para conocer las distintas cotizaciones del dólar en la Argentina. %{websiteUrl}`,
     opts_general: 'General',
-    opts_general_note: 'Última actualización de cotizaciones: %{lastUpdate}',
+    opts_general_note:
+      'Las cotizaciones se actualizarán automáticamente durante la jornada cambiaria. Última actualización: %{lastUpdate}',
     device_identifier: 'Identificador',
     opts_statistics: 'Estadísticas',
     opts_support: 'Soporte y difusión',
     send_app_feedback: 'Enviar comentarios',
     leave_app_review: 'Dejar una reseña',
     share: 'Compartir',
+    donate: 'Donar',
+    // donate: 'Contribuir',
+    // donate: 'Hacer una donación',
     // notifications
     notifications: 'Notificaciones',
     allow_permissions:
@@ -73,9 +81,16 @@ i18n.translations = {
     // statistics
     statistics: 'Estadísticas',
     opts_app: 'Aplicación',
-    app_installation_time: 'Fecha de instalación',
+    // app_installation_time: 'Fecha de instalación',
+    app_installation_time: 'Instalación',
+    app_last_review: 'Reseña',
+    app_usages: 'Usos',
     app_days_used: 'Días de uso',
     app_conversions: 'Conversiones',
+    app_shared_rates: 'Capturas',
+    app_downloaded_rates: 'Actualizaciones',
+    app_downloaded_historical_rates: 'Históricos',
+    app_detailed_rates: 'Detalles',
     // about
     about: 'Acerca de',
     // appearance

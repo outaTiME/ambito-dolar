@@ -13,6 +13,10 @@ const MaterialHeaderButton = (props) => {
       IconComponent={MaterialIcons}
       iconSize={Settings.ICON_SIZE}
       color={Settings.getForegroundColor(theme)}
+      buttonStyle={{
+        // required native stack
+        marginHorizontal: 0,
+      }}
     />
   );
 };

@@ -1,10 +1,10 @@
+import AmbitoDolar from '@ambito-dolar/core';
 import { useLayout } from '@react-native-community/hooks';
 import React from 'react';
 import { View } from 'react-native';
 import { VictoryGroup, VictoryArea } from 'victory-native';
 
 import Settings from '../config/settings';
-import Helper from '../utilities/Helper';
 
 const VictoryMiniRateChartView = ({
   width,
@@ -16,7 +16,9 @@ const VictoryMiniRateChartView = ({
   const data = React.useMemo(() => {
     return stats.map((datum, index) => ({
       x: index,
-      y: Helper.getRateValue(datum),
+      y: AmbitoDolar.getRateValue(datum),
+      // prevent rendering issues when values are close to 0
+      y0: -Settings.PADDING * 2,
     }));
   }, [stats]);
   // data normalization

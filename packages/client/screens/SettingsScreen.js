@@ -1,18 +1,21 @@
+import { compose } from '@reduxjs/toolkit';
 import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
 import { Linking, Share } from 'react-native';
 import { useSelector, shallowEqual } from 'react-redux';
-import { compose } from 'redux';
 
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
+import IconCardItemView from '../components/IconCardItemView';
 import ScrollView from '../components/ScrollView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
+
+const CAFECITO_WEB_URL = 'https://cafecito.app/ambitodolar';
 
 const SettingsScreen = ({ navigation }) => {
   const { updatedAt, appearance } = useSelector(
@@ -31,15 +34,19 @@ const SettingsScreen = ({ navigation }) => {
         '',
         '—',
         '',
+        `${I18n.t('installation')}: ${Settings.INSTALLATION_ID}`,
         `${I18n.t('app_version')}: ${
           Settings.APP_REVISION_ID || Settings.APP_VERSION
         }`,
         `${I18n.t('device')}: ${Device.modelName} (${Device.osVersion})`,
-      ].join('\n'),
+      ].join('\r\n'),
     });
   }, []);
   const onPressReview = React.useCallback(() => {
     Linking.openURL(Settings.APP_REVIEW_URI);
+  }, []);
+  const onPressDonate = React.useCallback(() => {
+    Linking.openURL(CAFECITO_WEB_URL);
   }, []);
   const onPressShare = React.useCallback(() => {
     Share.share({
@@ -87,6 +94,15 @@ const SettingsScreen = ({ navigation }) => {
             navigation.navigate('Appearance');
           }}
         />
+      </CardView>
+      <CardView plain>
+        <CardItemView
+          title={I18n.t('statistics')}
+          useSwitch={false}
+          onAction={() => {
+            navigation.navigate('Statistics');
+          }}
+        />
         {__DEV__ && (
           <CardItemView
             title={I18n.t('developer')}
@@ -97,16 +113,6 @@ const SettingsScreen = ({ navigation }) => {
           />
         )}
       </CardView>
-      <CardView plain>
-        <CardItemView
-          title={I18n.t('statistics')}
-          useSwitch={false}
-          onAction={() => {
-            navigation.navigate('Statistics');
-          }}
-        />
-      </CardView>
-
       <CardView title={I18n.t('opts_support')} plain>
         {contactAvailable && (
           <CardItemView
@@ -130,6 +136,19 @@ const SettingsScreen = ({ navigation }) => {
           chevron={false}
           onAction={onPressShare}
         />
+        <CardItemView
+          title={I18n.t('donate')}
+          useSwitch={false}
+          chevron={false}
+          onAction={onPressDonate}
+        />
+        {false && (
+          <IconCardItemView
+            title={I18n.t('donate')}
+            iconName="heart"
+            onAction={onPressDonate}
+          />
+        )}
       </CardView>
       <CardView plain>
         <CardItemView

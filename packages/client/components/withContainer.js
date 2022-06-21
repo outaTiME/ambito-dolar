@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -10,23 +10,17 @@ export default (alternativeBackground) => (Component) => (props) => {
     theme,
     alternativeBackground
   );
+  const container_style = React.useMemo(
+    () => ({
+      flex: 1,
+      justifyContent: 'center',
+      backgroundColor: background_color,
+    }),
+    [background_color]
+  );
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: background_color,
-        },
-      ]}
-    >
+    <View style={container_style}>
       <Component backgroundColor={background_color} {...props} />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-});

@@ -1,0 +1,54 @@
+# OSX
+#
+.DS_Store
+
+# Misc
+#
+.env
+.vercel
+.serverless
+
+# Gatsby
+#
+.cache
+public
+
+# Expo
+#
+.expo
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build
+google-services.json
+__generated__
+
+# Node
+#
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Yarn 2
+#
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# SST build output
+#
+.build
+.sst
+
+# EAS
+#
+packages/*
+!packages/core
+!packages/client

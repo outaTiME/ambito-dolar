@@ -2,16 +2,19 @@
 export const NOTIFICATIONS_REGISTER_PENDING = 'notifications_register_pending';
 export const NOTIFICATIONS_REGISTER_SUCCESS = 'notifications_register_success';
 export const NOTIFICATIONS_REGISTER_ERROR = 'notifications_register_error';
-export const APP_LOAD = 'app_load';
 export const APP_REVIEW = 'app_review';
 export const UPDATE_NOTIFICATION_SETTINGS = 'update_notification_settings';
 export const APP_UPDATE = 'app_update';
 export const APP_IGNORE_UPDATE = 'app_ignore_update';
 export const APP_INVALID_VERSION = 'app_invalid_version';
-export const APP_VALID_VERSION = 'app_valid_version';
 export const FORCE_APP_INVALID_VERSION = 'force_app_invalid_version';
+export const APP_USAGE = 'app_usage';
 export const APP_USAGE_DAY = 'app_usage_day';
 export const APP_CONVERSION = 'app_conversion';
+export const APP_SHARE_RATES = 'app_share_rates';
+export const APP_DOWNLOAD_RATES = 'app_download_rates';
+export const APP_DOWNLOAD_HISTORICAL_RATES = 'app_download_historical_rates';
+export const APP_DETAILED_RATES = 'app_detailed_rates';
 export const CHANGE_APPEARANCE = 'change_appearance';
 
 // rates

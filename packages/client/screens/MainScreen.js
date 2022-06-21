@@ -1,7 +1,9 @@
+import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import { compose } from 'redux';
+import { useDispatch } from 'react-redux';
 
+import * as actions from '../actions';
 import { MaterialHeaderButtons } from '../components/HeaderButtons';
 import RateView from '../components/RateView';
 import withContainer from '../components/withContainer';
@@ -16,7 +18,9 @@ const RefreshingIndicator = () => {
       <View
         style={{
           // https://github.com/vonovak/react-navigation-header-buttons/blob/master/src/HeaderItems.js#L73
-          width: Settings.ICON_SIZE + 11 * 2,
+          // width: Settings.ICON_SIZE + 11 * 2,
+          // required native stack
+          width: Settings.ICON_SIZE,
         }}
       >
         <ActivityIndicator
@@ -37,9 +41,13 @@ const MainScreen = ({ navigation }) => {
         updatingRates === true ? () => <RefreshingIndicator /> : undefined,
     });
   }, [navigation, updatingRates]);
+  const dispatch = useDispatch();
   const onRateSelected = React.useCallback(
-    (type) => navigation.navigate('RateDetail', { type }),
-    []
+    (type) => {
+      dispatch(actions.registerApplicationRateDetail());
+      navigation.navigate('RateDetail', { type });
+    },
+    [dispatch]
   );
   const rates = Helper.useRates();
   const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);

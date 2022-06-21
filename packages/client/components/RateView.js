@@ -64,12 +64,13 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
             flexDirection: 'row',
             alignItems: 'center',
             // marginTop: Settings.PADDING / 2,
-            marginTop: Settings.SMALL_PADDING,
+            marginVertical: Settings.SMALL_PADDING * 2,
+            borderColor: 'red',
           }}
         >
           <Text
             style={[
-              fonts.body,
+              fonts.callout,
               {
                 color: Settings.getGrayColor(theme),
                 flex: 1,
@@ -81,7 +82,7 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
           </Text>
           <Text
             style={[
-              fonts.body,
+              fonts.callout,
               {
                 color,
               },
@@ -96,7 +97,8 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
           style={{
             flex: 1,
             // marginTop: Settings.PADDING,
-            marginTop: Settings.SMALL_PADDING,
+            // marginTop: Settings.SMALL_PADDING,
+            // marginTop: Settings.SMALL_PADDING * 2,
             marginLeft: -Settings.PADDING,
             marginRight: -Settings.PADDING,
             marginBottom: -Settings.PADDING,
@@ -114,34 +116,36 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
         alignItems: 'center',
         // marginTop: Settings.PADDING / 2,
         marginTop: Settings.SMALL_PADDING,
+        justifyContent: 'space-between',
       }}
     >
+      <Text
+        style={[
+          fonts.subhead,
+          {
+            flex: 1,
+            color: Settings.getGrayColor(theme),
+          },
+        ]}
+        numberOfLines={1}
+      >
+        {timestamp}
+      </Text>
       <View
         style={{
-          flex: 1,
+          // flex: 1,
           flexDirection: 'row',
           alignItems: 'center',
-          marginRight: Settings.PADDING,
+          justifyContent: 'space-between',
+          width: 190,
+          paddingLeft: Settings.SMALL_PADDING,
         }}
       >
-        <Text
-          style={[
-            fonts.subhead,
-            {
-              color: Settings.getGrayColor(theme),
-            },
-          ]}
-          numberOfLines={1}
-        >
-          {timestamp}
-        </Text>
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <View
           style={{
             height: 15, // sames as change font height
             width: 50,
-            marginRight: Settings.PADDING,
+            marginRight: Settings.SMALL_PADDING,
           }}
         >
           <MiniRateChartView {...{ stats, color }} />
@@ -150,6 +154,8 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
           style={[
             fonts.subhead,
             {
+              flex: 1,
+              textAlign: 'right',
               color,
             },
           ]}
@@ -183,10 +189,13 @@ export default ({
     [value]
   );
   const timestamp_fmt = React.useMemo(
-    () => DateUtils.datetime(timestamp, { short: true }),
+    () => DateUtils.humanize(timestamp, 1),
     [timestamp]
   );
-  const change_fmt = React.useMemo(() => Helper.getChange(change), [change]);
+  const change_fmt = React.useMemo(
+    () => AmbitoDolar.getRateChange(stats[stats.length - 1], true),
+    [stats]
+  );
   const onPress = React.useCallback(() => onSelected(type), [onSelected, type]);
   return (
     <CardView

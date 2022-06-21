@@ -1,7 +1,8 @@
-import _ from 'lodash';
+import AmbitoDolar from '@ambito-dolar/core';
+import { compose } from '@reduxjs/toolkit';
+import * as _ from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { compose } from 'redux';
 
 import CardItemView from '../components/CardItemView';
 import FlatList from '../components/FlatList';
@@ -10,19 +11,29 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const ITEM_HEIGHT = Settings.PADDING * 2 + 22 + 2 + 18; // fonts.body + fonts.footnote (lineheight)
+// fonts.body + fonts.footnote (lineheight)
+/* const ITEM_HEIGHT = Math.round(
+  Settings.PADDING * 2 + 22 + Settings.SMALL_PADDING + 18
+); */
+const ITEM_HEIGHT = Settings.PADDING * 2 + 22 + Settings.SMALL_PADDING + 18;
 
 const RateRawDetailItem = ({ timestamp, value, change }) => {
   const { theme } = Helper.useTheme();
   return (
     <CardItemView
       title={Helper.getInlineRateValue(value)}
-      titleDetail={DateUtils.datetime(timestamp)}
+      titleDetail={DateUtils.humanize(timestamp, 5)}
       useSwitch={false}
-      value={Helper.getChange(change)}
+      value={AmbitoDolar.getRateChange(change)}
       valueStyle={{
         color: Helper.getChangeColor(change, theme),
       }}
+      containerStyle={
+        {
+          // fixed item size
+          // height: ITEM_HEIGHT,
+        }
+      }
     />
   );
 };

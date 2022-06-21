@@ -1,7 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { compose } from 'redux';
 
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';

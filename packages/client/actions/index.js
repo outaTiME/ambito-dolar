@@ -1,13 +1,11 @@
-import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 
-import settings from '../config/settings';
+import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 import {
   NOTIFICATIONS_REGISTER_PENDING,
   NOTIFICATIONS_REGISTER_SUCCESS,
   NOTIFICATIONS_REGISTER_ERROR,
-  APP_LOAD,
   APP_REVIEW,
   UPDATE_NOTIFICATION_SETTINGS,
   APP_UPDATE,
@@ -16,11 +14,16 @@ import {
   FORCE_APP_INVALID_VERSION,
   APP_USAGE_DAY,
   APP_CONVERSION,
+  APP_SHARE_RATES,
+  APP_DOWNLOAD_RATES,
+  APP_DOWNLOAD_HISTORICAL_RATES,
+  APP_DETAILED_RATES,
   CHANGE_APPEARANCE,
   ADD_RATES,
   UPDATE_HISTORICAL_RATES,
   PRUNE_RATES,
   PRUNE,
+  APP_USAGE,
 } from './types';
 
 export const addRates = (payload) => ({
@@ -33,14 +36,14 @@ export const updateHistoricalRates = (payload) => ({
   payload,
 });
 
-const doRegisterDevice = async (dispatch, state, value = {}) => {
+const doRegisterDevice = (dispatch, state, value = {}) => {
   // send notification settings in each call to avoid error handling
   const {
     application: { notification_settings },
   } = state;
   const data = {
-    installation_id: Constants.installationId,
-    app_version: settings.APP_VERSION,
+    installation_id: Settings.INSTALLATION_ID,
+    app_version: Settings.APP_VERSION,
     notification_settings,
     ...value,
   };
@@ -69,10 +72,6 @@ const doRegisterDevice = async (dispatch, state, value = {}) => {
         });
       }
       return Promise.resolve();
-      // TODO: clear invalid attributes when no statusCode?
-      /* return dispatch({
-      type: APP_VALID_VERSION,
-    }); */
     }
   );
 };
@@ -87,7 +86,9 @@ const doRegisterDeviceForNotifications = (
       push_token,
     }).then(() => push_token);
   }
-  return Notifications.getExpoPushTokenAsync().then(({ data: push_token }) =>
+  return Notifications.getExpoPushTokenAsync({
+    experienceId: Settings.EXPERIENCE_ID,
+  }).then(({ data: push_token }) =>
     doRegisterDevice(dispatch, current_state, { push_token }).then(
       () => push_token
     )
@@ -116,10 +117,6 @@ export const registerDeviceForNotifications =
         });
       });
   };
-
-export const registerApplicationLoad = () => ({
-  type: APP_LOAD,
-});
 
 export const registerApplicationReview = (payload) => ({
   type: APP_REVIEW,
@@ -154,12 +151,32 @@ export const forceApplicationInvalidVersion = () => ({
   type: FORCE_APP_INVALID_VERSION,
 });
 
+export const registerApplicationUsage = () => ({
+  type: APP_USAGE,
+});
+
 export const registerApplicationUsageDay = () => ({
   type: APP_USAGE_DAY,
 });
 
 export const registerApplicationConversion = () => ({
   type: APP_CONVERSION,
+});
+
+export const registerApplicationShareRates = () => ({
+  type: APP_SHARE_RATES,
+});
+
+export const registerApplicationDownloadRates = () => ({
+  type: APP_DOWNLOAD_RATES,
+});
+
+export const registerApplicationDownloadHistoricalRates = () => ({
+  type: APP_DOWNLOAD_HISTORICAL_RATES,
+});
+
+export const registerApplicationRateDetail = () => ({
+  type: APP_DETAILED_RATES,
 });
 
 export const changeAppearance = (payload) => ({

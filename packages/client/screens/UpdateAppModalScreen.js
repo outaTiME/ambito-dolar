@@ -1,7 +1,7 @@
+import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Image, Linking } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { compose } from 'redux';
 
 import * as actions from '../actions';
 import appIcon from '../assets/about-icon-borderless.png';

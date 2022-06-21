@@ -1,6 +1,6 @@
+import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { compose } from 'redux';
 
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
@@ -15,11 +15,19 @@ const DeveloperScreen = ({ navigation }) => {
     <ScrollView>
       <CardView title="Acciones" plain>
         <CardItemView
-          title="Version inválida"
+          title="Invalidar versión"
           useSwitch={false}
           chevron={false}
           onAction={() => {
             dispatch(actions.forceApplicationInvalidVersion());
+          }}
+        />
+        <CardItemView
+          title="Limpiar almacenamiento"
+          useSwitch={false}
+          chevron={false}
+          onAction={() => {
+            dispatch(actions.clearStore());
           }}
         />
         <CardItemView
@@ -31,14 +39,26 @@ const DeveloperScreen = ({ navigation }) => {
           }}
         />
         <CardItemView
-          title="Visualizar cotizaciones"
+          title="Ver cotizaciones"
           useSwitch={false}
           chevron={false}
           onAction={() => {
-            navigation.navigate(Settings.INITIAL_ROUTE_NAME, {
-              screen: 'Rates',
+            navigation.navigate('RatesTab', {
+              screen: Settings.INITIAL_ROUTE_NAME,
+            });
+          }}
+        />
+        <CardItemView
+          title="Ver conversor"
+          useSwitch={false}
+          chevron={false}
+          onAction={() => {
+            navigation.navigate('ConversionTab', {
+              // https://reactnavigation.org/docs/params/#passing-params-to-nested-navigators
+              screen: 'Conversion',
               params: {
-                screen: Settings.INITIAL_ROUTE_NAME,
+                // TODO: send focus flag or leave as it ???
+                focus: false,
               },
             });
           }}

@@ -1,3 +1,5 @@
+import 'expo-dev-client';
+import { BackgroundColor } from '@bacons/expo-background-color';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
   MaterialIcons,
@@ -5,82 +7,40 @@ import {
   FontAwesome5,
 } from '@expo/vector-icons';
 import * as Amplitude from 'expo-analytics-amplitude';
-import AppLoading from 'expo-app-loading';
 import { useAssets } from 'expo-asset';
+import * as Device from 'expo-device';
 import { useFonts } from 'expo-font';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Text, TextInput, LogBox, AppState } from 'react-native';
+import { Text, TextInput, LogBox, Platform } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
-import { createMigrate, persistReducer } from 'redux-persist';
-import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
-import { createBlacklistFilter } from 'redux-persist-transform-filter';
-import thunk from 'redux-thunk';
+import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components';
-import { SWRConfig } from 'swr';
 
-import AppContainer from './components/AppContainer';
+import AppContainer from './components/AppContainer.js';
 import Settings from './config/settings';
 import useColorScheme from './hooks/useColorScheme';
-import reducers from './reducers';
+import { store, persistor } from './store';
 import Helper from './utilities/Helper';
 import Sentry from './utilities/Sentry';
 
 if (__DEV__) {
   LogBox.ignoreLogs([
+    // 'Setting a timer for a long period of time',
     'Amplitude client has not been initialized',
     'Constants.installationId has been deprecated',
-    'Found screens with the same name nested inside one another',
+    'ViewPropTypes will be removed from React Native',
+    "Seems like you're using an old API with gesture components",
   ]);
 } else {
   Sentry.configure(Settings.SENTRY_URI);
-  Amplitude.initializeAsync(Settings.AMPLITUDE_KEY).catch(() => {
-    // silent ignore when error
-  });
+  Amplitude.initializeAsync(Settings.AMPLITUDE_KEY).catch(console.warn);
 }
-
-const saveApplicationSubsetBlacklistFilter = createBlacklistFilter(
-  'application',
-  ['push_token', 'sending_push_token']
-);
-
-const STORE_CONFIG_VERSION = 6;
-
-const migrations = {
-  [STORE_CONFIG_VERSION]: ({ application }) => ({
-    application,
-  }),
-};
-
-const persistConfig = {
-  key: 'root',
-  storage: ExpoFileSystemStorage,
-  debug: __DEV__,
-  version: STORE_CONFIG_VERSION,
-  migrate: createMigrate(migrations, { debug: __DEV__ }),
-  transforms: [saveApplicationSubsetBlacklistFilter],
-};
-
-const reducer = persistReducer(persistConfig, reducers);
-
-const initialState = {
-  // pass
-};
-
-const middlewares = [thunk];
-
-const enhacers = [
-  // pass
-];
-
-const store = createStore(
-  reducer,
-  initialState,
-  compose(...enhacers, applyMiddleware(...middlewares))
-);
 
 // disable font scaling in whole app (iOS only)
 Text.defaultProps = Text.defaultProps || {};
@@ -92,24 +52,41 @@ TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
+  // const colorScheme = 'dark';
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
   const statusBarStyle = colorScheme
     ? Helper.getInvertedTheme(colorScheme)
     : 'auto';
+  // same as AppContainer
+  const backgroundColor = Settings.getBackgroundColor(colorScheme, true);
   return (
     <ThemeProvider theme={theme}>
       <StatusBar style={statusBarStyle} animated />
+      <BackgroundColor color={backgroundColor} />
       <RootSiblingParent>
         <ActionSheetProvider>
-          <AppContainer />
+          <SafeAreaProvider>
+            <AppContainer />
+          </SafeAreaProvider>
         </ActionSheetProvider>
       </RootSiblingParent>
     </ThemeProvider>
   );
 };
 
-const App = () => {
-  const dataLoaded = Helper.usePersistedData(store);
+// force landscape on android tablets
+Platform.OS === 'android' &&
+  Device.getDeviceTypeAsync()
+    .then((deviceType) =>
+      ScreenOrientation.lockAsync(
+        deviceType === Device.DeviceType.PHONE
+          ? ScreenOrientation.OrientationLock.PORTRAIT_UP
+          : ScreenOrientation.OrientationLock.LANDSCAPE
+      )
+    )
+    .catch(console.warn);
+
+export default function App() {
   const [assetsLoaded] = useAssets([
     require('./assets/about-icon-borderless.png'),
   ]);
@@ -121,66 +98,43 @@ const App = () => {
     // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
   const constantsLoaded = Helper.useApplicationConstants();
-  if (!dataLoaded || !assetsLoaded || !fontsLoaded || !constantsLoaded) {
-    return <AppLoading />;
+  const [appIsReady, setAppIsReady] = React.useState(false);
+  const appIsLoading =
+    !assetsLoaded || !fontsLoaded || !constantsLoaded || !appIsReady;
+  React.useEffect(() => {
+    async function prepare() {
+      try {
+        // Keep the splash screen visible while we fetch resources
+        await SplashScreen.preventAutoHideAsync();
+        // additional async stuff here
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+      }
+    }
+    prepare();
+  }, []);
+  const onLayoutRootView = React.useCallback(async () => {
+    if (!appIsLoading) {
+      // This tells the splash screen to hide immediately! If we call this after
+      // `setAppIsReady`, then we may see a blank screen while the app is
+      // loading its initial state and rendering its first pixels. So instead,
+      // we hide the splash screen once we know the root view has already
+      // performed layout.
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsLoading]);
+  if (appIsLoading) {
+    return null;
   }
   return (
-    <SafeAreaProvider>
-      <Provider store={store}>
-        <ThemedApp />
-      </Provider>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+          <ThemedApp />
+        </GestureHandlerRootView>
+      </PersistGate>
+    </Provider>
   );
-};
-
-export default () => (
-  <SWRConfig
-    value={{
-      provider: () => new Map(),
-      isVisible: () => {
-        return true;
-      },
-      initFocus(callback) {
-        let appState = AppState.currentState;
-        const onAppStateChange = (nextAppState) => {
-          if (
-            appState.match(/inactive|background/) &&
-            nextAppState === 'active'
-          ) {
-            console.log('>>> SWR (initFocus) active');
-            callback();
-          }
-          appState = nextAppState;
-        };
-        const subscription = AppState.addEventListener(
-          'change',
-          onAppStateChange
-        );
-        return () => {
-          subscription.remove();
-        };
-      },
-      /* isOnline() {
-          return true;
-        },
-        initReconnect(callback) {
-          let networkState = true;
-          return Network.addEventListener((nextNetworkstate) => {
-            if (
-              networkState === false &&
-              nextNetworkstate.isConnected &&
-              nextNetworkstate.isInternetReachable
-            ) {
-              callback();
-            }
-            networkState =
-              nextNetworkstate.isConnected &&
-              nextNetworkstate.isInternetReachable;
-          });
-        }, */
-      // fetcher: (resource, opts) => Helper.getJson(resource, opts),
-    }}
-  >
-    <App />
-  </SWRConfig>
-);
+}

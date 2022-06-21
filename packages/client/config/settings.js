@@ -1,73 +1,98 @@
+// import * as Application from 'expo-application';
 import Constants from 'expo-constants';
-import { Dimensions, Platform } from 'react-native';
+//import * as Updates from 'expo-updates';
+import { Dimensions, PixelRatio, Platform } from 'react-native';
 import { human, iOSColors } from 'react-native-typography';
 
-const { manifest } = Constants;
-
-export const PADDING = 16;
-export const SMALL_PADDING = PADDING / 4;
-export const HEADER_HEIGHT = 54 + Constants.statusBarHeight;
+const PADDING = 16;
+const SMALL_PADDING = PADDING / 4;
+// const HEADER_HEIGHT = 54 + Constants.statusBarHeight;
 const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = Dimensions.get('window');
-export const SMALL_DISPLAY_HEIGHT = Math.round(DEVICE_HEIGHT) <= 731; // 5.0"
+const SMALL_DISPLAY_HEIGHT = Math.round(DEVICE_HEIGHT) <= 731; // 5.0"
 const EXTRA_MARGIN_ON_LARGE_DISPLAY = true;
-export const CARD_PADDING =
+const CARD_PADDING =
   Platform.OS === 'web'
     ? PADDING - SMALL_PADDING
     : !SMALL_DISPLAY_HEIGHT && EXTRA_MARGIN_ON_LARGE_DISPLAY
     ? PADDING / 1.5
     : PADDING / 2;
-export const BORDER_RADIUS = PADDING / 2;
-export const BORDER_WIDTH = 1;
-export const ALLOW_FONT_SCALING = false;
-export const REGISTER_DEVICE_URI = process.env.REGISTER_DEVICE_URI;
-export const RATES_URI = process.env.RATES_URI;
-export const HISTORICAL_RATES_URI = process.env.HISTORICAL_RATES_URI;
-export const SENTRY_URI = process.env.SENTRY_URI;
-export const AMPLITUDE_KEY = process.env.AMPLITUDE_KEY;
-export const FETCH_TIMEOUT = 30 * 1000; // 30 secs
-export const FETCH_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 mins
-export const BULLET_SEPARATOR = '•';
-export const SPACE_SEPARATOR = ' ';
-export const FIGURE_SPACE_SEPARATOR = ' ';
-export const DASH_SEPARATOR = '‒';
-export const EM_DASH_SEPARATOR = '—';
-export const MAX_LOADS_FOR_REVIEW = 5;
-export const MAX_NUMBER_OF_STATS = 7; // 1 week
-export const ANIMATION_DURATION = 250;
+const BORDER_RADIUS = PADDING / 2;
+const BORDER_WIDTH = 1;
+const ALLOW_FONT_SCALING = false;
+const FETCH_TIMEOUT = 30 * 1000; // 30 secs
+const FETCH_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 mins
+const BULLET_SEPARATOR = '•';
+const SPACE_SEPARATOR = ' ';
+const FIGURE_SPACE_SEPARATOR = ' ';
+const DASH_SEPARATOR = '‒';
+const EM_DASH_SEPARATOR = '—';
+const MAX_DAYS_FOR_REVIEW = 5;
+const MAX_NUMBER_OF_STATS = 7; // 1 week
+const STILL_LOADING_TIMEOUT = 10 * 1000; // 10 secs
+const ANIMATION_DURATION = 250;
 // same as header fonts.title size
-export const ICON_SIZE = 24;
-export const APP_IGNORE_UPDATE_EXPIRATION = 30 * 24 * 60 * 60 * 1000; // 30 days
-export const {
-  name: APP_NAME,
-  version: APP_VERSION,
-  revisionId: APP_REVISION_ID,
-  android,
-} = manifest;
-export const APP_COPYRIGHT = `© ${new Date().getFullYear()} ${APP_NAME}`;
-export const APP_DOMAIN = 'ambito-dolar.app';
-export const WEBSITE_URL = `https://${APP_DOMAIN}`;
-export const APP_STORE_URI =
+const ICON_SIZE = 24;
+const APP_IGNORE_UPDATE_EXPIRATION = 30 * 24 * 60 * 60 * 1000; // 30 days
+const {
+  manifest: {
+    name: APP_NAME,
+    version: APP_VERSION,
+    revisionId: APP_REVISION_ID,
+    // empty on web
+    android: { package: ANDROID_APP_ID } = {},
+    extra: {
+      registerDeviceUri: REGISTER_DEVICE_URI,
+      ratesUri: RATES_URI,
+      historicalRatesUri: HISTORICAL_RATES_URI,
+      sentryUri: SENTRY_URI,
+      amplitudeKey: AMPLITUDE_KEY,
+      firebaseConfigJson: FIREBASE_CONFIG_JSON,
+      experienceId: EXPERIENCE_ID,
+    },
+  },
+  installationId: INSTALLATION_ID,
+} = Constants;
+/* const {
+  applicationId: APP_ID,
+  applicationName: APP_NAME,
+  nativeApplicationVersion: APP_VERSION,
+} = Application; */
+/* const {
+  manifest: { revisionId: APP_REVISION_ID },
+} = Updates; */
+const APP_COPYRIGHT = `© ${new Date().getFullYear()} ${APP_NAME}`;
+const APP_DOMAIN = 'ambito-dolar.app';
+const WEBSITE_URL = `https://${APP_DOMAIN}`;
+const APP_STORE_URI =
   Platform.OS === 'ios'
     ? `itms-apps://itunes.apple.com/app/id1485120819`
-    : `market://details?id=${manifest.android?.package}`;
-export const APP_REVIEW_URI = `${APP_STORE_URI}${
+    : `market://details?id=${ANDROID_APP_ID}`;
+const APP_REVIEW_URI = `${APP_STORE_URI}${
   Platform.OS === 'ios' ? '?action=write-review' : '&showAllReviews=true'
 }`;
-export const HIT_SLOP = {
+const HIT_SLOP = {
   top: PADDING,
   bottom: PADDING,
   right: PADDING,
   left: PADDING,
 };
-export const CHART_STROKE_WIDTH = 3 - 0.5;
+const CHART_STROKE_WIDTH = 3 - 0.5;
 // iPad in landscape
-export const MAX_DEVICE_WIDTH = 551 + CARD_PADDING * 2;
-export const INITIAL_ROUTE_NAME = 'Main';
+const MAX_DEVICE_WIDTH = 551 + CARD_PADDING * 2;
+const INITIAL_ROUTE_NAME = 'Main';
+
+// https://github.com/nirsky/react-native-size-matters/blob/master/lib/scaling-utils.js#L7
+const guidelineBaseWidth = 350;
+
+const scale = (size) =>
+  (Math.min(DEVICE_WIDTH, MAX_DEVICE_WIDTH) / guidelineBaseWidth) * size;
+const moderateScale = (size, factor = 0.5) =>
+  size + (scale(size) - size) * factor;
 
 export default {
   PADDING,
   SMALL_PADDING,
-  HEADER_HEIGHT,
+  // HEADER_HEIGHT,
   DEVICE_HEIGHT,
   DEVICE_WIDTH,
   SMALL_DISPLAY_HEIGHT,
@@ -80,6 +105,8 @@ export default {
   HISTORICAL_RATES_URI,
   SENTRY_URI,
   AMPLITUDE_KEY,
+  FIREBASE_CONFIG_JSON,
+  EXPERIENCE_ID,
   FETCH_TIMEOUT,
   FETCH_REFRESH_INTERVAL,
   BULLET_SEPARATOR,
@@ -87,14 +114,16 @@ export default {
   FIGURE_SPACE_SEPARATOR,
   DASH_SEPARATOR,
   EM_DASH_SEPARATOR,
-  MAX_LOADS_FOR_REVIEW,
+  MAX_DAYS_FOR_REVIEW,
   MAX_NUMBER_OF_STATS,
+  STILL_LOADING_TIMEOUT,
   ANIMATION_DURATION,
   ICON_SIZE,
   APP_IGNORE_UPDATE_EXPIRATION,
   APP_NAME,
   APP_VERSION,
   APP_REVISION_ID,
+  INSTALLATION_ID,
   APP_COPYRIGHT,
   APP_DOMAIN,
   WEBSITE_URL,
@@ -191,4 +220,5 @@ export default {
       letterSpacing: undefined,
     };
   },
+  moderateScale,
 };

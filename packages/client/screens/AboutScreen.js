@@ -1,12 +1,12 @@
-import { FontAwesome5 } from '@expo/vector-icons';
+import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Image, Text, Linking, Platform } from 'react-native';
-import { compose } from 'redux';
 
 import appIcon from '../assets/about-icon-borderless.png';
-import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
+import IconCardItemView from '../components/IconCardItemView';
 import ScrollView from '../components/ScrollView';
+import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -23,48 +23,21 @@ const FACEBOOK_DEEP_LINK = `fb://${
   Platform.OS === 'ios' ? 'page?id=' : 'page/'
 }116047123558432`;
 const FACEBOOK_WEB_URL = 'https://facebook.com/pg/AmbitoDolar';
-const APOLLO_DEEP_LINK = 'apollo://www.reddit.com/r/AmbitoDolar';
-const REDDIT_DEEP_LINK = 'reddit:///r/AmbitoDolar';
-const REDDIT_WEB_URL = 'https://www.reddit.com/r/AmbitoDolar';
-const DISCORD_DEEP_LINK = 'com.hammerandchisel.discord://discord.gg/jwfDsy4EKe';
-const DISCORD_WEB_URL = 'https://discord.gg/jwfDsy4EKe';
-const GITHUB_DEEP_LINK = 'github://github.com/outaTiME/ambito-dolar';
-const GITHUB_WEB_URL = 'https://github.com/outaTiME/ambito-dolar';
-
-const SocialCardItemView = ({ title, iconName, iconColor, onAction }) => {
-  const { theme, fonts } = Helper.useTheme();
-  return (
-    <CardItemView
-      title={
-        <View
-          style={[
-            {
-              flexShrink: 0,
-              flexGrow: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-            },
-          ]}
-        >
-          <FontAwesome5
-            name={iconName}
-            size={17}
-            color={iconColor || Settings.getForegroundColor(theme)}
-          />
-          <Text
-            style={[fonts.body, { marginLeft: Settings.PADDING }]}
-            numberOfLines={1}
-          >
-            {title}
-          </Text>
-        </View>
-      }
-      useSwitch={false}
-      chevron={false}
-      onAction={onAction}
-    />
-  );
-};
+const REDDIT_URI = 'www.reddit.com/r/AmbitoDolar';
+const APOLLO_DEEP_LINK = `apollo://${REDDIT_URI}`;
+// const REDDIT_DEEP_LINK = 'reddit:///r/AmbitoDolar';
+const REDDIT_DEEP_LINK = `reddit://${REDDIT_URI}`;
+const REDDIT_WEB_URL = `https://${REDDIT_URI}`;
+const DISCORD_URI = 'discord.gg/jwfDsy4EKe';
+const DISCORD_DEEP_LINK = `com.hammerandchisel.discord://${DISCORD_URI}`;
+const DISCORD_WEB_URL = `https://${DISCORD_URI}`;
+const SLACK_URI =
+  'join.slack.com/t/ambitodolar/shared_invite/zt-1a3j77xsn-AZ4_zFTKobu1e6P21E~wdg';
+const SLACK_DEEP_LINK = `slack://${SLACK_URI}`;
+const SLACK_WEB_URL = `https://${SLACK_URI}`;
+const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
+const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
+const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
 
 const AboutScreen = ({ navigation }) => {
   const { theme, fonts } = Helper.useTheme();
@@ -121,6 +94,13 @@ const AboutScreen = ({ navigation }) => {
         : Linking.openURL(DISCORD_WEB_URL)
     );
   }, []);
+  const onPressSlack = React.useCallback(() => {
+    Linking.canOpenURL(SLACK_DEEP_LINK).then((supported) =>
+      supported
+        ? Linking.openURL(SLACK_DEEP_LINK)
+        : Linking.openURL(SLACK_WEB_URL)
+    );
+  }, []);
   const onPressGithub = React.useCallback(() => {
     Linking.canOpenURL(GITHUB_DEEP_LINK).then((supported) =>
       supported
@@ -169,82 +149,58 @@ const AboutScreen = ({ navigation }) => {
         </View>
       </View>
       <CardView plain>
-        <SocialCardItemView
+        <IconCardItemView
           title="Sitio web"
           iconName="link"
           onAction={onPressWebsite}
         />
       </CardView>
       <CardView plain>
-        <SocialCardItemView
+        <IconCardItemView
           title="Twitter"
           iconName="twitter"
           onAction={onPressTwitter}
         />
-        <SocialCardItemView
+        <IconCardItemView
           title="Telegram"
           iconName="telegram-plane"
           onAction={onPressTelegram}
         />
-        <SocialCardItemView
+        <IconCardItemView
           title="Instagram"
           iconName="instagram"
           onAction={onPressInstagram}
         />
-        <SocialCardItemView
+        <IconCardItemView
           title="Facebook"
           iconName="facebook"
           onAction={onPressFacebook}
         />
-        <SocialCardItemView
+        <IconCardItemView
           title="Reddit"
           iconName="reddit-alien"
           onAction={onPressReddit}
         />
-        <SocialCardItemView
+        <IconCardItemView
           title="Discord"
           iconName="discord"
           onAction={onPressDiscord}
         />
-        <SocialCardItemView
+        <IconCardItemView
+          title="Slack"
+          iconName="slack"
+          onAction={onPressSlack}
+        />
+        <IconCardItemView
           title="GitHub"
           iconName="github"
           onAction={onPressGithub}
         />
       </CardView>
-      <View
-        style={[
-          {
-            flexShrink: 0,
-            flexGrow: 1,
-            margin: Settings.CARD_PADDING,
-            paddingVertical: Settings.PADDING,
-          },
-          {
-            borderColor: 'red',
-            // borderWidth: 1,
-          },
-          {
-            alignItems: 'center',
-            // justifyContent: 'flex-end',
-            justifyContent: 'center',
-            paddingHorizontal: Settings.CARD_PADDING,
-          },
-        ]}
-      >
-        <Text
-          style={[
-            fonts.subhead,
-            {
-              color: Settings.getGrayColor(theme),
-              // textTransform: 'uppercase',
-              textAlign: 'center',
-            },
-          ]}
-        >
-          {`${Settings.APP_COPYRIGHT} ${Settings.DASH_SEPARATOR} Hecho con ♥ en Buenos Aires, Argentina.`}
-        </Text>
-      </View>
+      <TextCardView
+        // style={{ flexGrow: 1 }}
+        text={`${Settings.APP_COPYRIGHT} ${Settings.DASH_SEPARATOR} Hecho con ♥ en Buenos Aires, Argentina.`}
+      />
     </ScrollView>
   );
 };

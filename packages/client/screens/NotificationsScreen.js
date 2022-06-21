@@ -1,15 +1,13 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { compose } from '@reduxjs/toolkit';
 import * as Clipboard from 'expo-clipboard';
-import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 import * as Haptics from 'expo-haptics';
 import * as Linking from 'expo-linking';
 import React from 'react';
-import { View, Text } from 'react-native';
 import Collapsible from 'react-native-collapsible';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Toast from 'react-native-root-toast';
 import { useSelector, useDispatch } from 'react-redux';
-import { compose } from 'redux';
 
 import * as actions from '../actions';
 import ActionButton from '../components/ActionButton';
@@ -17,13 +15,14 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import MessageView from '../components/MessageView';
 import ScrollView from '../components/ScrollView';
+import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
 const NotificationsScreen = ({ navigation }) => {
-  const { theme, fonts, invertedTheme } = Helper.useTheme();
+  const { invertedTheme } = Helper.useTheme();
   const dispatch = useDispatch();
   const notification_settings = useSelector(
     Helper.getNotificationSettingsSelector
@@ -78,7 +77,7 @@ const NotificationsScreen = ({ navigation }) => {
         opacity: 1,
         containerStyle: {
           paddingHorizontal: 10 * 2,
-          // borderRadius: Settings.BORDER_RADIUS,
+          borderRadius: Settings.BORDER_RADIUS,
           backgroundColor: Settings.getBackgroundColor(invertedTheme, true),
         },
         // force white
@@ -86,13 +85,13 @@ const NotificationsScreen = ({ navigation }) => {
         textStyle: [Settings.getFontObject(invertedTheme, 'callout')],
       });
       // FIXME: update with pushTokenId on next release
-      Clipboard.setString(Constants.installationId);
+      Clipboard.setString(Settings.INSTALLATION_ID);
     }
   }, [invertedTheme]);
 
   return (
     <>
-      {Constants.isDevice && !allowNotifications ? (
+      {Device.isDevice && !allowNotifications ? (
         <>
           <MessageView
             style={[
@@ -129,49 +128,10 @@ const NotificationsScreen = ({ navigation }) => {
             ].map((type) => getItemView(type))}
           </Collapsible>
           {pushTokenId && (
-            <View
-              style={[
-                {
-                  // flexShrink: 0,
-                  // flexGrow: 1,
-                  margin: Settings.CARD_PADDING,
-                  paddingVertical: Settings.PADDING,
-                },
-                {
-                  borderColor: 'red',
-                  // borderWidth: 1,
-                },
-                {
-                  alignItems: 'center',
-                  // justifyContent: 'flex-end',
-                  justifyContent: 'center',
-                  paddingHorizontal: Settings.CARD_PADDING,
-                },
-              ]}
-            >
-              <TouchableWithoutFeedback
-                onPress={handleOnPress}
-                hitSlop={{
-                  top: Settings.PADDING,
-                  bottom: Settings.PADDING,
-                  left: Settings.PADDING,
-                  right: Settings.PADDING,
-                }}
-              >
-                <Text
-                  style={[
-                    fonts.subhead,
-                    {
-                      color: Settings.getGrayColor(theme),
-                      // textTransform: 'uppercase',
-                      textAlign: 'center',
-                    },
-                  ]}
-                >
-                  {`${I18n.t('notification_id')}: ${pushTokenId}`}
-                </Text>
-              </TouchableWithoutFeedback>
-            </View>
+            <TextCardView
+              text={`${I18n.t('notification_id')}: ${pushTokenId}`}
+              onLongPress={handleOnPress}
+            />
           )}
         </ScrollView>
       )}

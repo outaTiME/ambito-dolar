@@ -1,8 +1,9 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { compose } from '@reduxjs/toolkit';
+import * as _ from 'lodash';
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { compose } from 'redux';
 
 import MessageView from '../components/MessageView';
 import RateView from '../components/RateView';
@@ -42,8 +43,6 @@ const AppContainer = ({ rates, processedAt }) => {
           // fixed size required by social notifier
           width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
           height: AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
-          // TODO: leave until v6 release
-          // height: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
         }}
       >
         <View
@@ -72,7 +71,7 @@ const AppContainer = ({ rates, processedAt }) => {
             ]}
             numberOfLines={1}
           >
-            {DateUtils.datetime(processedAt, { long: true })}
+            {DateUtils.humanize(processedAt, 2)}
           </Text>
         </View>
         {/* two columns layout */}
@@ -157,6 +156,16 @@ const AppContainer = ({ rates, processedAt }) => {
                       />
                       <FontAwesome5
                         name="discord"
+                        size={17}
+                        color={Settings.getGrayColor(theme)}
+                        style={
+                          {
+                            // marginLeft: Settings.PADDING,
+                          }
+                        }
+                      />
+                      <FontAwesome5
+                        name="slack"
                         size={17}
                         color={Settings.getGrayColor(theme)}
                         style={
