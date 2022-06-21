@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const loadRates = async () => {
   const url = 'https://api.ambito-dolar.app/fetch';
   const req = new Request(url);
@@ -8,9 +9,7 @@ const OFFICIAL_TYPE = 'oficial';
 const INFORMAL_TYPE = 'informal';
 const TOURIST_TYPE = 'turista';
 const CCL_TYPE = 'ccl';
-const CCL_LEGACY_TYPE = 'cl';
 const MEP_TYPE = 'mep';
-const FUTURE_TYPE = 'futuro';
 const WHOLESALER_TYPE = 'mayorista';
 const FRACTION_DIGITS = 2;
 const SPACE_SEPARATOR = ' ';
@@ -22,7 +21,6 @@ const getAvailableRateTypes = () => [
   INFORMAL_TYPE,
   CCL_TYPE,
   MEP_TYPE,
-  // FUTURE_TYPE,
   WHOLESALER_TYPE,
 ];
 
@@ -38,8 +36,6 @@ const getRateTitle = (type) => {
     return 'CCL';
   } else if (type === MEP_TYPE) {
     return 'MEP';
-  } else if (type === FUTURE_TYPE) {
-    return 'Futuro';
   } else if (type === WHOLESALER_TYPE) {
     return 'Mayorista';
   }
@@ -169,7 +165,7 @@ const createVerticalWidget = async () => {
   return widget;
 };
 
-const createHorizontalWidget = async () => {
+/* const createHorizontalWidget = async () => {
   const rates = await loadRates();
   const widget = new ListWidget();
   addGradientBackground(widget);
@@ -233,7 +229,7 @@ const createHorizontalWidget = async () => {
   // const nextRefresh = Date.now() + 1000;
   // widget.refreshAfterDate = new Date(nextRefresh);
   return widget;
-};
+}; */
 
 const widget = await createVerticalWidget();
 if (config.runsInWidget) {
