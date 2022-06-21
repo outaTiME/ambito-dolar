@@ -1,5 +1,6 @@
 const chrono = require('chrono-node');
 const isEmpty = require('lodash.isempty');
+const max = require('lodash.max');
 const merge = require('lodash.merge');
 const pickBy = require('lodash.pickby');
 const moment = require('moment-timezone');
@@ -24,7 +25,6 @@ const TOURIST_TYPE = 'turista';
 const CCL_TYPE = 'ccl';
 const CCL_LEGACY_TYPE = 'cl';
 const MEP_TYPE = 'mep';
-const FUTURE_TYPE = 'futuro';
 const WHOLESALER_TYPE = 'mayorista';
 const CCB_TYPE = 'ccb';
 
@@ -37,9 +37,14 @@ const NOTIFICATION_VARIATION_TYPE = 'variation';
 // Portrait IGTV: 1080 x 1920 pixels, 9:16 aspect ratio
 
 const VIEWPORT_PORTRAIT_WIDTH = 648;
-// 810
-const VIEWPORT_PORTRAIT_HEIGHT = (VIEWPORT_PORTRAIT_WIDTH / 4) * 5;
-// 1152
+// const VIEWPORT_PORTRAIT_WIDTH = 684;
+// 810 (648)
+// 855
+// TODO: leave until v6 release
+const VIEWPORT_PORTRAIT_HEIGHT = VIEWPORT_PORTRAIT_WIDTH;
+// const VIEWPORT_PORTRAIT_HEIGHT = (VIEWPORT_PORTRAIT_WIDTH / 4) * 5;
+// 1152 (648)
+// 1216
 const VIEWPORT_PORTRAIT_STORY_HEIGHT = (VIEWPORT_PORTRAIT_WIDTH / 9) * 16;
 
 const getCapitalized = (str) => str.charAt(0).toUpperCase() + str.slice(1);
@@ -92,48 +97,67 @@ const getDelimiters = () => {
   return localeData.delimiters;
 };
 
+const toFixedNoRounding = function (num, n) {
+  const reg = new RegExp('^-?\\d+(?:\\.\\d{0,' + n + '})?', 'g');
+  const a = num.toString().match(reg)[0];
+  const dot = a.indexOf('.');
+  if (dot === -1) {
+    // integer, insert decimal dot and pad up zeros
+    return a + '.' + '0'.repeat(n);
+  }
+  const b = n - (a.length - dot) + 1;
+  return b > 0 ? a + '0'.repeat(b) : a;
+};
+
+const getNumber = (value, maxDigits = FRACTION_DIGITS) => {
+  value = numeral(value).value();
+  if (typeof value === 'number') {
+    // return +value.toFixed(maxDigits);
+    // truncate to max digits
+    return +toFixedNoRounding(value, maxDigits);
+  }
+  return value;
+};
+
 const formatNumber = (
   num,
   maxDigits = FRACTION_DIGITS,
   forceFractionDigits = true
 ) => {
-  // https://github.com/NickKaramoff/pretty-money/issues/11
-  /* const number_fmt = prettyMoney(
-    {
-      decimalDelimiter: DECIMAL_SEPARATOR,
-      thousandsDelimiter: DIGIT_GROUPING_SEPARATOR,
-      minDecimal: forceFractionDigits === true ? maxDigits : 0,
-      maxDecimal: maxDigits,
-    },
-    num
-  ); */
-  const decimal_digits = '0'.repeat(maxDigits);
-  let fmt = '0,0.' + decimal_digits;
-  if (forceFractionDigits !== true) {
-    fmt = '0,0[.][' + decimal_digits + ']';
+  // truncate to prevent rounding issues
+  num = getNumber(num, maxDigits);
+  if (typeof num === 'number') {
+    const decimal_digits = '0'.repeat(maxDigits);
+    let fmt = '0,0.' + decimal_digits;
+    if (forceFractionDigits !== true) {
+      fmt = '0,0[.][' + decimal_digits + ']';
+    }
+    return numeral(num).format(fmt);
   }
-  return numeral(num).format(fmt);
+  return num;
 };
-
-// TODO: should return undefined when value is null?
-const getNumber = (value, maxDigits = FRACTION_DIGITS) =>
-  +numeral(value || 0)
-    .value()
-    .toFixed(maxDigits);
 
 const formatRateCurrency = (num) => formatNumber(num);
 
-const formatRateChange = (num) =>
-  (num > 0 ? '+' : '') + formatRateCurrency(num) + '%';
+const formatRateChange = (num, percentage = true) => {
+  const formatted = formatRateCurrency(num);
+  if (formatted) {
+    return (num > 0 ? '+' : '') + formatted + (percentage === true ? '%' : '');
+  }
+  return formatted;
+};
 
-const formatCurrency = (num, usd) =>
-  (usd === true ? 'US$' : '$') + formatRateCurrency(num);
+const formatCurrency = (num, usd) => {
+  const formatted = formatRateCurrency(num);
+  if (formatted) {
+    return (usd === true ? 'US$' : '$') + formatted;
+  }
+  return formatted;
+};
 
 const formatBytes = (num) => numeral(num).format('0 b');
 
 const getBytes = (obj) => formatBytes(bytes(JSON.stringify(obj)));
-
-const getPercentNumber = (str) => getNumber((str || '').replace('%', ''));
 
 const isRateFromToday = (rate) => {
   const date = getTimezoneDate(undefined, undefined, true);
@@ -157,7 +181,6 @@ const getAvailableRateTypes = () => [
   INFORMAL_TYPE,
   CCL_TYPE,
   MEP_TYPE,
-  FUTURE_TYPE,
   WHOLESALER_TYPE,
   CCB_TYPE,
 ];
@@ -166,7 +189,9 @@ const getRateTitle = (type) => {
   if (type === OFFICIAL_TYPE) {
     return 'Oficial';
   } else if (type === TOURIST_TYPE) {
+    // TODO: leave until v6 release
     return 'Turista';
+    // return 'Solidario';
   } else if (type === INFORMAL_TYPE) {
     return 'Blue';
   } else if (type === CCL_TYPE) {
@@ -174,12 +199,11 @@ const getRateTitle = (type) => {
     return 'CCL';
   } else if (type === MEP_TYPE) {
     return 'MEP';
-  } else if (type === FUTURE_TYPE) {
-    return 'Futuro';
   } else if (type === WHOLESALER_TYPE) {
     return 'Mayorista';
   } else if (type === CCB_TYPE) {
     return 'CCB';
+    // return 'Cripto';
   }
 };
 
@@ -223,6 +247,35 @@ const getNotificationSettings = (notification_settings) => {
   );
 };
 
+const getRateValue = (stat) => max([].concat(stat[1]));
+
+const getRateChange = (stat, include_symbol = false) => {
+  const str = [];
+  let change = stat;
+  if (typeof stat !== 'number') {
+    // datum
+    const prev_value = stat[3];
+    if (prev_value) {
+      const value = getRateValue(stat);
+      const formatted_diff = formatRateChange(value - prev_value, false);
+      if (formatted_diff) {
+        str.push(formatted_diff);
+      }
+    }
+    change = stat[2];
+  }
+  const formatted_change = formatRateChange(change);
+  if (formatted_change) {
+    const show_as_detail = str.length > 0;
+    show_as_detail && str.push(' (');
+    str.push(formatted_change);
+    show_as_detail && str.push(')');
+    const symbol = change === 0 ? '=' : change > 0 ? '↑' : '↓';
+    include_symbol === true && str.push(` ${symbol}`);
+  }
+  return str.join('');
+};
+
 module.exports = {
   TIMEZONE,
   OFFICIAL_TYPE,
@@ -231,7 +284,6 @@ module.exports = {
   CCL_TYPE,
   CCL_LEGACY_TYPE,
   MEP_TYPE,
-  FUTURE_TYPE,
   WHOLESALER_TYPE,
   CCB_TYPE,
   NOTIFICATION_OPEN_TYPE,
@@ -246,13 +298,12 @@ module.exports = {
   FRACTION_DIGITS,
   setDelimiters,
   getDelimiters,
-  formatNumber,
   getNumber,
+  formatNumber,
   formatRateChange,
   formatRateCurrency,
   formatCurrency,
   getBytes,
-  getPercentNumber,
   isRateFromToday,
   hasRatesFromToday,
   parseNaturalDate,
@@ -260,4 +311,6 @@ module.exports = {
   getRateTitle,
   getNotificationTitle,
   getNotificationSettings,
+  getRateValue,
+  getRateChange,
 };
