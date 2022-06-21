@@ -8,6 +8,7 @@ import {
   FaFacebook as Facebook,
   FaRedditAlien as Reddit,
   FaDiscord as Discord,
+  FaSlack as Slack,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa';
@@ -122,6 +123,17 @@ const IndexPage = () => {
                       >
                         <Discord />
                       </a>
+                      {/* TODO: leave until v6 release */}
+                      {false && (
+                        <a
+                          className="icon"
+                          href="https://join.slack.com/t/ambitodolar/shared_invite/zt-1a3j77xsn-AZ4_zFTKobu1e6P21E~wdg"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Slack />
+                        </a>
+                      )}
                       <a
                         className="icon"
                         href="https://github.com/outaTiME/ambito-dolar"
