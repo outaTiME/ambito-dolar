@@ -56,19 +56,6 @@ test('Dates should use the default timezone', function (t) {
   );
 });
 
-test('Should parse date from a natural language string', function (t) {
-  // default value for time is 12:00 on "chrono-node" parse
-  const date_str = '2021-03-08T12:00:00-03:00';
-  t.is(AmbitoDolar.parseNaturalDate('08-03-2021'), date_str);
-  t.is(AmbitoDolar.parseNaturalDate('08/03/2021'), date_str);
-  t.is(AmbitoDolar.parseNaturalDate('2021-03-08'), date_str);
-  t.is(AmbitoDolar.parseNaturalDate('2021/03/08'), date_str);
-  t.is(
-    AmbitoDolar.parseNaturalDate('An appointment on March 8, 2021'),
-    date_str
-  );
-});
-
 test('Number should be formatted as a percentage', function (t) {
   t.is(AmbitoDolar.formatRateChange(10), '+10,00%');
   t.is(AmbitoDolar.formatRateChange(-10), '-10,00%');

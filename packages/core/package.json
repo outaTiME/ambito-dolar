@@ -2,14 +2,12 @@
   "name": "@ambito-dolar/core",
   "version": "2.2.0",
   "dependencies": {
-    "chrono-node": "^1.4.8",
     "lodash.isempty": "^4.4.0",
     "lodash.max": "^4.0.1",
     "lodash.merge": "^4.6.2",
     "lodash.pickby": "^4.6.0",
     "moment-timezone": "^0.5.34",
-    "numeral": "^2.0.6",
-    "utf8-length": "^0.0.1"
+    "numeral": "^2.0.6"
   },
   "devDependencies": {
     "ava": "^4.3.0"

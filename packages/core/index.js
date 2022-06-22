@@ -1,4 +1,3 @@
-const chrono = require('chrono-node');
 const isEmpty = require('lodash.isempty');
 const max = require('lodash.max');
 const merge = require('lodash.merge');
@@ -7,7 +6,6 @@ const moment = require('moment-timezone');
 require('moment/locale/es');
 const numeral = require('numeral');
 require('numeral/locales');
-const bytes = require('utf8-length');
 
 // defaults
 
@@ -156,10 +154,6 @@ const formatCurrency = (num, usd) => {
   return formatted;
 };
 
-const formatBytes = (num) => numeral(num).format('0 b');
-
-const getBytes = (obj) => formatBytes(bytes(JSON.stringify(obj)));
-
 const isRateFromToday = (rate) => {
   const date = getTimezoneDate(undefined, undefined, true);
   const rate_date = getTimezoneDate(rate[0], undefined, true);
@@ -169,12 +163,6 @@ const isRateFromToday = (rate) => {
 
 const hasRatesFromToday = (rates = {}) =>
   !isEmpty(pickBy(rates, (rate) => isRateFromToday(rate)));
-
-const parseNaturalDate = (value, format /* = 'YYYY-MM-DDTHH:mm:ss' */) => {
-  const date = chrono.es.parseDate(value);
-  // use today when invalid chrono format (ignore timezone)
-  return getTimezoneDate(date).format(format);
-};
 
 const getAvailableRateTypes = () => [
   OFFICIAL_TYPE,
@@ -190,9 +178,7 @@ const getRateTitle = (type) => {
   if (type === OFFICIAL_TYPE) {
     return 'Oficial';
   } else if (type === TOURIST_TYPE) {
-    // TODO: leave until v6 release
-    return 'Turista';
-    // return 'Solidario';
+    return 'Solidario';
   } else if (type === INFORMAL_TYPE) {
     return 'Blue';
   } else if (type === CCL_TYPE) {
@@ -307,10 +293,8 @@ module.exports = {
   formatRateChange,
   formatRateCurrency,
   formatCurrency,
-  getBytes,
   isRateFromToday,
   hasRatesFromToday,
-  parseNaturalDate,
   getAvailableRateTypes,
   getRateTitle,
   getNotificationTitle,
