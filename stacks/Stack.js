@@ -94,12 +94,12 @@ export function Stack({ stack }) {
       function: {
         handler: 'src/subscribers/social-notify.handler',
         bundle: {
-          externalModules: ['@sparticuz/chrome-aws-lambda'],
+          externalModules: ['@sparticuz/chrome-aws-lambda', 'sharp'],
         },
         environment: {
           SOCIAL_SCREENSHOT_URL: quotesSite.url,
         },
-        layers: [process.env.CHROME_LAYER_ARN],
+        layers: [process.env.CHROME_LAYER_ARN, process.env.SHARP_LAYER_ARN],
         // ~30s
         timeout: '1 minute',
       },

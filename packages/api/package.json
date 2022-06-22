@@ -19,7 +19,8 @@
     "node-fetch": "^2.6.7",
     "object-hash": "^3.0.0",
     "puppeteer-core": "14.3.0",
-    "semver": "^7.3.7"
+    "semver": "^7.3.7",
+    "sharp": "^0.30.7"
   },
   "devDependencies": {
     "puppeteer": "14.3.0"

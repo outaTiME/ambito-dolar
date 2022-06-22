@@ -1,6 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import chrome from '@sparticuz/chrome-aws-lambda';
 import { IgApiClient } from 'instagram-private-api';
+import sharp from 'sharp';
 
 import Shared from '../libs/shared';
 
@@ -19,9 +20,7 @@ const generateScreenshot = async (type, title) => {
   const page = await browser.newPage();
   await page.setViewport({
     width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
-    // height: AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
-    // TODO: leave until v6 release
-    height: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
+    height: AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
     deviceScaleFactor: 2,
   });
   await page.emulateTimezone(AmbitoDolar.TIMEZONE);
@@ -44,26 +43,45 @@ const generateScreenshot = async (type, title) => {
     type: image_type,
   });
   await browser.close();
-  const duration = (Date.now() - start_time) / 1000;
+  // resize according to IG (preserve aspect from core)
+  const { data: sharp_file, info: sharp_file_info } = await sharp(file)
+    .resize({
+      width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
+      height: AmbitoDolar.SOCIAL_IMAGE_HEIGHT,
+    })
+    .toBuffer({ resolveWithObject: true });
+  const { data: sharp_story_file, info: sharp_story_file_info } = await sharp(
+    story_file
+  )
+    .resize({
+      width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
+      height: AmbitoDolar.SOCIAL_STORY_IMAGE_HEIGHT,
+    })
+    .toBuffer({ resolveWithObject: true });
   // image hosting service
-  const target_url = await Shared.storeImgurFile(file.toString('base64'));
+  const target_url = await Shared.storeImgurFile(sharp_file.toString('base64'));
   // s3
   /* const key = `rate-images/${AmbitoDolar.getTimezoneDate().format()}-${type}`;
   const { Location: target_url } = await Shared.storePublicFileObject(
     key,
     file
   ); */
+  const duration = (Date.now() - start_time) / 1000;
   console.info(
     'Screenshot completed',
     JSON.stringify({
       screenshot_url,
+      image_info: sharp_file_info,
+      story_image_info: sharp_story_file_info,
       target_url,
       duration,
     })
   );
   return {
-    file,
-    story_file,
+    // file,
+    sharp_file,
+    // story_file,
+    sharp_story_file,
     target_url,
   };
 };
@@ -175,11 +193,13 @@ export async function handler(event) {
   if (type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
     try {
       const {
-        file,
-        story_file,
+        // file,
+        sharp_file,
+        // story_file,
+        sharp_story_file,
         target_url: image_url,
       } = await generateScreenshot(type, title);
-      promises.push(publishToInstagram(file, story_file, caption));
+      promises.push(publishToInstagram(sharp_file, sharp_story_file, caption));
       if (ig_only !== true) {
         promises.push(
           Shared.triggerSendSocialNotificationsEvent(caption, image_url)
