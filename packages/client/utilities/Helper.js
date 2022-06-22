@@ -248,24 +248,12 @@ export default {
   getNotificationSettings,
   getNotificationSettingsSelector,
   getAvailableRateTypes() {
-<<<<<<< HEAD
     const availableRateTypes = AmbitoDolar.getAvailableRateTypes();
     // TODO: leave until v6 release
     if (Platform.OS === 'web') {
       return _.without(availableRateTypes, AmbitoDolar.CCB_TYPE);
     }
     return availableRateTypes;
-=======
-    return [
-      AmbitoDolar.OFFICIAL_TYPE,
-      AmbitoDolar.TOURIST_TYPE,
-      AmbitoDolar.INFORMAL_TYPE,
-      AmbitoDolar.CCL_TYPE,
-      AmbitoDolar.MEP_TYPE,
-      AmbitoDolar.WHOLESALER_TYPE,
-      // AmbitoDolar.CCB_TYPE,
-    ];
->>>>>>> 818c30702838d4522d13ba46edfb9edc8cfb3859
   },
   getAvailableRates(rates) {
     return rates && _.pick(rates, this.getAvailableRateTypes());

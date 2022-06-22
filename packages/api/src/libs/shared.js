@@ -346,11 +346,7 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
   return Promise.all([
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
     storePublicJsonObject(
-<<<<<<< HEAD
       HISTORICAL_RATES_OBJECT_KEY,
-=======
-      HISTORICAL_RATES_V5_OBJECT_KEY,
->>>>>>> 818c30702838d4522d13ba46edfb9edc8cfb3859
       _.omit(base_rates, [AmbitoDolar.CCB_TYPE])
     ),
     storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_rates),
