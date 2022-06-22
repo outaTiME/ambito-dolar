@@ -11,7 +11,7 @@
     "eas-build-pre-install": "echo $GOOGLE_SERVICES_BASE64 | base64 --decode > ./google-services.json"
   },
   "dependencies": {
-    "@ambito-dolar/core": "^1.2.2",
+    "@ambito-dolar/core": "^2.2.0",
     "@bacons/expo-background-color": "^1.0.2",
     "@config-plugins/react-native-quick-actions": "^2.0.0",
     "@expo/react-native-action-sheet": "^3.13.0",
@@ -90,5 +90,5 @@
     "@babel/core": "^7.18.5",
     "@expo/webpack-config": "^0.16.24"
   },
-  "version": "6.0.0-beta.6"
+  "version": "6.0.0-beta.9"
 }

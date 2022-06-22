@@ -3,7 +3,7 @@
   "private": true,
   "version": "2.6.0",
   "dependencies": {
-    "@ambito-dolar/core": "^1.2.2",
+    "@ambito-dolar/core": "^2.2.0",
     "@aws-sdk/client-dynamodb": "^3.113.0",
     "@aws-sdk/client-s3": "^3.113.0",
     "@aws-sdk/client-sns": "^3.112.0",

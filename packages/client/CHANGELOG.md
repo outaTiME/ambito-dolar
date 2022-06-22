@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-beta.9](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.8...@ambito-dolar/client@6.0.0-beta.9) (2022-06-09)
+
+
+### Features
+
+* future rate type removed ([d3c388d](https://github.com/outaTiME/ambito-dolar/commit/d3c388df9301c02122b750728b488009c70902a0))
+
+
+
+
+
+# [6.0.0-beta.8](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.7...@ambito-dolar/client@6.0.0-beta.8) (2022-06-07)
+
+**Note:** Version bump only for package @ambito-dolar/client
+
+
+
+
+
+# [6.0.0-beta.7](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.6...@ambito-dolar/client@6.0.0-beta.7) (2022-06-05)
+
+**Note:** Version bump only for package @ambito-dolar/client
+
+
+
+
+
 # [6.0.0-beta.6](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.5...@ambito-dolar/client@6.0.0-beta.6) (2022-03-24)
 
 

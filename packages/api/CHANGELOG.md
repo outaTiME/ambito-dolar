@@ -3,6 +3,80 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.5.0...@ambito-dolar/api@2.6.0) (2022-06-09)
+
+
+### Features
+
+* future rate type removed ([d3c388d](https://github.com/outaTiME/ambito-dolar/commit/d3c388df9301c02122b750728b488009c70902a0))
+* update notification style for beta clients ([c5e5c34](https://github.com/outaTiME/ambito-dolar/commit/c5e5c3437bbb49227d7cf3332073a54a931a157a))
+
+
+
+
+
+# [2.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.4.0...@ambito-dolar/api@2.5.0) (2022-06-07)
+
+
+### Features
+
+* new notification style for beta clients ([402045e](https://github.com/outaTiME/ambito-dolar/commit/402045e3d32d09ee73678d1c1f879c07c147d591))
+
+
+
+
+
+# [2.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.3.0...@ambito-dolar/api@2.4.0) (2022-06-05)
+
+
+### Bug Fixes
+
+* force boolean values in process message ([5c02537](https://github.com/outaTiME/ambito-dolar/commit/5c0253703ce98b0f68926bb44c240e21537fa6de))
+* improve use of getNumber for process ([4d1a89e](https://github.com/outaTiME/ambito-dolar/commit/4d1a89eabcf4f06037dd9c528be706255203572e))
+* update timeout for process ([75586a8](https://github.com/outaTiME/ambito-dolar/commit/75586a8bd42d49d4da36cadcefcca340b89d1c3c))
+
+
+### Features
+
+* update process to get multiple crypto rates in a single call ([5b1ae26](https://github.com/outaTiME/ambito-dolar/commit/5b1ae26387b6367f74f9d2061e93b5669f8fc72e))
+* update variation threshold for non-realtime notifications ([b2cbe67](https://github.com/outaTiME/ambito-dolar/commit/b2cbe6779c6a13747abeca82920790e83bf709d2))
+
+
+### Performance Improvements
+
+* add duration traces for the process ([3c3bcda](https://github.com/outaTiME/ambito-dolar/commit/3c3bcda6203a09b09bf248d74f004f41b5d51329))
+
+
+
+
+
+# [2.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.2.0...@ambito-dolar/api@2.3.0) (2022-05-27)
+
+
+### Bug Fixes
+
+* exclude zero values from processing ([8d4e3a2](https://github.com/outaTiME/ambito-dolar/commit/8d4e3a2a70b793731b56e2387c68ed3e8daab5b9))
+
+
+### Features
+
+* new endpoint to update rates ([b7dc070](https://github.com/outaTiME/ambito-dolar/commit/b7dc070b3b7a621178a2a79bd12e73a8d1857239))
+
+
+
+
+
+# [2.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.1.1...@ambito-dolar/api@2.2.0) (2022-05-19)
+
+
+### Features
+
+* add new optimized attributes in firebase ([e203014](https://github.com/outaTiME/ambito-dolar/commit/e2030142064597b62c989b35c987ad49f7434c7a))
+
+
+
+
+
 ## [2.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.1.0...@ambito-dolar/api@2.1.1) (2022-03-29)
 
 
