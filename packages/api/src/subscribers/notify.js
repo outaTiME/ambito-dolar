@@ -15,15 +15,6 @@ const getChangeMessage = (rate, app_version) => {
   const body = [];
   const value = rate[1];
   if (app_version && Shared.isSemverGte(app_version, '6.0.0')) {
-    /* if (Array.isArray(value)) {
-      body.push(
-        `${AmbitoDolar.formatRateCurrency(
-          value[0]
-        )} - ${AmbitoDolar.formatRateCurrency(value[1])}`
-      );
-    } else {
-      body.push(`${AmbitoDolar.formatRateCurrency(value)}`);
-    } */
     const value = AmbitoDolar.getRateValue(rate);
     body.push(`${AmbitoDolar.formatRateCurrency(value)}`);
     body.push(`${AmbitoDolar.getRateChange(rate)}`);
@@ -216,8 +207,7 @@ const notify = async (
         // exclude when installation_id
         if (social === true) {
           const social_rates = _.omit(rates, [
-            // TODO: leave empty on next release
-            AmbitoDolar.CCB_TYPE,
+            // some rate to exclude ???
           ]);
           await Shared.triggerSocialNotifyEvent({
             type,
