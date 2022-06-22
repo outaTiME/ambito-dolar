@@ -30,9 +30,10 @@ const generateScreenshot = async (type, title) => {
   await page.goto(screenshot_url, { waitUntil: 'networkidle0' });
   // https://pptr.dev/#?product=Puppeteer&version=v5.2.1&show=api-pageselector
   // FIXME: throw exception when invalid page contents using page.$$('svg')
-  const image_type = 'jpeg';
+  // FIXME: update image type to png ??? or leave default ???
+  // const image_type = 'jpeg';
   const file = await page.screenshot({
-    type: image_type,
+    // type: image_type,
   });
   await page.setViewport({
     width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
@@ -40,7 +41,7 @@ const generateScreenshot = async (type, title) => {
     deviceScaleFactor: 2,
   });
   const story_file = await page.screenshot({
-    type: image_type,
+    // type: image_type,
   });
   await browser.close();
   // resize according to IG (preserve aspect from core)
