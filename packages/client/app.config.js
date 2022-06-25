@@ -4,12 +4,12 @@ const version = '6.0.0';
 const buildNumber = 66;
 
 const LIGHT_SPLASH = {
-  image: './assets/splash-dark-content.png',
+  image: './assets/splash-light.png',
   backgroundColor: '#FFFFFF',
 };
 
 const DARK_SPLASH = {
-  image: './assets/splash-soft-white-content.png',
+  image: './assets/splash-dark.png',
   backgroundColor: '#000000',
 };
 
