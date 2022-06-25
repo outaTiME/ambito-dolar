@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 const version = '6.0.0';
-const buildNumber = 66;
+const buildNumber = 70;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -103,6 +103,7 @@ export default {
         'com.hammerandchisel.discord',
         'slack',
         'github',
+        'itms-apps',
       ],
     },
     ...SHARED_SPLASH,
