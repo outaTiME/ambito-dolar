@@ -57,10 +57,13 @@ const BackButton = ({ navigation }) => (
   </MaterialHeaderButtons>
 );
 
+// for market capture purposes
+const BLUR_EFFECT_ON_NAVIGATION_BARS = true;
+
 const NavigatorBackgroundView = ({ style }) => {
   const { theme } = Helper.useTheme();
   const { colors } = useTheme();
-  if (Platform.OS === 'android') {
+  if (!BLUR_EFFECT_ON_NAVIGATION_BARS || Platform.OS === 'android') {
     return (
       <View
         style={[
@@ -101,7 +104,9 @@ const useNavigatorScreenOptions = () => {
     },
     ...Platform.select({
       ios: {
-        headerBlurEffect: theme,
+        ...(!BLUR_EFFECT_ON_NAVIGATION_BARS
+          ? { headerBackground }
+          : { headerBlurEffect: theme }),
         headerTransparent: true,
       },
       android: {
@@ -433,9 +438,6 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       <RootStack.Navigator
         screenOptions={{
           headerShown: false,
-          // https://github.com/expo/expo/issues/17700#issuecomment-1154686011
-          // presentation: 'fullScreenModal',
-          // orientation: isPhoneDevice ? 'portrait_up' : 'landscape',
         }}
       >
         <RootStack.Group>
