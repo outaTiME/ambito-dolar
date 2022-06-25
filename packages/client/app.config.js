@@ -72,7 +72,7 @@ export default {
     ],
   ],
   splash: LIGHT_SPLASH,
-  jsEngine: 'hermes',
+  // jsEngine: 'hermes',
   ios: {
     bundleIdentifier: 'im.outa.AmbitoDolar',
     buildNumber: buildNumber.toString(),
