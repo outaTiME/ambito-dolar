@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@2.2.0...@ambito-dolar/core@3.0.0) (2022-06-27)
+
+
+### Features
+
+* new sizes for social images ([d8af68c](https://github.com/outaTiME/ambito-dolar/commit/d8af68c0cf593af525cdc6509006f76ed221b1ed))
+* update lerna publish config ([8f128ed](https://github.com/outaTiME/ambito-dolar/commit/8f128edcb2f478ffd07476a80220cf10ad360d22))
+* upgrade to SST v1.x ([2191ab0](https://github.com/outaTiME/ambito-dolar/commit/2191ab07a4a1c2288edbde9d1ac0ad469dd33b49))
+
+
+### BREAKING CHANGES
+
+* remove public access to the core
+* all services now run on aws
+
+
+
+
+
 # [2.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@2.1.0...@ambito-dolar/core@2.2.0) (2022-06-09)
 
 

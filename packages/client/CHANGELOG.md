@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.9...@ambito-dolar/client@6.0.0) (2022-06-27)
+
+
+### Features
+
+* add a flag for the blur effect on navbars ([5459e35](https://github.com/outaTiME/ambito-dolar/commit/5459e35fa64ba61dad0dfbe280b66e1016a8e8da))
+* add CCB to social notifications ([f4eceec](https://github.com/outaTiME/ambito-dolar/commit/f4eceecd752ef62ad082823a607036b41d8c3b5b))
+* upgrade to SDK45 ([c8c7de6](https://github.com/outaTiME/ambito-dolar/commit/c8c7de6a83534bd6df404c13fc10b9e27284ed82))
+
+
+
+
+
 # [6.0.0-beta.9](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.8...@ambito-dolar/client@6.0.0-beta.9) (2022-06-09)
 
 

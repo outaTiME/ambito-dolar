@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.6.0...@ambito-dolar/api@3.0.0) (2022-06-27)
+
+
+### Bug Fixes
+
+* handle new change message format for social ([30df0f5](https://github.com/outaTiME/ambito-dolar/commit/30df0f5858ee4713db3295ee75f8584bfc220592))
+* rollback to jpeg format which required by IG ([172a73a](https://github.com/outaTiME/ambito-dolar/commit/172a73a7b09142c18b3796fbb13acd06255343d1))
+
+
+### Features
+
+* add CCB to social notifications ([f4eceec](https://github.com/outaTiME/ambito-dolar/commit/f4eceecd752ef62ad082823a607036b41d8c3b5b))
+* new format (PNG) in social images to improve quality ([cb0d320](https://github.com/outaTiME/ambito-dolar/commit/cb0d320cbb6e9e0cfd511f3460824fe918cc2393))
+* new sizes for social images ([d8af68c](https://github.com/outaTiME/ambito-dolar/commit/d8af68c0cf593af525cdc6509006f76ed221b1ed))
+* upgrade to SST v1.x ([2191ab0](https://github.com/outaTiME/ambito-dolar/commit/2191ab07a4a1c2288edbde9d1ac0ad469dd33b49))
+
+
+### BREAKING CHANGES
+
+* all services now run on aws
+
+
+
+
+
 # [2.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.5.0...@ambito-dolar/api@2.6.0) (2022-06-09)
 
 

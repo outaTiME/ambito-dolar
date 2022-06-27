@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.3.2...@ambito-dolar/website@1.4.0) (2022-06-27)
+
+
+### Bug Fixes
+
+* remove comment from slack icon ([992bf67](https://github.com/outaTiME/ambito-dolar/commit/992bf67039254eb4f67643c84b8f84570e0972b4))
+
+
+### Features
+
+* add slack icon ([6731a1d](https://github.com/outaTiME/ambito-dolar/commit/6731a1d7e9fce333498c8458bbae48fe9d37e13b))
+* update images for landing ([b13c059](https://github.com/outaTiME/ambito-dolar/commit/b13c0592efe6d45d579877389ef2e3236279d01d))
+
+
+
+
+
 ## [1.3.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.3.1...@ambito-dolar/website@1.3.2) (2022-03-24)
 
 **Note:** Version bump only for package @ambito-dolar/website
