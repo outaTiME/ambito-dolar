@@ -11,7 +11,8 @@ import Shared, {
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
-const getChangeMessage = (rate, app_version) => {
+// app_version is empty on social
+const getChangeMessage = (rate, app_version = '6.0.0') => {
   const body = [];
   const value = rate[1];
   if (app_version && Shared.isSemverGte(app_version, '6.0.0')) {
