@@ -17,9 +17,9 @@
     }
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.0.2",
-    "@serverless-stack/cli": "1.2.30",
-    "@serverless-stack/resources": "1.2.30",
+    "@commitlint/cli": "^17.0.3",
+    "@serverless-stack/cli": "1.2.31",
+    "@serverless-stack/resources": "1.2.31",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
     "aws-cdk-lib": "2.24.0",
