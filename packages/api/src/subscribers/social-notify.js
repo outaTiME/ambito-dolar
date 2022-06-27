@@ -30,7 +30,7 @@ const generateScreenshot = async (type, title) => {
   await page.goto(screenshot_url, { waitUntil: 'networkidle0' });
   // https://pptr.dev/#?product=Puppeteer&version=v5.2.1&show=api-pageselector
   // FIXME: throw exception when invalid page contents using page.$$('svg')
-  // const image_type = 'jpeg';
+  // const image_type = 'png';
   const file = await page.screenshot({
     // type: image_type,
   });
@@ -49,6 +49,10 @@ const generateScreenshot = async (type, title) => {
       width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
       height: AmbitoDolar.SOCIAL_IMAGE_HEIGHT,
     })
+    // required by IG
+    .jpeg({
+      quality: 100,
+    })
     .toBuffer({ resolveWithObject: true });
   const { data: sharp_story_file, info: sharp_story_file_info } = await sharp(
     story_file
@@ -56,6 +60,10 @@ const generateScreenshot = async (type, title) => {
     .resize({
       width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
       height: AmbitoDolar.SOCIAL_STORY_IMAGE_HEIGHT,
+    })
+    // required by IG
+    .jpeg({
+      quality: 100,
     })
     .toBuffer({ resolveWithObject: true });
   // image hosting service
