@@ -1,7 +1,7 @@
 // import * as Application from 'expo-application';
 import Constants from 'expo-constants';
 //import * as Updates from 'expo-updates';
-import { Dimensions, PixelRatio, Platform } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import { human, iOSColors } from 'react-native-typography';
 
 const PADDING = 16;
