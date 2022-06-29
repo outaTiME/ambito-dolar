@@ -49,9 +49,10 @@ const generateScreenshot = async (type, title) => {
       width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
       height: AmbitoDolar.SOCIAL_IMAGE_HEIGHT,
     })
-    // required by IG
+    // jpeg format required by instagram-private-api
     .jpeg({
       quality: 100,
+      chromaSubsampling: '4:4:4',
     })
     .toBuffer({ resolveWithObject: true });
   const { data: sharp_story_file, info: sharp_story_file_info } = await sharp(
@@ -61,9 +62,10 @@ const generateScreenshot = async (type, title) => {
       width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
       height: AmbitoDolar.SOCIAL_STORY_IMAGE_HEIGHT,
     })
-    // required by IG
+    // jpeg format required by instagram-private-api
     .jpeg({
       quality: 100,
+      chromaSubsampling: '4:4:4',
     })
     .toBuffer({ resolveWithObject: true });
   // image hosting service
@@ -87,9 +89,9 @@ const generateScreenshot = async (type, title) => {
   );
   return {
     // file,
-    sharp_file,
+    file: sharp_file,
     // story_file,
-    sharp_story_file,
+    story_file: sharp_story_file,
     target_url,
   };
 };
@@ -201,13 +203,11 @@ export async function handler(event) {
   if (type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
     try {
       const {
-        // file,
-        sharp_file,
-        // story_file,
-        sharp_story_file,
+        file,
+        story_file,
         target_url: image_url,
       } = await generateScreenshot(type, title);
-      promises.push(publishToInstagram(sharp_file, sharp_story_file, caption));
+      promises.push(publishToInstagram(file, story_file, caption));
       if (ig_only !== true) {
         promises.push(
           Shared.triggerSendSocialNotificationsEvent(caption, image_url)
