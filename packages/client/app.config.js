@@ -123,6 +123,7 @@ export default {
     ...SHARED_SPLASH,
     allowBackup: false,
     softwareKeyboardLayoutMode: 'pan',
+    jsEngine: 'hermes',
   },
   ...(process.env.SENTRY_HOOK_CONFIG_JSON && {
     hooks: {
