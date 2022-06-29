@@ -50,9 +50,23 @@ TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
 TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
+// https://github.com/expo/expo/issues/17746#issuecomment-1168328002
+SplashScreen.preventAutoHideAsync();
+
+// force landscape on android tablets
+Platform.OS === 'android' &&
+  Device.getDeviceTypeAsync()
+    .then((deviceType) =>
+      ScreenOrientation.lockAsync(
+        deviceType === Device.DeviceType.PHONE
+          ? ScreenOrientation.OrientationLock.PORTRAIT_UP
+          : ScreenOrientation.OrientationLock.LANDSCAPE
+      )
+    )
+    .catch(console.warn);
+
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
-  // const colorScheme = 'dark';
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
   const statusBarStyle = colorScheme
     ? Helper.getInvertedTheme(colorScheme)
@@ -76,18 +90,6 @@ const ThemedApp = () => {
   );
 };
 
-// force landscape on android tablets
-Platform.OS === 'android' &&
-  Device.getDeviceTypeAsync()
-    .then((deviceType) =>
-      ScreenOrientation.lockAsync(
-        deviceType === Device.DeviceType.PHONE
-          ? ScreenOrientation.OrientationLock.PORTRAIT_UP
-          : ScreenOrientation.OrientationLock.LANDSCAPE
-      )
-    )
-    .catch(console.warn);
-
 export default function App() {
   const [assetsLoaded] = useAssets([
     require('./assets/about-icon-borderless.png'),
@@ -106,8 +108,6 @@ export default function App() {
   React.useEffect(() => {
     async function prepare() {
       try {
-        // Keep the splash screen visible while we fetch resources
-        await SplashScreen.preventAutoHideAsync();
         // additional async stuff here
       } catch (e) {
         console.warn(e);
@@ -119,11 +119,6 @@ export default function App() {
   }, []);
   const onLayoutRootView = React.useCallback(async () => {
     if (!appIsLoading) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
       await SplashScreen.hideAsync();
     }
   }, [appIsLoading]);
