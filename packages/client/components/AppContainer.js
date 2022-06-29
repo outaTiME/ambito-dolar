@@ -336,6 +336,7 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
     () => ({
       dark: theme === 'dark',
       colors: {
+        // background: Settings.getBackgroundColor(theme, true),
         card: Settings.getContentColor(theme),
         border: Settings.getSeparatorColor(theme),
       },
@@ -577,19 +578,23 @@ const withUserActivity = (Component) => (props) => {
           if (Device.isDevice) {
             let finalSettings = await Notifications.getPermissionsAsync();
             if (!hasNotificationPermissions(finalSettings)) {
-              finalSettings = await Notifications.requestPermissionsAsync({
-                ios: {
-                  allowAlert: true,
-                  // allowBadge: false
-                  allowSound: true,
-                  allowDisplayInCarPlay: true,
-                  // allowCriticalAlerts: true,
-                  // https://forums.expo.io/t/handling-provideappnotificationsettings-on-sdk38/39565
-                  // provideAppNotificationSettings: true,
-                  // allowProvisional: true,
-                  allowAnnouncements: true,
-                },
-              });
+              try {
+                finalSettings = await Notifications.requestPermissionsAsync({
+                  ios: {
+                    allowAlert: true,
+                    // allowBadge: false
+                    allowSound: true,
+                    allowDisplayInCarPlay: true,
+                    // allowCriticalAlerts: true,
+                    // https://forums.expo.io/t/handling-provideappnotificationsettings-on-sdk38/39565
+                    // provideAppNotificationSettings: true,
+                    // allowProvisional: true,
+                    allowAnnouncements: true,
+                  },
+                });
+              } catch (e) {
+                console.warn(e);
+              }
             }
             allowNotifications = hasNotificationPermissions(finalSettings);
             // update shared state
