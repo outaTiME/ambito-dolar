@@ -1,5 +1,4 @@
 import 'expo-dev-client';
-import { BackgroundColor } from '@bacons/expo-background-color';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
   MaterialIcons,
@@ -13,6 +12,7 @@ import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 import React from 'react';
 import { Text, TextInput, LogBox, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -59,10 +59,12 @@ const ThemedApp = () => {
     : 'auto';
   // same as AppContainer
   const backgroundColor = Settings.getBackgroundColor(colorScheme, true);
+  React.useEffect(() => {
+    SystemUI.setBackgroundColorAsync(backgroundColor);
+  }, [backgroundColor]);
   return (
     <ThemeProvider theme={theme}>
       <StatusBar style={statusBarStyle} animated />
-      <BackgroundColor color={backgroundColor} />
       <RootSiblingParent>
         <ActionSheetProvider>
           <SafeAreaProvider>
