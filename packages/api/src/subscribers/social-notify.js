@@ -43,56 +43,65 @@ const generateScreenshot = async (type, title) => {
     // type: image_type,
   });
   await browser.close();
-  // resize according to IG (preserve aspect from core)
+  // resize images in memory
   const { data: sharp_file, info: sharp_file_info } = await sharp(file)
+    // resize according to IG (preserve aspect from core)
     .resize({
       width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
       height: AmbitoDolar.SOCIAL_IMAGE_HEIGHT,
     })
     // jpeg format required by instagram-private-api
-    .jpeg({
-      quality: 100,
-      chromaSubsampling: '4:4:4',
+    .png({
+      // pass
     })
     .toBuffer({ resolveWithObject: true });
-  const { data: sharp_story_file, info: sharp_story_file_info } = await sharp(
-    story_file
-  )
-    .resize({
-      width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
-      height: AmbitoDolar.SOCIAL_STORY_IMAGE_HEIGHT,
-    })
-    // jpeg format required by instagram-private-api
-    .jpeg({
-      quality: 100,
-      chromaSubsampling: '4:4:4',
-    })
-    .toBuffer({ resolveWithObject: true });
-  // image hosting service
-  const target_url = await Shared.storeImgurFile(sharp_file.toString('base64'));
-  // s3
-  /* const key = `rate-images/${AmbitoDolar.getTimezoneDate().format()}-${type}`;
-  const { Location: target_url } = await Shared.storePublicFileObject(
-    key,
-    file
-  ); */
+  // parellelize image processing
+  const [
+    target_url,
+    { data: ig_sharp_file, info: ig_sharp_file_info },
+    { data: ig_sharp_story_file, info: ig_sharp_story_file_info },
+  ] = await Promise.all([
+    // image hosting service
+    Shared.storeImgurFile(sharp_file.toString('base64')),
+    // ig feed image
+    sharp(sharp_file)
+      // jpeg format required by instagram-private-api
+      .jpeg({
+        quality: 100,
+        chromaSubsampling: '4:4:4',
+      })
+      .toBuffer({ resolveWithObject: true }),
+    // ig story image
+    sharp(story_file)
+      // resize according to IG (preserve aspect from core)
+      .resize({
+        width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
+        height: AmbitoDolar.SOCIAL_STORY_IMAGE_HEIGHT,
+      })
+      // jpeg format required by instagram-private-api
+      .jpeg({
+        quality: 100,
+        chromaSubsampling: '4:4:4',
+      })
+      .toBuffer({ resolveWithObject: true }),
+  ]);
   const duration = (Date.now() - start_time) / 1000;
   console.info(
     'Screenshot completed',
     JSON.stringify({
       screenshot_url,
       image_info: sharp_file_info,
-      story_image_info: sharp_story_file_info,
       target_url,
+      ig_image_info: ig_sharp_file_info,
+      ig_story_image_info: ig_sharp_story_file_info,
       duration,
     })
   );
   return {
-    // file,
     file: sharp_file,
-    // story_file,
-    story_file: sharp_story_file,
     target_url,
+    ig_file: ig_sharp_file,
+    ig_story_file: ig_sharp_story_file,
   };
 };
 
@@ -203,9 +212,9 @@ export async function handler(event) {
   if (type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
     try {
       const {
-        file,
-        story_file,
         target_url: image_url,
+        ig_file: file,
+        ig_story_file: story_file,
       } = await generateScreenshot(type, title);
       promises.push(publishToInstagram(file, story_file, caption));
       if (ig_only !== true) {
