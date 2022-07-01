@@ -163,9 +163,7 @@ export function Stack({ stack }) {
   });
   // api endpoints
   const api = new sst.Api(stack, 'Api', {
-    accessLog: {
-      retention: 'one_week',
-    },
+    accessLog: false,
     authorizers: {
       basicAuthorizer: {
         function: new sst.Function(stack, 'Authorizer', {
@@ -226,11 +224,10 @@ export function Stack({ stack }) {
     buildOutput: 'public',
     errorPage: 'redirect_to_index_page',
     path: 'packages/website',
+    // waitForInvalidation: IS_PRODUCTION,
   });
   const legacyApi = new sst.Api(stack, 'LegacyApi', {
-    accessLog: {
-      retention: 'one_week',
-    },
+    accessLog: false,
     ...(IS_PRODUCTION && {
       customDomain: {
         isExternalDomain: true,

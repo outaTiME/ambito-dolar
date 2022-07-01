@@ -30,7 +30,7 @@ export default function main(app) {
     srcPath: 'packages/api',
     tracing: 'disabled',
     // https://docs.serverless-stack.com/constructs/Function#setting-additional-props
-    logRetention: logs.RetentionDays.ONE_WEEK,
+    logRetention: logs.RetentionDays.ONE_DAY,
     // https://github.com/aws/aws-cdk/issues/8257
     /* logRetentionRetryOptions: {
       base: Duration.millis(500),
