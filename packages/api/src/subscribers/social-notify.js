@@ -30,9 +30,8 @@ const generateScreenshot = async (type, title) => {
   await page.goto(screenshot_url, { waitUntil: 'networkidle0' });
   // https://pptr.dev/#?product=Puppeteer&version=v5.2.1&show=api-pageselector
   // FIXME: throw exception when invalid page contents using page.$$('svg')
-  // const image_type = 'png';
   const file = await page.screenshot({
-    // type: image_type,
+    // pass,
   });
   await page.setViewport({
     width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
@@ -40,27 +39,21 @@ const generateScreenshot = async (type, title) => {
     deviceScaleFactor: 2,
   });
   const story_file = await page.screenshot({
-    // type: image_type,
+    // pass,
   });
   await browser.close();
   // resize images in memory
-  const { data: sharp_file, info: sharp_file_info } = await sharp(file)
-    // resize according to IG (preserve aspect from core)
+  const sharp_file = await sharp(file)
     .resize({
       width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
       height: AmbitoDolar.SOCIAL_IMAGE_HEIGHT,
     })
-    // jpeg format required by instagram-private-api
     .png({
       // pass
     })
-    .toBuffer({ resolveWithObject: true });
+    .toBuffer();
   // parellelize image processing
-  const [
-    target_url,
-    { data: ig_sharp_file, info: ig_sharp_file_info },
-    { data: ig_sharp_story_file, info: ig_sharp_story_file_info },
-  ] = await Promise.all([
+  const [target_url, ig_sharp_file, ig_sharp_story_file] = await Promise.all([
     // image hosting service
     Shared.storeImgurFile(sharp_file.toString('base64')),
     // ig feed image
@@ -70,10 +63,9 @@ const generateScreenshot = async (type, title) => {
         quality: 100,
         chromaSubsampling: '4:4:4',
       })
-      .toBuffer({ resolveWithObject: true }),
+      .toBuffer(),
     // ig story image
     sharp(story_file)
-      // resize according to IG (preserve aspect from core)
       .resize({
         width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
         height: AmbitoDolar.SOCIAL_STORY_IMAGE_HEIGHT,
@@ -83,17 +75,14 @@ const generateScreenshot = async (type, title) => {
         quality: 100,
         chromaSubsampling: '4:4:4',
       })
-      .toBuffer({ resolveWithObject: true }),
+      .toBuffer(),
   ]);
   const duration = (Date.now() - start_time) / 1000;
   console.info(
     'Screenshot completed',
     JSON.stringify({
       screenshot_url,
-      image_info: sharp_file_info,
       target_url,
-      ig_image_info: ig_sharp_file_info,
-      ig_story_image_info: ig_sharp_story_file_info,
       duration,
     })
   );
