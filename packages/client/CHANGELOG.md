@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0...@ambito-dolar/client@6.0.1) (2022-07-01)
+
+
+### Bug Fixes
+
+* enable hermes engine on android ([36acec5](https://github.com/outaTiME/ambito-dolar/commit/36acec54f99fbead30f25d90794def8775c2fe1b))
+* handle errors in permissions for notifications on certain devices ([1cb3148](https://github.com/outaTiME/ambito-dolar/commit/1cb314894a27a4b3b0e0739bed99311607f5b066))
+* use plain expo-system-ui to update root view background color ([c767bf4](https://github.com/outaTiME/ambito-dolar/commit/c767bf423632665a25d3706add0655285f7c8105))
+
+
+
+
+
 # [6.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0-beta.9...@ambito-dolar/client@6.0.0) (2022-06-27)
 
 

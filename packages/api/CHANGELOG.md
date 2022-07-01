@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.0.0...@ambito-dolar/api@3.0.1) (2022-07-01)
+
+
+### Bug Fixes
+
+* update jpeg quality for social images ([22ec63f](https://github.com/outaTiME/ambito-dolar/commit/22ec63fae95007def1109f131e5ca45abd94acef))
+* use jpeg for ig and leave png for notifications to avoid loss ([4cf2e98](https://github.com/outaTiME/ambito-dolar/commit/4cf2e986c154da2c20c6b1a25a9157864b8fa086))
+
+
+
+
+
 # [3.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@2.6.0...@ambito-dolar/api@3.0.0) (2022-06-27)
 
 
