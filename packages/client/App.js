@@ -31,14 +31,13 @@ import Sentry from './utilities/Sentry';
 
 if (__DEV__) {
   LogBox.ignoreLogs([
-    // 'Setting a timer for a long period of time',
     'Amplitude client has not been initialized',
     'Constants.installationId has been deprecated',
     'ViewPropTypes will be removed from React Native',
     "Seems like you're using an old API with gesture components",
   ]);
 } else {
-  Sentry.configure(Settings.SENTRY_URI);
+  Sentry.configure(Settings.SENTRY_DSN);
   Amplitude.initializeAsync(Settings.AMPLITUDE_KEY).catch(console.warn);
 }
 
@@ -50,8 +49,7 @@ TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
 TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
-// https://github.com/expo/expo/issues/17746#issuecomment-1168328002
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 // force landscape on android tablets
 Platform.OS === 'android' &&
@@ -74,7 +72,7 @@ const ThemedApp = () => {
   // same as AppContainer
   const backgroundColor = Settings.getBackgroundColor(colorScheme, true);
   React.useEffect(() => {
-    SystemUI.setBackgroundColorAsync(backgroundColor);
+    SystemUI.setBackgroundColorAsync(backgroundColor).catch(console.warn);
   }, [backgroundColor]);
   return (
     <ThemeProvider theme={theme}>
@@ -119,7 +117,7 @@ export default function App() {
   }, []);
   const onLayoutRootView = React.useCallback(async () => {
     if (!appIsLoading) {
-      await SplashScreen.hideAsync();
+      await SplashScreen.hideAsync().catch(console.warn);
     }
   }, [appIsLoading]);
   if (appIsLoading) {

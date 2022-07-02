@@ -41,7 +41,7 @@ export default {
     registerDeviceUri: process.env.REGISTER_DEVICE_URI,
     ratesUri: process.env.RATES_URI,
     historicalRatesUri: process.env.HISTORICAL_RATES_URI,
-    sentryUri: process.env.SENTRY_URI,
+    sentryDsn: process.env.SENTRY_DSN,
     amplitudeKey: process.env.AMPLITUDE_KEY,
     firebaseConfigJson: process.env.FIREBASE_CONFIG_JSON,
     experienceId: process.env.EXPERIENCE_ID,
