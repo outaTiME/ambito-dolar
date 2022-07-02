@@ -1,6 +1,6 @@
 import Shared from '../libs/shared';
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   const { type, installation_id, message } = event.queryStringParameters || {};
   try {
     const message_id = await Shared.triggerNotifyEvent({
@@ -16,4 +16,4 @@ export async function handler(event) {
       error: error.message,
     });
   }
-}
+});

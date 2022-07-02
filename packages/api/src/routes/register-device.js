@@ -9,7 +9,7 @@ const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 const MIN_CLIENT_VERSION = '3.0.0';
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   try {
     const { installation_id, app_version, push_token, notification_settings } =
       JSON.parse(event.body || '{}');
@@ -91,4 +91,4 @@ export async function handler(event) {
       error: error.message,
     });
   }
-}
+});

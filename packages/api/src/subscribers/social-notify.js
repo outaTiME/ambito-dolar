@@ -171,7 +171,7 @@ const publishToInstagram = async (file, story_file, caption) => {
   }
 };
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   const {
     type,
     title = AmbitoDolar.getNotificationTitle(type),
@@ -239,4 +239,4 @@ export async function handler(event) {
     } else {
       throw new Error('No data available');
     } */
-}
+});

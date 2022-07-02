@@ -1,4 +1,4 @@
-export async function handler(event) {
+export const handler = async (event) => {
   const isAuthorized = event?.headers?.authorization === process.env.SECRET_KEY;
   return {
     isAuthorized,
@@ -6,4 +6,4 @@ export async function handler(event) {
       // pass,
     },
   };
-}
+};

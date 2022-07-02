@@ -88,7 +88,7 @@ const check = async (items = [], readonly) => {
   };
 };
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   const { date_from, readonly } = JSON.parse(event.Records[0].Sns.Message);
   console.info(
     'Message received',
@@ -131,4 +131,4 @@ export async function handler(event) {
   const results = await check(tickets, readonly === true);
   console.info('Completed', JSON.stringify(results));
   return results;
-}
+});

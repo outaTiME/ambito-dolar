@@ -25,6 +25,7 @@ export default function main(app) {
       FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
       FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,
       FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,
+      SENTRY_DSN: process.env.SENTRY_DSN,
     },
     runtime: 'nodejs16.x',
     srcPath: 'packages/api',

@@ -2,7 +2,7 @@ import { boolean } from 'boolean';
 
 import Shared from '../libs/shared';
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   const { date_from, readonly } = event.queryStringParameters || {};
   try {
     const message_id = await Shared.triggerInvalidateReceiptsEvent({
@@ -17,4 +17,4 @@ export async function handler(event) {
       error: error.message,
     });
   }
-}
+});

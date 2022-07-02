@@ -2,7 +2,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 
 import Shared from '../libs/shared';
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   try {
     const base_rates = JSON.parse(event.body || '{}');
     if (!base_rates.rates) {
@@ -29,4 +29,4 @@ export async function handler(event) {
       error: error.message,
     });
   }
-}
+});

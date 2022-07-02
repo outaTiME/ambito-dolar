@@ -319,7 +319,7 @@ const notify = async (
   };
 };
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   const { type, installation_id, message, rates } = JSON.parse(
     event.Records[0].Sns.Message
   );
@@ -363,4 +363,4 @@ export async function handler(event) {
   );
   console.info('Completed', JSON.stringify(results));
   return results;
-}
+});

@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 import Shared from '../libs/shared';
 
-export async function handler() {
+export const handler = Shared.wrapHandler(async () => {
   try {
     const params = {
       TableName: process.env.DEVICES_TABLE_NAME,
@@ -25,4 +25,4 @@ export async function handler() {
       error: error.message,
     });
   }
-}
+});

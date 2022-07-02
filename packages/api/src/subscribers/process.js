@@ -317,7 +317,7 @@ const notify = (
 // in minutes
 const REALTIME_PROCESSING_INTERVAL = 15;
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   const { notify: trigger_notification, close: close_day } = JSON.parse(
     event.Records[0].Sns.Message
   );
@@ -423,4 +423,4 @@ export async function handler(event) {
   }
   console.info('Completed', JSON.stringify(new_rates));
   return new_rates;
-}
+});

@@ -29,7 +29,7 @@ const pruneDevice = async (installation_id) => {
   return ddbDocClient.send(new UpdateCommand(params));
 };
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   const { installation_id } = event.queryStringParameters || {};
   try {
     let filter_expression = attributes
@@ -63,4 +63,4 @@ export async function handler(event) {
       error: error.message,
     });
   }
-}
+});

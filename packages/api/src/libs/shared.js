@@ -6,9 +6,10 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
+import { CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations';
+import * as Sentry from '@sentry/serverless';
 import { parallelScan } from '@shelf/dynamodb-parallel-scan';
 import { Expo } from 'expo-server-sdk';
-// const FileType = require('file-type');
 import { JWT } from 'google-auth-library';
 import * as _ from 'lodash';
 import fetch from 'node-fetch';
@@ -557,6 +558,23 @@ const storeImgurFile = async (image) =>
     throw Error(response.statusText);
   });
 
+const wrapHandler = (handler) => {
+  if (!process.env.IS_LOCAL) {
+    Sentry.AWSLambda.init({
+      dsn: process.env.SENTRY_DSN,
+      // disable performance monitoring
+      // tracesSampleRate: 1.0,
+      integrations: [
+        new CaptureConsoleIntegration({
+          levels: ['warn', 'error'],
+        }),
+      ],
+    });
+    return Sentry.AWSLambda.wrapHandler(handler);
+  }
+  return handler;
+};
+
 export default {
   // fetchFirebaseData,
   putFirebaseData,
@@ -585,4 +603,5 @@ export default {
   triggerSocialNotifyEvent,
   triggerSendSocialNotificationsEvent,
   storeImgurFile,
+  wrapHandler,
 };

@@ -2,7 +2,7 @@ import { boolean } from 'boolean';
 
 import Shared from '../libs/shared';
 
-export async function handler(event) {
+export const handler = Shared.wrapHandler(async (event) => {
   const { type, title, caption, ig_only, generate_only } =
     event.queryStringParameters || {};
   try {
@@ -21,4 +21,4 @@ export async function handler(event) {
       error: error.message,
     });
   }
-}
+});

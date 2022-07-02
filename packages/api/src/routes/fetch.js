@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 import Shared from '../libs/shared';
 
-export async function handler() {
+export const handler = Shared.wrapHandler(async () => {
   try {
     const results = await Shared.getRates().then((data) => {
       if (!_.isEmpty(data)) {
@@ -16,4 +16,4 @@ export async function handler() {
       error: error.message,
     });
   }
-}
+});
