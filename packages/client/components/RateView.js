@@ -115,13 +115,13 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: Settings.SMALL_PADDING,
-        justifyContent: 'space-between',
       }}
     >
       <Text
         style={[
           fonts.subhead,
           {
+            flex: 1,
             color: Settings.getGrayColor(theme),
           },
         ]}
@@ -131,38 +131,27 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
       </Text>
       <View
         style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          marginLeft: Settings.SMALL_PADDING * 2,
-          overflow: 'hidden',
+          height: 15, // sames as change font height
+          width: 40,
+          marginHorizontal: Settings.SMALL_PADDING * 2,
         }}
       >
-        <View
-          style={{
-            height: 15, // sames as change font height
-            width: 50,
-            marginRight: Settings.SMALL_PADDING * 2,
-          }}
-        >
-          <MiniRateChartView {...{ stats, color }} />
-        </View>
-        <Text
-          style={[
-            fonts.subhead,
-            {
-              // flex: 1,
-              // width: 140,
-              textAlign: 'right',
-              color,
-            },
-          ]}
-          numberOfLines={1}
-        >
-          {change}
-        </Text>
+        <MiniRateChartView {...{ stats, color }} />
       </View>
+      <Text
+        style={[
+          fonts.subhead,
+          {
+            width: 140,
+            textAlign: 'right',
+            color,
+          },
+        ]}
+        ellipsizeMode="middle"
+        numberOfLines={1}
+      >
+        {change}
+      </Text>
     </View>
   );
 };
