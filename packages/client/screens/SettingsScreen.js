@@ -40,7 +40,7 @@ const SettingsScreen = ({ navigation }) => {
         }`,
         `${I18n.t('device')}: ${Device.modelName} (${Device.osVersion})`,
       ].join('\r\n'),
-    });
+    }).catch(console.warn);
   }, []);
   const onPressReview = React.useCallback(() => {
     Linking.openURL(Settings.APP_REVIEW_URI);
