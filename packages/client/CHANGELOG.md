@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.1...@ambito-dolar/client@6.0.2) (2022-07-04)
+
+
+### Bug Fixes
+
+* remove columning from chart to avoid ellipsis issues ([a201406](https://github.com/outaTiME/ambito-dolar/commit/a2014060ffce2cbb0d09ea0c864b995c0f0bee51))
+* rollback the columning for the chart and improved the ellipsis mode ([1901e0c](https://github.com/outaTiME/ambito-dolar/commit/1901e0c6ff1c3d6f33bfccef2fa980419b101fc0))
+* update device type for landscape orientation in android ([6f972e8](https://github.com/outaTiME/ambito-dolar/commit/6f972e894cd16b54e13c0471f9f2ea144b14112b))
+
+
+
+
+
 ## [6.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.0...@ambito-dolar/client@6.0.1) (2022-07-01)
 
 
