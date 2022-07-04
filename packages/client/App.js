@@ -56,9 +56,9 @@ Platform.OS === 'android' &&
   Device.getDeviceTypeAsync()
     .then((deviceType) =>
       ScreenOrientation.lockAsync(
-        deviceType === Device.DeviceType.PHONE
-          ? ScreenOrientation.OrientationLock.PORTRAIT_UP
-          : ScreenOrientation.OrientationLock.LANDSCAPE
+        deviceType === Device.DeviceType.TABLET
+          ? ScreenOrientation.OrientationLock.LANDSCAPE
+          : ScreenOrientation.OrientationLock.PORTRAIT_UP
       )
     )
     .catch(console.warn);
