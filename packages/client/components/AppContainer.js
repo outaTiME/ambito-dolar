@@ -677,7 +677,9 @@ const EnhancedAppNavigationContainer = compose(
   withUserActivity
 )(AppNavigationContainer);
 
-initializeApp(JSON.parse(Settings.FIREBASE_CONFIG_JSON));
+const firebaseApp =
+  Settings.FIREBASE_CONFIG_JSON &&
+  initializeApp(JSON.parse(Settings.FIREBASE_CONFIG_JSON));
 
 const AppContainer = () => {
   const { theme } = Helper.useTheme();
@@ -724,30 +726,40 @@ const AppContainer = () => {
   }, [updatedAt]);
   React.useEffect(() => {
     if (!isInitial) {
-      if (__DEV__) {
-        console.log('🚀 Connect to firebase');
-      }
-      const db = getDatabase();
-      return onValue(ref(db, 'u'), (snapshot) => {
-        // use rates file format
-        const updated_at = AmbitoDolar.getTimezoneDate(
-          snapshot.val() * 1000
-        ).format();
-        Sentry.addBreadcrumb({
-          message: 'Firebase update event',
-          data: updated_at,
-        });
+      if (firebaseApp) {
         if (__DEV__) {
-          console.log('⚡️ Firebase updated', updated_at, updatedAtRef.current);
+          console.log('🚀 Connect to firebase');
         }
-        if (updated_at !== updatedAtRef.current) {
-          fetchRates(false);
-        } else {
+        const db = getDatabase(firebaseApp);
+        return onValue(ref(db, 'u'), (snapshot) => {
+          // use rates file format
+          const updated_at = AmbitoDolar.getTimezoneDate(
+            snapshot.val() * 1000
+          ).format();
+          Sentry.addBreadcrumb({
+            message: 'Firebase update event',
+            data: updated_at,
+          });
           if (__DEV__) {
-            console.log('Rates already updated', updated_at);
+            console.log(
+              '⚡️ Firebase updated',
+              updated_at,
+              updatedAtRef.current
+            );
           }
-        }
-      });
+          if (updated_at !== updatedAtRef.current) {
+            fetchRates(false);
+          } else {
+            if (__DEV__) {
+              console.log('Rates already updated', updated_at);
+            }
+          }
+        });
+      }
+      if (__DEV__) {
+        console.log('❄️ No realtime updates');
+      }
+      return;
     }
     if (__DEV__) {
       console.log('🚀 Initial fetch');
