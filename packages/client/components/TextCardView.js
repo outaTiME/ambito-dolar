@@ -39,7 +39,7 @@ export default ({ style, text, onLongPress }) => {
             // paddingHorizontal: 0,
           },
           titleContainerStyle: {
-            paddingVertical: 0,
+            // paddingVertical: 0,
           },
           // onAction,
         }}

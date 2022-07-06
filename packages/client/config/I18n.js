@@ -73,7 +73,7 @@ i18n.translations = {
       'Recibirás una notificación cuando cierre la jornada cambiaria.',
     notification_variation_note:
       'Recibirás una notificación cuando varíe alguna cotización durante la jornada cambiaria.',
-    notification_id: 'ID de notificación',
+    notification_id: 'ID',
     // advanced notifications
     opts_rates: 'Cotizaciones',
     notification_choose_rates_note:
