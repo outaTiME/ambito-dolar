@@ -1,23 +1,11 @@
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { getDefaultHeaderHeight } from '@react-navigation/elements';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
-import {
-  useSafeAreaInsets,
-  useSafeAreaFrame,
-} from 'react-native-safe-area-context';
 
 export default (Component) => (props) => {
-  const insets = useSafeAreaInsets();
-  // fails on iPad
-  // const headerHeight = useHeaderHeight();
-  const headerHeight = getDefaultHeaderHeight(
-    useSafeAreaFrame(),
-    false,
-    insets.top
-  );
-  // const headerHeight = 50 + insets.top;
+  const headerHeight = useHeaderHeight();
   const tabBarheight = useBottomTabBarHeight();
   const { colors } = useTheme();
   return (
@@ -38,7 +26,6 @@ export default (Component) => (props) => {
           right: 0,
           height: StyleSheet.hairlineWidth,
           backgroundColor: colors.border,
-          // backgroundColor: 'red',
         }}
       />
       <View
@@ -49,7 +36,6 @@ export default (Component) => (props) => {
           right: 0,
           height: StyleSheet.hairlineWidth,
           backgroundColor: colors.border,
-          // backgroundColor: 'red',
         }}
       />
     </>
