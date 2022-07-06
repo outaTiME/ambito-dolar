@@ -15,6 +15,7 @@
       "channel": "production"
     },
     "simulator": {
+      "extends": "development",
       "ios": {
         "simulator": true
       }
