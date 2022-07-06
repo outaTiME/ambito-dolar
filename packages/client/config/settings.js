@@ -2,6 +2,7 @@
 import Constants from 'expo-constants';
 //import * as Updates from 'expo-updates';
 import { Dimensions, Platform } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { human, iOSColors } from 'react-native-typography';
 
 const PADDING = 16;
@@ -80,6 +81,7 @@ const CHART_STROKE_WIDTH = 3 - 0.5;
 // iPad in landscape
 const MAX_DEVICE_WIDTH = 551 + CARD_PADDING * 2;
 const INITIAL_ROUTE_NAME = 'Main';
+const DEVICE_TYPE = DeviceInfo.getDeviceType();
 
 // https://github.com/nirsky/react-native-size-matters/blob/master/lib/scaling-utils.js#L7
 const guidelineBaseWidth = 350;
@@ -133,6 +135,8 @@ export default {
   CHART_STROKE_WIDTH,
   MAX_DEVICE_WIDTH,
   INITIAL_ROUTE_NAME,
+  IS_TABLET: DEVICE_TYPE === 'Tablet',
+  IS_HANDSET: DEVICE_TYPE === 'Handset',
   getLightColor(alternative = false) {
     if (alternative !== false) {
       return iOSColors.white;

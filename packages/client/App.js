@@ -7,7 +7,6 @@ import {
 } from '@expo/vector-icons';
 import * as Amplitude from 'expo-analytics-amplitude';
 import { useAssets } from 'expo-asset';
-import * as Device from 'expo-device';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
@@ -52,16 +51,13 @@ TextInput.defaultProps.maxFontSizeMultiplier = 1;
 SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 // force landscape on android tablets
-Platform.OS === 'android' &&
-  Device.getDeviceTypeAsync()
-    .then((deviceType) =>
-      ScreenOrientation.lockAsync(
-        deviceType === Device.DeviceType.TABLET
-          ? ScreenOrientation.OrientationLock.LANDSCAPE
-          : ScreenOrientation.OrientationLock.PORTRAIT_UP
-      )
-    )
-    .catch(console.warn);
+if (Platform.OS === 'android') {
+  ScreenOrientation.lockAsync(
+    Settings.IS_TABLET
+      ? ScreenOrientation.OrientationLock.LANDSCAPE
+      : ScreenOrientation.OrientationLock.PORTRAIT_UP
+  );
+}
 
 const ThemedApp = () => {
   const colorScheme = useColorScheme();

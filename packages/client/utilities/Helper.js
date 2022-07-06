@@ -1,7 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import * as d3Array from 'd3-array';
 import * as Application from 'expo-application';
-import * as Device from 'expo-device';
 import * as Localization from 'expo-localization';
 import * as MailComposer from 'expo-mail-composer';
 import * as _ from 'lodash';
@@ -368,15 +367,11 @@ export default {
   },
   useApplicationConstants() {
     const [constantsLoaded, setConstantsLoaded] = React.useState(false);
-    const [, setIsPhoneDevice] = this.useSharedState('isPhoneDevice');
     const [, setContactAvailable] = this.useSharedState('contactAvailable');
     const [, setStoreAvailable] = this.useSharedState('storeAvailable');
     const [, setInstallationTime] = this.useSharedState('installationTime');
     React.useEffect(() => {
       Promise.all([
-        Device.getDeviceTypeAsync().then(
-          (deviceType) => deviceType === Device.DeviceType.PHONE
-        ),
         MailComposer.isAvailableAsync(),
         Linking.canOpenURL(Settings.APP_STORE_URI),
         Application.getInstallationTimeAsync(),
@@ -384,13 +379,7 @@ export default {
         if (__DEV__) {
           console.log('Application constants', data);
         }
-        const [
-          isPhoneDevice,
-          contactAvailable,
-          storeAvailable,
-          installationTime,
-        ] = data;
-        setIsPhoneDevice(isPhoneDevice);
+        const [contactAvailable, storeAvailable, installationTime] = data;
         setContactAvailable(contactAvailable);
         setStoreAvailable(storeAvailable);
         setInstallationTime(installationTime);

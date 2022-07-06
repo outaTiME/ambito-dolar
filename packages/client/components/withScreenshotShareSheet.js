@@ -24,9 +24,8 @@ const withScreenshotShareSheet = (Component) => (props) => {
   const [capturedImage, setCapturedImage] = React.useState(null);
   const updatedAt = useSelector((state) => state.rates?.updated_at);
   const shareViewGeneratedContainerRef = React.useRef();
-  const [isPhoneDevice] = Helper.useSharedState('isPhoneDevice', true);
   React.useLayoutEffect(() => {
-    isPhoneDevice &&
+    Settings.IS_HANDSET &&
       Sharing.isAvailableAsync().then(() => {
         navigation.setOptions({
           headerRight: () => (
@@ -99,7 +98,7 @@ const withScreenshotShareSheet = (Component) => (props) => {
           ),
         });
       });
-  }, [navigation, isPhoneDevice, theme]);
+  }, [navigation, theme]);
   const dispatch = useDispatch();
   const capturedImageLoaded = React.useCallback(() => {
     captureRef(shareViewGeneratedContainerRef.current, {

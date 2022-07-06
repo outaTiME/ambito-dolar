@@ -415,7 +415,6 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       subscription.remove();
     };
   }, []);
-  // const [isPhoneDevice] = Helper.useSharedState('isPhoneDevice', true);
   return (
     <NavigationContainer
       {...{
