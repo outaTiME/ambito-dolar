@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.1.0...@ambito-dolar/api@3.1.1) (2022-07-06)
+
+
+### Bug Fixes
+
+* bump variation threshold for realtime quotes ([8d89795](https://github.com/outaTiME/ambito-dolar/commit/8d897950beb3303c0cf796b8da84748c5e76c056))
+
+
+
+
+
 # [3.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.0.1...@ambito-dolar/api@3.1.0) (2022-07-04)
 
 

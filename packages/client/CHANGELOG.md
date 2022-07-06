@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.2...@ambito-dolar/client@6.0.3) (2022-07-06)
+
+
+### Bug Fixes
+
+* handle error when mail composer is not available ([b34a3c8](https://github.com/outaTiME/ambito-dolar/commit/b34a3c8c097d539449293a713deaf463818f4346))
+* remove donation button on ios ([26dcc1a](https://github.com/outaTiME/ambito-dolar/commit/26dcc1acc46fce80638b226e3d76da289da3dc94))
+* use header height from updated version of react-navigation ([4335f18](https://github.com/outaTiME/ambito-dolar/commit/4335f1848adc03df948ebf054d9810d21cec00e1))
+* use react-native-device-info to detect android tablets ([fcfd3b2](https://github.com/outaTiME/ambito-dolar/commit/fcfd3b207eca86ea1324743edfe1c68997fef603))
+
+
+
+
+
 ## [6.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.1...@ambito-dolar/client@6.0.2) (2022-07-04)
 
 
