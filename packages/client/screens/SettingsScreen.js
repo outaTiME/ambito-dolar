@@ -2,12 +2,11 @@ import { compose } from '@reduxjs/toolkit';
 import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
-import { Linking, Share } from 'react-native';
+import { Linking, Share, Platform } from 'react-native';
 import { useSelector, shallowEqual } from 'react-redux';
 
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
-import IconCardItemView from '../components/IconCardItemView';
 import ScrollView from '../components/ScrollView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
@@ -136,16 +135,11 @@ const SettingsScreen = ({ navigation }) => {
           chevron={false}
           onAction={onPressShare}
         />
-        <CardItemView
-          title={I18n.t('donate')}
-          useSwitch={false}
-          chevron={false}
-          onAction={onPressDonate}
-        />
-        {false && (
-          <IconCardItemView
+        {Platform.OS === 'android' && (
+          <CardItemView
             title={I18n.t('donate')}
-            iconName="heart"
+            useSwitch={false}
+            chevron={false}
             onAction={onPressDonate}
           />
         )}
