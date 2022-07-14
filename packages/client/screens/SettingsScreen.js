@@ -42,10 +42,10 @@ const SettingsScreen = ({ navigation }) => {
     }).catch(console.warn);
   }, []);
   const onPressReview = React.useCallback(() => {
-    Linking.openURL(Settings.APP_REVIEW_URI);
+    Linking.openURL(Settings.APP_REVIEW_URI).catch(console.warn);
   }, []);
   const onPressDonate = React.useCallback(() => {
-    Linking.openURL(CAFECITO_WEB_URL);
+    Linking.openURL(CAFECITO_WEB_URL).catch(console.warn);
   }, []);
   const onPressShare = React.useCallback(() => {
     Share.share({
@@ -53,7 +53,7 @@ const SettingsScreen = ({ navigation }) => {
         appName: Settings.APP_NAME,
         websiteUrl: Settings.WEBSITE_URL,
       }),
-    });
+    }).catch(console.warn);
   }, []);
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);

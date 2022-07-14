@@ -56,7 +56,7 @@ if (Platform.OS === 'android') {
     Settings.IS_TABLET
       ? ScreenOrientation.OrientationLock.LANDSCAPE
       : ScreenOrientation.OrientationLock.PORTRAIT_UP
-  );
+  ).catch(console.warn);
 }
 
 const ThemedApp = () => {
