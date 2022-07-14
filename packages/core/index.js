@@ -178,7 +178,7 @@ const getRateTitle = (type) => {
   if (type === OFFICIAL_TYPE) {
     return 'Oficial';
   } else if (type === TOURIST_TYPE) {
-    return 'Solidario';
+    return 'Turista';
   } else if (type === INFORMAL_TYPE) {
     return 'Blue';
   } else if (type === CCL_TYPE) {
