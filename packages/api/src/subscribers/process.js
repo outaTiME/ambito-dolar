@@ -401,7 +401,7 @@ export const handler = Shared.wrapHandler(async (event) => {
   // firebase update should occur after saving json files
   await Promise.all([
     Shared.putFirebaseData('processed_at', processed_at_fmt),
-    Shared.putFirebaseData('p', processed_at_unix),
+    // Shared.putFirebaseData('p', processed_at_unix),
     ...(has_new_rates
       ? [
           Shared.putFirebaseData('updated_at', processed_at_fmt),
