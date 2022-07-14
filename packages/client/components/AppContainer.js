@@ -730,11 +730,15 @@ const AppContainer = () => {
           console.log('🚀 Connect to firebase');
         }
         const db = getDatabase(firebaseApp);
-        return onValue(ref(db, 'u'), (snapshot) => {
+        return onValue(ref(db, '/u'), (snapshot) => {
+          if (!snapshot.exists()) {
+            // this should never happen
+            console.error('No data available on firebase');
+            return;
+          }
+          const data = snapshot.val();
           // use rates file format
-          const updated_at = AmbitoDolar.getTimezoneDate(
-            snapshot.val() * 1000
-          ).format();
+          const updated_at = AmbitoDolar.getTimezoneDate(data * 1000).format();
           Sentry.addBreadcrumb({
             message: 'Firebase update event',
             data: updated_at,
