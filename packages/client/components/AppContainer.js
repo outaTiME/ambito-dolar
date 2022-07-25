@@ -78,7 +78,9 @@ const NavigatorBackgroundView = ({ style }) => {
   }
   return (
     <BlurView
-      tint={theme}
+      // use light (default) instead of extraLight (light)
+      // https://github.com/expo/expo/blob/main/packages/expo-blur/ios/EXBlur/BlurEffectView.swift#L52
+      tint={theme === 'light' ? 'default' : theme}
       intensity={100}
       style={[StyleSheet.absoluteFill, style]}
     />
