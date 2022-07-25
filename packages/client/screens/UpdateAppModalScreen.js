@@ -39,7 +39,7 @@ const UpdateAppModalScreen = ({ navigation }) => {
     }
   }, [dispatch, confirmed]);
   const onPressUpdate = React.useCallback(() => {
-    Linking.openURL(Settings.APP_STORE_URI);
+    Linking.openURL(Settings.APP_STORE_URI).catch(console.warn);
   }, []);
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
   return (

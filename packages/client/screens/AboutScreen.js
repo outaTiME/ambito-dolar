@@ -42,71 +42,87 @@ const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
 const AboutScreen = ({ navigation }) => {
   const { theme, fonts } = Helper.useTheme();
   const onPressWebsite = React.useCallback(() => {
-    Linking.openURL(Settings.WEBSITE_URL);
+    Linking.openURL(Settings.WEBSITE_URL).catch(console.warn);
   }, []);
   const onPressTwitter = React.useCallback(() => {
-    Linking.canOpenURL(TWEETBOT_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(TWEETBOT_DEEP_LINK)
-        : Linking.canOpenURL(TWITTER_DEEP_LINK).then((supported) =>
-            supported
-              ? Linking.openURL(TWITTER_DEEP_LINK)
-              : Linking.openURL(TWITTER_WEB_URL)
-          )
-    );
+    Linking.canOpenURL(TWEETBOT_DEEP_LINK)
+      .then((supported) =>
+        supported
+          ? Linking.openURL(TWEETBOT_DEEP_LINK)
+          : Linking.canOpenURL(TWITTER_DEEP_LINK).then((supported) =>
+              supported
+                ? Linking.openURL(TWITTER_DEEP_LINK)
+                : Linking.openURL(TWITTER_WEB_URL)
+            )
+      )
+      .catch(console.warn);
   }, []);
   const onPressTelegram = React.useCallback(() => {
-    Linking.canOpenURL(TELEGRAM_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(TELEGRAM_DEEP_LINK)
-        : Linking.openURL(TELEGRAM_WEB_URL)
-    );
+    Linking.canOpenURL(TELEGRAM_DEEP_LINK)
+      .then((supported) =>
+        supported
+          ? Linking.openURL(TELEGRAM_DEEP_LINK)
+          : Linking.openURL(TELEGRAM_WEB_URL)
+      )
+      .catch(console.warn);
   }, []);
   const onPressInstagram = React.useCallback(() => {
-    Linking.canOpenURL(INSTAGRAM_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(INSTAGRAM_DEEP_LINK)
-        : Linking.openURL(INSTAGRAM_WEB_URL)
-    );
+    Linking.canOpenURL(INSTAGRAM_DEEP_LINK)
+      .then((supported) =>
+        supported
+          ? Linking.openURL(INSTAGRAM_DEEP_LINK)
+          : Linking.openURL(INSTAGRAM_WEB_URL)
+      )
+      .catch(console.warn);
   }, []);
   const onPressFacebook = React.useCallback(() => {
-    Linking.canOpenURL(FACEBOOK_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(FACEBOOK_DEEP_LINK)
-        : Linking.openURL(FACEBOOK_WEB_URL)
-    );
+    Linking.canOpenURL(FACEBOOK_DEEP_LINK)
+      .then((supported) =>
+        supported
+          ? Linking.openURL(FACEBOOK_DEEP_LINK)
+          : Linking.openURL(FACEBOOK_WEB_URL)
+      )
+      .catch(console.warn);
   }, []);
   const onPressReddit = React.useCallback(() => {
-    Linking.canOpenURL(APOLLO_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(APOLLO_DEEP_LINK)
-        : Linking.canOpenURL(REDDIT_DEEP_LINK).then((supported) =>
-            supported
-              ? Linking.openURL(REDDIT_DEEP_LINK)
-              : Linking.openURL(REDDIT_WEB_URL)
-          )
-    );
+    Linking.canOpenURL(APOLLO_DEEP_LINK)
+      .then((supported) =>
+        supported
+          ? Linking.openURL(APOLLO_DEEP_LINK)
+          : Linking.canOpenURL(REDDIT_DEEP_LINK).then((supported) =>
+              supported
+                ? Linking.openURL(REDDIT_DEEP_LINK)
+                : Linking.openURL(REDDIT_WEB_URL)
+            )
+      )
+      .catch(console.warn);
   }, []);
   const onPressDiscord = React.useCallback(() => {
-    Linking.canOpenURL(DISCORD_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(DISCORD_DEEP_LINK)
-        : Linking.openURL(DISCORD_WEB_URL)
-    );
+    Linking.canOpenURL(DISCORD_DEEP_LINK)
+      .then((supported) =>
+        supported
+          ? Linking.openURL(DISCORD_DEEP_LINK)
+          : Linking.openURL(DISCORD_WEB_URL)
+      )
+      .catch(console.warn);
   }, []);
   const onPressSlack = React.useCallback(() => {
-    Linking.canOpenURL(SLACK_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(SLACK_DEEP_LINK)
-        : Linking.openURL(SLACK_WEB_URL)
-    );
+    Linking.canOpenURL(SLACK_DEEP_LINK)
+      .then((supported) =>
+        supported
+          ? Linking.openURL(SLACK_DEEP_LINK)
+          : Linking.openURL(SLACK_WEB_URL)
+      )
+      .catch(console.warn);
   }, []);
   const onPressGithub = React.useCallback(() => {
-    Linking.canOpenURL(GITHUB_DEEP_LINK).then((supported) =>
-      supported
-        ? Linking.openURL(GITHUB_DEEP_LINK)
-        : Linking.openURL(GITHUB_WEB_URL)
-    );
+    Linking.canOpenURL(GITHUB_DEEP_LINK)
+      .then((supported) =>
+        supported
+          ? Linking.openURL(GITHUB_DEEP_LINK)
+          : Linking.openURL(GITHUB_WEB_URL)
+      )
+      .catch(console.warn);
   }, []);
   return (
     <ScrollView>
