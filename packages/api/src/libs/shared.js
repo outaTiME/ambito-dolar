@@ -146,7 +146,7 @@ const getVariationThreshold = (type) => {
     AmbitoDolar.CCB_TYPE,
   ];
   if (realtime_types.includes(type)) {
-    return 2.0;
+    return 2.5;
   }
   return 0.05;
 };
