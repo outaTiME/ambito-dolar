@@ -51,11 +51,7 @@ const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
 const QUOTES_OBJECT_KEY = process.env.QUOTES_OBJECT_KEY;
 const HISTORICAL_QUOTES_OBJECT_KEY = 'historical-' + QUOTES_OBJECT_KEY;
 
-let FIREBASE_CREDENTIALS;
-
 const getFirebaseAccessToken = async () => {
-  const { access_token, expiry_date } = FIREBASE_CREDENTIALS || {};
-  if (!expiry_date || (expiry_date && Date.now() >= expiry_date)) {
     // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
     const scopes = [
       'https://www.googleapis.com/auth/userinfo.email',
@@ -73,12 +69,9 @@ const getFirebaseAccessToken = async () => {
           return;
         }
         // internal
-        FIREBASE_CREDENTIALS = token;
         resolve(token.access_token);
       });
     });
-  }
-  return access_token;
 };
 
 const fetchFirebaseData = async (uri, opts = {}) => {
