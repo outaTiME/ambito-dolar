@@ -67,11 +67,12 @@ const getJson = (url, opts = {}) => {
   return (retry === true ? fetchRetry : timeout ? fetchTimeout : fetch)(
     url,
     {
-      ...opts,
+      // method: 'GET',
       headers: {
         // Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
       },
+      ...opts,
     },
     timeout
   ).then((response) => {
@@ -98,20 +99,13 @@ const { decimal: DECIMAL_SEPARATOR } = AmbitoDolar.getDelimiters();
 
 const FRACTION_DIGITS = AmbitoDolar.FRACTION_DIGITS;
 
-const formatNumber = (
-  num,
-  maxDigits = FRACTION_DIGITS,
-  forceFractionDigits = true
-) => AmbitoDolar.formatNumber(num, maxDigits, forceFractionDigits);
+const formatNumber = AmbitoDolar.formatNumber;
 
-const getNumber = (value, maxDigits = FRACTION_DIGITS) =>
-  AmbitoDolar.getNumber(value, maxDigits);
+const formatRateCurrency = AmbitoDolar.formatRateCurrency;
 
-const formatRateCurrency = (num) => AmbitoDolar.formatRateCurrency(num);
+const formatRateChange = AmbitoDolar.formatRateChange;
 
-const formatRateChange = (num) => AmbitoDolar.formatRateChange(num);
-
-const formatCurrency = (num, usd) => AmbitoDolar.formatCurrency(num, usd);
+const formatCurrency = AmbitoDolar.formatCurrency;
 
 // https://github.com/realadvisor/rifm/blob/master/pages/number-format/index.js#L39
 
@@ -164,7 +158,7 @@ export default {
   formatIntegerNumber(num) {
     return formatNumber(num, 0, false);
   },
-  getNumber,
+  getNumber: AmbitoDolar.getNumber,
   formatFloatingPointNumber,
   getChangeColor(num, theme) {
     if (num === 0) {
