@@ -31,6 +31,7 @@ i18n.translations = {
     show_detail: 'Ver detalle',
     day_summary: 'Resumen de jornada',
     variation: 'Variación',
+    spread: 'Brecha',
     previous_close: 'Cierre anterior',
     'all-time_high': 'Máximo histórico',
     source: 'Fuente',

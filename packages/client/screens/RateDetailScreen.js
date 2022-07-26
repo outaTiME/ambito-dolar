@@ -140,6 +140,26 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
   const onTabPress = React.useCallback((index) => {
     setRangeIndex(index);
   }, []);
+  const official_spread = React.useMemo(() => {
+    if (type !== AmbitoDolar.OFFICIAL_TYPE) {
+      const official_stats = rates[AmbitoDolar.OFFICIAL_TYPE]?.stats;
+      if (official_stats) {
+        const official_stat = official_stats[official_stats.length - 1];
+        const rate_value = AmbitoDolar.getRateValue(stat);
+        const official_rate_value = AmbitoDolar.getRateValue(official_stat);
+        // calculate from open / close rate and truncate
+        /* const rate_change_percent = AmbitoDolar.getNumber(
+        (rate_value / official_rate_value - 1) * 100
+      ); */
+        return AmbitoDolar.getRateChange([
+          null,
+          rate_value,
+          null,
+          official_rate_value,
+        ]);
+      }
+    }
+  }, [type, rates, stat]);
   return (
     <>
       <SegmentedControlTab
@@ -177,6 +197,13 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
           useSwitch={false}
           value={Helper.getCurrency(stat[3])}
         />
+        {official_spread && (
+          <CardItemView
+            title={I18n.t('spread')}
+            useSwitch={false}
+            value={official_spread}
+          />
+        )}
       </CardView>
       {rate.max_date && rate.max && (
         <CardView plain>
