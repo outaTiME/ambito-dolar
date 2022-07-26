@@ -246,26 +246,18 @@ export default {
   },
   getNotificationSettings,
   getNotificationSettingsSelector,
-  getAvailableRateTypes: AmbitoDolar.getAvailableRateTypes,
-  getAvailableRates(rates) {
-    return rates && _.pick(rates, this.getAvailableRateTypes());
-  },
   useRates() {
     const rates = useSelector((state) => state.rates?.rates);
-    return this.getAvailableRates(rates);
+    return AmbitoDolar.getAvailableRates(rates);
   },
   hasValidRates(rates) {
     const values = Object.values(rates || {});
-    const rate_types = this.getAvailableRateTypes();
-    if (values.length === rate_types.length) {
       return (
         values
           // two stats at least
           .map(({ stats }) => stats?.length > 1)
           .every((value) => value === true)
       );
-    }
-    return false;
   },
   usePrevious(value) {
     const ref = React.useRef();

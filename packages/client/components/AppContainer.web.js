@@ -242,7 +242,7 @@ const withRates = (Component) => (props) => {
         });
       });
   }, []);
-  const rates = Helper.getAvailableRates(data?.rates);
+  const rates = AmbitoDolar.getAvailableRates(data?.rates);
   const hasRates = React.useMemo(() => Helper.hasValidRates(rates), [rates]);
   return (
     <>

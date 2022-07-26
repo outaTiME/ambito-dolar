@@ -5,6 +5,7 @@
     "lodash.isempty": "^4.4.0",
     "lodash.max": "^4.0.1",
     "lodash.merge": "^4.6.2",
+    "lodash.pick": "^4.4.0",
     "lodash.pickby": "^4.6.0",
     "moment-timezone": "^0.5.34",
     "numeral": "^2.0.6"

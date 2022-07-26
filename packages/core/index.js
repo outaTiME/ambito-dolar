@@ -1,6 +1,7 @@
 const isEmpty = require('lodash.isempty');
 const max = require('lodash.max');
 const merge = require('lodash.merge');
+const pick = require('lodash.pick');
 const pickBy = require('lodash.pickby');
 const moment = require('moment-timezone');
 require('moment/locale/es');
@@ -174,6 +175,21 @@ const getAvailableRateTypes = () => [
   CCB_TYPE,
 ];
 
+const getAvailableRates = (rates, check = false) => {
+  // respect the order from getAvailableRateTypes
+  const available_rate_types = getAvailableRateTypes();
+  // leave only the available rates sorted
+  rates = pick(rates, available_rate_types);
+  /* if (
+    check === false ||
+    (check === true &&
+      Object.keys(rates).length === available_rate_types.length)
+  ) {
+    return rates;
+  } */
+  return isEmpty(rates) ? false : rates;
+};
+
 const getRateTitle = (type) => {
   if (type === OFFICIAL_TYPE) {
     return 'Oficial';
@@ -295,7 +311,7 @@ module.exports = {
   formatCurrency,
   isRateFromToday,
   hasRatesFromToday,
-  getAvailableRateTypes,
+  getAvailableRates,
   getRateTitle,
   getNotificationTitle,
   getNotificationSettings,

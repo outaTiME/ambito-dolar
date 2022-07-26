@@ -47,15 +47,19 @@ const getRateMessage = (type, rate, app_version) => {
 };
 
 const getBodyMessage = (rates, app_version) => {
-  const body = Object.entries(rates).reduce((obj, [type, rate]) => {
-    const rate_message = getRateMessage(type, rate, app_version);
-    if (rate_message) {
-      obj.push(rate_message);
-    }
+  const available_rates = AmbitoDolar.getAvailableRates(rates);
+  if (available_rates) {
+    const body = _.chain(available_rates)
+      .reduce((obj, rate, type) => {
+        obj.push(getRateMessage(type, rate, app_version));
     return obj;
-  }, []);
+      }, [])
+      // remove empty messages
+      .compact()
+      .value();
   if (body.length > 0) {
     return `${body.join(', ')}.`;
+    }
   }
 };
 
