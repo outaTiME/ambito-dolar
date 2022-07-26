@@ -91,14 +91,14 @@ const StatisticsScreen = () => {
           value={Helper.formatIntegerNumber(downloadedRates)}
         />
         <CardItemView
-          title={I18n.t('app_downloaded_historical_rates')}
-          useSwitch={false}
-          value={Helper.formatIntegerNumber(downloadedHistoricalRates)}
-        />
-        <CardItemView
           title={I18n.t('app_detailed_rates')}
           useSwitch={false}
           value={Helper.formatIntegerNumber(detailedRates)}
+        />
+        <CardItemView
+          title={I18n.t('app_downloaded_historical_rates')}
+          useSwitch={false}
+          value={Helper.formatIntegerNumber(downloadedHistoricalRates)}
         />
       </CardView>
     </ScrollView>
