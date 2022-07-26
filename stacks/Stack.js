@@ -31,6 +31,9 @@ export function Stack({ stack }) {
   const quotesSite = new sst.StaticSite(stack, 'QuotesSite', {
     buildCommand: 'expo build:web',
     buildOutput: 'web-build',
+    environment: {
+      IS_PRODUCTION: IS_PRODUCTION.toString(),
+    },
     path: 'packages/client',
   });
   // sns

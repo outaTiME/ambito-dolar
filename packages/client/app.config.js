@@ -45,6 +45,7 @@ export default {
     amplitudeKey: process.env.AMPLITUDE_KEY,
     firebaseConfigJson: process.env.FIREBASE_CONFIG_JSON,
     experienceId: process.env.EXPERIENCE_ID,
+    isProduction: process.env.IS_PRODUCTION === 'true',
   },
   updates: {
     fallbackToCacheTimeout: 0,

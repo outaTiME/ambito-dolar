@@ -326,7 +326,7 @@ const MainStackScreen = () => {
 
 let initialQuickAction;
 // https://github.com/jordanbyron/react-native-quick-actions#listening-for-quick-actions
-!__DEV__ &&
+Settings.IS_PRODUCTION &&
   QuickActions.popInitialAction()
     .then((data) => (initialQuickAction = data))
     .catch(console.error);
