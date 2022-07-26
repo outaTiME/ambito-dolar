@@ -168,13 +168,13 @@ const hasRatesFromToday = (rates = {}) =>
 
 const getAvailableRateTypes = () => [
   OFFICIAL_TYPE,
-  TOURIST_TYPE,
   INFORMAL_TYPE,
+  TOURIST_TYPE,
   SAVING_TYPE,
   CCL_TYPE,
   MEP_TYPE,
-  WHOLESALER_TYPE,
   CCB_TYPE,
+  WHOLESALER_TYPE,
 ];
 
 const getAvailableRates = (rates, check = false) => {
@@ -195,10 +195,10 @@ const getAvailableRates = (rates, check = false) => {
 const getRateTitle = (type) => {
   if (type === OFFICIAL_TYPE) {
     return 'Oficial';
-  } else if (type === TOURIST_TYPE) {
-    return 'Turista';
   } else if (type === INFORMAL_TYPE) {
     return 'Blue';
+  } else if (type === TOURIST_TYPE) {
+    return 'Tarjeta';
   } else if (type === SAVING_TYPE) {
     return 'Ahorro';
   } else if (type === CCL_TYPE) {
@@ -206,11 +206,10 @@ const getRateTitle = (type) => {
     return 'CCL';
   } else if (type === MEP_TYPE) {
     return 'MEP';
+  } else if (type === CCB_TYPE) {
+    return 'Cripto';
   } else if (type === WHOLESALER_TYPE) {
     return 'Mayorista';
-  } else if (type === CCB_TYPE) {
-    return 'CCB';
-    // return 'Cripto';
   }
 };
 
