@@ -16,11 +16,105 @@ import WatermarkOverlayView from './WatermarkOverlayView';
 
 const LAYOUT_COLUMNS = 2;
 
+const SocialView = ({ extraSpace = false }) => {
+  const { theme } = Helper.useTheme();
+  return (
+    <>
+      <FontAwesome5
+        name="twitter"
+        size={17}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: Settings.PADDING,
+        }}
+      />
+      <FontAwesome5
+        name="telegram-plane"
+        size={17}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: Settings.PADDING,
+        }}
+      />
+      <FontAwesome5
+        name="instagram"
+        size={17}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: Settings.PADDING,
+        }}
+      />
+      <FontAwesome5
+        name="facebook"
+        size={17}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: Settings.PADDING,
+        }}
+      />
+      <FontAwesome5
+        name="reddit-alien"
+        size={17}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: Settings.PADDING,
+        }}
+      />
+      <FontAwesome5
+        name="discord"
+        size={17}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: Settings.PADDING,
+        }}
+      />
+      <FontAwesome5
+        name="slack"
+        size={17}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: Settings.PADDING,
+        }}
+      />
+      <FontAwesome5
+        name="github"
+        size={17}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          ...(extraSpace === true && {
+            marginRight: Settings.PADDING,
+          }),
+        }}
+      />
+    </>
+  );
+};
+
+const FundingView = () => {
+  const { theme, fonts } = Helper.useTheme();
+  return (
+    <Text
+      style={[
+        fonts.body,
+        {
+          color: Settings.getGrayColor(theme),
+        },
+      ]}
+      numberOfLines={1}
+    >
+      {Helper.removeProtocol(Settings.CAFECITO_URL)}
+    </Text>
+  );
+};
+
 const AppContainer = ({ rates, processedAt }) => {
   const urlParams = new URLSearchParams(document.location.search);
   const title = urlParams.get('title');
   const { theme, fonts } = Helper.useTheme();
-  const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);
+  const rateTypes = React.useMemo(
+    () => Object.keys(rates) /*.slice(0, -1)*/,
+    [rates]
+  );
   const getItemView = React.useCallback(
     (type) => (
       <RateView
@@ -43,6 +137,10 @@ const AppContainer = ({ rates, processedAt }) => {
           // fixed size required by social notifier
           width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
           height: AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
+          // borderWidth: 1,
+          borderColor: Settings.getSeparatorColor(theme),
+          borderStyle: 'dashed',
+          borderRadius: Settings.BORDER_RADIUS,
         }}
       >
         <View
@@ -104,121 +202,34 @@ const AppContainer = ({ rates, processedAt }) => {
                   >
                     <View
                       style={{
-                        alignSelf: 'stretch',
+                        // alignSelf: 'stretch',
                         flexDirection: 'row',
-                        justifyContent: 'space-evenly',
+                        justifyContent: 'center',
                       }}
                     >
-                      <FontAwesome5
-                        name="twitter"
-                        size={17}
-                        color={Settings.getGrayColor(theme)}
-                      />
-                      <FontAwesome5
-                        name="telegram-plane"
-                        size={17}
-                        color={Settings.getGrayColor(theme)}
-                        style={
-                          {
-                            // marginLeft: Settings.PADDING,
-                          }
-                        }
-                      />
-                      <FontAwesome5
-                        name="instagram"
-                        size={17}
-                        color={Settings.getGrayColor(theme)}
-                        style={
-                          {
-                            // marginLeft: Settings.PADDING,
-                          }
-                        }
-                      />
-                      <FontAwesome5
-                        name="facebook"
-                        size={17}
-                        color={Settings.getGrayColor(theme)}
-                        style={
-                          {
-                            // marginLeft: Settings.PADDING,
-                          }
-                        }
-                      />
-                      <FontAwesome5
-                        name="reddit-alien"
-                        size={17}
-                        color={Settings.getGrayColor(theme)}
-                        style={
-                          {
-                            // marginLeft: Settings.PADDING,
-                          }
-                        }
-                      />
-                      <FontAwesome5
-                        name="discord"
-                        size={17}
-                        color={Settings.getGrayColor(theme)}
-                        style={
-                          {
-                            // marginLeft: Settings.PADDING,
-                          }
-                        }
-                      />
-                      <FontAwesome5
-                        name="slack"
-                        size={17}
-                        color={Settings.getGrayColor(theme)}
-                        style={
-                          {
-                            // marginLeft: Settings.PADDING,
-                          }
-                        }
-                      />
-                      <FontAwesome5
-                        name="github"
-                        size={17}
-                        color={Settings.getGrayColor(theme)}
-                        style={
-                          {
-                            // marginLeft: Settings.PADDING,
-                          }
-                        }
-                      />
+                      <SocialView />
                     </View>
-                    {true && (
-                      <Text
-                        style={[
-                          fonts.body,
-                          {
-                            color: Settings.getGrayColor(theme),
-                            // marginTop: Settings.CARD_PADDING * 2,
-                          },
-                        ]}
-                        numberOfLines={1}
-                      >
-                        cafecito.app/ambitodolar
-                      </Text>
-                    )}
-                    {false && (
-                      <Text
-                        style={[
-                          fonts.body,
-                          {
-                            color: Settings.getGrayColor(theme),
-                            // marginTop: Settings.CARD_PADDING * 2,
-                          },
-                        ]}
-                        numberOfLines={1}
-                      >
-                        {Settings.APP_COPYRIGHT}
-                      </Text>
-                    )}
+                    <FundingView />
                   </View>
                 </View>
               )}
             </View>
           );
         })}
+        {rateTypes.length % LAYOUT_COLUMNS === 0 && (
+          <View
+            style={{
+              flexDirection: 'row',
+              // justifyContent: 'space-between',
+              justifyContent: 'flex-end',
+              margin: Settings.CARD_PADDING,
+              alignItems: 'center',
+            }}
+          >
+            <SocialView extraSpace />
+            <FundingView />
+          </View>
+        )}
       </View>
       <WatermarkOverlayView />
     </>

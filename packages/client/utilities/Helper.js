@@ -246,12 +246,12 @@ export default {
   },
   hasValidRates(rates) {
     const values = Object.values(rates || {});
-      return (
-        values
-          // two stats at least
-          .map(({ stats }) => stats?.length > 1)
-          .every((value) => value === true)
-      );
+    return (
+      values
+        // two stats at least
+        .map(({ stats }) => stats?.length > 1)
+        .every((value) => value === true)
+    );
   },
   usePrevious(value) {
     const ref = React.useRef();
@@ -379,4 +379,5 @@ export default {
     const { theme } = this.useTheme();
     return theme === 'light' ? 'black' : 'white';
   },
+  removeProtocol: (url) => url.replace(/^https?:\/\//, ''),
 };
