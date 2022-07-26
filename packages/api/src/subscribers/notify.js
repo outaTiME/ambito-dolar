@@ -6,17 +6,24 @@ import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
   MIN_CLIENT_VERSION_FOR_CCB,
+  MIN_CLIENT_VERSION_FOR_CHANGE_MESSAGE_STYLE_V2,
   MIN_CLIENT_VERSION_FOR_SAVING,
 } from '../libs/shared';
 
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
-// app_version is empty on social
-const getChangeMessage = (rate, app_version = '6.0.0') => {
+const getChangeMessage = (rate, app_version) => {
   const body = [];
   const value = rate[1];
-  if (app_version && Shared.isSemverGte(app_version, '6.0.0')) {
+  // default style for social when app_version is empty
+  if (
+    !app_version ||
+    Shared.isSemverGte(
+      app_version,
+      MIN_CLIENT_VERSION_FOR_CHANGE_MESSAGE_STYLE_V2
+    )
+  ) {
     const value = AmbitoDolar.getRateValue(rate);
     body.push(`${AmbitoDolar.formatRateCurrency(value)}`);
     body.push(`${AmbitoDolar.getRateChange(rate)}`);
@@ -53,13 +60,13 @@ const getBodyMessage = (rates, app_version) => {
     const body = _.chain(available_rates)
       .reduce((obj, rate, type) => {
         obj.push(getRateMessage(type, rate, app_version));
-    return obj;
+        return obj;
       }, [])
       // remove empty messages
       .compact()
       .value();
-  if (body.length > 0) {
-    return `${body.join(', ')}.`;
+    if (body.length > 0) {
+      return `${body.join(', ')}.`;
     }
   }
 };
@@ -216,7 +223,7 @@ const notify = async (
         // exclude when installation_id
         if (social === true) {
           const social_rates = _.omit(rates, [
-            // some rate to exclude ???
+            // rates to exclude
           ]);
           await Shared.triggerSocialNotifyEvent({
             type,

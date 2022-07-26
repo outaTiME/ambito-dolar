@@ -36,6 +36,7 @@ const snsClient = new SNSClient({
 export const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
 export const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
 export const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
+export const MIN_CLIENT_VERSION_FOR_CHANGE_MESSAGE_STYLE_V2 = '6.0.0';
 export const MIN_CLIENT_VERSION_FOR_SAVING = '6.1.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
 const S3_BUCKET = process.env.S3_BUCKET;
@@ -53,26 +54,26 @@ const QUOTES_OBJECT_KEY = process.env.QUOTES_OBJECT_KEY;
 const HISTORICAL_QUOTES_OBJECT_KEY = 'historical-' + QUOTES_OBJECT_KEY;
 
 const getFirebaseAccessToken = async () => {
-    // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
-    const scopes = [
-      'https://www.googleapis.com/auth/userinfo.email',
-      'https://www.googleapis.com/auth/firebase.database',
-    ];
-    return new Promise((resolve, reject) => {
-      const jwtClient = new JWT({
-        email: process.env.FIREBASE_CLIENT_EMAIL,
-        key: process.env.FIREBASE_PRIVATE_KEY,
-        scopes,
-      });
-      jwtClient.authorize((err, token) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        // internal
-        resolve(token.access_token);
-      });
+  // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
+  const scopes = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/firebase.database',
+  ];
+  return new Promise((resolve, reject) => {
+    const jwtClient = new JWT({
+      email: process.env.FIREBASE_CLIENT_EMAIL,
+      key: process.env.FIREBASE_PRIVATE_KEY,
+      scopes,
     });
+    jwtClient.authorize((err, token) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      // internal
+      resolve(token.access_token);
+    });
+  });
 };
 
 const fetchFirebaseData = async (uri, opts = {}) => {
@@ -296,35 +297,35 @@ const storeHistoricalRatesJsonObject = async (rates) => {
   if (rates?.rates) {
     // merge
     base_rates = await getJsonObject(HISTORICAL_QUOTES_OBJECT_KEY).catch(
-    (error) => {
-      if (error.code === 'NoSuchKey') {
-        return {};
+      (error) => {
+        if (error.code === 'NoSuchKey') {
+          return {};
+        }
+        // unhandled error
+        throw error;
       }
-      // unhandled error
-      throw error;
-    }
-  );
+    );
     Object.entries(rates.rates || {}).forEach(([type, { stats }]) => {
       const moment_from = AmbitoDolar.getTimezoneDate(
         _.last(stats)[0]
       ).subtract(1, 'year');
-    const moment_to = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
-    // limit base_rates excluding stats
-    base_rates[type] = (base_rates[type] || [])
-      .filter(([timestamp]) => {
-        const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
-        const include = moment_timestamp.isBetween(
-          moment_from,
-          moment_to,
-          'day',
-          // moment_to exclusion
-          '[)'
-        );
-        return include;
-      })
-      // leave new rate without rate open and hash
-      .concat(stats.map((stat) => _.take(stat, 3)));
-  });
+      const moment_to = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
+      // limit base_rates excluding stats
+      base_rates[type] = (base_rates[type] || [])
+        .filter(([timestamp]) => {
+          const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
+          const include = moment_timestamp.isBetween(
+            moment_from,
+            moment_to,
+            'day',
+            // moment_to exclusion
+            '[)'
+          );
+          return include;
+        })
+        // leave new rate without rate open and hash
+        .concat(stats.map((stat) => _.take(stat, 3)));
+    });
   }
   const legacy_rates = Object.entries(base_rates || {}).reduce(
     (obj, [type, rate]) => {
