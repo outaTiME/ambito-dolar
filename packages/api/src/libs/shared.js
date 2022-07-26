@@ -36,6 +36,7 @@ const snsClient = new SNSClient({
 export const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
 export const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
 export const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
+export const MIN_CLIENT_VERSION_FOR_SAVING = '6.1.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
 const S3_BUCKET = process.env.S3_BUCKET;
 // 2.1.x
@@ -256,7 +257,8 @@ const storeRateStats = async (rates) => {
       // ignore
       if (
         type === AmbitoDolar.WHOLESALER_TYPE ||
-        type === AmbitoDolar.CCB_TYPE
+        type === AmbitoDolar.CCB_TYPE ||
+        type === AmbitoDolar.SAVING_TYPE
       ) {
         return obj;
       }
@@ -329,7 +331,8 @@ const storeHistoricalRatesJsonObject = async (rates) => {
       // ignore
       if (
         type === AmbitoDolar.WHOLESALER_TYPE ||
-        type === AmbitoDolar.CCB_TYPE
+        type === AmbitoDolar.CCB_TYPE ||
+        type === AmbitoDolar.SAVING_TYPE
       ) {
         return obj;
       }
@@ -345,7 +348,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
     storePublicJsonObject(
       HISTORICAL_RATES_OBJECT_KEY,
-      _.omit(base_rates, [AmbitoDolar.CCB_TYPE])
+      _.omit(base_rates, [AmbitoDolar.CCB_TYPE, AmbitoDolar.SAVING_TYPE])
     ),
     storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_rates),
   ]);
@@ -357,7 +360,8 @@ const storeRatesJsonObject = async (rates, is_updated) => {
       // ignore
       if (
         type === AmbitoDolar.WHOLESALER_TYPE ||
-        type === AmbitoDolar.CCB_TYPE
+        type === AmbitoDolar.CCB_TYPE ||
+        type === AmbitoDolar.SAVING_TYPE
       ) {
         return obj;
       }
@@ -377,7 +381,10 @@ const storeRatesJsonObject = async (rates, is_updated) => {
     }),
     storePublicJsonObject(RATES_OBJECT_KEY, {
       ...rates,
-      rates: _.omit(rates.rates, [AmbitoDolar.CCB_TYPE]),
+      rates: _.omit(rates.rates, [
+        AmbitoDolar.CCB_TYPE,
+        AmbitoDolar.SAVING_TYPE,
+      ]),
     }),
     storePublicJsonObject(QUOTES_OBJECT_KEY, rates),
     // save historical rates
@@ -397,6 +404,8 @@ const getDataProviderForRate = (type) => {
 const getPathForRate = (type) => {
   if (type === AmbitoDolar.TOURIST_TYPE) {
     return 'dolarturista';
+  } else if (type === AmbitoDolar.SAVING_TYPE) {
+    return 'dolarahorro';
   } else if (type === AmbitoDolar.CCL_TYPE) {
     return 'dolarrava/cl';
   } else if (type === AmbitoDolar.MEP_TYPE) {

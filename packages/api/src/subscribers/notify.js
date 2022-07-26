@@ -6,6 +6,7 @@ import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
   MIN_CLIENT_VERSION_FOR_CCB,
+  MIN_CLIENT_VERSION_FOR_SAVING,
 } from '../libs/shared';
 
 const ddbClient = Shared.getDynamoDBClient();
@@ -113,6 +114,9 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
         }
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_CCB)) {
           delete rates_for_settings[AmbitoDolar.CCB_TYPE];
+        }
+        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_SAVING)) {
+          delete rates_for_settings[AmbitoDolar.SAVING_TYPE];
         }
         const body = getBodyMessage(rates_for_settings, app_version);
         if (body) {

@@ -30,7 +30,7 @@ const getRate = (type) =>
             // variacion: Joi.string().required(),
             compra: Joi.string().required().custom(numberValidator),
             venta: Joi.string().required().custom(numberValidator),
-            // only when TOURIST_TYPE / CCL_TYPE / MEP_TYPE
+            // only when TOURIST_TYPE / SAVING_TYPE / CCL_TYPE / MEP_TYPE
             valor: Joi.string().custom(numberValidator),
           })
           .unknown(true);
@@ -205,6 +205,7 @@ const getRates = (rates) =>
   Promise.all([
     getRate(AmbitoDolar.OFFICIAL_TYPE),
     getRate(AmbitoDolar.TOURIST_TYPE),
+    getRate(AmbitoDolar.SAVING_TYPE),
     getRate(AmbitoDolar.INFORMAL_TYPE),
     getRate(AmbitoDolar.WHOLESALER_TYPE),
   ])
@@ -401,7 +402,6 @@ export const handler = Shared.wrapHandler(async (event) => {
   // firebase update should occur after saving json files
   await Promise.all([
     Shared.putFirebaseData('processed_at', processed_at_fmt),
-    // Shared.putFirebaseData('p', processed_at_unix),
     ...(has_new_rates
       ? [
           Shared.putFirebaseData('updated_at', processed_at_fmt),

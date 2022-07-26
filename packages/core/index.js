@@ -21,6 +21,7 @@ const TIMEZONE = 'America/Argentina/Buenos_Aires';
 const OFFICIAL_TYPE = 'oficial';
 const INFORMAL_TYPE = 'informal';
 const TOURIST_TYPE = 'turista';
+const SAVING_TYPE = 'ahorro';
 const CCL_TYPE = 'ccl';
 const CCL_LEGACY_TYPE = 'cl';
 const MEP_TYPE = 'mep';
@@ -169,6 +170,7 @@ const getAvailableRateTypes = () => [
   OFFICIAL_TYPE,
   TOURIST_TYPE,
   INFORMAL_TYPE,
+  SAVING_TYPE,
   CCL_TYPE,
   MEP_TYPE,
   WHOLESALER_TYPE,
@@ -197,6 +199,8 @@ const getRateTitle = (type) => {
     return 'Turista';
   } else if (type === INFORMAL_TYPE) {
     return 'Blue';
+  } else if (type === SAVING_TYPE) {
+    return 'Ahorro';
   } else if (type === CCL_TYPE) {
     // return 'Contado con liquidación',
     return 'CCL';
@@ -284,6 +288,7 @@ module.exports = {
   OFFICIAL_TYPE,
   INFORMAL_TYPE,
   TOURIST_TYPE,
+  SAVING_TYPE,
   CCL_TYPE,
   CCL_LEGACY_TYPE,
   MEP_TYPE,
