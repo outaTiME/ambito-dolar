@@ -22,7 +22,7 @@ const saveApplicationSubsetBlacklistFilter = createBlacklistFilter(
   ['push_token', 'sending_push_token']
 );
 
-const STORE_CONFIG_VERSION = 6;
+const STORE_CONFIG_VERSION = 6.1;
 
 const migrations = {
   [STORE_CONFIG_VERSION]: ({ application }) => ({
