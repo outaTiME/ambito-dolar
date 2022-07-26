@@ -14,8 +14,6 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const CAFECITO_WEB_URL = 'https://cafecito.app/ambitodolar';
-
 const SettingsScreen = ({ navigation }) => {
   const { updatedAt, appearance } = useSelector(
     ({ rates: { updated_at: updatedAt }, application: { appearance } }) => ({
@@ -45,7 +43,7 @@ const SettingsScreen = ({ navigation }) => {
     Linking.openURL(Settings.APP_REVIEW_URI).catch(console.warn);
   }, []);
   const onPressDonate = React.useCallback(() => {
-    Linking.openURL(CAFECITO_WEB_URL).catch(console.warn);
+    Linking.openURL(Settings.CAFECITO_URL).catch(console.warn);
   }, []);
   const onPressShare = React.useCallback(() => {
     Share.share({

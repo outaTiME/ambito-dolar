@@ -72,6 +72,7 @@ const APP_STORE_URI =
 const APP_REVIEW_URI = `${APP_STORE_URI}${
   Platform.OS === 'ios' ? '?action=write-review' : '&showAllReviews=true'
 }`;
+const CAFECITO_URL = 'https://cafecito.app/ambitodolar';
 const HIT_SLOP = {
   top: PADDING,
   bottom: PADDING,
@@ -133,6 +134,7 @@ export default {
   WEBSITE_URL,
   APP_STORE_URI,
   APP_REVIEW_URI,
+  CAFECITO_URL,
   HIT_SLOP,
   CHART_STROKE_WIDTH,
   MAX_DEVICE_WIDTH,
