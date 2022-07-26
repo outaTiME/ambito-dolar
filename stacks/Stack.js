@@ -202,6 +202,8 @@ export function Stack({ stack }) {
       'GET /invalidate-receipts': 'src/routes/invalidate-receipts.handler',
       'GET /social-notify': 'src/routes/social-notify.handler',
       'POST /update-rates': 'src/routes/update-rates.handler',
+      'POST /update-historical-rates':
+        'src/routes/update-historical-rates.handler',
       // public
       'GET /test': {
         authorizer: 'none',

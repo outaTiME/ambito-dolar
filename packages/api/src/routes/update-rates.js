@@ -1,11 +1,12 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import * as _ from 'lodash';
 
 import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
   try {
     const base_rates = JSON.parse(event.body || '{}');
-    if (!base_rates.rates) {
+    if (_.isEmpty(base_rates.rates)) {
       throw new Error('No data available');
     }
     const processed_at = AmbitoDolar.getTimezoneDate();

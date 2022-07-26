@@ -288,8 +288,12 @@ const storeRateStats = async (rates) => {
   return storePublicJsonObject(RATE_STATS_OBJECT_KEY, base_rates);
 };
 
-const storeHistoricalRatesJsonObject = async ({ rates }) => {
-  const base_rates = await getJsonObject(HISTORICAL_QUOTES_OBJECT_KEY).catch(
+const storeHistoricalRatesJsonObject = async (rates) => {
+  let base_rates = rates;
+  // when rates comes from storeRatesJsonObject
+  if (rates?.rates) {
+    // merge
+    base_rates = await getJsonObject(HISTORICAL_QUOTES_OBJECT_KEY).catch(
     (error) => {
       if (error.code === 'NoSuchKey') {
         return {};
@@ -298,11 +302,10 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
       throw error;
     }
   );
-  Object.entries(rates || {}).forEach(([type, { stats }]) => {
-    const moment_from = AmbitoDolar.getTimezoneDate(_.last(stats)[0]).subtract(
-      1,
-      'year'
-    );
+    Object.entries(rates.rates || {}).forEach(([type, { stats }]) => {
+      const moment_from = AmbitoDolar.getTimezoneDate(
+        _.last(stats)[0]
+      ).subtract(1, 'year');
     const moment_to = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
     // limit base_rates excluding stats
     base_rates[type] = (base_rates[type] || [])
@@ -320,6 +323,7 @@ const storeHistoricalRatesJsonObject = async ({ rates }) => {
       // leave new rate without rate open and hash
       .concat(stats.map((stat) => _.take(stat, 3)));
   });
+  }
   const legacy_rates = Object.entries(base_rates || {}).reduce(
     (obj, [type, rate]) => {
       // ignore
@@ -584,6 +588,7 @@ export default {
   getRates,
   storeJsonObject,
   storeTickets,
+  storeHistoricalRatesJsonObject,
   storeRatesJsonObject,
   getDataProviderForRate,
   getRateUrl,
