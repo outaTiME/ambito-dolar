@@ -2,15 +2,23 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { useFocusEffect } from '@react-navigation/native';
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
-import { View, TextInput, InteractionManager } from 'react-native';
+import {
+  ScrollView,
+  View,
+  TextInput,
+  InteractionManager,
+  Platform,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
+import DividerView from '../components/DividerView';
 import SegmentedControlTab from '../components/SegmentedControlTab';
 import withContainer from '../components/withContainer';
-import withScreenshotShareSheet from '../components/withScreenshotShareSheet';
+import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -21,7 +29,8 @@ const CONVERSION_TYPES = [I18n.t('buy'), I18n.t('average'), I18n.t('sell')];
 const DEFAULT_NUMBER = 1;
 
 const ConversionScreen = ({
-  scrollViewRef,
+  headerHeight,
+  tabBarheight,
   route: { params },
   navigation: { setParams },
 }) => {
@@ -109,12 +118,9 @@ const ConversionScreen = ({
   );
   useFocusEffect(
     React.useCallback(() => {
-      // FIXME: update params on quick action to force force when app state change
       const task = InteractionManager.runAfterInteractions(() => {
         if (params?.focus === true) {
-          scrollViewRef.current?.scrollTo({ y: 0, animated: true });
           inputTextRef.current?.focus();
-          // TODO: update param to false ???
           setParams({
             focus: false,
           });
@@ -123,61 +129,116 @@ const ConversionScreen = ({
       return () => task.cancel();
     }, [params])
   );
+  const insets = useSafeAreaInsets();
+  const indicatorStyle = Helper.useIndicatorStyle();
   return (
     <>
       <View
+        style={[
+          {
+            alignSelf: 'center',
+            width: Math.min(Settings.DEVICE_WIDTH, Settings.MAX_DEVICE_WIDTH),
+            ...(Platform.OS === 'ios' && {
+              paddingTop: headerHeight,
+            }),
+          },
+        ]}
+      >
+        <View
+          style={[
+            {
+              margin: Settings.CARD_PADDING,
+            },
+          ]}
+        >
+          <View
+            style={{
+              borderRadius: Settings.BORDER_RADIUS,
+              borderWidth: Settings.BORDER_WIDTH,
+              borderColor: Settings.getStrokeColor(theme),
+              margin: Settings.CARD_PADDING,
+              // perfect size using diff between the lineHeight and size of font
+              padding: Settings.PADDING - (34 - 28) / 2,
+              backgroundColor: Settings.getContentColor(theme),
+            }}
+          >
+            <TextInput
+              ref={inputTextRef}
+              defaultValue={Helper.formatFloatingPointNumber(numberValue)}
+              onFocus={onTextInputFocus}
+              onEndEditing={onTextInputBlur}
+              onChangeText={onTextInputChangeText}
+              style={[
+                fonts.largeTitle,
+                {
+                  // forced lineHeight required by android
+                  // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L25
+                  height: 34,
+                },
+              ]}
+              underlineColorAndroid="transparent"
+              returnKeyType="done"
+              keyboardType="numeric"
+              maxLength={15}
+              enablesReturnKeyAutomatically
+              autoCorrect={false}
+              textAlign="center"
+            />
+          </View>
+          <SegmentedControlTab
+            values={CURRENCY_TYPES}
+            selectedIndex={currencyIndex}
+            onTabPress={handleCurrencyTypeChange}
+          />
+          <SegmentedControlTab
+            values={CONVERSION_TYPES}
+            selectedIndex={typeIndex}
+            onTabPress={handleConversionTypeChange}
+          />
+        </View>
+      </View>
+      <DividerView />
+      <ScrollView
+        scrollIndicatorInsets={{
+          bottom: tabBarheight - insets.bottom,
+        }}
+        indicatorStyle={indicatorStyle}
+        contentContainerStyle={[
+          {
+            flexGrow: 1,
+            alignSelf: 'center',
+            width: Math.min(Settings.DEVICE_WIDTH, Settings.MAX_DEVICE_WIDTH),
+            // required when translucent bars
+            ...(Platform.OS === 'ios' && {
+              paddingBottom: tabBarheight,
+            }),
+          },
+        ]}
         style={{
-          borderRadius: Settings.BORDER_RADIUS,
-          borderWidth: Settings.BORDER_WIDTH,
-          borderColor: Settings.getStrokeColor(theme),
-          margin: Settings.CARD_PADDING,
-          // perfect size using diff between the lineHeight and size of font
-          padding: Settings.PADDING - (34 - 28) / 2,
           backgroundColor: Settings.getContentColor(theme),
         }}
       >
-        <TextInput
-          ref={inputTextRef}
-          defaultValue={Helper.formatFloatingPointNumber(numberValue)}
-          onFocus={onTextInputFocus}
-          onEndEditing={onTextInputBlur}
-          onChangeText={onTextInputChangeText}
+        <View
           style={[
-            fonts.largeTitle,
             {
-              // forced lineHeight required by android
-              // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L25
-              height: 34,
+              flex: 1,
+              marginHorizontal: Settings.CARD_PADDING,
+              marginVertical: -Settings.CARD_PADDING,
             },
           ]}
-          underlineColorAndroid="transparent"
-          returnKeyType="done"
-          keyboardType="numeric"
-          maxLength={15}
-          enablesReturnKeyAutomatically
-          autoCorrect={false}
-          textAlign="center"
-        />
-      </View>
-      <SegmentedControlTab
-        values={CURRENCY_TYPES}
-        selectedIndex={currencyIndex}
-        onTabPress={handleCurrencyTypeChange}
-      />
-      <SegmentedControlTab
-        values={CONVERSION_TYPES}
-        selectedIndex={typeIndex}
-        onTabPress={handleConversionTypeChange}
-      />
-      <CardView style={{ flex: 1 }} plain>
-        {rateTypes.map((type) => getItemView(type))}
-      </CardView>
+        >
+          <CardView
+            plain
+            style={{
+              flex: 1,
+            }}
+          >
+            {rateTypes.map((type) => getItemView(type))}
+          </CardView>
+        </View>
+      </ScrollView>
     </>
   );
 };
 
-export default compose(
-  withContainer(),
-  // withScreenshotShareSheet('Compartir resultados')
-  withScreenshotShareSheet
-)(ConversionScreen);
+export default compose(withContainer(), withDividersOverlay)(ConversionScreen);
