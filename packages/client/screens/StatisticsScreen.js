@@ -4,7 +4,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
-import ScrollView from '../components/ScrollView';
+import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
 import DateUtils from '../utilities/Date';
@@ -47,7 +47,7 @@ const StatisticsScreen = () => {
   );
 
   return (
-    <ScrollView>
+    <FixedScrollView>
       <CardView title={I18n.t('opts_app')} plain>
         {installationTime && (
           <CardItemView
@@ -101,7 +101,7 @@ const StatisticsScreen = () => {
           value={Helper.formatIntegerNumber(downloadedHistoricalRates)}
         />
       </CardView>
-    </ScrollView>
+    </FixedScrollView>
   );
 };
 

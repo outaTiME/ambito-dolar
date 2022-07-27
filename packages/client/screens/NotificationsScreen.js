@@ -13,8 +13,8 @@ import * as actions from '../actions';
 import ActionButton from '../components/ActionButton';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
+import FixedScrollView from '../components/FixedScrollView';
 import MessageView from '../components/MessageView';
-import ScrollView from '../components/ScrollView';
 import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
@@ -107,7 +107,7 @@ const NotificationsScreen = ({ navigation }) => {
           />
         </>
       ) : (
-        <ScrollView>
+        <FixedScrollView>
           <CardView plain>
             <CardItemView
               title={I18n.t('allow_notifications')}
@@ -133,7 +133,7 @@ const NotificationsScreen = ({ navigation }) => {
               onLongPress={handleOnPress}
             />
           )}
-        </ScrollView>
+        </FixedScrollView>
       )}
     </>
   );

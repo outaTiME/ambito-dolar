@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
-import ScrollView from '../components/ScrollView';
+import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
 import Helper from '../utilities/Helper';
@@ -56,7 +56,7 @@ const AdvancedNotificationsScreen = ({ route: { params } }) => {
     [params, notification_settings]
   );
   return (
-    <ScrollView>
+    <FixedScrollView>
       <CardView
         // title={I18n.t('opts_rates')}
         note={I18n.t('notification_choose_rates_note')}
@@ -64,7 +64,7 @@ const AdvancedNotificationsScreen = ({ route: { params } }) => {
       >
         {rateTypes.map((type) => getItemView(type))}
       </CardView>
-    </ScrollView>
+    </FixedScrollView>
   );
 };
 

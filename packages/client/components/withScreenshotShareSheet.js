@@ -13,8 +13,8 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
+import FixedScrollView from './FixedScrollView';
 import { MaterialHeaderButtons, Item } from './HeaderButtons';
-import ScrollView from './ScrollView';
 import WatermarkOverlayView from './WatermarkOverlayView';
 
 const withScreenshotShareSheet = (Component) => (props) => {
@@ -192,14 +192,14 @@ const withScreenshotShareSheet = (Component) => (props) => {
           </View>
         </View>
       )}
-      <ScrollView
+      <FixedScrollView
         // required for better view shot (same as parent)
         backgroundColor={backgroundColor}
         contentContainerRef={shareViewContainerRef}
         containerRef={scrollViewRef}
       >
         <Component {...props} scrollViewRef={scrollViewRef} />
-      </ScrollView>
+      </FixedScrollView>
     </>
   );
 };

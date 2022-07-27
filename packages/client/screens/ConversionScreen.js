@@ -3,7 +3,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import {
-  ScrollView,
   View,
   TextInput,
   InteractionManager,
@@ -17,6 +16,7 @@ import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import DividerView from '../components/DividerView';
+import ScrollView from '../components/ScrollView';
 import SegmentedControlTab from '../components/SegmentedControlTab';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
@@ -136,7 +136,6 @@ const ConversionScreen = ({
     }, [params])
   );
   const insets = useSafeAreaInsets();
-  const indicatorStyle = Helper.useIndicatorStyle();
   return (
     <>
       <TouchableWithoutFeedback onPress={dismissKeyboard} accessible={false}>
@@ -213,7 +212,6 @@ const ConversionScreen = ({
         scrollIndicatorInsets={{
           bottom: tabBarheight - insets.bottom,
         }}
-        indicatorStyle={indicatorStyle}
         contentContainerStyle={[
           {
             flexGrow: 1,

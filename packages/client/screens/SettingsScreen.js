@@ -7,7 +7,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
-import ScrollView from '../components/ScrollView';
+import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
@@ -68,7 +68,7 @@ const SettingsScreen = ({ navigation }) => {
   );
   Helper.useInterval(tickCallback);
   return (
-    <ScrollView>
+    <FixedScrollView>
       <CardView
         title={I18n.t('opts_general')}
         note={I18n.t('opts_general_note', {
@@ -151,7 +151,7 @@ const SettingsScreen = ({ navigation }) => {
           }}
         />
       </CardView>
-    </ScrollView>
+    </FixedScrollView>
   );
 };
 

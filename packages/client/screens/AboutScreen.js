@@ -4,8 +4,8 @@ import { View, Image, Text, Linking, Platform } from 'react-native';
 
 import appIcon from '../assets/about-icon-borderless.png';
 import CardView from '../components/CardView';
+import FixedScrollView from '../components/FixedScrollView';
 import IconCardItemView from '../components/IconCardItemView';
-import ScrollView from '../components/ScrollView';
 import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
 import Settings from '../config/settings';
@@ -125,7 +125,7 @@ const AboutScreen = ({ navigation }) => {
       .catch(console.warn);
   }, []);
   return (
-    <ScrollView>
+    <FixedScrollView>
       <View
         style={{
           flexDirection: 'row',
@@ -217,7 +217,7 @@ const AboutScreen = ({ navigation }) => {
         // style={{ flexGrow: 1 }}
         text={`${Settings.APP_COPYRIGHT} ${Settings.DASH_SEPARATOR} Hecho con ♥ en Buenos Aires, Argentina.`}
       />
-    </ScrollView>
+    </FixedScrollView>
   );
 };
 

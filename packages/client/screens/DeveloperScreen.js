@@ -5,14 +5,14 @@ import { useDispatch } from 'react-redux';
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
-import ScrollView from '../components/ScrollView';
+import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import Settings from '../config/settings';
 
 const DeveloperScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   return (
-    <ScrollView>
+    <FixedScrollView>
       <CardView title="Acciones" plain>
         <CardItemView
           title="Invalidar versión"
@@ -64,7 +64,7 @@ const DeveloperScreen = ({ navigation }) => {
           }}
         />
       </CardView>
-    </ScrollView>
+    </FixedScrollView>
   );
 };
 

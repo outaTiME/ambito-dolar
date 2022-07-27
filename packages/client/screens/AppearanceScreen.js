@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
-import ScrollView from '../components/ScrollView';
+import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
 import Helper from '../utilities/Helper';
@@ -16,7 +16,7 @@ const AppearanceScreen = () => {
   );
   const dispatch = useDispatch();
   return (
-    <ScrollView>
+    <FixedScrollView>
       <CardView title={I18n.t('opts_appearance')} plain>
         {['system', 'light', 'dark'].map((appearance) => (
           <CardItemView
@@ -38,7 +38,7 @@ const AppearanceScreen = () => {
           />
         ))}
       </CardView>
-    </ScrollView>
+    </FixedScrollView>
   );
 };
 

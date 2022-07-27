@@ -5,7 +5,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import CardItemView from '../components/CardItemView';
-import FlatList from '../components/FlatList';
+import FixedFlatList from '../components/FixedFlatList';
 import withContainer from '../components/withContainer';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
@@ -102,7 +102,7 @@ const RateRawDetailScreen = ({ route: { params } }) => {
     [chartStats]
   );
   return (
-    <FlatList
+    <FixedFlatList
       {...{
         title,
         data,
