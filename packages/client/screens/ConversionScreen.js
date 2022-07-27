@@ -8,6 +8,7 @@ import {
   TextInput,
   InteractionManager,
   Platform,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
@@ -65,10 +66,15 @@ const ConversionScreen = ({
       text: Helper.formatFloatingPointNumber(text),
     });
   }, []);
+  const dismissKeyboard = React.useCallback(() => {
+    inputTextRef.current?.blur();
+  }, []);
   const handleCurrencyTypeChange = React.useCallback((index) => {
+    dismissKeyboard();
     setCurrencyIndex(index);
   }, []);
   const handleConversionTypeChange = React.useCallback((index) => {
+    dismissKeyboard();
     setTypeIndex(index);
   }, []);
   const getValueFromType = React.useCallback((rate, typeIndex) => {
@@ -133,70 +139,75 @@ const ConversionScreen = ({
   const indicatorStyle = Helper.useIndicatorStyle();
   return (
     <>
-      <View
-        style={[
-          {
-            alignSelf: 'center',
-            width: Math.min(Settings.DEVICE_WIDTH, Settings.MAX_DEVICE_WIDTH),
-            ...(Platform.OS === 'ios' && {
-              paddingTop: headerHeight,
-            }),
-          },
-        ]}
-      >
+      <TouchableWithoutFeedback onPress={dismissKeyboard} accessible={false}>
         <View
           style={[
             {
-              margin: Settings.CARD_PADDING,
+              alignItems: 'center',
+              ...(Platform.OS === 'ios' && {
+                paddingTop: headerHeight,
+              }),
             },
           ]}
         >
           <View
-            style={{
-              borderRadius: Settings.BORDER_RADIUS,
-              borderWidth: Settings.BORDER_WIDTH,
-              borderColor: Settings.getStrokeColor(theme),
-              margin: Settings.CARD_PADDING,
-              // perfect size using diff between the lineHeight and size of font
-              padding: Settings.PADDING - (34 - 28) / 2,
-              backgroundColor: Settings.getContentColor(theme),
-            }}
+            style={[
+              {
+                padding: Settings.CARD_PADDING,
+                width: Math.min(
+                  Settings.DEVICE_WIDTH,
+                  Settings.MAX_DEVICE_WIDTH
+                ),
+              },
+            ]}
           >
-            <TextInput
-              ref={inputTextRef}
-              defaultValue={Helper.formatFloatingPointNumber(numberValue)}
-              onFocus={onTextInputFocus}
-              onEndEditing={onTextInputBlur}
-              onChangeText={onTextInputChangeText}
-              style={[
-                fonts.largeTitle,
-                {
-                  // forced lineHeight required by android
-                  // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L25
-                  height: 34,
-                },
-              ]}
-              underlineColorAndroid="transparent"
-              returnKeyType="done"
-              keyboardType="numeric"
-              maxLength={15}
-              enablesReturnKeyAutomatically
-              autoCorrect={false}
-              textAlign="center"
+            <View
+              style={{
+                borderRadius: Settings.BORDER_RADIUS,
+                borderWidth: Settings.BORDER_WIDTH,
+                borderColor: Settings.getStrokeColor(theme),
+                margin: Settings.CARD_PADDING,
+                // perfect size using diff between the lineHeight and size of font
+                padding: Settings.PADDING - (34 - 28) / 2,
+                backgroundColor: Settings.getContentColor(theme),
+              }}
+            >
+              <TextInput
+                ref={inputTextRef}
+                defaultValue={Helper.formatFloatingPointNumber(numberValue)}
+                onFocus={onTextInputFocus}
+                onEndEditing={onTextInputBlur}
+                onChangeText={onTextInputChangeText}
+                style={[
+                  fonts.largeTitle,
+                  {
+                    // forced lineHeight required by android
+                    // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L25
+                    height: 34,
+                  },
+                ]}
+                underlineColorAndroid="transparent"
+                returnKeyType="done"
+                keyboardType="numeric"
+                maxLength={15}
+                enablesReturnKeyAutomatically
+                autoCorrect={false}
+                textAlign="center"
+              />
+            </View>
+            <SegmentedControlTab
+              values={CURRENCY_TYPES}
+              selectedIndex={currencyIndex}
+              onTabPress={handleCurrencyTypeChange}
+            />
+            <SegmentedControlTab
+              values={CONVERSION_TYPES}
+              selectedIndex={typeIndex}
+              onTabPress={handleConversionTypeChange}
             />
           </View>
-          <SegmentedControlTab
-            values={CURRENCY_TYPES}
-            selectedIndex={currencyIndex}
-            onTabPress={handleCurrencyTypeChange}
-          />
-          <SegmentedControlTab
-            values={CONVERSION_TYPES}
-            selectedIndex={typeIndex}
-            onTabPress={handleConversionTypeChange}
-          />
         </View>
-      </View>
+      </TouchableWithoutFeedback>
       <DividerView />
       <ScrollView
         scrollIndicatorInsets={{
@@ -217,6 +228,7 @@ const ConversionScreen = ({
         style={{
           backgroundColor: Settings.getContentColor(theme),
         }}
+        onScrollBeginDrag={dismissKeyboard}
       >
         <View
           style={[
