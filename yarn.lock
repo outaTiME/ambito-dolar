@@ -17,7 +17,7 @@ __metadata:
     "@sentry/integrations": ^7.8.0
     "@sentry/serverless": ^7.8.0
     "@shelf/dynamodb-parallel-scan": ^3.3.0
-    "@sparticuz/chrome-aws-lambda": ^14.4.1
+    "@sparticuz/chrome-aws-lambda": ^15.5.0
     boolean: ^3.2.0
     expo-server-sdk: ^3.6.0
     google-auth-library: ^8.1.1
@@ -26,8 +26,8 @@ __metadata:
     lodash: ^4.17.21
     node-fetch: ^2.6.7
     object-hash: ^3.0.0
-    puppeteer: 14.4.1
-    puppeteer-core: 14.4.1
+    puppeteer: 15.5.0
+    puppeteer-core: 15.5.0
     semver: ^7.3.7
     sharp: ^0.30.7
   languageName: unknown
@@ -56,7 +56,7 @@ __metadata:
     d3-array: ^3.1.6
     d3-shape: ^3.1.0
     dotenv: ^16.0.1
-    expo: ^45.0.6
+    expo: ^45.0.8
     expo-analytics-amplitude: ~11.2.0
     expo-application: ~4.1.0
     expo-asset: ~8.5.0
@@ -3448,18 +3448,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/cli@npm:0.1.5":
-  version: 0.1.5
-  resolution: "@expo/cli@npm:0.1.5"
+"@expo/cli@npm:0.1.7":
+  version: 0.1.7
+  resolution: "@expo/cli@npm:0.1.7"
   dependencies:
     "@babel/runtime": ^7.14.0
     "@expo/code-signing-certificates": ^0.0.2
     "@expo/config": ~6.0.23
     "@expo/config-plugins": ~4.1.4
-    "@expo/dev-server": ~0.1.110
+    "@expo/dev-server": 0.1.116
     "@expo/devcert": ^1.0.0
     "@expo/json-file": ^8.2.35
-    "@expo/metro-config": ~0.3.16
+    "@expo/metro-config": 0.3.19
     "@expo/osascript": ^2.0.31
     "@expo/package-manager": ~0.0.52
     "@expo/plist": ^0.0.18
@@ -3512,7 +3512,7 @@ __metadata:
     wrap-ansi: ^7.0.0
   bin:
     expo-internal: build/bin/cli
-  checksum: 8b18b788a08c7cc3f7f34159f4e3e3060e74220812d877de4eee6daaeb5312f84a332649c7703a227ff66283f85da671ec4cf79820da138667b20893f11e3de7
+  checksum: 7cc6643ad4438e5a5ac1c0810565c248316c1fdf8c510b02d104efdbf5bd673fad9f537b4116213241cfa1effb8259824c0f75b209294036a51a10600d838582
   languageName: node
   linkType: hard
 
@@ -3623,7 +3623,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/dev-server@npm:~0.1.110":
+"@expo/dev-server@npm:0.1.116":
   version: 0.1.116
   resolution: "@expo/dev-server@npm:0.1.116"
   dependencies:
@@ -3714,7 +3714,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/metro-config@npm:0.3.19, @expo/metro-config@npm:~0.3.16, @expo/metro-config@npm:~0.3.7":
+"@expo/metro-config@npm:0.3.19, @expo/metro-config@npm:~0.3.7":
   version: 0.3.19
   resolution: "@expo/metro-config@npm:0.3.19"
   dependencies:
@@ -7458,13 +7458,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serverless-stack/cli@npm:1.6.1":
-  version: 1.6.1
-  resolution: "@serverless-stack/cli@npm:1.6.1"
+"@serverless-stack/cli@npm:1.6.2":
+  version: 1.6.2
+  resolution: "@serverless-stack/cli@npm:1.6.2"
   dependencies:
     "@aws-cdk/aws-apigatewayv2-alpha": 2.32.0-alpha.0
-    "@serverless-stack/core": 1.6.1
-    "@serverless-stack/resources": 1.6.1
+    "@serverless-stack/core": 1.6.2
+    "@serverless-stack/resources": 1.6.2
     aws-cdk: 2.32.0
     aws-cdk-lib: 2.32.0
     aws-sdk: ^2.1110.0
@@ -7483,13 +7483,13 @@ __metadata:
     yargs: ^15.4.1
   bin:
     sst: bin/scripts.mjs
-  checksum: 143fffe46ade46dc73341e881ea8a52c38f324787429aa9d573af80f40609eb24227c45bfaed7b104bc4d411ea5d810ad5fb1e12358d9ff0c5a6fa0376ae41e4
+  checksum: e2bf76af7915311182712add7adee644903bdd4c006368a55ea22773707a9c7409426f3b7229b83100d61f332928f5933a48a5fa928838cce721e8a3aa24c213
   languageName: node
   linkType: hard
 
-"@serverless-stack/core@npm:1.6.1":
-  version: 1.6.1
-  resolution: "@serverless-stack/core@npm:1.6.1"
+"@serverless-stack/core@npm:1.6.2":
+  version: 1.6.2
+  resolution: "@serverless-stack/core@npm:1.6.2"
   dependencies:
     "@pothos/core": ^3.11.0
     "@rmp135/sql-ts": ^1.13.0
@@ -7531,19 +7531,19 @@ __metadata:
       optional: true
     graphql:
       optional: true
-  checksum: cff1abf4aa0f8b7a8633e698edff74781bba80082fa66d74d51beb8aeeac1831a09ad4f497afea3daa715000fa3a9b666a9d6d52deb2c4664ae3bc48b350fd15
+  checksum: 91878abe3239ed17720d180cee9735d40f83fabbc9aab31bf018366e218a70f0ddf2cb0fcf681b3e8a71675102bc9818c62eeac737f42af4c84bb329a7a25784
   languageName: node
   linkType: hard
 
-"@serverless-stack/resources@npm:1.6.1":
-  version: 1.6.1
-  resolution: "@serverless-stack/resources@npm:1.6.1"
+"@serverless-stack/resources@npm:1.6.2":
+  version: 1.6.2
+  resolution: "@serverless-stack/resources@npm:1.6.2"
   dependencies:
     "@aws-cdk/aws-apigatewayv2-alpha": 2.32.0-alpha.0
     "@aws-cdk/aws-apigatewayv2-authorizers-alpha": 2.32.0-alpha.0
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": 2.32.0-alpha.0
     "@aws-cdk/aws-appsync-alpha": 2.32.0-alpha.0
-    "@serverless-stack/core": 1.6.1
+    "@serverless-stack/core": 1.6.2
     archiver: ^5.3.0
     aws-cdk-lib: 2.32.0
     chalk: ^4.1.0
@@ -7557,7 +7557,7 @@ __metadata:
   dependenciesMeta:
     graphql:
       optional: true
-  checksum: dd26b8f1b0c5542ef9e11150b0b261590ac4a0ef2bab13191accf7d428e62fcb4df9b300e9738e53dd018e0e2933926f4c0b30d350521cb42f8f129e3f27f34c
+  checksum: 14711fbd1987b9b4e718891d1e7e191de440161ca1965898595ef0f9ae2092276ccacb786db4f9ec1495d29462152b41f000af933b5bfd473a7654ba44b50f88
   languageName: node
   linkType: hard
 
@@ -7648,14 +7648,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sparticuz/chrome-aws-lambda@npm:^14.4.1":
-  version: 14.4.1
-  resolution: "@sparticuz/chrome-aws-lambda@npm:14.4.1"
+"@sparticuz/chrome-aws-lambda@npm:^15.5.0":
+  version: 15.5.0
+  resolution: "@sparticuz/chrome-aws-lambda@npm:15.5.0"
   dependencies:
     tar-fs: ^2.1.1
   peerDependencies:
-    puppeteer-core: 14.4.1
-  checksum: 2bf4469285308abf3d1bd68102d6899f603f0e17e9212ccd545b3b0f42b0beb76ab0c71a43ef35e515b0cd66b09c4eb518aed3d1fb3daf052433a3713ec9e7e3
+    puppeteer-core: 15.5.0
+  checksum: 09179a83dee81aadcfa798ed10821b8d8fc68590cc5452c823d70c44f7602821ff3489a0bd7306861abdbc2a5c16ea8074dc869eaaa852d8ae82e40fb98a2bb4
   languageName: node
   linkType: hard
 
@@ -9166,8 +9166,8 @@ __metadata:
   dependencies:
     "@commitlint/cli": ^17.0.3
     "@commitlint/config-conventional": ^17.0.3
-    "@serverless-stack/cli": 1.6.1
-    "@serverless-stack/resources": 1.6.1
+    "@serverless-stack/cli": 1.6.2
+    "@serverless-stack/resources": 1.6.2
     aws-cdk-lib: 2.32.0
     eslint: ^8.20.0
     eslint-config-universe: ^11.1.0
@@ -14146,10 +14146,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devtools-protocol@npm:0.0.1001819":
-  version: 0.0.1001819
-  resolution: "devtools-protocol@npm:0.0.1001819"
-  checksum: 156e7c6703ec6c203e0bc1d68393fcd768de45bf225ca7b2d6bd106d8dc4ab0e8f38c518ce158c73d83a96db8ef32ae06dc9b4edd70e94660253dc2622619947
+"devtools-protocol@npm:0.0.1019158":
+  version: 0.0.1019158
+  resolution: "devtools-protocol@npm:0.0.1019158"
+  checksum: 3b40771d231597dea5d502e708ac1ea1225214d4e007e12f7f82fb1966b76d9980665481f8495df444e3632d86b0361e2625502b5ef918884a4ed7fe57518723
   languageName: node
   linkType: hard
 
@@ -16379,12 +16379,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo@npm:^45.0.6":
-  version: 45.0.6
-  resolution: "expo@npm:45.0.6"
+"expo@npm:^45.0.8":
+  version: 45.0.8
+  resolution: "expo@npm:45.0.8"
   dependencies:
     "@babel/runtime": ^7.14.0
-    "@expo/cli": 0.1.5
+    "@expo/cli": 0.1.7
     "@expo/vector-icons": ^13.0.0
     babel-preset-expo: ~9.1.0
     cross-spawn: ^6.0.5
@@ -16409,7 +16409,7 @@ __metadata:
       optional: true
   bin:
     expo: bin/cli.js
-  checksum: af8faabe4becb9b9eb36e385f68d27305929e32c77decb90c6e2cf00aa145fbd5736e5da76ccea0d75d3bbf2b4b887bf4a3c98718010f335326455104c27772a
+  checksum: 90f16c1a81276880ea44cc0979e26c68254c14a2ef0aa31c007e645b2bfbba08ace94d7c761443f8c60f215ff0059a4804eb4561d68104e93150a9b34f09a559
   languageName: node
   linkType: hard
 
@@ -27952,13 +27952,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:14.4.1":
-  version: 14.4.1
-  resolution: "puppeteer-core@npm:14.4.1"
+"puppeteer-core@npm:15.5.0":
+  version: 15.5.0
+  resolution: "puppeteer-core@npm:15.5.0"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
-    devtools-protocol: 0.0.1001819
+    devtools-protocol: 0.0.1019158
     extract-zip: 2.0.1
     https-proxy-agent: 5.0.1
     pkg-dir: 4.2.0
@@ -27967,18 +27967,18 @@ __metadata:
     rimraf: 3.0.2
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
-    ws: 8.7.0
-  checksum: ad04ab14817961b251ce1b58a0b2d89f890e44c8d8f56a099911e2af9806a33d047fe8bf26fd5a76992229460833d5ad48e4431acacb43fb3f3ff84c7a76fd13
+    ws: 8.8.0
+  checksum: 1134a21cd1047722bb2f19f586f2c0ac110bc36019099c8d6280142dd203efa4f55f620ad16e6ac3e4d74db02363c54095bc1719dfea1b7805ed306f45d3a298
   languageName: node
   linkType: hard
 
-"puppeteer@npm:14.4.1":
-  version: 14.4.1
-  resolution: "puppeteer@npm:14.4.1"
+"puppeteer@npm:15.5.0":
+  version: 15.5.0
+  resolution: "puppeteer@npm:15.5.0"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
-    devtools-protocol: 0.0.1001819
+    devtools-protocol: 0.0.1019158
     extract-zip: 2.0.1
     https-proxy-agent: 5.0.1
     pkg-dir: 4.2.0
@@ -27987,8 +27987,8 @@ __metadata:
     rimraf: 3.0.2
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
-    ws: 8.7.0
-  checksum: 21566e220dbbc8df8c59209b71de83630bf7ba8f9fa117c9f2452370430471fa3bbeb9c19bbfb95bc8078d65454d9000240441050ba6c9880de1954038af0a08
+    ws: 8.8.0
+  checksum: 2bc9e230b397f6b0c42eb5ba4e9179879b3d52f64d767a0bffbb266ecd5f8268ee982fd643c09362e29248e8f9566607c128bf7f60ec625b7605c9e609871788
   languageName: node
   linkType: hard
 
@@ -34945,22 +34945,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.7.0":
-  version: 8.7.0
-  resolution: "ws@npm:8.7.0"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 078fa2dbc06b31a45e0057b19e2930d26c222622e355955afe019c9b9b25f62eb2a8eff7cceabdad04910ecd2bd6ef4fa48e6f3673f2fdddff02a6e4c2459584
-  languageName: node
-  linkType: hard
-
-"ws@npm:>=7.4.6, ws@npm:^8.6.0":
+"ws@npm:8.8.0, ws@npm:>=7.4.6, ws@npm:^8.6.0":
   version: 8.8.0
   resolution: "ws@npm:8.8.0"
   peerDependencies:

@@ -14,8 +14,8 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
-    "@serverless-stack/cli": "1.6.1",
-    "@serverless-stack/resources": "1.6.1",
+    "@serverless-stack/cli": "1.6.2",
+    "@serverless-stack/resources": "1.6.2",
     "aws-cdk-lib": "2.32.0",
     "eslint": "^8.20.0",
     "eslint-config-universe": "^11.1.0",
