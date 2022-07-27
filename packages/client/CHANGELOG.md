@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.3...@ambito-dolar/client@6.1.0) (2022-07-27)
+
+
+### Bug Fixes
+
+* handle errors on certain promises ([9f2b1d9](https://github.com/outaTiME/ambito-dolar/commit/9f2b1d9c623aae4063b0d288774a18768fd0b1f9))
+* handle errors on certain promises ([262ca07](https://github.com/outaTiME/ambito-dolar/commit/262ca0762b58404b043d99389f7e62889f31630f))
+* improve keyboard dismiss on conversion ([aa631f4](https://github.com/outaTiME/ambito-dolar/commit/aa631f47a72e2f133848a784511ecdb9ba0c9459))
+* throw exception when no value on firebase ([82de52c](https://github.com/outaTiME/ambito-dolar/commit/82de52ce69e763602286ff47d99404ae7cded671))
+* tint on blurview for light theme ([1aea34e](https://github.com/outaTiME/ambito-dolar/commit/1aea34e5caa82ad42e9d7f2611e155315f8d33dc))
+* use order from getAvailableRates on rates ([f7f10dd](https://github.com/outaTiME/ambito-dolar/commit/f7f10ddcbf57dee0d8243fcc3541412964f8cd4b))
+
+
+### Features
+
+* add official spread on rates ([6b7c0ee](https://github.com/outaTiME/ambito-dolar/commit/6b7c0eede535169cb08bc0bf66fd1ddcb9d86b5f))
+* update footer style for rates website ([4946cd8](https://github.com/outaTiME/ambito-dolar/commit/4946cd8724b731c7e3ae313f95e5d94967e8b83c))
+
+
+
+
+
 ## [6.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.2...@ambito-dolar/client@6.0.3) (2022-07-06)
 
 

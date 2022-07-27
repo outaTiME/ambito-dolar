@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.1.1...@ambito-dolar/api@3.2.0) (2022-07-27)
+
+
+### Bug Fixes
+
+* bump variation threshold for realtime quotes ([ad046dc](https://github.com/outaTiME/ambito-dolar/commit/ad046dcf8b2f87ec025dacbf4d7ae0698d2e29e1))
+* bump variation threshold for realtime quotes ([3a39141](https://github.com/outaTiME/ambito-dolar/commit/3a391410f725bc9559afc2a89a6262de2f687444))
+* bump variation threshold for realtime quotes ([9645584](https://github.com/outaTiME/ambito-dolar/commit/96455846138ed1b71d00eca261ca02cc26fa2a88))
+* remove google auth from local cache ([e7dcf4d](https://github.com/outaTiME/ambito-dolar/commit/e7dcf4d7910d574f418b8fb78ae59547a471610f))
+* remove unused value on firebase ([9a3e49d](https://github.com/outaTiME/ambito-dolar/commit/9a3e49dd07c77c2860d88ebdaa2babbc56b08cfc))
+* use order from getAvailableRates on rates ([f7f10dd](https://github.com/outaTiME/ambito-dolar/commit/f7f10ddcbf57dee0d8243fcc3541412964f8cd4b))
+
+
+### Features
+
+* add endpoint to update historical rates ([ad07b41](https://github.com/outaTiME/ambito-dolar/commit/ad07b41b52e64b31eba0333bc4db8471da1112f8))
+* add saving rate type ([37d5ed8](https://github.com/outaTiME/ambito-dolar/commit/37d5ed881288a84249a9eb670ec6601842a2e521))
+
+
+
+
+
 ## [3.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.1.0...@ambito-dolar/api@3.1.1) (2022-07-06)
 
 

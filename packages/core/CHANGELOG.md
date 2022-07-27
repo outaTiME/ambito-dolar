@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.0.0...@ambito-dolar/core@3.1.0) (2022-07-27)
+
+
+### Bug Fixes
+
+* update wording quotes ([8c3534f](https://github.com/outaTiME/ambito-dolar/commit/8c3534fb6261da0a57cd9d0743ecd2f9c1f3b8f3))
+* use order from getAvailableRates on rates ([f7f10dd](https://github.com/outaTiME/ambito-dolar/commit/f7f10ddcbf57dee0d8243fcc3541412964f8cd4b))
+
+
+### Features
+
+* add saving rate type ([37d5ed8](https://github.com/outaTiME/ambito-dolar/commit/37d5ed881288a84249a9eb670ec6601842a2e521))
+
+
+
+
+
 # [3.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@2.2.0...@ambito-dolar/core@3.0.0) (2022-06-27)
 
 
