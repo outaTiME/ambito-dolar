@@ -81,7 +81,7 @@ __metadata:
     expo-system-ui: ~1.2.0
     expo-updates: ~0.13.3
     firebase: ^9.9.1
-    i18n-js: ^3.9.2
+    i18n-js: ^4.0.1
     immutability-helper: ^3.1.1
     lodash: ^4.17.21
     react: 17.0.2
@@ -7458,13 +7458,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serverless-stack/cli@npm:1.6.2":
-  version: 1.6.2
-  resolution: "@serverless-stack/cli@npm:1.6.2"
+"@serverless-stack/cli@npm:1.6.4":
+  version: 1.6.4
+  resolution: "@serverless-stack/cli@npm:1.6.4"
   dependencies:
     "@aws-cdk/aws-apigatewayv2-alpha": 2.32.0-alpha.0
-    "@serverless-stack/core": 1.6.2
-    "@serverless-stack/resources": 1.6.2
+    "@serverless-stack/core": 1.6.4
+    "@serverless-stack/resources": 1.6.4
     aws-cdk: 2.32.0
     aws-cdk-lib: 2.32.0
     aws-sdk: ^2.1110.0
@@ -7483,13 +7483,13 @@ __metadata:
     yargs: ^15.4.1
   bin:
     sst: bin/scripts.mjs
-  checksum: e2bf76af7915311182712add7adee644903bdd4c006368a55ea22773707a9c7409426f3b7229b83100d61f332928f5933a48a5fa928838cce721e8a3aa24c213
+  checksum: 3a5a8c20a1f3f3912116b3fa5b9217938df0d7e5c7fced61942677b8d6a32ea1370e3e9311be8d57b5125950d2c9437b1814493c611c76d8a51a9616c6f9aef9
   languageName: node
   linkType: hard
 
-"@serverless-stack/core@npm:1.6.2":
-  version: 1.6.2
-  resolution: "@serverless-stack/core@npm:1.6.2"
+"@serverless-stack/core@npm:1.6.4":
+  version: 1.6.4
+  resolution: "@serverless-stack/core@npm:1.6.4"
   dependencies:
     "@pothos/core": ^3.11.0
     "@rmp135/sql-ts": ^1.13.0
@@ -7531,19 +7531,19 @@ __metadata:
       optional: true
     graphql:
       optional: true
-  checksum: 91878abe3239ed17720d180cee9735d40f83fabbc9aab31bf018366e218a70f0ddf2cb0fcf681b3e8a71675102bc9818c62eeac737f42af4c84bb329a7a25784
+  checksum: 9f3fc047630fd849fd8b26afd023ffabd3efe4a9c93b6e35cfcd2cda84c89140c3d553143a4ff3a7f476d9b78d3981d6fce75fd0c0cc6bff9d1d0f4ded83ad3e
   languageName: node
   linkType: hard
 
-"@serverless-stack/resources@npm:1.6.2":
-  version: 1.6.2
-  resolution: "@serverless-stack/resources@npm:1.6.2"
+"@serverless-stack/resources@npm:1.6.4":
+  version: 1.6.4
+  resolution: "@serverless-stack/resources@npm:1.6.4"
   dependencies:
     "@aws-cdk/aws-apigatewayv2-alpha": 2.32.0-alpha.0
     "@aws-cdk/aws-apigatewayv2-authorizers-alpha": 2.32.0-alpha.0
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": 2.32.0-alpha.0
     "@aws-cdk/aws-appsync-alpha": 2.32.0-alpha.0
-    "@serverless-stack/core": 1.6.2
+    "@serverless-stack/core": 1.6.4
     archiver: ^5.3.0
     aws-cdk-lib: 2.32.0
     chalk: ^4.1.0
@@ -7557,7 +7557,7 @@ __metadata:
   dependenciesMeta:
     graphql:
       optional: true
-  checksum: 14711fbd1987b9b4e718891d1e7e191de440161ca1965898595ef0f9ae2092276ccacb786db4f9ec1495d29462152b41f000af933b5bfd473a7654ba44b50f88
+  checksum: ccf0443d4d73d2d43e9f9db6974a659437f70899193fa76300d2dd5d7359630797071510946bdbc5c8809112f68d7effc1216967f496b57123cc38bf2ce78e50
   languageName: node
   linkType: hard
 
@@ -9166,8 +9166,8 @@ __metadata:
   dependencies:
     "@commitlint/cli": ^17.0.3
     "@commitlint/config-conventional": ^17.0.3
-    "@serverless-stack/cli": 1.6.2
-    "@serverless-stack/resources": 1.6.2
+    "@serverless-stack/cli": 1.6.4
+    "@serverless-stack/resources": 1.6.4
     aws-cdk-lib: 2.32.0
     eslint: ^8.20.0
     eslint-config-universe: ^11.1.0
@@ -10507,7 +10507,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bignumber.js@npm:^9.0.0":
+"bignumber.js@npm:*, bignumber.js@npm:^9.0.0":
   version: 9.0.2
   resolution: "bignumber.js@npm:9.0.2"
   checksum: 8637b71d0a99104b20413c47578953970006fec6b4df796b9dcfd9835ea9c402ea0e727eba9a5ca9f9a393c1d88b6168c5bbe0887598b708d4f8b4870ad62e1f
@@ -19902,10 +19902,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18n-js@npm:^3.9.2":
-  version: 3.9.2
-  resolution: "i18n-js@npm:3.9.2"
-  checksum: b405ad0861dbd57a8757811dcee791e8526a705d67c4a4353e27c924fa2c3422130fba16a21875bd89be871c86ef82f26212b002ba527c09956ff230c47e5026
+"i18n-js@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "i18n-js@npm:4.0.1"
+  dependencies:
+    bignumber.js: "*"
+    lodash: "*"
+  checksum: dcefbe8f9aceafef313c1a802fe277459511504a46318728001e28570ddee284ea898f386623757b7aa4d47816505a613c4dd102a6dd87a1a3ccbf6db9282f5b
   languageName: node
   linkType: hard
 
@@ -22845,7 +22848,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.17.21, lodash@npm:>=3.5 <5, lodash@npm:^4.17.10, lodash@npm:^4.17.11, lodash@npm:^4.17.12, lodash@npm:^4.17.13, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.17.5, lodash@npm:^4.3.0, lodash@npm:^4.7.0":
+"lodash@npm:*, lodash@npm:4.17.21, lodash@npm:>=3.5 <5, lodash@npm:^4.17.10, lodash@npm:^4.17.11, lodash@npm:^4.17.12, lodash@npm:^4.17.13, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.17.5, lodash@npm:^4.3.0, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
