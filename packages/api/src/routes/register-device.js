@@ -83,7 +83,8 @@ export const handler = Shared.wrapHandler(async (event) => {
     }
     console.info(
       'Registration or interaction for the device completed',
-      JSON.stringify(data)
+      // JSON.stringify(data)
+      installation_id
     );
     return Shared.serviceResponse(null, 200, results);
   } catch (error) {
