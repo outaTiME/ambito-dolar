@@ -1,9 +1,7 @@
 import * as Localization from 'expo-localization';
-import i18n from 'i18n-js';
+import { I18n } from 'i18n-js';
 
-i18n.defaultLocale = 'es';
-i18n.fallbacks = true;
-i18n.translations = {
+const i18n = new I18n({
   es: {
     // general
     accept: 'Aceptar',
@@ -101,7 +99,10 @@ i18n.translations = {
     light_appearance: 'Claro',
     dark_appearance: 'Oscuro',
   },
-};
+});
+
+i18n.defaultLocale = 'es';
+i18n.enableFallback = true;
 i18n.locale = Localization.locale;
 
 export default i18n;
