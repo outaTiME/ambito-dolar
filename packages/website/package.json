@@ -4,7 +4,7 @@
   "version": "1.4.1",
   "dependencies": {
     "gatsby": "^2.32.13",
-    "gatsby-background-image": "^1.5.3",
+    "gatsby-background-image": "^1.6.0",
     "gatsby-cli": "^2.19.3",
     "gatsby-image": "^2.11.0",
     "gatsby-plugin-dark-mode": "^1.1.2",
@@ -14,7 +14,7 @@
     "gatsby-plugin-no-sourcemaps": "^2.9.0",
     "gatsby-plugin-offline": "^3.10.2",
     "gatsby-plugin-react-helmet": "^3.10.0",
-    "gatsby-plugin-robots-txt": "^1.6.14",
+    "gatsby-plugin-robots-txt": "^1.7.1",
     "gatsby-plugin-sass": "^3.2.0",
     "gatsby-plugin-sharp": "^2.14.4",
     "gatsby-plugin-web-font-loader": "^1.0.4",
@@ -25,7 +25,7 @@
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
     "react-icons": "^4.4.0",
-    "sass": "^1.54.0"
+    "sass": "^1.54.1"
   },
   "scripts": {
     "develop": "gatsby develop",
