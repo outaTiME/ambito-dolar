@@ -104,7 +104,13 @@ const withScreenshotShareSheet = (Component) => (props) => {
     })
       .then(
         async (uri) => {
-          const { uri: new_uri } = await ImageManipulator.manipulateAsync(uri);
+          const { uri: new_uri } = await ImageManipulator.manipulateAsync(
+            uri,
+            [
+              // ignore
+            ],
+            { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+          );
           if (__DEV__) {
             console.log('Snapshot for sharing', new_uri);
           }
