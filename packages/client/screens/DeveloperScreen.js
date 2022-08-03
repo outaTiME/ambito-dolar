@@ -8,6 +8,7 @@ import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import Settings from '../config/settings';
+import Sentry from '../utilities/Sentry';
 
 const DeveloperScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -62,6 +63,15 @@ const DeveloperScreen = ({ navigation }) => {
               },
             });
           }}
+        />
+        <CardItemView
+          title="Simular excepción"
+          useSwitch={false}
+          chevron={false}
+          onAction={Sentry.nativeCrash}
+          /* onAction={() => {
+            throw new Error('Intentional excepción');
+          }} */
         />
       </CardView>
     </FixedScrollView>

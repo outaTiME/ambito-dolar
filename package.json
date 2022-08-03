@@ -27,7 +27,7 @@
     "test": "lerna run test",
     "g:eslint": "cd $INIT_CWD && eslint .",
     "client:start": "yarn workspace @ambito-dolar/client run start",
-    "client:upgrade": "yarn workspace @ambito-dolar/client expo upgrade",
+    "client:upgrade": "yarn workspace @ambito-dolar/client exec expo-cli upgrade",
     "client:build": "yarn workspace @ambito-dolar/client exec eas build --clear-cache",
     "api:start": "yarn sst start",
     "api:publish": "yarn sst deploy",
@@ -38,8 +38,7 @@
     "postinstall": "husky install"
   },
   "resolutions": {
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "@expo/config-plugins": "~5.0.0"
   },
   "packageManager": "yarn@3.2.1"
 }

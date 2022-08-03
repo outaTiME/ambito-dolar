@@ -5,7 +5,6 @@ import {
   MaterialCommunityIcons,
   FontAwesome5,
 } from '@expo/vector-icons';
-import * as Amplitude from 'expo-analytics-amplitude';
 import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -13,7 +12,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import React from 'react';
-import { Text, TextInput, LogBox, Platform } from 'react-native';
+import { Text, TextInput, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -26,19 +25,6 @@ import Settings from './config/settings';
 import useColorScheme from './hooks/useColorScheme';
 import { store, persistor } from './store';
 import Helper from './utilities/Helper';
-import Sentry from './utilities/Sentry';
-
-if (__DEV__) {
-  LogBox.ignoreLogs([
-    'Amplitude client has not been initialized',
-    'Constants.installationId has been deprecated',
-    'ViewPropTypes will be removed from React Native',
-    "Seems like you're using an old API with gesture components",
-  ]);
-} else {
-  Sentry.configure(Settings.SENTRY_DSN);
-  Amplitude.initializeAsync(Settings.AMPLITUDE_KEY).catch(console.warn);
-}
 
 // disable font scaling in whole app (iOS only)
 Text.defaultProps = Text.defaultProps || {};

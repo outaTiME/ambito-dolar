@@ -1,6 +1,5 @@
 import { connectActionSheet } from '@expo/react-native-action-sheet';
 import { compose } from '@reduxjs/toolkit';
-import * as Amplitude from 'expo-analytics-amplitude';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Sharing from 'expo-sharing';
 import React from 'react';
@@ -11,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as actions from '../actions';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
+import Amplitude from '../utilities/Amplitude';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import FixedScrollView from './FixedScrollView';
@@ -63,9 +63,7 @@ const withScreenshotShareSheet = (Component) => (props) => {
                       (button_index) => {
                         const button_name = action_sheet_opts[button_index];
                         if (button_name === share_opt) {
-                          Amplitude.logEventAsync('Share rates').catch(
-                            console.warn
-                          );
+                          Amplitude.logEvent('Share rates');
                           captureRef(shareViewContainerRef.current, {
                             result: 'data-uri',
                           }).then(

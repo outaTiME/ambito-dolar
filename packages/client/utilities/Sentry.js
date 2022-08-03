@@ -1,12 +1,15 @@
 import * as Sentry from 'sentry-expo';
 
-const configure = (dsn) => {
+import Settings from '../config/settings';
+
+const init = (dsn) =>
   Sentry.init({
     dsn,
-    enableInExpoDevelopment: false,
+    // enableInExpoDevelopment: true,
     debug: __DEV__,
   });
-};
+
+Settings.IS_PRODUCTION && Settings.SENTRY_DSN && init(Settings.SENTRY_DSN);
 
 const setUserContext = (ctx) => {
   ctx = ctx || {};
@@ -29,7 +32,7 @@ const captureMessage = (msg, opts) => {
 const addBreadcrumb = ({ data, ...opts }) => {
   Sentry.Native.addBreadcrumb({
     category: 'application',
-    level: Sentry.Native.Severity.Debug,
+    level: 'debug',
     ...opts,
     ...(data && {
       data: {
@@ -39,9 +42,11 @@ const addBreadcrumb = ({ data, ...opts }) => {
   });
 };
 
+const nativeCrash = Sentry?.Native?.nativeCrash;
+
 export default {
-  configure,
   setUserContext,
   captureMessage,
   addBreadcrumb,
+  nativeCrash,
 };

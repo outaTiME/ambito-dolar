@@ -8,7 +8,6 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { compose } from '@reduxjs/toolkit';
-import * as Amplitude from 'expo-analytics-amplitude';
 import { BlurView } from 'expo-blur';
 import * as Device from 'expo-device';
 import { processFontFamily } from 'expo-font';
@@ -43,6 +42,7 @@ import RateRawDetailScreen from '../screens/RateRawDetailScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
 import UpdateAppModalScreen from '../screens/UpdateAppModalScreen';
+import Amplitude from '../utilities/Amplitude';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
@@ -352,7 +352,7 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
     Sentry.addBreadcrumb({
       message: `${name} screen`,
     });
-    Amplitude.logEventAsync(`${name} screen`).catch(console.warn);
+    Amplitude.logEvent(`${name} screen`);
   }, []);
   React.useEffect(() => {
     const uid = Settings.INSTALLATION_ID;
@@ -360,7 +360,7 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
     Sentry.setUserContext({
       id: uid,
     });
-    Amplitude.setUserIdAsync(uid).catch(console.warn);
+    Amplitude.setUserId(uid);
     // track initial screen
     trackScreen(Settings.INITIAL_ROUTE_NAME);
   }, []);
@@ -375,7 +375,7 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       lastNotificationResponse.actionIdentifier ===
         Notifications.DEFAULT_ACTION_IDENTIFIER
     ) {
-      Amplitude.logEventAsync('Select notification').catch(console.warn);
+      Amplitude.logEvent('Select notification');
       navigationRef.navigate('RatesTab', {
         screen: Settings.INITIAL_ROUTE_NAME,
       });
@@ -395,9 +395,7 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
     }
     const type = data?.type;
     if (type) {
-      Amplitude.logEventWithPropertiesAsync('Quick action', {
-        type,
-      }).catch(console.warn);
+      Amplitude.logEvent('Quick action', { type });
       navigationRef.navigate(`${type}Tab`, {
         screen: type,
         params: {
