@@ -17,7 +17,7 @@ __metadata:
     "@sentry/integrations": ^7.8.1
     "@sentry/serverless": ^7.8.1
     "@shelf/dynamodb-parallel-scan": ^3.3.0
-    "@sparticuz/chrome-aws-lambda": ^15.5.0
+    "@sparticuz/chrome-aws-lambda": ^16.0.0
     boolean: ^3.2.0
     expo-server-sdk: ^3.6.0
     google-auth-library: ^8.1.1
@@ -26,8 +26,8 @@ __metadata:
     lodash: ^4.17.21
     node-fetch: ^2.6.7
     object-hash: ^3.0.0
-    puppeteer: 15.5.0
-    puppeteer-core: 15.5.0
+    puppeteer: 16.0.0
+    puppeteer-core: 16.0.0
     semver: ^7.3.7
     sharp: ^0.30.7
   languageName: unknown
@@ -7466,14 +7466,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sparticuz/chrome-aws-lambda@npm:^15.5.0":
-  version: 15.5.0
-  resolution: "@sparticuz/chrome-aws-lambda@npm:15.5.0"
+"@sparticuz/chrome-aws-lambda@npm:^16.0.0":
+  version: 16.0.0
+  resolution: "@sparticuz/chrome-aws-lambda@npm:16.0.0"
   dependencies:
     tar-fs: ^2.1.1
   peerDependencies:
-    puppeteer-core: 15.5.0
-  checksum: 09179a83dee81aadcfa798ed10821b8d8fc68590cc5452c823d70c44f7602821ff3489a0bd7306861abdbc2a5c16ea8074dc869eaaa852d8ae82e40fb98a2bb4
+    puppeteer-core: 16.0.0
+  checksum: d37b45b6bccfa0b029f2a171847d9130077ba0c6a28088b42218464029d6a7d64fa6a0c9a1879b66ef6f2b2456111291711ea796066354dfc629528f419c5e32
   languageName: node
   linkType: hard
 
@@ -27809,9 +27809,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:15.5.0":
-  version: 15.5.0
-  resolution: "puppeteer-core@npm:15.5.0"
+"puppeteer-core@npm:16.0.0":
+  version: 16.0.0
+  resolution: "puppeteer-core@npm:16.0.0"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
@@ -27824,14 +27824,14 @@ __metadata:
     rimraf: 3.0.2
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
-    ws: 8.8.0
-  checksum: 1134a21cd1047722bb2f19f586f2c0ac110bc36019099c8d6280142dd203efa4f55f620ad16e6ac3e4d74db02363c54095bc1719dfea1b7805ed306f45d3a298
+    ws: 8.8.1
+  checksum: a0ea6fe3f623f65e2355813afc4ffdb5ec712faf9807e56781856300c34fd04036f982f62562329180ebd7988f03446c2dd0a6b911da3af0bfc1021437dd5b0e
   languageName: node
   linkType: hard
 
-"puppeteer@npm:15.5.0":
-  version: 15.5.0
-  resolution: "puppeteer@npm:15.5.0"
+"puppeteer@npm:16.0.0":
+  version: 16.0.0
+  resolution: "puppeteer@npm:16.0.0"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
@@ -27844,8 +27844,8 @@ __metadata:
     rimraf: 3.0.2
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
-    ws: 8.8.0
-  checksum: 2bc9e230b397f6b0c42eb5ba4e9179879b3d52f64d767a0bffbb266ecd5f8268ee982fd643c09362e29248e8f9566607c128bf7f60ec625b7605c9e609871788
+    ws: 8.8.1
+  checksum: 2d1d3b2d231c94095a1841cd8ac05b31bec6227e6facdbd5c98c1a47e9d7718fe648002c79d4d623b4668538aea75eb2da939082e377144f3cca4360b23fd4f9
   languageName: node
   linkType: hard
 
@@ -34844,22 +34844,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.8.0":
-  version: 8.8.0
-  resolution: "ws@npm:8.8.0"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 6ceed1ca1cb800ef60c7fc8346c7d5d73d73be754228eb958765abf5d714519338efa20ffe674167039486eb3a813aae5a497f8d319e16b4d96216a31df5bd95
-  languageName: node
-  linkType: hard
-
-"ws@npm:>=7.4.6, ws@npm:^8.6.0":
+"ws@npm:8.8.1, ws@npm:>=7.4.6, ws@npm:^8.6.0":
   version: 8.8.1
   resolution: "ws@npm:8.8.1"
   peerDependencies:
