@@ -12,35 +12,31 @@
 
 ## Preview
 
-<div>
+<p>
   <img width="250" src="packages/website/static/images/iphone.png">
   &nbsp;
   <img width="250" src="packages/website/static/images/iphone-dark.png">
-</div>
-
-## Install
-
-```sh
-yarn install
-```
-
-## Run tests
-
-```sh
-yarn run test
-```
+</p>
 
 ## Download
 
-<div>
-  <a href="https://apps.apple.com/app/id1485120819">
-    <img width="120" src="packages/website/static/images/app-store.png">
-  </a>
+<p>
+  <a href="https://apps.apple.com/app/id1485120819"><img width="120" src="packages/website/static/images/app-store.png"></a>
   &nbsp;
-  <a href="https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar">
-    <img width="120" src="packages/website/static/images/play-store.png">
-  </a>
-</div>
+  <a href="https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar"><img width="120" src="packages/website/static/images/play-store.png"></a>
+</p>
+
+- App Store: https://apps.apple.com/app/id1485120819
+- Play Store: https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar
+
+## Development
+
+This project is built with [Expo](https://expo.io/) under the **Managed Workflow**, you can run it locally (with limitations) as follows:
+
+```sh
+yarn install
+yarn run client:start
+```
 
 ## Contributing
 
