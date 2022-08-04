@@ -30,6 +30,12 @@ yarn install
 yarn run test
 ```
 
+## Contributing
+
+Contributions, issues and feature requests are welcome!
+
+Feel free to check [issues page](https://github.com/outaTiME/ambito-dolar/issues).
+
 ## Download
 
 <div>
@@ -41,12 +47,6 @@ yarn run test
     <img width="120" src="packages/website/static/images/play-store.png">
   </a>
 </div>
-
-## Contributing
-
-Contributions, issues and feature requests are welcome!
-
-Feel free to check [issues page](https://github.com/outaTiME/ambito-dolar/issues).
 
 ## Show your support
 
