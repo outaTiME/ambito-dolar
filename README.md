@@ -18,18 +18,6 @@
   <img width="250" src="packages/website/static/images/iphone-dark.png">
 </div>
 
-## Download
-
-<div>
-  <a href="https://apps.apple.com/app/id1485120819">
-    <img width="120" src="packages/website/static/images/app-store.png">
-  </a>
-  &nbsp;
-  <a href="https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar">
-    <img width="120" src="packages/website/static/images/play-store.png">
-  </a>
-</div>
-
 ## Install
 
 ```sh
@@ -41,6 +29,18 @@ yarn install
 ```sh
 yarn run test
 ```
+
+## Download
+
+<div>
+  <a href="https://apps.apple.com/app/id1485120819">
+    <img width="120" src="packages/website/static/images/app-store.png">
+  </a>
+  &nbsp;
+  <a href="https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar">
+    <img width="120" src="packages/website/static/images/play-store.png">
+  </a>
+</div>
 
 ## Contributing
 
