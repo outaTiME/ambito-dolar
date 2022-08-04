@@ -287,17 +287,7 @@ const MainStackScreen = () => {
         }}
         component={ConversionStackScreen}
         listeners={({ navigation, route }) => ({
-          tabPress: () => {
-            // e.preventDefault();
-            navigation.navigate(route.name, {
-              screen: 'Conversion',
-              params: {
-                focus: false,
-              },
-            });
-          },
           tabLongPress: () => {
-            // e.preventDefault();
             navigation.navigate(route.name, {
               screen: 'Conversion',
               params: {
