@@ -6,7 +6,7 @@
 &nbsp;
 [![License: CC-BY-NC-ND-4.0](https://img.shields.io/badge/license-CC--BY--NC--ND--4.0-yellow)](https://creativecommons.org/licenses/by-nc-nd/4.0)
 &nbsp;
-[![Twitter: outa7iME](https://img.shields.io/twitter/follow/AmbitoDolar)](https://twitter.com/outa7iME)
+[![Twitter: outa7iME](https://img.shields.io/twitter/follow/AmbitoDolar)](https://twitter.com/AmbitoDolar)
 
 > A free and open-source mobile application to follow the different quotes of the USD in Argentina.
 
