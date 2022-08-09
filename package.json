@@ -14,13 +14,13 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
-    "@serverless-stack/cli": "1.6.7",
-    "@serverless-stack/resources": "1.6.7",
+    "@serverless-stack/cli": "1.6.8",
+    "@serverless-stack/resources": "1.6.8",
     "aws-cdk-lib": "2.32.0",
     "eslint": "^8.21.0",
     "eslint-config-universe": "^11.1.0",
     "husky": "^8.0.1",
-    "lerna": "^5.3.0",
+    "lerna": "^5.4.0",
     "prettier": "^2.7.1"
   },
   "scripts": {
