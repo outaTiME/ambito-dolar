@@ -29,7 +29,7 @@ export function Stack({ stack }) {
   );
   // expo web build
   const quotesSite = new sst.StaticSite(stack, 'QuotesSite', {
-    buildCommand: 'expo build:web',
+    buildCommand: 'yarn expo export:web',
     buildOutput: 'web-build',
     environment: {
       IS_PRODUCTION: IS_PRODUCTION.toString(),
@@ -225,7 +225,7 @@ export function Stack({ stack }) {
   api.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
   // landing page with accesss to legacy api
   const landingSite = new sst.StaticSite(stack, 'LandingSite', {
-    buildCommand: 'npm run build',
+    buildCommand: 'yarn build',
     buildOutput: 'public',
     errorPage: 'redirect_to_index_page',
     path: 'packages/website',
