@@ -1,8 +1,7 @@
-import * as logs from 'aws-cdk-lib/aws-logs';
-
 import { Stack } from './Stack';
 
 export default function main(app) {
+  // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_lambda.FunctionOptions.html
   app.setDefaultFunctionProps({
     bundle: {
       format: 'esm',
@@ -30,13 +29,7 @@ export default function main(app) {
     runtime: 'nodejs16.x',
     srcPath: 'packages/api',
     tracing: 'disabled',
-    // https://docs.serverless-stack.com/constructs/Function#setting-additional-props
-    logRetention: logs.RetentionDays.ONE_DAY,
-    // https://github.com/aws/aws-cdk/issues/8257
-    /* logRetentionRetryOptions: {
-      base: Duration.millis(500),
-      maxRetries: 15,
-    }, */
+    logRetention: 'one_day',
     retryAttempts: 0,
   });
   app.setDefaultRemovalPolicy('destroy');
