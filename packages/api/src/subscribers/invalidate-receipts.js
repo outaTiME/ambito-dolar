@@ -81,7 +81,7 @@ const check = async (items = [], readonly) => {
       amount: invalid_receipts.length,
     };
   } else {
-    console.warn('No tickets to check', JSON.stringify({ items }));
+    console.info('No tickets to check', JSON.stringify({ items }));
   }
   return {
     // empty
