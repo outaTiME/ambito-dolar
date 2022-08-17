@@ -90,14 +90,7 @@ const scaleInvert = (y, d, r) => {
   return interpolate(y, r, d, Extrapolate.CLAMP);
 };
 
-const ChartOverlayPathView = ({
-  data,
-  domain,
-  color,
-  selectionIndex,
-  width,
-  height,
-}) => {
+export default ({ data, domain, color, selectionIndex, width, height }) => {
   const range = React.useMemo(
     () => ({
       x: [0, width],
@@ -159,19 +152,6 @@ const ChartOverlayPathView = ({
     </>
   );
 };
-
-export default ({ data, domain, color, selectionIndex, width, height }) => (
-  <ChartOverlayPathView
-    {...{
-      data,
-      domain,
-      color,
-      selectionIndex,
-      width,
-      height,
-    }}
-  />
-);
 
 const styles = StyleSheet.create({
   cursorContainer: {
