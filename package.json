@@ -20,7 +20,7 @@
     "eslint": "^8.22.0",
     "eslint-config-universe": "^11.1.0",
     "husky": "^8.0.1",
-    "lerna": "^5.4.2",
+    "lerna": "^5.4.3",
     "prettier": "^2.7.1"
   },
   "scripts": {
