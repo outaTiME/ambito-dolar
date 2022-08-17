@@ -17,11 +17,12 @@ import FixedScrollView from '../components/FixedScrollView';
 import MessageView from '../components/MessageView';
 import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const NotificationsScreen = ({ navigation }) => {
+const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const { invertedTheme } = Helper.useTheme();
   const dispatch = useDispatch();
   const notification_settings = useSelector(
@@ -107,7 +108,12 @@ const NotificationsScreen = ({ navigation }) => {
           />
         </>
       ) : (
-        <FixedScrollView>
+        <FixedScrollView
+          {...{
+            headerHeight,
+            tabBarheight,
+          }}
+        >
           <CardView plain>
             <CardItemView
               title={I18n.t('allow_notifications')}
@@ -139,4 +145,7 @@ const NotificationsScreen = ({ navigation }) => {
   );
 };
 
-export default compose(withContainer())(NotificationsScreen);
+export default compose(
+  withContainer(),
+  withDividersOverlay
+)(NotificationsScreen);

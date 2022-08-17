@@ -1,11 +1,9 @@
-import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Settings from '../config/settings';
 import ScrollView from './ScrollView';
-import withDividersOverlay from './withDividersOverlay';
 
 const FixedScrollView = ({
   children,
@@ -78,4 +76,4 @@ const FixedScrollView = ({
   );
 };
 
-export default compose(withDividersOverlay)(FixedScrollView);
+export default FixedScrollView;

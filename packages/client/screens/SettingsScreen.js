@@ -9,12 +9,13 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const SettingsScreen = ({ navigation }) => {
+const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const { updatedAt, appearance } = useSelector(
     ({ rates: { updated_at: updatedAt }, application: { appearance } }) => ({
       updatedAt,
@@ -68,7 +69,12 @@ const SettingsScreen = ({ navigation }) => {
   );
   Helper.useInterval(tickCallback);
   return (
-    <FixedScrollView>
+    <FixedScrollView
+      {...{
+        headerHeight,
+        tabBarheight,
+      }}
+    >
       <CardView
         title={I18n.t('opts_general')}
         note={I18n.t('opts_general_note', {
@@ -155,4 +161,4 @@ const SettingsScreen = ({ navigation }) => {
   );
 };
 
-export default compose(withContainer())(SettingsScreen);
+export default compose(withContainer(), withDividersOverlay)(SettingsScreen);

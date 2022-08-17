@@ -7,6 +7,7 @@ import * as actions from '../actions';
 import { MaterialHeaderButtons } from '../components/HeaderButtons';
 import RateView from '../components/RateView';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import withScreenshotShareSheet from '../components/withScreenshotShareSheet';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -69,6 +70,7 @@ const MainScreen = ({ navigation }) => {
 
 export default compose(
   withContainer(),
+  withDividersOverlay,
   // withScreenshotShareSheet('Compartir cotizaciones')
   withScreenshotShareSheet
 )(MainScreen);

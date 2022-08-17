@@ -8,10 +8,15 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import Helper from '../utilities/Helper';
 
-const AdvancedNotificationsScreen = ({ route: { params } }) => {
+const AdvancedNotificationsScreen = ({
+  headerHeight,
+  tabBarheight,
+  route: { params },
+}) => {
   const dispatch = useDispatch();
   const notification_settings = useSelector(
     Helper.getNotificationSettingsSelector
@@ -56,7 +61,12 @@ const AdvancedNotificationsScreen = ({ route: { params } }) => {
     [params, notification_settings]
   );
   return (
-    <FixedScrollView>
+    <FixedScrollView
+      {...{
+        headerHeight,
+        tabBarheight,
+      }}
+    >
       <CardView
         // title={I18n.t('opts_rates')}
         note={I18n.t('notification_choose_rates_note')}
@@ -68,4 +78,7 @@ const AdvancedNotificationsScreen = ({ route: { params } }) => {
   );
 };
 
-export default compose(withContainer())(AdvancedNotificationsScreen);
+export default compose(
+  withContainer(),
+  withDividersOverlay
+)(AdvancedNotificationsScreen);

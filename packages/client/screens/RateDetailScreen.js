@@ -10,6 +10,7 @@ import CardView from '../components/CardView';
 import SegmentedControlTab from '../components/SegmentedControlTab';
 import VictoryRateChartView from '../components/VictoryRateChartView';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import withScreenshotShareSheet from '../components/withScreenshotShareSheet';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
@@ -224,6 +225,7 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
 
 export default compose(
   withContainer(),
+  withDividersOverlay,
   // withScreenshotShareSheet('Compartir cotización')
   withScreenshotShareSheet
 )(RateDetailScreen);

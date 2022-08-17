@@ -1,4 +1,3 @@
-import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,7 +6,6 @@ import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 import { Separator } from './CardView';
 import FlatList from './FlatList';
-import withDividersOverlay from './withDividersOverlay';
 
 // fonts.subhead (lineheight)
 /* const HEADER_HEIGHT = Math.round(
@@ -146,4 +144,4 @@ const FixedFlatList = ({
   );
 };
 
-export default compose(withDividersOverlay)(FixedFlatList);
+export default FixedFlatList;

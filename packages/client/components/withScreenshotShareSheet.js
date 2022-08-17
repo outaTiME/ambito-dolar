@@ -18,7 +18,13 @@ import { MaterialHeaderButtons, Item } from './HeaderButtons';
 import WatermarkOverlayView from './WatermarkOverlayView';
 
 const withScreenshotShareSheet = (Component) => (props) => {
-  const { navigation, showActionSheetWithOptions, backgroundColor } = props;
+  const {
+    navigation,
+    showActionSheetWithOptions,
+    backgroundColor,
+    headerHeight,
+    tabBarheight,
+  } = props;
   const { theme, fonts } = Helper.useTheme();
   const shareViewContainerRef = React.useRef();
   const [capturedImage, setCapturedImage] = React.useState(null);
@@ -197,10 +203,14 @@ const withScreenshotShareSheet = (Component) => (props) => {
         </View>
       )}
       <FixedScrollView
-        // required for better view shot (same as parent)
-        backgroundColor={backgroundColor}
-        contentContainerRef={shareViewContainerRef}
-        containerRef={scrollViewRef}
+        {...{
+          // required for better view shot (same as parent)
+          backgroundColor,
+          contentContainerRef: shareViewContainerRef,
+          headerHeight,
+          tabBarheight,
+          containerRef: scrollViewRef,
+        }}
       >
         <Component {...props} scrollViewRef={scrollViewRef} />
       </FixedScrollView>

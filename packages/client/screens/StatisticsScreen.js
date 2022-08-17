@@ -6,11 +6,12 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const StatisticsScreen = () => {
+const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
   const [installationTime] = Helper.useSharedState('installationTime');
   const {
     lastReview,
@@ -47,7 +48,12 @@ const StatisticsScreen = () => {
   );
 
   return (
-    <FixedScrollView>
+    <FixedScrollView
+      {...{
+        headerHeight,
+        tabBarheight,
+      }}
+    >
       <CardView title={I18n.t('opts_app')} plain>
         {installationTime && (
           <CardItemView
@@ -105,4 +111,4 @@ const StatisticsScreen = () => {
   );
 };
 
-export default compose(withContainer())(StatisticsScreen);
+export default compose(withContainer(), withDividersOverlay)(StatisticsScreen);

@@ -7,16 +7,22 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import Helper from '../utilities/Helper';
 
-const AppearanceScreen = () => {
+const AppearanceScreen = ({ headerHeight, tabBarheight }) => {
   const selectedAppearance = useSelector(
     (state) => state.application.appearance
   );
   const dispatch = useDispatch();
   return (
-    <FixedScrollView>
+    <FixedScrollView
+      {...{
+        headerHeight,
+        tabBarheight,
+      }}
+    >
       <CardView title={I18n.t('opts_appearance')} plain>
         {['system', 'light', 'dark'].map((appearance) => (
           <CardItemView
@@ -42,4 +48,4 @@ const AppearanceScreen = () => {
   );
 };
 
-export default compose(withContainer())(AppearanceScreen);
+export default compose(withContainer(), withDividersOverlay)(AppearanceScreen);

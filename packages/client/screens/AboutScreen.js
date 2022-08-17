@@ -8,6 +8,7 @@ import FixedScrollView from '../components/FixedScrollView';
 import IconCardItemView from '../components/IconCardItemView';
 import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
@@ -39,7 +40,7 @@ const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
 const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
 const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
 
-const AboutScreen = ({ navigation }) => {
+const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const { theme, fonts } = Helper.useTheme();
   const onPressWebsite = React.useCallback(() => {
     Linking.openURL(Settings.WEBSITE_URL).catch(console.warn);
@@ -125,7 +126,12 @@ const AboutScreen = ({ navigation }) => {
       .catch(console.warn);
   }, []);
   return (
-    <FixedScrollView>
+    <FixedScrollView
+      {...{
+        headerHeight,
+        tabBarheight,
+      }}
+    >
       <View
         style={{
           flexDirection: 'row',
@@ -221,4 +227,4 @@ const AboutScreen = ({ navigation }) => {
   );
 };
 
-export default compose(withContainer())(AboutScreen);
+export default compose(withContainer(), withDividersOverlay)(AboutScreen);

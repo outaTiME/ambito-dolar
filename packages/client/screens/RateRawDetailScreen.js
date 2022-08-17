@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import CardItemView from '../components/CardItemView';
 import FixedFlatList from '../components/FixedFlatList';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
@@ -34,11 +35,20 @@ const RateRawDetailItem = ({ timestamp, value, change }) => {
           // height: ITEM_HEIGHT,
         }
       }
+      titleContainerStyle={
+        {
+          // paddingVertical: Settings.PADDING / 2,
+        }
+      }
     />
   );
 };
 
-const RateRawDetailScreen = ({ route: { params } }) => {
+const RateRawDetailScreen = ({
+  headerHeight,
+  tabBarheight,
+  route: { params },
+}) => {
   const rates = Helper.useRates();
   const { type, rangeIndex } = params;
   const rate = React.useMemo(() => rates[type], [rates, type]);
@@ -107,9 +117,14 @@ const RateRawDetailScreen = ({ route: { params } }) => {
         title,
         data,
         itemHeight: ITEM_HEIGHT,
+        headerHeight,
+        tabBarheight,
       }}
     />
   );
 };
 
-export default compose(withContainer())(RateRawDetailScreen);
+export default compose(
+  withContainer(),
+  withDividersOverlay
+)(RateRawDetailScreen);

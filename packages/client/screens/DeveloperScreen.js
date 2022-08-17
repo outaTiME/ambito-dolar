@@ -7,13 +7,19 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
+import withDividersOverlay from '../components/withDividersOverlay';
 import Settings from '../config/settings';
 import Sentry from '../utilities/Sentry';
 
-const DeveloperScreen = ({ navigation }) => {
+const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const dispatch = useDispatch();
   return (
-    <FixedScrollView>
+    <FixedScrollView
+      {...{
+        headerHeight,
+        tabBarheight,
+      }}
+    >
       <CardView title="Acciones" plain>
         <CardItemView
           title="Invalidar versión"
@@ -78,4 +84,4 @@ const DeveloperScreen = ({ navigation }) => {
   );
 };
 
-export default compose(withContainer())(DeveloperScreen);
+export default compose(withContainer(), withDividersOverlay)(DeveloperScreen);
