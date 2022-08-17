@@ -27,11 +27,19 @@ const InlineRateView = ({ type, value, onSelected }) => {
             flex: 1,
             flexDirection: 'row',
             alignItems: 'center',
-            marginRight: Settings.PADDING,
+            marginRight: Settings.PADDING / 2,
           },
         ]}
       >
-        <Text style={[title_font]} numberOfLines={1}>
+        <Text
+          style={[
+            title_font,
+            {
+              flexShrink: 1,
+            },
+          ]}
+          numberOfLines={1}
+        >
           {AmbitoDolar.getRateTitle(type)}
         </Text>
         {onSelected && (
@@ -125,6 +133,7 @@ const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
             color: Settings.getGrayColor(theme),
           },
         ]}
+        // adjustsFontSizeToFit
         numberOfLines={1}
       >
         {timestamp}
