@@ -87,7 +87,7 @@ const doRegisterDeviceForNotifications = (
     }).then(() => push_token);
   }
   return Notifications.getExpoPushTokenAsync({
-    experienceId: Settings.EXPERIENCE_ID,
+    experienceId: '@outatime/ambito-dolar',
   }).then(({ data: push_token }) =>
     doRegisterDevice(dispatch, current_state, { push_token }).then(
       () => push_token

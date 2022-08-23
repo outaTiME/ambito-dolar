@@ -48,7 +48,6 @@ const {
       sentryDsn: SENTRY_DSN,
       amplitudeKey: AMPLITUDE_KEY,
       firebaseConfigJson: FIREBASE_CONFIG_JSON,
-      experienceId: EXPERIENCE_ID,
       isProduction: IS_PRODUCTION,
     },
   },
@@ -82,6 +81,8 @@ const HIT_SLOP = {
 const CHART_STROKE_WIDTH = 3 - 0.5;
 // iPad in landscape
 const MAX_DEVICE_WIDTH = 551 + CARD_PADDING * 2;
+// https://hacknicity.medium.com/view-controller-presentation-changes-in-ios-and-ipados-16-474c82c9ed2e
+// const MAX_DEVICE_WIDTH = 664;
 const INITIAL_ROUTE_NAME = 'Main';
 const DEVICE_TYPE = DeviceInfo.getDeviceType();
 
@@ -110,7 +111,6 @@ export default {
   SENTRY_DSN,
   AMPLITUDE_KEY,
   FIREBASE_CONFIG_JSON,
-  EXPERIENCE_ID,
   IS_PRODUCTION: Platform.OS === 'web' ? IS_PRODUCTION : !__DEV__,
   FETCH_TIMEOUT,
   FETCH_REFRESH_INTERVAL,

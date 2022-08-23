@@ -44,7 +44,6 @@ export default {
     sentryDsn: process.env.SENTRY_DSN,
     amplitudeKey: process.env.AMPLITUDE_KEY,
     firebaseConfigJson: process.env.FIREBASE_CONFIG_JSON,
-    experienceId: process.env.EXPERIENCE_ID,
     isProduction: process.env.IS_PRODUCTION === 'true',
   },
   updates: {
