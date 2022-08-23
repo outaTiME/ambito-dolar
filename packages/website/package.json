@@ -25,7 +25,7 @@
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
     "react-icons": "^4.4.0",
-    "sass": "^1.54.4"
+    "sass": "^1.54.5"
   },
   "scripts": {
     "develop": "gatsby develop",
