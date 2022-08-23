@@ -47,6 +47,7 @@ import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
 import ActionButton from './ActionButton';
+import ContentView from './ContentView';
 import { MaterialHeaderButtons, Item } from './HeaderButtons';
 import MessageView from './MessageView';
 import withContainer from './withContainer';
@@ -753,18 +754,18 @@ const AppContainer = () => {
         console.log('❄️ No realtime updates');
       }
     } else {
-    if (__DEV__) {
-      console.log('🚀 Initial fetch');
-    }
+      if (__DEV__) {
+        console.log('🚀 Initial fetch');
+      }
     }
     fetchRates(true);
   }, [isInitial]);
   if (isInitial && error) {
     return (
-      <>
+      <ContentView>
         <MessageView
           style={{
-            marginBottom: Settings.PADDING * 2,
+            marginBottom: Settings.PADDING,
           }}
           message={I18n.t('rates_loading_error')}
         />
@@ -773,12 +774,12 @@ const AppContainer = () => {
           handleOnPress={() => fetchRates(true)}
           alternativeBackground
         />
-      </>
+      </ContentView>
     );
   }
   if (!rates) {
     return (
-      <>
+      <ContentView>
         <ActivityIndicator
           animating
           color={Settings.getForegroundColor(theme)}
@@ -786,21 +787,20 @@ const AppContainer = () => {
         />
         {stillLoading && (
           <MessageView
-            style={{ marginTop: Settings.PADDING * 2 }}
+            style={{
+              marginTop: Settings.PADDING,
+            }}
             message={I18n.t('still_loading')}
           />
         )}
-      </>
+      </ContentView>
     );
   }
   if (rates && !hasRates) {
     return (
-      <MessageView
-        style={{
-          marginBottom: Settings.PADDING * 2,
-        }}
-        message={I18n.t('no_available_rates')}
-      />
+      <ContentView>
+        <MessageView message={I18n.t('no_available_rates')} />
+      </ContentView>
     );
   }
   return <EnhancedAppNavigationContainer />;

@@ -30,7 +30,6 @@ export default ({
   children,
   plain,
   separatorStyle,
-  extraTopSpace,
   transparent,
 }) => {
   const { theme, fonts } = Helper.useTheme();
@@ -55,9 +54,6 @@ export default ({
       style={[
         {
           margin: Settings.CARD_PADDING,
-        },
-        extraTopSpace === true && {
-          paddingTop: Settings.PADDING,
         },
         style,
       ]}

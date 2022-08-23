@@ -1,30 +1,22 @@
 import React from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { Text, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 import { Separator } from './CardView';
+import ContentView from './ContentView';
 import FlatList from './FlatList';
-
-// fonts.subhead (lineheight)
-/* const HEADER_HEIGHT = Math.round(
-  Settings.CARD_PADDING + Settings.PADDING * 2 + 20
-); */
-const HEADER_HEIGHT = Settings.CARD_PADDING + Settings.PADDING * 2 + 20;
-const SEPARATOR_HEIGHT = StyleSheet.hairlineWidth;
 
 const HeaderComponent = ({ title }) => {
   const { theme, fonts } = Helper.useTheme();
   return (
-    <View
-      style={{
+    <ContentView
+      contentContainerStyle={{
         padding: Settings.PADDING,
-        marginTop: Settings.CARD_PADDING,
+        marginBottom: 0,
         marginHorizontal: Settings.CARD_PADDING * 2,
         justifyContent: 'flex-end',
-        // fixed header size
-        // height: HEADER_HEIGHT - Settings.CARD_PADDING,
       }}
     >
       <Text
@@ -38,17 +30,9 @@ const HeaderComponent = ({ title }) => {
       >
         {title}
       </Text>
-    </View>
+    </ContentView>
   );
 };
-
-const FooterComponent = () => (
-  <View
-    style={{
-      marginTop: Settings.CARD_PADDING * 2,
-    }}
-  />
-);
 
 const FixedFlatList = ({
   title,
@@ -63,10 +47,11 @@ const FixedFlatList = ({
   const insets = useSafeAreaInsets();
   const renderItem = React.useCallback(
     ({ item, index }) => (
-      <View
-        style={[
+      <ContentView
+        contentContainerStyle={[
           {
             backgroundColor: Settings.getContentColor(theme),
+            marginVertical: 0,
             marginHorizontal: Settings.CARD_PADDING * 2,
           },
           index === 0 && {
@@ -80,21 +65,21 @@ const FixedFlatList = ({
         ]}
       >
         {item.component}
-      </View>
+      </ContentView>
     ),
     [theme, data]
   );
-  const keyExtractor = React.useCallback((item) => item.id, []);
   const separatorComponent = React.useCallback(
     () => (
-      <View
-        style={{
+      <ContentView
+        contentContainerStyle={{
           backgroundColor: Settings.getContentColor(theme),
+          marginVertical: 0,
           marginHorizontal: Settings.CARD_PADDING * 2,
         }}
       >
         <Separator />
-      </View>
+      </ContentView>
     ),
     [theme]
   );
@@ -102,43 +87,27 @@ const FixedFlatList = ({
     () => <HeaderComponent {...{ title }} />,
     [title]
   );
-  const footerComponent = React.useCallback(() => <FooterComponent />, []);
-  const itemLayout = React.useCallback(
-    (data, index) => ({
-      length: itemHeight,
-      offset: HEADER_HEIGHT + (itemHeight + SEPARATOR_HEIGHT) * index,
-      index,
-    }),
-    [itemHeight]
-  );
+  const extraData = React.useMemo(() => Date.now(), [theme, data]);
   return (
     <FlatList
       scrollIndicatorInsets={{
         // top: headerHeight - insets.top,
         bottom: tabBarheight - insets.bottom,
       }}
-      contentContainerStyle={[
-        {
-          flexGrow: 1,
-          alignSelf: 'center',
-          width: Math.min(Settings.DEVICE_WIDTH, Settings.MAX_DEVICE_WIDTH),
-          // required when translucent bars
-          ...(Platform.OS === 'ios' && {
-            paddingTop: headerHeight,
-            paddingBottom: tabBarheight,
-          }),
-        },
-      ]}
-      // contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{
+        // required when translucent bars
+        ...(Platform.OS === 'ios' && {
+          paddingTop: headerHeight,
+          paddingBottom: tabBarheight + Settings.CARD_PADDING * 2,
+        }),
+      }}
       {...{ data }}
       renderItem={renderItem}
-      keyExtractor={keyExtractor}
       ItemSeparatorComponent={separatorComponent}
       ListHeaderComponent={headerComponent}
-      ListFooterComponent={footerComponent}
-      getItemLayout={itemLayout}
-      initialNumToRender={12}
       containerRef={containerRef}
+      estimatedItemSize={itemHeight}
+      extraData={extraData}
       {...extra}
     />
   );

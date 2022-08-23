@@ -10,8 +10,8 @@ export default ({ style, message }) => {
     <View
       style={[
         {
-          // took padding from scrollview
-          marginHorizontal: Settings.PADDING * 2,
+          marginHorizontal: Settings.CARD_PADDING,
+          padding: Settings.PADDING,
         },
         style,
       ]}

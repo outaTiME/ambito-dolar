@@ -98,7 +98,6 @@ const RateRawDetailScreen = ({
       _.orderBy(chartStats, ([timestamp]) => new Date(timestamp).getTime(), [
         'desc',
       ]).map(([timestamp, value, change], index) => ({
-        id: `stat_${type}_${index}`,
         component: (
           <RateRawDetailItem
             {...{

@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
+import ContentView from '../components/ContentView';
 import DividerView from '../components/DividerView';
 import ScrollView from '../components/ScrollView';
 import SegmentedControlTab from '../components/SegmentedControlTab';
@@ -149,17 +150,7 @@ const ConversionScreen = ({
             },
           ]}
         >
-          <View
-            style={[
-              {
-                padding: Settings.CARD_PADDING,
-                width: Math.min(
-                  Settings.DEVICE_WIDTH,
-                  Settings.MAX_DEVICE_WIDTH
-                ),
-              },
-            ]}
-          >
+          <ContentView>
             <View
               style={{
                 borderRadius: Settings.BORDER_RADIUS,
@@ -204,7 +195,7 @@ const ConversionScreen = ({
               selectedIndex={typeIndex}
               onTabPress={handleConversionTypeChange}
             />
-          </View>
+          </ContentView>
         </View>
       </TouchableWithoutFeedback>
       <DividerView />
@@ -215,8 +206,6 @@ const ConversionScreen = ({
         contentContainerStyle={[
           {
             flexGrow: 1,
-            alignSelf: 'center',
-            width: Math.min(Settings.DEVICE_WIDTH, Settings.MAX_DEVICE_WIDTH),
             // required when translucent bars
             ...(Platform.OS === 'ios' && {
               paddingBottom: tabBarheight,
@@ -228,12 +217,14 @@ const ConversionScreen = ({
         }}
         onScrollBeginDrag={dismissKeyboard}
       >
-        <View
-          style={[
+        <ContentView
+          style={{ flex: 1 }}
+          contentContainerStyle={[
             {
               flex: 1,
-              marginHorizontal: Settings.CARD_PADDING,
+              // marginHorizontal: Settings.CARD_PADDING,
               marginVertical: -Settings.CARD_PADDING,
+              // paddingVertical: 0,
             },
           ]}
         >
@@ -245,7 +236,7 @@ const ConversionScreen = ({
           >
             {rateTypes.map((type) => getItemView(type))}
           </CardView>
-        </View>
+        </ContentView>
       </ScrollView>
     </>
   );

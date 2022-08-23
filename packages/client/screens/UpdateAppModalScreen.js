@@ -1,11 +1,11 @@
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
-import { View, Image, Linking } from 'react-native';
+import { Linking } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import * as actions from '../actions';
-import appIcon from '../assets/about-icon-borderless.png';
 import ActionButton from '../components/ActionButton';
+import ContentView from '../components/ContentView';
 import MessageView from '../components/MessageView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
@@ -43,28 +43,10 @@ const UpdateAppModalScreen = ({ navigation }) => {
   }, []);
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
   return (
-    <>
-      {false && (
-        <View
-          style={{
-            marginBottom: Settings.CARD_PADDING * 2,
-            paddingVertical: Settings.PADDING,
-          }}
-        >
-          <Image
-            style={{
-              width: 72,
-              height: 72,
-              alignSelf: 'center',
-              borderRadius: Settings.BORDER_RADIUS,
-            }}
-            source={appIcon}
-          />
-        </View>
-      )}
+    <ContentView>
       <MessageView
         style={{
-          marginBottom: Settings.PADDING * 2,
+          marginBottom: Settings.PADDING,
         }}
         message={I18n.t('update_app')}
       />
@@ -84,9 +66,10 @@ const UpdateAppModalScreen = ({ navigation }) => {
         handleOnPress={() => {
           setConfirmed(true);
         }}
+        alternativeBackground
         // small={storeAvailable}
       />
-    </>
+    </ContentView>
   );
 };
 

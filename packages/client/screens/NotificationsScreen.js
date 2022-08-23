@@ -13,6 +13,7 @@ import * as actions from '../actions';
 import ActionButton from '../components/ActionButton';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
+import ContentView from '../components/ContentView';
 import FixedScrollView from '../components/FixedScrollView';
 import MessageView from '../components/MessageView';
 import TextCardView from '../components/TextCardView';
@@ -93,20 +94,19 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   return (
     <>
       {Device.isDevice && !allowNotifications ? (
-        <>
+        <ContentView>
           <MessageView
-            style={[
-              {
-                marginBottom: Settings.PADDING * 2,
-              },
-            ]}
+            style={{
+              marginBottom: Settings.PADDING,
+            }}
             message={I18n.t('allow_permissions')}
           />
           <ActionButton
             handleOnPress={Linking.openSettings}
             title={I18n.t('allow')}
+            // alternativeBackground
           />
-        </>
+        </ContentView>
       ) : (
         <FixedScrollView
           {...{
