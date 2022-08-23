@@ -45,6 +45,9 @@ export default {
     amplitudeKey: process.env.AMPLITUDE_KEY,
     firebaseConfigJson: process.env.FIREBASE_CONFIG_JSON,
     isProduction: process.env.IS_PRODUCTION === 'true',
+    eas: {
+      projectId: '88dc0a10-eec5-11e8-bdb0-e9d94f6dfa7d',
+    },
   },
   updates: {
     fallbackToCacheTimeout: 0,
