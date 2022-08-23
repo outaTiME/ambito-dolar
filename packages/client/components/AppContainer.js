@@ -752,10 +752,10 @@ const AppContainer = () => {
       if (__DEV__) {
         console.log('❄️ No realtime updates');
       }
-      return;
-    }
+    } else {
     if (__DEV__) {
       console.log('🚀 Initial fetch');
+    }
     }
     fetchRates(true);
   }, [isInitial]);

@@ -15,6 +15,7 @@ import semverValid from 'semver/functions/valid';
 import { ThemeContext } from 'styled-components';
 import useSWR from 'swr';
 
+import rates from '../assets/rates.json';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Sentry from '../utilities/Sentry';
@@ -200,25 +201,31 @@ export default {
         ? { timeout: Settings.FETCH_TIMEOUT }
         : { retry: true }),
     };
-    return getJson(Settings.RATES_URI, opts)
-      .then((data) => {
-        if (__DEV__) {
-          console.log('Rate stats updated', initial, data.updated_at);
-        }
-        return data;
-      })
-      .catch((error) => {
-        // silent ignore when error or invalid data
-        if (__DEV__) {
-          console.warn('Unable to update rate stats', initial, error);
-        }
-        Sentry.addBreadcrumb({
-          message: 'Unable to update rate stats',
-          initial,
-          data: error.message,
+    if (Settings.RATES_URI) {
+      return getJson(Settings.RATES_URI, opts)
+        .then((data) => {
+          if (__DEV__) {
+            console.log('Rate stats updated', initial, data.updated_at);
+          }
+          return data;
+        })
+        .catch((error) => {
+          // silent ignore when error or invalid data
+          if (__DEV__) {
+            console.warn('Unable to update rate stats', initial, error);
+          }
+          Sentry.addBreadcrumb({
+            message: 'Unable to update rate stats',
+            initial,
+            data: error.message,
+          });
+          throw error;
         });
-        throw error;
-      });
+    }
+    if (__DEV__) {
+      console.log('Using the local rates file');
+    }
+    return Promise.resolve(rates);
   },
   getHistoricalRates() {
     return getJson(Settings.HISTORICAL_RATES_URI, {
