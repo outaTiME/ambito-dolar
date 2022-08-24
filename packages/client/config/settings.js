@@ -79,18 +79,18 @@ const HIT_SLOP = {
   left: PADDING,
 };
 const CHART_STROKE_WIDTH = 3 - 0.5;
-// iPad in landscape
-const MAX_DEVICE_WIDTH = 551 + CARD_PADDING * 2;
-// https://hacknicity.medium.com/view-controller-presentation-changes-in-ios-and-ipados-16-474c82c9ed2e
-// const MAX_DEVICE_WIDTH = 664;
 const INITIAL_ROUTE_NAME = 'Main';
 const DEVICE_TYPE = DeviceInfo.getDeviceType();
+const IS_TABLET = DEVICE_TYPE === 'Tablet';
+const IS_HANDSET = DEVICE_TYPE === 'Handset';
+
+// use 50% of landscape viewing area on tablets
+const MAX_CONTENT_WIDTH = IS_HANDSET ? DEVICE_WIDTH : DEVICE_WIDTH * 0.5;
+const CONTENT_WIDTH = Math.min(DEVICE_WIDTH, MAX_CONTENT_WIDTH);
 
 // https://github.com/nirsky/react-native-size-matters/blob/master/lib/scaling-utils.js#L7
 const guidelineBaseWidth = 350;
-
-const scale = (size) =>
-  (Math.min(DEVICE_WIDTH, MAX_DEVICE_WIDTH) / guidelineBaseWidth) * size;
+const scale = (size) => (CONTENT_WIDTH / guidelineBaseWidth) * size;
 const moderateScale = (size, factor = 0.5) =>
   size + (scale(size) - size) * factor;
 
@@ -137,10 +137,10 @@ export default {
   CAFECITO_URL,
   HIT_SLOP,
   CHART_STROKE_WIDTH,
-  MAX_DEVICE_WIDTH,
+  CONTENT_WIDTH,
   INITIAL_ROUTE_NAME,
-  IS_TABLET: DEVICE_TYPE === 'Tablet',
-  IS_HANDSET: DEVICE_TYPE === 'Handset',
+  IS_TABLET,
+  IS_HANDSET,
   getLightColor(alternative = false) {
     if (alternative !== false) {
       return iOSColors.white;

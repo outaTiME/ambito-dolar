@@ -9,7 +9,7 @@ export default React.forwardRef(
       style={[
         {
           alignSelf: 'center',
-          width: Math.min(Settings.DEVICE_WIDTH, Settings.MAX_DEVICE_WIDTH),
+          width: Settings.CONTENT_WIDTH,
         },
         style,
       ]}
