@@ -18,7 +18,6 @@ import useSWR from 'swr';
 import rates from '../assets/rates.json';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
-import Sentry from '../utilities/Sentry';
 
 const getNotificationSettings = (notification_settings, value, type) => {
   notification_settings = AmbitoDolar.getNotificationSettings(
@@ -195,42 +194,25 @@ export default {
     });
   },
   getRates(initial) {
-    initial = initial === true;
-    const opts = {
-      ...(initial === true
-        ? { timeout: Settings.FETCH_TIMEOUT }
-        : { retry: true }),
-    };
     if (Settings.RATES_URI) {
-      return getJson(Settings.RATES_URI, opts)
-        .then((data) => {
-          if (__DEV__) {
-            console.log('Rate stats updated', initial, data.updated_at);
-          }
-          return data;
-        })
-        .catch((error) => {
-          // silent ignore when error or invalid data
-          if (__DEV__) {
-            console.warn('Unable to update rate stats', initial, error);
-          }
-          Sentry.addBreadcrumb({
-            message: 'Unable to update rate stats',
-            initial,
-            data: error.message,
-          });
-          throw error;
-        });
+      return getJson(Settings.RATES_URI, {
+        ...(initial === true
+          ? { timeout: Settings.FETCH_TIMEOUT }
+          : { retry: true }),
+      });
     }
     if (__DEV__) {
-      console.log('Using the local rates file');
+      console.log('Using local rates file');
     }
     return Promise.resolve(rates);
   },
   getHistoricalRates() {
-    return getJson(Settings.HISTORICAL_RATES_URI, {
-      timeout: Settings.FETCH_TIMEOUT,
-    });
+    if (Settings.HISTORICAL_RATES_URI) {
+      return getJson(Settings.HISTORICAL_RATES_URI, {
+        timeout: Settings.FETCH_TIMEOUT,
+      });
+    }
+    return Promise.reject(new Error('No historical rates available'));
   },
   cleanVersion(version) {
     return semverValid(semverCoerce(version));
