@@ -81,7 +81,7 @@ __metadata:
     expo-system-ui: ~1.3.0
     expo-updates: ~0.14.5
     firebase: ^9.9.3
-    i18n-js: ^4.1.0
+    i18n-js: ^4.1.1
     immutability-helper: ^3.1.1
     lodash: ^4.17.21
     react: 18.0.0
@@ -90,13 +90,13 @@ __metadata:
     react-native-collapsible: ^1.6.0
     react-native-device-info: ^10.0.2
     react-native-draggable-flatlist: ^3.1.2
-    react-native-gesture-handler: ~2.5.0
+    react-native-gesture-handler: ~2.6.0
     react-native-quick-actions: ^0.3.13
     react-native-reanimated: ~2.10.0
     react-native-redash: ^18.0.0
     react-native-root-toast: ^3.4.0
     react-native-safe-area-context: 4.3.3
-    react-native-screens: ~3.16.0
+    react-native-screens: ~3.17.0
     react-native-segmented-control-tab: ^4.0.0
     react-native-svg: 12.4.4
     react-native-typography: ^1.4.1
@@ -121,13 +121,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ambito-dolar/core@workspace:packages/core"
   dependencies:
-    ava: ^4.3.1
+    ava: ^4.3.3
     lodash.isempty: ^4.4.0
     lodash.max: ^4.0.1
     lodash.merge: ^4.6.2
     lodash.pick: ^4.4.0
     lodash.pickby: ^4.6.0
-    moment-timezone: ^0.5.35
+    moment-timezone: ^0.5.37
     numeral: ^2.0.6
   languageName: unknown
   linkType: soft
@@ -7352,13 +7352,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serverless-stack/cli@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@serverless-stack/cli@npm:1.9.0"
+"@serverless-stack/cli@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@serverless-stack/cli@npm:1.9.1"
   dependencies:
     "@aws-cdk/aws-apigatewayv2-alpha": 2.32.0-alpha.0
-    "@serverless-stack/core": 1.9.0
-    "@serverless-stack/resources": 1.9.0
+    "@serverless-stack/core": 1.9.1
+    "@serverless-stack/resources": 1.9.1
     aws-cdk: 2.32.0
     aws-cdk-lib: 2.32.0
     aws-sdk: ^2.1110.0
@@ -7377,13 +7377,13 @@ __metadata:
     yargs: ^15.4.1
   bin:
     sst: bin/scripts.mjs
-  checksum: e14796416b3ba2bd3f516d40699ebae89d23001b4e74581a039ea10be7878f78b88c0b1ec33e825f867fc12ecf49d35c7ff49013b5962800be885bfb1d90ab67
+  checksum: 7683fcc7f449ca6f59f2d90c5941fe8d6f6c2228c04b824a9713370b9a86ce03e3cdca6e5a32b7ced3317274f29dc02d813354d4d07601f492bf5b5a44466814
   languageName: node
   linkType: hard
 
-"@serverless-stack/core@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@serverless-stack/core@npm:1.9.0"
+"@serverless-stack/core@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@serverless-stack/core@npm:1.9.1"
   dependencies:
     "@pothos/core": ^3.11.0
     "@rmp135/sql-ts": ^1.13.0
@@ -7427,19 +7427,19 @@ __metadata:
       optional: true
     graphql:
       optional: true
-  checksum: 6a6a25a270eebb64b003e849d857575a11e9b989dbc2168a94b4d6e9102724987a71b4c62e4b0bfa1f3dbc5e2471069021521f6815bec8e7d2187a0bd798da48
+  checksum: a7f43b501ec9e59b8be4ffa8de7f4fd5e645cb9d3581e38dd7103de2ef8fcf0689f189899714dc1e5c88b1b61e11458e1b88b3d709493902ecc3a02046ad7b9c
   languageName: node
   linkType: hard
 
-"@serverless-stack/resources@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@serverless-stack/resources@npm:1.9.0"
+"@serverless-stack/resources@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@serverless-stack/resources@npm:1.9.1"
   dependencies:
     "@aws-cdk/aws-apigatewayv2-alpha": 2.32.0-alpha.0
     "@aws-cdk/aws-apigatewayv2-authorizers-alpha": 2.32.0-alpha.0
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": 2.32.0-alpha.0
     "@aws-cdk/aws-appsync-alpha": 2.32.0-alpha.0
-    "@serverless-stack/core": 1.9.0
+    "@serverless-stack/core": 1.9.1
     archiver: ^5.3.0
     aws-cdk-lib: 2.32.0
     chalk: ^4.1.0
@@ -7453,7 +7453,7 @@ __metadata:
   dependenciesMeta:
     graphql:
       optional: true
-  checksum: 2e500a537d70aa936943f665198b54a840a994d6ab13808330cb9104cbb4d9b130e3f83bc5cc2da701578ca4250890e07bb63599b1a1664f8ee8e243b5820e22
+  checksum: 0d9318892d67f65d51d6ddbdedb2dcd6260a110003577e10dc75b1a805a05c76e78d64b006bc991b5529378fad095df7b41773b988e0f1e331e61b0289c59ef9
   languageName: node
   linkType: hard
 
@@ -9069,8 +9069,8 @@ __metadata:
   dependencies:
     "@commitlint/cli": ^17.0.3
     "@commitlint/config-conventional": ^17.0.3
-    "@serverless-stack/cli": 1.9.0
-    "@serverless-stack/resources": 1.9.0
+    "@serverless-stack/cli": 1.9.1
+    "@serverless-stack/resources": 1.9.1
     aws-cdk-lib: 2.32.0
     eslint: ^8.22.0
     eslint-config-universe: ^11.1.0
@@ -9788,9 +9788,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ava@npm:^4.3.1":
-  version: 4.3.1
-  resolution: "ava@npm:4.3.1"
+"ava@npm:^4.3.3":
+  version: 4.3.3
+  resolution: "ava@npm:4.3.3"
   dependencies:
     acorn: ^8.7.1
     acorn-walk: ^8.2.0
@@ -9844,7 +9844,7 @@ __metadata:
       optional: true
   bin:
     ava: entrypoints/cli.mjs
-  checksum: 279b139addc4484a639e9636f0b9855b797027c3e715479a189fe678be19618469acea6d89cf62997f60ee967423feac27a731733567c29562815747ecf7b915
+  checksum: 6365f0e9fab13b3f471e4f71081ba9f8015d4ea62df6b6685cb752442edd6720ddd76011c2a5cbd595dcf6d675cfd7486d72cecfa94225adb6dd511215713fff
   languageName: node
   linkType: hard
 
@@ -19804,13 +19804,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18n-js@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "i18n-js@npm:4.1.0"
+"i18n-js@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "i18n-js@npm:4.1.1"
   dependencies:
     bignumber.js: "*"
     lodash: "*"
-  checksum: 6782ae937589a822f0b0edce554d215835a131d9aa24e4542029b415cebe5c009b1198d39a6c4ab63cba4fe62ef36fa0b05f1cf8107cbaa4cc825316b75164f3
+  checksum: fea70d32d30811b802b29812fe83cd57da0b65a51c52dd3a48fc5811378efdc6aad7760832e6a6071e6641e6dfa5bd474aa8f9faae2870014bd73724f942f2e2
   languageName: node
   linkType: hard
 
@@ -24541,12 +24541,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment-timezone@npm:^0.5.35":
-  version: 0.5.35
-  resolution: "moment-timezone@npm:0.5.35"
+"moment-timezone@npm:^0.5.37":
+  version: 0.5.37
+  resolution: "moment-timezone@npm:0.5.37"
   dependencies:
     moment: ">= 2.9.0"
-  checksum: 0f3907282dc9ae3d405fefaccf486dc4222945ff479127fd269e6c4ddc25e526e7ca9e849d6bf941c871bd17e875b256bdb276137a55db9fce4177c792a003df
+  checksum: b3fc24848a396ee3801331a4b5511591df0e22241e59f55200a475603f23a8429f01887294c7a0c005dae25b8e4bef20472fbc875ff20080f26fded066559f1a
   languageName: node
   linkType: hard
 
@@ -28386,9 +28386,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:~2.5.0":
-  version: 2.5.0
-  resolution: "react-native-gesture-handler@npm:2.5.0"
+"react-native-gesture-handler@npm:~2.6.0":
+  version: 2.6.0
+  resolution: "react-native-gesture-handler@npm:2.6.0"
   dependencies:
     "@egjs/hammerjs": ^2.0.17
     hoist-non-react-statics: ^3.3.0
@@ -28398,7 +28398,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: d086f14da7f45c24c675402a4e9dec0a5c32e7279110f1af0c178cae0b6ca40dea99f878120d7034ce9c84f01465f68d0f21dcc9c3869fd527ebd18255b73432
+  checksum: c9b9564698ca61cca2cc173a1191ea2f2c2dfc54afac457e239449742cda7245a2bf335ec5a1613bc5d7079df31b7a0a18ae0951a122005de2d65b98ccdfcdfc
   languageName: node
   linkType: hard
 
@@ -28481,16 +28481,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-screens@npm:~3.16.0":
-  version: 3.16.0
-  resolution: "react-native-screens@npm:3.16.0"
+"react-native-screens@npm:~3.17.0":
+  version: 3.17.0
+  resolution: "react-native-screens@npm:3.17.0"
   dependencies:
     react-freeze: ^1.0.0
     warn-once: ^0.1.0
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: f95586ab4e378a75c3686b3ce4fa581bdb989120f4a075e8d8c76b1d9c2f4a06c5d7a89710792abae86588b524941a78208776d49fd18abb001b77295a9e3266
+  checksum: c3523d56113c182ac13e487d09c04f2991f8151578cbbea34cf0abc9c5fbe9ee19664cfcb84b9620607791ae38fc61efcd72870534513a4afbd5b5da9a248b48
   languageName: node
   linkType: hard
 
