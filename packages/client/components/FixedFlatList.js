@@ -34,6 +34,8 @@ const HeaderComponent = ({ title }) => {
   );
 };
 
+const FooterComponent = () => <ContentView />;
+
 const FixedFlatList = ({
   title,
   data,
@@ -87,6 +89,7 @@ const FixedFlatList = ({
     () => <HeaderComponent {...{ title }} />,
     [title]
   );
+  const footerComponent = React.useCallback(() => <FooterComponent />, []);
   const extraData = React.useMemo(() => Date.now(), [theme, data]);
   return (
     <FlatList
@@ -98,13 +101,14 @@ const FixedFlatList = ({
         // required when translucent bars
         ...(Platform.OS === 'ios' && {
           paddingTop: headerHeight,
-          paddingBottom: tabBarheight + Settings.CARD_PADDING * 2,
+          paddingBottom: tabBarheight,
         }),
       }}
       {...{ data }}
       renderItem={renderItem}
       ItemSeparatorComponent={separatorComponent}
       ListHeaderComponent={headerComponent}
+      ListFooterComponent={footerComponent}
       containerRef={containerRef}
       estimatedItemSize={itemHeight}
       extraData={extraData}
