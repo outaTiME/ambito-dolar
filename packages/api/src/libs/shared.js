@@ -36,7 +36,6 @@ const snsClient = new SNSClient({
 export const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
 export const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
 export const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
-export const MIN_CLIENT_VERSION_FOR_CHANGE_MESSAGE_STYLE_V2 = '6.0.0';
 export const MIN_CLIENT_VERSION_FOR_SAVING = '6.1.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
 const S3_BUCKET = process.env.S3_BUCKET;

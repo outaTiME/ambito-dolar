@@ -6,34 +6,19 @@ import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
   MIN_CLIENT_VERSION_FOR_CCB,
-  MIN_CLIENT_VERSION_FOR_CHANGE_MESSAGE_STYLE_V2,
   MIN_CLIENT_VERSION_FOR_SAVING,
 } from '../libs/shared';
 
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
-const getChangeMessage = (rate, app_version) => {
+const getChangeMessage = (rate) => {
   const body = [];
   const value = rate[1];
-  // default style for social when app_version is empty
-  if (
-    !app_version ||
-    Shared.isSemverGte(
-      app_version,
-      MIN_CLIENT_VERSION_FOR_CHANGE_MESSAGE_STYLE_V2
-    )
-  ) {
-    const value = AmbitoDolar.getRateValue(rate);
-    body.push(`${AmbitoDolar.formatRateCurrency(value)}`);
-    body.push(`${AmbitoDolar.getRateChange(rate)}`);
-    return body.join(' ');
-  }
-  // old-style
   const change = rate[2];
   if (Array.isArray(value)) {
     body.push(
-      `${AmbitoDolar.formatCurrency(value[0])} - ${AmbitoDolar.formatCurrency(
+      `${AmbitoDolar.formatCurrency(value[0])}–${AmbitoDolar.formatCurrency(
         value[1]
       )}`
     );
@@ -44,22 +29,19 @@ const getChangeMessage = (rate, app_version) => {
   return body.join('');
 };
 
-const getRateMessage = (type, rate, app_version) => {
+const getRateMessage = (type, rate) => {
   const rate_title = AmbitoDolar.getRateTitle(type);
   if (rate_title) {
-    return `${rate_title.toUpperCase()}: ${getChangeMessage(
-      rate,
-      app_version
-    )}`;
+    return `${rate_title.toUpperCase()}: ${getChangeMessage(rate)}`;
   }
 };
 
-const getBodyMessage = (rates, app_version) => {
+const getBodyMessage = (rates) => {
   const available_rates = AmbitoDolar.getAvailableRates(rates);
   if (available_rates) {
     const body = _.chain(available_rates)
       .reduce((obj, rate, type) => {
-        obj.push(getRateMessage(type, rate, app_version));
+        obj.push(getRateMessage(type, rate));
         return obj;
       }, [])
       // remove empty messages
@@ -125,7 +107,7 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_SAVING)) {
           delete rates_for_settings[AmbitoDolar.SAVING_TYPE];
         }
-        const body = getBodyMessage(rates_for_settings, app_version);
+        const body = getBodyMessage(rates_for_settings);
         if (body) {
           return getMessage({
             to: push_token,
