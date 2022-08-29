@@ -12,12 +12,12 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^17.0.3",
-    "@commitlint/config-conventional": "^17.0.3",
-    "@serverless-stack/cli": "1.9.1",
-    "@serverless-stack/resources": "1.9.1",
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "@serverless-stack/cli": "1.9.4",
+    "@serverless-stack/resources": "1.9.4",
     "aws-cdk-lib": "2.32.0",
-    "eslint": "^8.22.0",
+    "eslint": "^8.23.0",
     "eslint-config-universe": "^11.1.0",
     "husky": "^8.0.1",
     "lerna": "^5.4.3",
