@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.1.0...@ambito-dolar/client@6.2.0) (2022-08-30)
+
+
+### Bug Fixes
+
+* add bottom margin on FixedFlatList for android devices ([189b819](https://github.com/outaTiME/ambito-dolar/commit/189b81968e09e6e6930589907a379063b064b6b0))
+* handle historical rates on local execution ([9af05ce](https://github.com/outaTiME/ambito-dolar/commit/9af05ce1e4d41120ef6d2595c71761c785f39acc))
+* improve shrink on rate view titles ([008fd39](https://github.com/outaTiME/ambito-dolar/commit/008fd39b8e0994072eee508048af5980e0a68d4a))
+* improve visual content area on tablets ([5d9d15c](https://github.com/outaTiME/ambito-dolar/commit/5d9d15cd107117ed06a2d2430c521f98f9d9f828))
+* leave default tabPress on conversion ([b51badd](https://github.com/outaTiME/ambito-dolar/commit/b51badd757c2916d14ea6622fea456079dfd5ba8))
+* scroll to top support on bottom tabs ([f00982d](https://github.com/outaTiME/ambito-dolar/commit/f00982de0e1d9b416d4f9943a0f108b2ca44e238))
+* use dividers overlay on screens instead of scroll view ([fb91f58](https://github.com/outaTiME/ambito-dolar/commit/fb91f58cb052d7124bd8c8024a8ebb372618fc78))
+
+
+### Features
+
+* force width across all screens for better support on tablets ([b930930](https://github.com/outaTiME/ambito-dolar/commit/b930930fc7180eec479665da9b47171f75f863ea))
+* local execution support ([f4e64a7](https://github.com/outaTiME/ambito-dolar/commit/f4e64a7e395bd08cac9c5543f1cd536b24aee1d3))
+* update i18n-js to 4.x ([0800578](https://github.com/outaTiME/ambito-dolar/commit/0800578c47933fb06a170b720cef0f1209155571))
+* update to Expo SDK46 ([37bd449](https://github.com/outaTiME/ambito-dolar/commit/37bd449628c63c4fc803d0a86f73ab8b2e83a660))
+* use hermes as default js engine ([41bd48a](https://github.com/outaTiME/ambito-dolar/commit/41bd48a712f59886c2d6e654895f67e56e6190da))
+* use png format for shared image ([bb3edfe](https://github.com/outaTiME/ambito-dolar/commit/bb3edfe632d54076717e3ae098708686383b4b06))
+
+
+
+
+
 # [6.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.0.3...@ambito-dolar/client@6.1.0) (2022-07-27)
 
 

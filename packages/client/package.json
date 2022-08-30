@@ -10,7 +10,7 @@
     "eas-build-pre-install": "echo $GOOGLE_SERVICES_BASE64 | base64 --decode > ./google-services.json"
   },
   "dependencies": {
-    "@ambito-dolar/core": "^3.1.0",
+    "@ambito-dolar/core": "^3.1.1",
     "@amplitude/react-native": "^2.14.0",
     "@config-plugins/react-native-quick-actions": "^3.0.0",
     "@expo/react-native-action-sheet": "^3.13.0",
@@ -90,5 +90,5 @@
     "@babel/core": "^7.18.13",
     "@expo/webpack-config": "^0.17.2"
   },
-  "version": "6.1.0"
+  "version": "6.2.0"
 }

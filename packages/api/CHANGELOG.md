@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.2.0...@ambito-dolar/api@3.3.0) (2022-08-30)
+
+
+### Features
+
+* new compact notification style ([6dd30e1](https://github.com/outaTiME/ambito-dolar/commit/6dd30e1975953c1713e17af8484653768190f4e7))
+
+
+
+
+
 # [3.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.1.1...@ambito-dolar/api@3.2.0) (2022-07-27)
 
 
