@@ -18,12 +18,12 @@ const getChangeMessage = (rate) => {
   const change = rate[2];
   if (Array.isArray(value)) {
     body.push(
-      `${AmbitoDolar.formatCurrency(value[0])}–${AmbitoDolar.formatCurrency(
-        value[1]
-      )}`
+      `${AmbitoDolar.formatRateCurrency(
+        value[0]
+      )}–${AmbitoDolar.formatRateCurrency(value[1])}`
     );
   } else {
-    body.push(`${AmbitoDolar.formatCurrency(value)}`);
+    body.push(AmbitoDolar.formatRateCurrency(value));
   }
   body.push(` (${AmbitoDolar.formatRateChange(change)})`);
   return body.join('');
