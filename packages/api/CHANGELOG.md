@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.3.0...@ambito-dolar/api@3.3.1) (2022-08-30)
+
+
+### Bug Fixes
+
+* remove currency symbol from notifications ([ba72e09](https://github.com/outaTiME/ambito-dolar/commit/ba72e09a4ec0ebe67a79ba5506daa07438e6aa35))
+
+
+
+
+
 # [3.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.2.0...@ambito-dolar/api@3.3.0) (2022-08-30)
 
 
