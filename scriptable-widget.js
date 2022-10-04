@@ -8,34 +8,42 @@ const loadRates = async () => {
 const OFFICIAL_TYPE = 'oficial';
 const INFORMAL_TYPE = 'informal';
 const TOURIST_TYPE = 'turista';
+const SAVING_TYPE = 'ahorro';
 const CCL_TYPE = 'ccl';
 const MEP_TYPE = 'mep';
+const CCB_TYPE = 'ccb';
 const WHOLESALER_TYPE = 'mayorista';
+
 const FRACTION_DIGITS = 2;
 const SPACE_SEPARATOR = ' ';
-const BULLET_SEPARATOR = '•';
 
 const getAvailableRateTypes = () => [
   OFFICIAL_TYPE,
-  TOURIST_TYPE,
   INFORMAL_TYPE,
+  TOURIST_TYPE,
+  // SAVING_TYPE,
   CCL_TYPE,
   MEP_TYPE,
+  // CCB_TYPE,
   WHOLESALER_TYPE,
 ];
 
 const getRateTitle = (type) => {
   if (type === OFFICIAL_TYPE) {
     return 'Oficial';
-  } else if (type === TOURIST_TYPE) {
-    return 'Turista';
   } else if (type === INFORMAL_TYPE) {
     return 'Blue';
+  } else if (type === TOURIST_TYPE) {
+    return 'Tarjeta';
+  } else if (type === SAVING_TYPE) {
+    return 'Ahorro';
   } else if (type === CCL_TYPE) {
     // return 'Contado con liquidación',
     return 'CCL';
   } else if (type === MEP_TYPE) {
     return 'MEP';
+  } else if (type === CCB_TYPE) {
+    return 'Cripto';
   } else if (type === WHOLESALER_TYPE) {
     return 'Mayorista';
   }
@@ -65,7 +73,7 @@ const formatRateCurrency = (num) => formatNumber(num);
 const formatCurrency = (num, usd) =>
   (usd === true ? 'US$' : '$') + formatRateCurrency(num);
 
-const getCurrency = (str, include_symbol = true, usd = false) => {
+const getCurrency = (str, include_symbol = false, usd = false) => {
   if (include_symbol === true) {
     if (usd === true) {
       return formatCurrency(str, true);
@@ -81,11 +89,7 @@ const formatRateChange = (num) =>
 const getInlineRateValue = (value, change) => {
   let value_str;
   if (Array.isArray(value)) {
-    value_str = `${getCurrency(
-      value[0]
-    )}${SPACE_SEPARATOR}${BULLET_SEPARATOR}${SPACE_SEPARATOR}${getCurrency(
-      value[1]
-    )}`;
+    value_str = `${getCurrency(value[0])}–${getCurrency(value[1])}`;
   } else {
     value_str = getCurrency(value);
   }
@@ -120,7 +124,7 @@ const addGradientBackground = (widget) => {
 const getForegroundColor = () => Color.white();
 
 const addRateRow = (widget, title, rate) => {
-  let rateValueText = getCurrency(getRateValue(rate[1]), false);
+  let rateValueText = getCurrency(getRateValue(rate[1]));
   const changeValue = rate[2];
   let rateChangeText = getChangeSymbol(changeValue);
   if (/medium|large/i.test(config.widgetFamily)) {

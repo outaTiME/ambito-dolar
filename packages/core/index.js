@@ -25,8 +25,8 @@ const SAVING_TYPE = 'ahorro';
 const CCL_TYPE = 'ccl';
 const CCL_LEGACY_TYPE = 'cl';
 const MEP_TYPE = 'mep';
-const WHOLESALER_TYPE = 'mayorista';
 const CCB_TYPE = 'ccb';
+const WHOLESALER_TYPE = 'mayorista';
 
 const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
@@ -291,8 +291,8 @@ module.exports = {
   CCL_TYPE,
   CCL_LEGACY_TYPE,
   MEP_TYPE,
-  WHOLESALER_TYPE,
   CCB_TYPE,
+  WHOLESALER_TYPE,
   NOTIFICATION_OPEN_TYPE,
   NOTIFICATION_CLOSE_TYPE,
   NOTIFICATION_VARIATION_TYPE,
