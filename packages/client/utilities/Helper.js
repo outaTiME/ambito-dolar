@@ -261,9 +261,7 @@ export default {
   getInlineRateValue(value, change) {
     let value_str;
     if (Array.isArray(value)) {
-      value_str = `${this.getCurrency(value[0])}${Settings.SPACE_SEPARATOR}${
-        Settings.BULLET_SEPARATOR
-      }${Settings.SPACE_SEPARATOR}${this.getCurrency(value[1])}`;
+      value_str = `${this.getCurrency(value[0])}–${this.getCurrency(value[1])}`;
     } else {
       value_str = this.getCurrency(value);
     }
