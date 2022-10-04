@@ -41,9 +41,16 @@ yarn-error.log
 .sst
 
 # EAS
+# https://github.com/expo/fyi/blob/main/eas-build-archive.md#what-files-are-included-in-the-archive
 packages/*
 !packages/core
 !packages/client
+packages/client/ios/build
+packages/client/ios/Pods
 /assets
 google-services.json
-
+/sst.json
+/stacks
+/scriptable-widget.js
+README.md
+CHANGELOG.md
