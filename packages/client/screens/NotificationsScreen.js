@@ -87,7 +87,7 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
         textStyle: [Settings.getFontObject(invertedTheme, 'callout')],
       });
       // FIXME: update with pushTokenId on next release
-      Clipboard.setString(Settings.INSTALLATION_ID);
+      Clipboard.setStringAsync(Settings.INSTALLATION_ID);
     }
   }, [invertedTheme]);
 
