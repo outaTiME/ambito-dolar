@@ -1,4 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import WidgetKit from '@calitb/react-native-widgetkit';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
@@ -697,6 +698,7 @@ const AppContainer = () => {
             dispatch(actions.addRates(data));
             dispatch(actions.registerApplicationDownloadRates());
           });
+          return WidgetKit.standard.reloadAllTimelines();
         })
         .catch(() => {
           setError(true);

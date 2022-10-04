@@ -39,3 +39,6 @@ yarn-error.log
 # SST build output
 .build
 .sst
+
+# Sentry
+packages/client/ios/sentry.properties

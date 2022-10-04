@@ -86,7 +86,7 @@ export default {
     supportsTablet: true,
     requireFullScreen: true,
     infoPlist: {
-      CFBundleDevelopmentRegion: 'es',
+      CFBundleDevelopmentRegion: 'es-419',
       // https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html#//apple_ref/doc/uid/TP40009254-SW9
       'UISupportedInterfaceOrientations~iphone': [
         'UIInterfaceOrientationPortrait',

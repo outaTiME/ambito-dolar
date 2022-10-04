@@ -1,0 +1,918 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
+		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		27B95FF6F73E4B0FACF2F2E1 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A36E372A6F49E387BE9D76 /* noop-file.swift */; };
+		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		96905EF65AED1B983A6B3ABC /* libPods-mbitoDlar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */; };
+		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
+		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		C2284AA828E348BF00B264FD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2284AA728E348BF00B264FD /* WidgetKit.framework */; };
+		C2284AAA28E348BF00B264FD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2284AA928E348BF00B264FD /* SwiftUI.framework */; };
+		C2284AAD28E348BF00B264FD /* RateWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2284AAC28E348BF00B264FD /* RateWidgets.swift */; };
+		C2284AB028E348C000B264FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2284AAF28E348C000B264FD /* Assets.xcassets */; };
+		C2284AB628E348C000B264FD /* RateWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2284AA628E348BF00B264FD /* RateWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C2284ABB28E34AAB00B264FD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */; };
+		C2284ABC28E34AAB00B264FD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */; };
+		C2284AC428E34BBF00B264FD /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2284AC328E34BBF00B264FD /* Helper.swift */; };
+		C2284AC628E34C1200B264FD /* FiraGO-Regular-Minimal.otf in Resources */ = {isa = PBXBuildFile; fileRef = C2284AC528E34C1200B264FD /* FiraGO-Regular-Minimal.otf */; };
+		C2284ACD28E34D6800B264FD /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2284ACC28E34D6800B264FD /* Intents.framework */; };
+		C2284AD028E34D6800B264FD /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2284ACF28E34D6800B264FD /* IntentHandler.swift */; };
+		C2284AD428E34D6800B264FD /* RateIntents.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2284ACB28E34D6800B264FD /* RateIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C2284AD828E34D7E00B264FD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */; };
+		C2284AD928E34DCE00B264FD /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2284AC328E34BBF00B264FD /* Helper.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C2284AB428E348C000B264FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C2284AA528E348BF00B264FD;
+			remoteInfo = RateWidgetsExtension;
+		};
+		C2284AD228E34D6800B264FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C2284ACA28E34D6800B264FD;
+			remoteInfo = RateIntents;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C2284AB728E348C000B264FD /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C2284AD428E34D6800B264FD /* RateIntents.appex in Embed Foundation Extensions */,
+				C2284AB628E348C000B264FD /* RateWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
+		04A36E372A6F49E387BE9D76 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "mbitoDlar/noop-file.swift"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* mbitoDlar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mbitoDlar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = mbitoDlar/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = mbitoDlar/AppDelegate.mm; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mbitoDlar/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mbitoDlar/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mbitoDlar/main.m; sourceTree = "<group>"; };
+		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mbitoDlar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C2E3173556A471DD304B334 /* Pods-mbitoDlar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.debug.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.debug.xcconfig"; sourceTree = "<group>"; };
+		7A4D352CD337FB3A3BF06240 /* Pods-mbitoDlar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.release.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.release.xcconfig"; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = mbitoDlar/SplashScreen.storyboard; sourceTree = "<group>"; };
+		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		C2284AA628E348BF00B264FD /* RateWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2284AA728E348BF00B264FD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C2284AA928E348BF00B264FD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C2284AAC28E348BF00B264FD /* RateWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateWidgets.swift; sourceTree = "<group>"; };
+		C2284AAF28E348C000B264FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C2284AB128E348C000B264FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2284ABF28E34AAE00B264FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/RateWidgets.intentdefinition; sourceTree = "<group>"; };
+		C2284AC328E34BBF00B264FD /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		C2284AC528E34C1200B264FD /* FiraGO-Regular-Minimal.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FiraGO-Regular-Minimal.otf"; path = "../../assets/fonts/FiraGO-Regular-Minimal.otf"; sourceTree = "<group>"; };
+		C2284ACB28E34D6800B264FD /* RateIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2284ACC28E34D6800B264FD /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		C2284ACF28E34D6800B264FD /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
+		C2284AD128E34D6800B264FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2822ACD28E4685100C12A6C /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/RateWidgets.strings"; sourceTree = "<group>"; };
+		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-mbitoDlar/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96905EF65AED1B983A6B3ABC /* libPods-mbitoDlar.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2284AA328E348BF00B264FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2284AAA28E348BF00B264FD /* SwiftUI.framework in Frameworks */,
+				C2284AA828E348BF00B264FD /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2284AC828E34D6800B264FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2284ACD28E34D6800B264FD /* Intents.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		13B07FAE1A68108700A75B9A /* mbitoDlar */ = {
+			isa = PBXGroup;
+			children = (
+				BB2F792B24A3F905000567C9 /* Supporting */,
+				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
+				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
+				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				13B07FB61A68108700A75B9A /* Info.plist */,
+				13B07FB71A68108700A75B9A /* main.m */,
+				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
+				04A36E372A6F49E387BE9D76 /* noop-file.swift */,
+			);
+			name = mbitoDlar;
+			sourceTree = "<group>";
+		};
+		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */,
+				C2284AA728E348BF00B264FD /* WidgetKit.framework */,
+				C2284AA928E348BF00B264FD /* SwiftUI.framework */,
+				C2284ACC28E34D6800B264FD /* Intents.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		83CBB9F61A601CBA00E9B192 = {
+			isa = PBXGroup;
+			children = (
+				13B07FAE1A68108700A75B9A /* mbitoDlar */,
+				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				C2284AAB28E348BF00B264FD /* RateWidgets */,
+				C2284ACE28E34D6800B264FD /* RateIntents */,
+				83CBBA001A601CBA00E9B192 /* Products */,
+				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				D65327D7A22EEC0BE12398D9 /* Pods */,
+				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
+			);
+			indentWidth = 2;
+			sourceTree = "<group>";
+			tabWidth = 2;
+			usesTabs = 0;
+		};
+		83CBBA001A601CBA00E9B192 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13B07F961A680F5B00A75B9A /* mbitoDlar.app */,
+				C2284AA628E348BF00B264FD /* RateWidgetsExtension.appex */,
+				C2284ACB28E34D6800B264FD /* RateIntents.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		92DBD88DE9BF7D494EA9DA96 /* mbitoDlar */ = {
+			isa = PBXGroup;
+			children = (
+				FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */,
+			);
+			name = mbitoDlar;
+			sourceTree = "<group>";
+		};
+		BB2F792B24A3F905000567C9 /* Supporting */ = {
+			isa = PBXGroup;
+			children = (
+				BB2F792C24A3F905000567C9 /* Expo.plist */,
+			);
+			name = Supporting;
+			path = mbitoDlar/Supporting;
+			sourceTree = "<group>";
+		};
+		C2284AAB28E348BF00B264FD /* RateWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				C2284AC528E34C1200B264FD /* FiraGO-Regular-Minimal.otf */,
+				C2284AC228E34BA100B264FD /* Utils */,
+				C2284AAC28E348BF00B264FD /* RateWidgets.swift */,
+				C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */,
+				C2284AAF28E348C000B264FD /* Assets.xcassets */,
+				C2284AB128E348C000B264FD /* Info.plist */,
+			);
+			path = RateWidgets;
+			sourceTree = "<group>";
+		};
+		C2284AC228E34BA100B264FD /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				C2284AC328E34BBF00B264FD /* Helper.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		C2284ACE28E34D6800B264FD /* RateIntents */ = {
+			isa = PBXGroup;
+			children = (
+				C2284ACF28E34D6800B264FD /* IntentHandler.swift */,
+				C2284AD128E34D6800B264FD /* Info.plist */,
+			);
+			path = RateIntents;
+			sourceTree = "<group>";
+		};
+		D65327D7A22EEC0BE12398D9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6C2E3173556A471DD304B334 /* Pods-mbitoDlar.debug.xcconfig */,
+				7A4D352CD337FB3A3BF06240 /* Pods-mbitoDlar.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				92DBD88DE9BF7D494EA9DA96 /* mbitoDlar */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		13B07F861A680F5B00A75B9A /* mbitoDlar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "mbitoDlar" */;
+			buildPhases = (
+				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
+				FD10A7F022414F080027D42C /* Start Packager */,
+				13B07F871A680F5B00A75B9A /* Sources */,
+				13B07F8C1A680F5B00A75B9A /* Frameworks */,
+				13B07F8E1A680F5B00A75B9A /* Resources */,
+				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
+				8CBAAE15D1154E57B511D143 /* Upload Debug Symbols to Sentry */,
+				38CCD8A00F21755F3D9933F7 /* [CP] Embed Pods Frameworks */,
+				C2284AB728E348C000B264FD /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C2284AB528E348C000B264FD /* PBXTargetDependency */,
+				C2284AD328E34D6800B264FD /* PBXTargetDependency */,
+			);
+			name = mbitoDlar;
+			productName = mbitoDlar;
+			productReference = 13B07F961A680F5B00A75B9A /* mbitoDlar.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C2284AA528E348BF00B264FD /* RateWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2284ABA28E348C000B264FD /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */;
+			buildPhases = (
+				C2284AA228E348BF00B264FD /* Sources */,
+				C2284AA328E348BF00B264FD /* Frameworks */,
+				C2284AA428E348BF00B264FD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RateWidgetsExtension;
+			productName = RateWidgetsExtension;
+			productReference = C2284AA628E348BF00B264FD /* RateWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		C2284ACA28E34D6800B264FD /* RateIntents */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2284AD528E34D6800B264FD /* Build configuration list for PBXNativeTarget "RateIntents" */;
+			buildPhases = (
+				C2284AC728E34D6800B264FD /* Sources */,
+				C2284AC828E34D6800B264FD /* Frameworks */,
+				C2284AC928E34D6800B264FD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RateIntents;
+			productName = RateIntents;
+			productReference = C2284ACB28E34D6800B264FD /* RateIntents.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83CBB9F71A601CBA00E9B192 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1400;
+				LastUpgradeCheck = 1130;
+				TargetAttributes = {
+					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 1250;
+					};
+					C2284AA528E348BF00B264FD = {
+						CreatedOnToolsVersion = 14.0;
+						ProvisioningStyle = Automatic;
+					};
+					C2284ACA28E34D6800B264FD = {
+						CreatedOnToolsVersion = 14.0;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "mbitoDlar" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"es-419",
+			);
+			mainGroup = 83CBB9F61A601CBA00E9B192;
+			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				13B07F861A680F5B00A75B9A /* mbitoDlar */,
+				C2284AA528E348BF00B264FD /* RateWidgetsExtension */,
+				C2284ACA28E34D6800B264FD /* RateIntents */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		13B07F8E1A680F5B00A75B9A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
+				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2284AA428E348BF00B264FD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2284AC628E34C1200B264FD /* FiraGO-Regular-Minimal.otf in Resources */,
+				C2284AB028E348C000B264FD /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2284AC928E34D6800B264FD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nif [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\n`node --print \"require.resolve('@sentry/cli/package.json').slice(0, -13) + '/bin/sentry-cli'\"` react-native xcode --force-foreground `\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
+		};
+		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-mbitoDlar-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		38CCD8A00F21755F3D9933F7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-resources.sh",
+				"${PODS_ROOT}/Amplitude/Sources/Resources/ComodoRsaDomainValidationCA.der",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXUpdates/EXUpdates.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-launcher/EXDevLauncher.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-menu/EXDevMenu.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ComodoRsaDomainValidationCA.der",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXUpdates.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevLauncher.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevMenu.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8CBAAE15D1154E57B511D143 /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n`node --print \"require.resolve('@sentry/cli/package.json').slice(0, -13) + '/bin/sentry-cli'\"` upload-dsym --force-foreground";
+		};
+		FD10A7F022414F080027D42C /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\nexport RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > `$NODE_BINARY --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/.packager.env'\"`\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open `$NODE_BINARY --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/launchPackager.command'\"` || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		13B07F871A680F5B00A75B9A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				C2284ABB28E34AAB00B264FD /* RateWidgets.intentdefinition in Sources */,
+				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
+				27B95FF6F73E4B0FACF2F2E1 /* noop-file.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2284AA228E348BF00B264FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2284ABC28E34AAB00B264FD /* RateWidgets.intentdefinition in Sources */,
+				C2284AAD28E348BF00B264FD /* RateWidgets.swift in Sources */,
+				C2284AC428E34BBF00B264FD /* Helper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2284AC728E34D6800B264FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2284AD828E34D7E00B264FD /* RateWidgets.intentdefinition in Sources */,
+				C2284AD028E34D6800B264FD /* IntentHandler.swift in Sources */,
+				C2284AD928E34DCE00B264FD /* Helper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C2284AB528E348C000B264FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C2284AA528E348BF00B264FD /* RateWidgetsExtension */;
+			targetProxy = C2284AB428E348C000B264FD /* PBXContainerItemProxy */;
+		};
+		C2284AD328E34D6800B264FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C2284ACA28E34D6800B264FD /* RateIntents */;
+			targetProxy = C2284AD228E34D6800B264FD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C2284ABF28E34AAE00B264FD /* Base */,
+				C2822ACD28E4685100C12A6C /* es-419 */,
+			);
+			name = RateWidgets.intentdefinition;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6C2E3173556A471DD304B334 /* Pods-mbitoDlar.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = mbitoDlar/mbitoDlar.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_BITCODE = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"FB_SONARKIT_ENABLED=1",
+				);
+				INFOPLIST_FILE = mbitoDlar/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = im.outa.AmbitoDolar;
+				PRODUCT_NAME = mbitoDlar;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B00A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7A4D352CD337FB3A3BF06240 /* Pods-mbitoDlar.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = mbitoDlar/mbitoDlar.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = mbitoDlar/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = im.outa.AmbitoDolar;
+				PRODUCT_NAME = mbitoDlar;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		83CBBA201A601CBA00E9B192 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+				LIBRARY_SEARCH_PATHS = "\"$(inherited)\"";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		83CBBA211A601CBA00E9B192 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+				LIBRARY_SEARCH_PATHS = "\"$(inherited)\"";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C2284AB828E348C000B264FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RateWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RateWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = im.outa.AmbitoDolar.RateWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C2284AB928E348C000B264FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RateWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RateWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = im.outa.AmbitoDolar.RateWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C2284AD628E34D6800B264FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RateIntents/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RateIntents;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = im.outa.AmbitoDolar.RateIntents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C2284AD728E34D6800B264FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RateIntents/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RateIntents;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = im.outa.AmbitoDolar.RateIntents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "mbitoDlar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13B07F941A680F5B00A75B9A /* Debug */,
+				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "mbitoDlar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83CBBA201A601CBA00E9B192 /* Debug */,
+				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2284ABA28E348C000B264FD /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2284AB828E348C000B264FD /* Debug */,
+				C2284AB928E348C000B264FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2284AD528E34D6800B264FD /* Build configuration list for PBXNativeTarget "RateIntents" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2284AD628E34D6800B264FD /* Debug */,
+				C2284AD728E34D6800B264FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
+}
