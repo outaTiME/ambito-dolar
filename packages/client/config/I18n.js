@@ -16,7 +16,7 @@ const i18n = new I18n({
     still_loading:
       'Conectividad limitada, la carga se reanudará automáticamente.',
     update_app:
-      'Tienes que actualizar esta aplicación a una versión más reciente.',
+      'Tenés que actualizar esta aplicación a una versión más reciente.',
     update: 'Actualizar',
     remind_me_later: 'Más tarde',
     retry: 'Reintentar',
@@ -64,7 +64,7 @@ const i18n = new I18n({
     // notifications
     notifications: 'Notificaciones',
     allow_permissions:
-      'Tienes que permitir el acceso a las notificaciones para poder configurar este módulo.',
+      'Tenés que permitir las notificaciones para poder configurar este módulo.',
     allow: 'Permitir',
     allow_notifications: 'Permitir notificaciones',
     notification_open_note:
@@ -77,7 +77,7 @@ const i18n = new I18n({
     // advanced notifications
     opts_rates: 'Cotizaciones',
     notification_choose_rates_note:
-      'Elige las cotizaciones que deseas incluir en esta notificación.',
+      'Elegí las cotizaciones que querés incluir en esta notificación.',
     // statistics
     statistics: 'Estadísticas',
     opts_app: 'Aplicación',
