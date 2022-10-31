@@ -25,7 +25,7 @@
 </p>
 
 - App Store: https://apps.apple.com/app/id1485120819
-- Play Store: https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar
+- Google Play: https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar
 
 ## Development
 
