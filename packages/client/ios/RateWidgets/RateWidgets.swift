@@ -61,9 +61,9 @@ private func formatRateCurrency(num: Double) -> String {
 }
 
 private func getChangeSymbol(num: Double) -> String {
-  if (num == 0) {
+  if num == 0 {
     return "="
-  } else if (num > 0) {
+  } else if num > 0 {
     return "↑"
   }
   return "↓"
@@ -71,32 +71,32 @@ private func getChangeSymbol(num: Double) -> String {
 
 private func formatRateChange(num: Double, symbol: Bool = true) -> String {
   let change = (num > 0 ? "+" : "") + formatRateCurrency(num: num) + "%"
-  if (symbol) {
+  if symbol == true {
     return change + " " + getChangeSymbol(num: num)
   }
   return change
 }
 
 private func getChangeColor(num: Double) -> Color {
-  if (num == 0) {
+  if num == 0 {
     return Color(UIColor.systemBlue);
-  } else if (num > 0) {
+  } else if num > 0 {
     return Color(UIColor.systemGreen);
   }
   return Color(UIColor.systemRed);
 }
 
-private func lookupRateValues(types: [RateType] = Helper.getDefaultRateTypes()) -> [RateValue]? {
+private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes(), valueType: ValueType = ValueType.sell ) -> [RateValue]? {
   let rates = getRates()
-  return types.map {
+  return rateTypes.map {
     let type = $0.identifier
     let name = $0.displayString
-    if (rates != nil) {
-      let rate = rates![type!] as? [Any]
-      let price: String
-      let rateValue = rate?[1]
-      if (rateValue is Double) {
-        price = formatRateCurrency(num: rateValue as! Double)
+    if rates != nil, let rate = rates![type!] as? [Any] {
+      let rateValue = rate[1]
+      let value: Double
+      if rateValue is Double {
+        value = rateValue as! Double
+        // price = formatRateCurrency(num: rateValue as! Double)
       } else {
         /* var arr = [String]()
          for item in rateValue as! NSArray {
@@ -107,13 +107,23 @@ private func lookupRateValues(types: [RateType] = Helper.getDefaultRateTypes()) 
         for item in rateValue as! NSArray {
           arr.append(item as! Double)
         }
-        price = formatRateCurrency(num: arr.max()!)
+        let buy = arr[0]
+        let sell = arr[1]
+        if valueType == ValueType.buy {
+          value = buy
+        } else if valueType == ValueType.avg {
+          value = (buy + sell) / 2
+        } else {
+          value = sell
+        }
+        // price = formatRateCurrency(num: arr.max()!)
       }
-      let rateChange = rate?[2] as! Double
+      let price = formatRateCurrency(num: value)
+      let rateChange = rate[2] as! Double
       let change = formatRateChange(num: rateChange)
       let plainChange = formatRateChange(num: rateChange, symbol: false )
       let changeColor = getChangeColor(num: rateChange)
-      let rateDate = ISO8601DateFormatter().date(from: rate?[0] as! String)
+      let rateDate = ISO8601DateFormatter().date(from: rate[0] as! String)
       let dateFormatter = DateFormatter()
       dateFormatter.dateFormat = "dd/MM HH:mm"
       let date = dateFormatter.string(from: rateDate!)
@@ -134,14 +144,14 @@ struct RateProvider: IntentTimelineProvider {
     return SimpleEntry(date: Date(), rates: rates)
   }
   func getSnapshot(for configuration: SelectRateTypeIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-    let rates = lookupRateValues(types: [configuration.rateType!])
+    let rates = lookupRateValues(rateTypes: [configuration.rateType!], valueType: configuration.valueType)
     let entry = SimpleEntry(date: Date(), rates: rates)
     completion(entry)
   }
   func getTimeline(for configuration: SelectRateTypeIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
     var entries: [SimpleEntry] = []
     let date = Date()
-    let rates = lookupRateValues(types: [configuration.rateType!])
+    let rates = lookupRateValues(rateTypes: [configuration.rateType!], valueType: configuration.valueType)
     let entry = SimpleEntry(date: date, rates: rates)
     entries.append(entry)
     let reloadDate = Calendar.current.date(byAdding: .minute, value: 5, to: date)!
@@ -159,25 +169,25 @@ struct RateWidgetEntryView : View {
   let fgColor = Color(UIColor.label)
   let fgSecondaryColor = Color(UIColor.secondaryLabel)
   var body: some View {
-    let rate = entry.rates?[0]
+    let rates = entry.rates
     switch widgetFamily {
       /* case .accessoryCircular:
        if #available(iOSApplicationExtension 16.0, *) {
-       if (rate != nil) {
+       if rates?.isEmpty == false, let rate = rates?[0] {
        ZStack {
        AccessoryWidgetBackground()
        VStack {
-       Text(rate!.name)
+       Text(rate.name)
        .font(.custom(fontName, size: 10))
        // .minimumScaleFactor(0.5)
        .lineLimit(1)
-       Text(rate!.price)
+       Text(rate.price)
        .font(.custom(fontName, size: 20))
        .minimumScaleFactor(0.5)
        .lineLimit(1)
        .widgetAccentable()
-       if (rate?.plainChange != nil) {
-       Text((rate?.plainChange)!)
+       if rate.plainChange != nil {
+       Text((rate.plainChange)!)
        .font(.custom(fontName, size: 10))
        // .minimumScaleFactor(0.5)
        .lineLimit(1)
@@ -206,24 +216,24 @@ struct RateWidgetEntryView : View {
        }
        } */
     default:
-      if (rate != nil) {
+      if rates?.isEmpty == false, let rate = rates?[0] {
         VStack(alignment: .leading) {
-          Text(rate!.name)
+          Text(rate.name)
             .font(.custom(fontName, size: 20))
           // .fontWeight(.regular)
             .foregroundColor(fgColor)
           // .minimumScaleFactor(0.5)
             .lineLimit(1)
           Spacer()
-          if (rate?.change != nil) {
-            Text((rate?.change)!)
+          if rate.change != nil {
+            Text((rate.change)!)
               .font(.custom(fontName, size: 14))
             // .fontWeight(.medium)
-              .foregroundColor(rate?.changeColor!)
+              .foregroundColor(rate.changeColor!)
             // .minimumScaleFactor(0.5)
               .lineLimit(1)
           }
-          Text(rate!.price)
+          Text(rate.price)
             .font(.custom(fontName, size: 28))
           // .fontWeight(.semibold)
             .foregroundColor(fgColor)
@@ -231,7 +241,7 @@ struct RateWidgetEntryView : View {
             .lineLimit(1)
           Spacer().frame(height: 8)
           // (Text("Actualizado ") + Text(entry.date, style: .time))
-          Text(rate!.date)
+          Text(rate.date)
             .font(.custom(fontName, size: 10))
           // .fontWeight(.medium)
             .foregroundColor(fgSecondaryColor)
@@ -287,8 +297,8 @@ struct RateWidget: Widget {
     IntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateProvider()) { entry in
       RateWidgetEntryView(entry: entry)
     }
-    .configurationDisplayName("Cotizaciónes")
-    .description("Mantente al tanto de las cotizaciones durante el transcurso del día.")
+    .configurationDisplayName("Cotizaciones")
+    .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
     .supportedFamilies(supportedFamilies)
   }
 }
@@ -299,14 +309,14 @@ struct ListRatesProvider: IntentTimelineProvider {
     return SimpleEntry(date: Date(), rates: rates)
   }
   func getSnapshot(for configuration: SelectRateTypesIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-    let rates = lookupRateValues(types: configuration.rateTypes!)
+    let rates = lookupRateValues(rateTypes: configuration.rateTypes!, valueType: configuration.valueType)
     let entry = SimpleEntry(date: Date(), rates: rates)
     completion(entry)
   }
   func getTimeline(for configuration: SelectRateTypesIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
     var entries: [SimpleEntry] = []
     let date = Date()
-    let rates = lookupRateValues(types: configuration.rateTypes!)
+    let rates = lookupRateValues(rateTypes: configuration.rateTypes!, valueType: configuration.valueType)
     let entry = SimpleEntry(date: date, rates: rates)
     entries.append(entry)
     let reloadDate = Calendar.current.date(byAdding: .minute, value: 5, to: date)!
@@ -353,7 +363,7 @@ struct ListRatesWidgetEntryView : View {
               // .minimumScaleFactor(0.5)
                 .lineLimit(1)
               Spacer()
-              if (rate.change != nil) {
+              if rate.change != nil {
                 Text(rate.change!)
                   .font(.custom(fontName, size: 10))
                 // .fontWeight(.medium)
@@ -376,7 +386,7 @@ struct ListRatesWidgetEntryView : View {
         .background(bgColor)
       } else {
         VStack {
-          Text("Sin cotizaciónes disponibles")
+          Text("Sin cotizaciones disponibles")
             .font(.custom(fontName, size: 14))
           // .fontWeight(.regular)
             .foregroundColor(fgColor)
@@ -406,8 +416,8 @@ struct ListRatesWidget: Widget {
     IntentConfiguration(kind: kind, intent: SelectRateTypesIntent.self, provider: ListRatesProvider()) { entry in
       ListRatesWidgetEntryView(entry: entry)
     }
-    .configurationDisplayName("Lista de cotizaciónes")
-    .description("Mantente al tanto de las cotizaciones durante el transcurso del día.")
+    .configurationDisplayName("Lista de cotizaciones")
+    .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
     .supportedFamilies(supportedFamilies)
   }
 }

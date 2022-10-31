@@ -7,6 +7,7 @@ import Shared, {
   MIN_CLIENT_VERSION_FOR_WHOLESALER,
   MIN_CLIENT_VERSION_FOR_CCB,
   MIN_CLIENT_VERSION_FOR_SAVING,
+  MIN_CLIENT_VERSION_FOR_QATAR,
 } from '../libs/shared';
 
 const ddbClient = Shared.getDynamoDBClient();
@@ -106,6 +107,11 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
         }
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_SAVING)) {
           delete rates_for_settings[AmbitoDolar.SAVING_TYPE];
+        }
+        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_QATAR)) {
+          delete rates_for_settings[AmbitoDolar.QATAR_TYPE];
+          // delete rates_for_settings[AmbitoDolar.LUXURY_TYPE];
+          // delete rates_for_settings[AmbitoDolar.CULTURAL_TYPE];
         }
         const body = getBodyMessage(rates_for_settings);
         if (body) {

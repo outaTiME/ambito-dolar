@@ -27,6 +27,9 @@ const CCL_LEGACY_TYPE = 'cl';
 const MEP_TYPE = 'mep';
 const CCB_TYPE = 'ccb';
 const WHOLESALER_TYPE = 'mayorista';
+const QATAR_TYPE = 'qatar';
+const LUXURY_TYPE = 'lujo';
+const CULTURAL_TYPE = 'cultural';
 
 const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
@@ -170,7 +173,10 @@ const getAvailableRateTypes = () => [
   OFFICIAL_TYPE,
   INFORMAL_TYPE,
   TOURIST_TYPE,
+  QATAR_TYPE,
   SAVING_TYPE,
+  // LUXURY_TYPE,
+  // CULTURAL_TYPE,
   CCL_TYPE,
   MEP_TYPE,
   CCB_TYPE,
@@ -199,8 +205,14 @@ const getRateTitle = (type) => {
     return 'Blue';
   } else if (type === TOURIST_TYPE) {
     return 'Tarjeta';
+  } else if (type === QATAR_TYPE) {
+    return 'Qatar';
   } else if (type === SAVING_TYPE) {
     return 'Ahorro';
+  } else if (type === LUXURY_TYPE) {
+    return 'Lujo';
+  } else if (type === CULTURAL_TYPE) {
+    return 'Cultural';
   } else if (type === CCL_TYPE) {
     // return 'Contado con liquidación',
     return 'CCL';
@@ -293,6 +305,9 @@ module.exports = {
   MEP_TYPE,
   CCB_TYPE,
   WHOLESALER_TYPE,
+  QATAR_TYPE,
+  LUXURY_TYPE,
+  CULTURAL_TYPE,
   NOTIFICATION_OPEN_TYPE,
   NOTIFICATION_CLOSE_TYPE,
   NOTIFICATION_VARIATION_TYPE,

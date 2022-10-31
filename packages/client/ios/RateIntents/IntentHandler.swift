@@ -9,6 +9,8 @@ import Intents
 
 class IntentHandler: INExtension, SelectRateTypeIntentHandling, SelectRateTypesIntentHandling {
   
+  // FIXME: took rates from remote
+  
   func defaultRateType(for intent: SelectRateTypeIntent) -> RateType? {
     Helper.getDefaultRateType()
   }
@@ -18,7 +20,7 @@ class IntentHandler: INExtension, SelectRateTypeIntentHandling, SelectRateTypesI
     let collection = INObjectCollection(items: rateTypes)
     completion(collection, nil)
   }
-
+  
   func defaultRateTypes(for intent: SelectRateTypesIntent) -> [RateType]? {
     Helper.getDefaultRateTypes()
   }
@@ -28,5 +30,5 @@ class IntentHandler: INExtension, SelectRateTypeIntentHandling, SelectRateTypesI
     let collection = INObjectCollection(items: rateTypes)
     completion(collection, nil)
   }
-
+  
 }

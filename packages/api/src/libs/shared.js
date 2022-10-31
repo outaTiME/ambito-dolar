@@ -37,6 +37,7 @@ export const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
 export const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
 export const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
 export const MIN_CLIENT_VERSION_FOR_SAVING = '6.1.0';
+export const MIN_CLIENT_VERSION_FOR_QATAR = '6.4.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
 const S3_BUCKET = process.env.S3_BUCKET;
 // 2.1.x
@@ -258,7 +259,10 @@ const storeRateStats = async (rates) => {
       if (
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE ||
-        type === AmbitoDolar.SAVING_TYPE
+        type === AmbitoDolar.SAVING_TYPE ||
+        type === AmbitoDolar.QATAR_TYPE /* ||
+        type === AmbitoDolar.LUXURY_TYPE ||
+        type === AmbitoDolar.CULTURAL_TYPE */
       ) {
         return obj;
       }
@@ -332,7 +336,10 @@ const storeHistoricalRatesJsonObject = async (rates) => {
       if (
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE ||
-        type === AmbitoDolar.SAVING_TYPE
+        type === AmbitoDolar.SAVING_TYPE ||
+        type === AmbitoDolar.QATAR_TYPE /* ||
+        type === AmbitoDolar.LUXURY_TYPE ||
+        type === AmbitoDolar.CULTURAL_TYPE */
       ) {
         return obj;
       }
@@ -348,7 +355,13 @@ const storeHistoricalRatesJsonObject = async (rates) => {
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
     storePublicJsonObject(
       HISTORICAL_RATES_OBJECT_KEY,
-      _.omit(base_rates, [AmbitoDolar.CCB_TYPE, AmbitoDolar.SAVING_TYPE])
+      _.omit(base_rates, [
+        AmbitoDolar.CCB_TYPE,
+        AmbitoDolar.SAVING_TYPE,
+        AmbitoDolar.QATAR_TYPE,
+        // AmbitoDolar.LUXURY_TYPE
+        // AmbitoDolar.CULTURAL_TYPE
+      ])
     ),
     storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_rates),
   ]);
@@ -361,7 +374,10 @@ const storeRatesJsonObject = async (rates, is_updated) => {
       if (
         type === AmbitoDolar.WHOLESALER_TYPE ||
         type === AmbitoDolar.CCB_TYPE ||
-        type === AmbitoDolar.SAVING_TYPE
+        type === AmbitoDolar.SAVING_TYPE ||
+        type === AmbitoDolar.QATAR_TYPE /* ||
+        type === AmbitoDolar.LUXURY_TYPE ||
+        type === AmbitoDolar.CULTURAL_TYPE */
       ) {
         return obj;
       }
@@ -384,6 +400,9 @@ const storeRatesJsonObject = async (rates, is_updated) => {
       rates: _.omit(rates.rates, [
         AmbitoDolar.CCB_TYPE,
         AmbitoDolar.SAVING_TYPE,
+        AmbitoDolar.QATAR_TYPE,
+        // AmbitoDolar.LUXURY_TYPE
+        // AmbitoDolar.CULTURAL_TYPE
       ]),
     }),
     storePublicJsonObject(QUOTES_OBJECT_KEY, rates),
@@ -410,6 +429,12 @@ const getPathForRate = (type) => {
     return 'dolarrava/cl';
   } else if (type === AmbitoDolar.MEP_TYPE) {
     return 'dolarrava/mep';
+  } else if (type === AmbitoDolar.QATAR_TYPE) {
+    return 'dolarqatar';
+  } else if (type === AmbitoDolar.LUXURY_TYPE) {
+    return 'dolardelujo';
+  } else if (type === AmbitoDolar.CULTURAL_TYPE) {
+    return 'dolarcoldplay';
   }
   return `dolar/${type}`;
 };

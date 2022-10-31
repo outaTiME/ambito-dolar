@@ -675,7 +675,7 @@ const firebaseApp =
 const AppContainer = () => {
   const { theme } = Helper.useTheme();
   const rates = Helper.useRates();
-  const hasRates = React.useMemo(() => Helper.hasValidRates(rates), [rates]);
+  const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
   const isInitial = !rates;
   const dispatch = useDispatch();
   const [, setUpdatingRates] = Helper.useSharedState('updatingRates');

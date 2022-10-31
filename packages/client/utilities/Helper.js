@@ -229,19 +229,21 @@ export default {
   },
   getNotificationSettings,
   getNotificationSettingsSelector,
+  getAvailableRates(rates) {
+    if (rates) {
+      rates = _.omit(rates, [
+        // rates to exclude
+      ]);
+      rates = AmbitoDolar.getAvailableRates(rates);
+      // strip rates with invalid stats
+      return _.pickBy(rates, ({ stats }) => stats?.length > 1);
+    }
+  },
   useRates() {
     const rates = useSelector((state) => state.rates?.rates);
-    return AmbitoDolar.getAvailableRates(rates);
+    return this.getAvailableRates(rates);
   },
-  hasValidRates(rates) {
-    const values = Object.values(rates || {});
-    return (
-      values
-        // two stats at least
-        .map(({ stats }) => stats?.length > 1)
-        .every((value) => value === true)
-    );
-  },
+  isValid: (obj) => !_.isEmpty(obj),
   usePrevious(value) {
     const ref = React.useRef();
     React.useEffect(() => {
