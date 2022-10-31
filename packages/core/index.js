@@ -141,6 +141,17 @@ const formatNumber = (
   return num;
 };
 
+const localeData = numeral.localeData();
+Object.assign(localeData.abbreviations, {
+  million: 'm',
+});
+
+const formatNumberHumanized = (num, maxDigits = FRACTION_DIGITS) => {
+  const decimal_digits = '0'.repeat(maxDigits);
+  const fmt = '0.' + decimal_digits + 'a';
+  return numeral(num).format(fmt);
+};
+
 const formatRateCurrency = (num) => formatNumber(num);
 
 const formatRateChange = (num, percentage = true) => {
@@ -325,8 +336,9 @@ module.exports = {
   getDelimiters,
   getNumber,
   formatNumber,
-  formatRateChange,
+  formatNumberHumanized,
   formatRateCurrency,
+  formatRateChange,
   formatCurrency,
   isRateFromToday,
   hasRatesFromToday,

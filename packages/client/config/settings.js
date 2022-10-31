@@ -12,10 +12,9 @@ const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = Dimensions.get('window');
 const SMALL_DISPLAY_HEIGHT = Math.round(DEVICE_HEIGHT) <= 731; // 5.0"
 const EXTRA_MARGIN_ON_LARGE_DISPLAY = true;
 const CARD_PADDING =
-  Platform.OS === 'web'
-    ? PADDING - SMALL_PADDING
-    : !SMALL_DISPLAY_HEIGHT && EXTRA_MARGIN_ON_LARGE_DISPLAY
-    ? PADDING / 1.5
+  Platform.OS === 'web' ||
+  (!SMALL_DISPLAY_HEIGHT && EXTRA_MARGIN_ON_LARGE_DISPLAY)
+    ? 10
     : PADDING / 2;
 const BORDER_RADIUS = PADDING / 2;
 const BORDER_WIDTH = 1;
@@ -49,6 +48,7 @@ const {
       amplitudeKey: AMPLITUDE_KEY,
       firebaseConfigJson: FIREBASE_CONFIG_JSON,
       isProduction: IS_PRODUCTION,
+      statsUri: STATS_URI,
     },
   },
   installationId: INSTALLATION_ID,
@@ -112,6 +112,7 @@ export default {
   AMPLITUDE_KEY,
   FIREBASE_CONFIG_JSON,
   IS_PRODUCTION: Platform.OS === 'web' ? IS_PRODUCTION : !__DEV__,
+  STATS_URI,
   FETCH_TIMEOUT,
   FETCH_REFRESH_INTERVAL,
   BULLET_SEPARATOR,

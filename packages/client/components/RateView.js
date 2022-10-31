@@ -62,19 +62,28 @@ const InlineRateView = ({ type, value, onSelected }) => {
   );
 };
 
-const InlineRateDetailView = ({ timestamp, change, stats, color, large }) => {
+const InlineRateDetailView = ({
+  timestamp,
+  change,
+  stats,
+  color,
+  large,
+  condensed,
+}) => {
   const { theme, fonts } = Helper.useTheme();
   if (large) {
     return (
       <>
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            // marginTop: Settings.PADDING / 2,
-            marginVertical: Settings.SMALL_PADDING * 2,
-            borderColor: 'red',
-          }}
+          style={[
+            {
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: Settings.SMALL_PADDING * (condensed === true ? 1 : 2),
+              // borderColor: 'red',
+              // borderWidth: 1,
+            },
+          ]}
         >
           <Text
             style={[
@@ -171,6 +180,7 @@ export default ({
   onSelected,
   large = false,
   highlight = true,
+  condensed = false,
 }) => {
   const { theme } = Helper.useTheme();
   const [timestamp, value, change] = React.useMemo(
@@ -221,6 +231,7 @@ export default ({
             stats,
             color,
             large,
+            condensed,
           }}
         />
       </>

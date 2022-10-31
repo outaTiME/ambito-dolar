@@ -97,7 +97,7 @@ export function Stack({ stack }) {
       function: {
         handler: 'src/subscribers/social-notify.handler',
         bundle: {
-          externalModules: ['@sparticuz/chrome-aws-lambda', 'sharp'],
+          externalModules: ['@sparticuz/chromium', 'sharp'],
         },
         environment: {
           SOCIAL_SCREENSHOT_URL: quotesSite.url,
@@ -111,6 +111,29 @@ export function Stack({ stack }) {
           filterPolicy: {
             event: SubscriptionFilter.stringFilter({
               allowlist: ['social-notify'],
+            }),
+          },
+        },
+      },
+    },
+    fundingNotify: {
+      function: {
+        handler: 'src/subscribers/funding-notify.handler',
+        bundle: {
+          externalModules: ['@sparticuz/chromium', 'sharp'],
+        },
+        environment: {
+          SOCIAL_SCREENSHOT_URL: quotesSite.url,
+        },
+        layers: [process.env.CHROME_LAYER_ARN, process.env.SHARP_LAYER_ARN],
+        // ~30s
+        timeout: '1 minute',
+      },
+      cdk: {
+        subscription: {
+          filterPolicy: {
+            event: SubscriptionFilter.stringFilter({
+              allowlist: ['funding-notify'],
             }),
           },
         },
@@ -164,6 +187,21 @@ export function Stack({ stack }) {
     schedule: 'cron(0 22 ? * MON-FRI *)',
     enabled: IS_PRODUCTION,
   });
+  // eslint-disable-next-line no-new
+  new sst.Cron(stack, 'FundingNotify', {
+    job: {
+      function: {
+        handler: 'src/jobs/funding-notify.handler',
+        environment: {
+          SNS_TOPIC: topic.topicArn,
+        },
+        permissions: [topic],
+      },
+    },
+    // last day of month (23:59hs) (for full month stats)
+    schedule: 'cron(59 2 1 * ? *)',
+    enabled: IS_PRODUCTION,
+  });
   // api endpoints
   const api = new sst.Api(stack, 'Api', {
     accessLog: false,
@@ -193,7 +231,8 @@ export function Stack({ stack }) {
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
-        // timeout: '20 seconds',
+        // ~10s
+        timeout: '20 seconds',
       },
     },
     routes: {
@@ -204,6 +243,7 @@ export function Stack({ stack }) {
       'GET /notify': 'src/routes/notify.handler',
       'GET /invalidate-receipts': 'src/routes/invalidate-receipts.handler',
       'GET /social-notify': 'src/routes/social-notify.handler',
+      'GET /funding-notify': 'src/routes/funding-notify.handler',
       'POST /update-rates': 'src/routes/update-rates.handler',
       'POST /update-historical-rates':
         'src/routes/update-historical-rates.handler',
@@ -219,6 +259,10 @@ export function Stack({ stack }) {
       'POST /register-device': {
         authorizer: 'none',
         function: 'src/routes/register-device.handler',
+      },
+      'GET /stats': {
+        authorizer: 'none',
+        function: 'src/routes/stats.handler',
       },
     },
   });

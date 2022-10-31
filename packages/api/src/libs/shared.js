@@ -448,8 +448,14 @@ const getRateUrl = (type) => {
 
 const getCryptoRatesUrl = () => process.env.CRYPTO_RATES_URL;
 
-const getSocialScreenshotUrl = (title) =>
-  process.env.SOCIAL_SCREENSHOT_URL + '?title=' + encodeURIComponent(title);
+const getSocialScreenshotUrl = (data) => {
+  const url = new URL(process.env.SOCIAL_SCREENSHOT_URL);
+  url.search = new URLSearchParams({
+    ...Object.fromEntries(url.searchParams),
+    ...data,
+  });
+  return url.toString();
+};
 
 const getExpoClient = () =>
   new Expo({
@@ -513,6 +519,9 @@ const triggerNotifyEvent = async (payload) =>
 
 const triggerSocialNotifyEvent = async (payload) =>
   publishMessageToTopic('social-notify', payload);
+
+const triggerFundingNotifyEvent = async (payload) =>
+  publishMessageToTopic('funding-notify', payload);
 
 // IFTTT
 
@@ -633,6 +642,7 @@ export default {
   triggerInvalidateReceiptsEvent,
   triggerNotifyEvent,
   triggerSocialNotifyEvent,
+  triggerFundingNotifyEvent,
   triggerSendSocialNotificationsEvent,
   storeImgurFile,
   wrapHandler,

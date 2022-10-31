@@ -150,9 +150,9 @@ const IndexPage = () => {
                     </p>
 
                     <p className="donation">
-                      Esta aplicación es gratuita y de código abierto, podés
-                      contribuir con su desarrollo y mantenimiento haciendo tu
-                      aporte en&nbsp;
+                      Esta aplicación es gratuita, de código abierto y sin
+                      publicidades, podés contribuir con su desarrollo y
+                      mantenimiento haciendo tu aporte en&nbsp;
                       <a
                         className="icon"
                         href="https://cafecito.app/ambitodolar"

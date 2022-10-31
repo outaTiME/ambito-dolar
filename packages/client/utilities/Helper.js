@@ -214,6 +214,10 @@ export default {
     }
     return Promise.reject(new Error('No historical rates available'));
   },
+  getStats: () =>
+    getJson(Settings.STATS_URI, {
+      timeout: Settings.FETCH_TIMEOUT,
+    }),
   cleanVersion(version) {
     return semverValid(semverCoerce(version));
   },

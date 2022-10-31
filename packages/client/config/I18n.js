@@ -9,6 +9,7 @@ const i18n = new I18n({
     search: 'Buscar',
     customize: 'Personalizar',
     no_available_rates: 'Sin cotizaciones disponibles.',
+    no_available_stats: 'Sin métricas disponibles.',
     rates_loading_error: 'Imposible obtener las cotizaciones.',
     // still_loading: 'Conectividad limitada, aguarde un momento...',
     // still_loading: 'Aguarde un momento...',
