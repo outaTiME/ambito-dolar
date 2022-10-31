@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.1.2...@ambito-dolar/core@3.2.0) (2022-10-31)
+
+### Features
+
+- add funding job to run once a month ([6c994fb](https://github.com/outaTiME/ambito-dolar/commit/6c994fbadff9cbc7b1b13ba2da972f1292a7b9e4))
+- add qatar rate type ([e9201bb](https://github.com/outaTiME/ambito-dolar/commit/e9201bb1ef248b61404089f9438639b12571bf84))
+
 ## [3.1.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.1.1...@ambito-dolar/core@3.1.2) (2022-10-04)
 
 **Note:** Version bump only for package @ambito-dolar/core

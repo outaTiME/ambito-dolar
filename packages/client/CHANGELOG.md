@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.3.0...@ambito-dolar/client@6.4.0) (2022-10-31)
+
+### Bug Fixes
+
+- wording improvements on client ([77a3ac7](https://github.com/outaTiME/ambito-dolar/commit/77a3ac73fe02b92c39384a852e86b7aa1e0d8a69))
+
+### Features
+
+- add funding job to run once a month ([6c994fb](https://github.com/outaTiME/ambito-dolar/commit/6c994fbadff9cbc7b1b13ba2da972f1292a7b9e4))
+- add qatar rate type ([e9201bb](https://github.com/outaTiME/ambito-dolar/commit/e9201bb1ef248b61404089f9438639b12571bf84))
+
 # [6.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.2.0...@ambito-dolar/client@6.3.0) (2022-10-04)
 
 ### Bug Fixes

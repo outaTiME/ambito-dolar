@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.5.0...@ambito-dolar/website@1.6.0) (2022-10-31)
+
+### Features
+
+- add funding job to run once a month ([6c994fb](https://github.com/outaTiME/ambito-dolar/commit/6c994fbadff9cbc7b1b13ba2da972f1292a7b9e4))
+
 # [1.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.4.3...@ambito-dolar/website@1.5.0) (2022-10-04)
 
 ### Features

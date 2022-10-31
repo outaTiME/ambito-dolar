@@ -11,7 +11,7 @@
     "prebuild": "expo prebuild --platform ios && cd ios && pod install --verbose --no-repo-update"
   },
   "dependencies": {
-    "@ambito-dolar/core": "^3.1.2",
+    "@ambito-dolar/core": "^3.2.0",
     "@amplitude/react-native": "^2.16.1",
     "@calitb/react-native-widgetkit": "^0.1.3",
     "@config-plugins/react-native-quick-actions": "^3.0.0",
@@ -92,5 +92,5 @@
     "@babel/core": "^7.19.6",
     "@expo/webpack-config": "^0.17.2"
   },
-  "version": "6.3.0"
+  "version": "6.4.0"
 }

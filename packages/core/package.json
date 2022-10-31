@@ -1,7 +1,7 @@
 {
   "name": "@ambito-dolar/core",
   "private": true,
-  "version": "3.1.2",
+  "version": "3.2.0",
   "dependencies": {
     "lodash.isempty": "^4.4.0",
     "lodash.max": "^4.0.1",
