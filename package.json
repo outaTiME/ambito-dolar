@@ -12,15 +12,15 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^17.1.2",
-    "@commitlint/config-conventional": "^17.1.0",
-    "@serverless-stack/cli": "1.15.8",
-    "@serverless-stack/resources": "1.15.8",
+    "@commitlint/cli": "^17.2.0",
+    "@commitlint/config-conventional": "^17.2.0",
+    "@serverless-stack/cli": "1.15.16",
+    "@serverless-stack/resources": "1.15.16",
     "aws-cdk-lib": "2.39.1",
-    "eslint": "^8.24.0",
-    "eslint-config-universe": "^11.1.0",
+    "eslint": "^8.26.0",
+    "eslint-config-universe": "^11.1.1",
     "husky": "^8.0.1",
-    "lerna": "^5.6.1",
+    "lerna": "^6.0.1",
     "prettier": "^2.7.1"
   },
   "scripts": {
@@ -28,6 +28,7 @@
     "g:eslint": "cd $INIT_CWD && eslint .",
     "client:start": "yarn workspace @ambito-dolar/client run start",
     "client:upgrade": "yarn workspace @ambito-dolar/client exec expo-cli upgrade",
+    "client:prebuild": "yarn workspace @ambito-dolar/client run prebuild",
     "client:build": "yarn workspace @ambito-dolar/client exec eas build --clear-cache",
     "api:start": "yarn sst start",
     "api:publish": "yarn sst deploy",
@@ -38,5 +39,8 @@
     "depcheck": "yarn workspaces foreach --verbose exec npx depcheck",
     "postinstall": "husky install"
   },
-  "packageManager": "yarn@3.2.3"
+  "packageManager": "yarn@3.2.3",
+  "resolutions": {
+    "eslint": "^8.6.0"
+  }
 }
