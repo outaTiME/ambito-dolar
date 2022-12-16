@@ -2,7 +2,7 @@
 
 # Ámbito Dólar 💸
 
-[![Build Status](https://img.shields.io/github/workflow/status/outaTiME/ambito-dolar/CI)](https://github.com/outaTiME/ambito-dolar/actions/workflows/main.yml)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/outaTiME/ambito-dolar/main.yml?branch=master)](https://github.com/outaTiME/ambito-dolar/actions/workflows/main.yml)
 [![License: CC-BY-NC-ND-4.0](https://img.shields.io/badge/license-CC--BY--NC--ND--4.0-yellow)](https://creativecommons.org/licenses/by-nc-nd/4.0)
 [![Twitter: outa7iME](https://img.shields.io/twitter/follow/AmbitoDolar)](https://twitter.com/AmbitoDolar)
 
