@@ -3,15 +3,23 @@
     "version": ">= 0.52.0"
   },
   "build": {
+    "fast": {
+      "ios": {
+        "resourceClass": "m1-medium"
+      }
+    },
     "development": {
+      "extends": "fast",
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
+      "extends": "fast",
       "distribution": "internal",
       "channel": "preview"
     },
     "production": {
+      "extends": "fast",
       "channel": "production"
     },
     "simulator": {
