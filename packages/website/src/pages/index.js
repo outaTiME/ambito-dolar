@@ -7,8 +7,7 @@ import {
   FaInstagram as Insta,
   FaFacebook as Facebook,
   FaRedditAlien as Reddit,
-  FaDiscord as Discord,
-  FaSlack as Slack,
+  FaMastodon as Mastodon,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa';
@@ -75,7 +74,7 @@ const IndexPage = () => {
                       y efectiva.
                     </p>
                     <p className="social">
-                      <a
+                    <a
                         className="icon"
                         href="https://twitter.com/AmbitoDolar"
                         target="_blank"
@@ -117,19 +116,11 @@ const IndexPage = () => {
                       </a>
                       <a
                         className="icon"
-                        href="https://discord.gg/jwfDsy4EKe"
+                        href="https://mastodon.social/@AmbitoDolar"
                         target="_blank"
-                        rel="noopener noreferrer"
+                        rel="noopener noreferrer me"
                       >
-                        <Discord />
-                      </a>
-                      <a
-                        className="icon"
-                        href="https://join.slack.com/t/ambitodolar/shared_invite/zt-1a3j77xsn-AZ4_zFTKobu1e6P21E~wdg"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Slack />
+                        <Mastodon />
                       </a>
                       <a
                         className="icon"

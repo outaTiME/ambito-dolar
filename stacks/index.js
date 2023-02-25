@@ -28,6 +28,8 @@ export default function main(app) {
       AMPLITUDE_API_KEY: process.env.AMPLITUDE_API_KEY,
       AMPLITUDE_SECRET_KEY: process.env.AMPLITUDE_SECRET_KEY,
       AMPLITUDE_USAGE_STATS_URL: process.env.AMPLITUDE_USAGE_STATS_URL,
+      MASTODON_URL: process.env.MASTODON_URL,
+      MASTODON_ACCESS_TOKEN: process.env.MASTODON_ACCESS_TOKEN,
     },
     runtime: 'nodejs16.x',
     srcPath: 'packages/api',

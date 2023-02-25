@@ -28,7 +28,7 @@ export function Stack({ stack }) {
     process.env.DOMAIN_CERTIFICATE_ARN
   );
   // expo web build
-  const quotesSite = new sst.StaticSite(stack, 'QuotesSite', {
+  const screenshotSite = new sst.StaticSite(stack, 'ScreenshotSite', {
     buildCommand: 'yarn expo export:web',
     buildOutput: 'web-build',
     environment: {
@@ -100,11 +100,11 @@ export function Stack({ stack }) {
           externalModules: ['@sparticuz/chromium', 'sharp'],
         },
         environment: {
-          SOCIAL_SCREENSHOT_URL: quotesSite.url,
+          SOCIAL_SCREENSHOT_URL: screenshotSite.url,
         },
         layers: [process.env.CHROME_LAYER_ARN, process.env.SHARP_LAYER_ARN],
-        // ~30s
-        timeout: '1 minute',
+        // ~60s
+        timeout: '2 minutes',
       },
       cdk: {
         subscription: {
@@ -123,11 +123,11 @@ export function Stack({ stack }) {
           externalModules: ['@sparticuz/chromium', 'sharp'],
         },
         environment: {
-          SOCIAL_SCREENSHOT_URL: quotesSite.url,
+          SOCIAL_SCREENSHOT_URL: screenshotSite.url,
         },
         layers: [process.env.CHROME_LAYER_ARN, process.env.SHARP_LAYER_ARN],
-        // ~30s
-        timeout: '1 minute',
+        // ~60s
+        timeout: '2 minutes',
       },
       cdk: {
         subscription: {
@@ -231,8 +231,8 @@ export function Stack({ stack }) {
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
-        // ~10s
-        timeout: '20 seconds',
+        // ~20s
+        timeout: '40 seconds',
       },
     },
     routes: {
@@ -303,7 +303,7 @@ export function Stack({ stack }) {
     ...(api.cdk.domainName && {
       ApiRegionalDomainName: api.cdk.domainName.regionalDomainName,
     }),
-    QuotesSiteUrl: quotesSite.url,
+    ScreenshotSiteUrl: screenshotSite.url,
     LandingSiteUrl: landingSite.url,
     LegacyApiUrl: legacyApi.url,
     ...(legacyApi.cdk.domainName && {

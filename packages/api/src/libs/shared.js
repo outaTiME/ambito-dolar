@@ -455,6 +455,9 @@ const getSocialScreenshotUrl = (data) => {
     ...data,
   });
   return url.toString();
+  /* return (
+    process.env.SOCIAL_SCREENSHOT_URL + '?data=' + AmbitoDolar.crushJson(data)
+  ); */
 };
 
 const getExpoClient = () =>
@@ -598,6 +601,14 @@ const storeImgurFile = async (image) =>
     throw Error(response.statusText);
   });
 
+const fetchImage = async (url) =>
+  fetch(url).then(async (response) => {
+    if (response.ok) {
+      return Buffer.from(await response.arrayBuffer());
+    }
+    throw Error(response.statusText);
+  });
+
 const wrapHandler = (handler) => {
   if (!process.env.IS_LOCAL) {
     Sentry.AWSLambda.init({
@@ -645,5 +656,6 @@ export default {
   triggerFundingNotifyEvent,
   triggerSendSocialNotificationsEvent,
   storeImgurFile,
+  fetchImage,
   wrapHandler,
 };

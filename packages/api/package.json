@@ -18,6 +18,8 @@
     "instagram-private-api": "^1.45.3",
     "joi": "^17.6.4",
     "lodash": "^4.17.21",
+    "masto": "^5.10.0",
+    "megalodon": "^5.2.0",
     "node-fetch": "^2.6.7",
     "object-hash": "^3.0.0",
     "puppeteer-core": "19.2.0",

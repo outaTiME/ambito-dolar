@@ -3,6 +3,7 @@
   "private": true,
   "version": "3.2.0",
   "dependencies": {
+    "@jsonurl/jsonurl": "^1.1.7",
     "lodash.isempty": "^4.4.0",
     "lodash.max": "^4.0.1",
     "lodash.merge": "^4.6.2",

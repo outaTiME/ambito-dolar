@@ -1,3 +1,4 @@
+const JsonURL = require('@jsonurl/jsonurl');
 const isEmpty = require('lodash.isempty');
 const max = require('lodash.max');
 const merge = require('lodash.merge');
@@ -141,7 +142,7 @@ const formatNumber = (
   return num;
 };
 
-const localeData = numeral.localeData();
+/* const localeData = numeral.localeData();
 Object.assign(localeData.abbreviations, {
   million: 'm',
 });
@@ -150,6 +151,15 @@ const formatNumberHumanized = (num, maxDigits = FRACTION_DIGITS) => {
   const decimal_digits = '0'.repeat(maxDigits);
   const fmt = '0.' + decimal_digits + 'a';
   return numeral(num).format(fmt);
+}; */
+
+const formatNumberHumanized = (num, maxDigits = FRACTION_DIGITS) => {
+  return Intl.NumberFormat(chosenLocale, {
+    notation: 'compact',
+    // minimumFractionDigits: 2,
+    // maximumFractionDigits: maxDigits,
+    compactDisplay: 'long',
+  }).format(num);
 };
 
 const formatRateCurrency = (num) => formatNumber(num);
@@ -217,6 +227,7 @@ const getRateTitle = (type) => {
   } else if (type === TOURIST_TYPE) {
     return 'Tarjeta';
   } else if (type === QATAR_TYPE) {
+    // return 'Turista';
     return 'Qatar';
   } else if (type === SAVING_TYPE) {
     return 'Ahorro';
@@ -348,4 +359,6 @@ module.exports = {
   getNotificationSettings,
   getRateValue,
   getRateChange,
+  crushJson: (obj) => JsonURL.stringify(obj, { AQF: true }),
+  uncrushJson: (str) => JsonURL.parse(str, { AQF: true }),
 };
