@@ -97,6 +97,15 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
             navigation.navigate('Appearance');
           }}
         />
+        <CardItemView
+          title={I18n.t('customize_rates')}
+          useSwitch={false}
+          onAction={() => {
+            navigation.navigate('CustomizeRates', {
+              modal: false,
+            });
+          }}
+        />
       </CardView>
       <CardView plain>
         <CardItemView

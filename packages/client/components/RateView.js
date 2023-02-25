@@ -181,6 +181,7 @@ export default ({
   large = false,
   highlight = true,
   condensed = false,
+  shoudStretch = true,
 }) => {
   const { theme } = Helper.useTheme();
   const [timestamp, value, change] = React.useMemo(
@@ -207,7 +208,8 @@ export default ({
   return (
     <CardView
       style={[
-        {
+        shoudStretch === true && {
+          // TODO: remove when customization is allowed (review on web)
           flex: 1,
         },
         highlight === false && {

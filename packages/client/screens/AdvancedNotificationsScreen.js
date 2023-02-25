@@ -9,12 +9,15 @@ import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
+import withRates from '../components/withRates';
 import I18n from '../config/I18n';
 import Helper from '../utilities/Helper';
 
 const AdvancedNotificationsScreen = ({
   headerHeight,
   tabBarheight,
+  // rates,
+  rateTypes,
   route: { params },
 }) => {
   const dispatch = useDispatch();
@@ -36,8 +39,6 @@ const AdvancedNotificationsScreen = ({
     },
     [params, notification_settings]
   );
-  const rates = Helper.useRates();
-  const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);
   const getItemView = React.useCallback(
     (type) => {
       const settings = notification_settings[params.type];
@@ -80,5 +81,6 @@ const AdvancedNotificationsScreen = ({
 
 export default compose(
   withContainer(),
-  withDividersOverlay
+  withDividersOverlay,
+  withRates()
 )(AdvancedNotificationsScreen);

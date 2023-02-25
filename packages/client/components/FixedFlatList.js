@@ -1,16 +1,20 @@
 import React from 'react';
 import { Text, Platform } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  // ScaleDecorator,
+  ShadowDecorator,
+  // OpacityDecorator,
+} from 'react-native-draggable-flatlist';
 
-import Settings from '../config/settings';
-import Helper from '../utilities/Helper';
 import { Separator } from './CardView';
 import ContentView from './ContentView';
 import FlatList from './FlatList';
+import Settings from '../config/settings';
+import Helper from '../utilities/Helper';
 
-const HeaderComponent = ({ title }) => {
+const HeaderComponent = ({ ListHeaderComponent, title }) => {
   const { theme, fonts } = Helper.useTheme();
-  return (
+  const contents = title ? (
     <ContentView
       contentContainerStyle={{
         padding: Settings.PADDING,
@@ -31,10 +35,49 @@ const HeaderComponent = ({ title }) => {
         {title}
       </Text>
     </ContentView>
+  ) : (
+    <ContentView />
+  );
+  return (
+    <>
+      {ListHeaderComponent}
+      {contents}
+    </>
   );
 };
 
-const FooterComponent = () => <ContentView />;
+const FooterComponent = ({ ListFooterComponent, note }) => {
+  const { theme, fonts } = Helper.useTheme();
+  const contents = note ? (
+    <ContentView
+      contentContainerStyle={{
+        padding: Settings.PADDING,
+        marginTop: 0,
+        marginHorizontal: Settings.CARD_PADDING * 2,
+        justifyContent: 'flex-start',
+      }}
+    >
+      <Text
+        style={[
+          fonts.footnote,
+          {
+            color: Settings.getGrayColor(theme),
+          },
+        ]}
+      >
+        {note}
+      </Text>
+    </ContentView>
+  ) : (
+    <ContentView />
+  );
+  return (
+    <>
+      {contents}
+      {ListFooterComponent}
+    </>
+  );
+};
 
 const FixedFlatList = ({
   title,
@@ -42,61 +85,96 @@ const FixedFlatList = ({
   itemHeight,
   headerHeight,
   tabBarheight,
-  containerRef,
+  note,
+  ListHeaderComponent,
+  ListFooterComponent,
+  isModal,
   ...extra
 }) => {
   const { theme } = Helper.useTheme();
-  const insets = useSafeAreaInsets();
+  const { shadowColor, shadowOpacity, shadowRadius, elevation } =
+    Helper.getShadowDefaults();
   const renderItem = React.useCallback(
-    ({ item, index }) => (
-      <ContentView
-        contentContainerStyle={[
-          {
-            backgroundColor: Settings.getContentColor(theme),
-            marginVertical: 0,
-            marginHorizontal: Settings.CARD_PADDING * 2,
-          },
-          index === 0 && {
-            borderTopLeftRadius: Settings.BORDER_RADIUS,
-            borderTopRightRadius: Settings.BORDER_RADIUS,
-          },
-          index === data.length - 1 && {
-            borderBottomLeftRadius: Settings.BORDER_RADIUS,
-            borderBottomRightRadius: Settings.BORDER_RADIUS,
-          },
-        ]}
-      >
-        {item.component}
-      </ContentView>
-    ),
-    [theme, data]
+    ({ item: { component }, index, drag, isActive, getIndex, onStartDrag }) => {
+      index = index ?? getIndex();
+      const contents = (
+        <ContentView
+          contentContainerStyle={[
+            {
+              backgroundColor: Settings.getContentColor(theme, false, isModal),
+              marginVertical: 0,
+              marginHorizontal: Settings.CARD_PADDING * 2,
+            },
+            index === 0 && {
+              borderTopLeftRadius: Settings.BORDER_RADIUS,
+              borderTopRightRadius: Settings.BORDER_RADIUS,
+            },
+            index === data.length - 1 && {
+              borderBottomLeftRadius: Settings.BORDER_RADIUS,
+              borderBottomRightRadius: Settings.BORDER_RADIUS,
+            },
+          ]}
+        >
+          {React.isValidElement(component)
+            ? component
+            : component({
+                index,
+                drag: drag ?? onStartDrag,
+                isActive,
+                isModal,
+              })}
+        </ContentView>
+      );
+      // react-native-draggable-flatlist
+      if (drag) {
+        return (
+          <ShadowDecorator
+            {...{
+              color: shadowColor,
+              opacity: shadowOpacity,
+              radius: shadowRadius,
+              elevation,
+            }}
+          >
+            {contents}
+          </ShadowDecorator>
+        );
+      }
+      return contents;
+    },
+    [theme, data, isModal]
   );
   const separatorComponent = React.useCallback(
     () => (
       <ContentView
         contentContainerStyle={{
-          backgroundColor: Settings.getContentColor(theme),
+          backgroundColor: Settings.getContentColor(theme, false, isModal),
           marginVertical: 0,
           marginHorizontal: Settings.CARD_PADDING * 2,
         }}
       >
-        <Separator />
+        <Separator isModal={isModal} />
       </ContentView>
     ),
-    [theme]
+    [theme, isModal]
   );
   const headerComponent = React.useCallback(
-    () => <HeaderComponent {...{ title }} />,
-    [title]
+    () => <HeaderComponent {...{ ListHeaderComponent, title }} />,
+    [ListHeaderComponent, title]
   );
-  const footerComponent = React.useCallback(() => <FooterComponent />, []);
+  const footerComponent = React.useCallback(
+    () => <FooterComponent {...{ ListFooterComponent, note }} />,
+    [ListFooterComponent, note]
+  );
   const extraData = React.useMemo(() => Date.now(), [theme, data]);
   return (
     <FlatList
+      // automaticallyAdjustContentInsets={false}
       scrollIndicatorInsets={{
-        // top: headerHeight - insets.top,
-        bottom: tabBarheight - insets.bottom,
+        top: headerHeight,
+        bottom: tabBarheight,
       }}
+      automaticallyAdjustsScrollIndicatorInsets={false}
       contentContainerStyle={{
         // required when translucent bars
         ...(Platform.OS === 'ios' && {
@@ -104,12 +182,12 @@ const FixedFlatList = ({
           paddingBottom: tabBarheight,
         }),
       }}
+      // contentInsetAdjustmentBehavior="automatic"
       {...{ data }}
       renderItem={renderItem}
       ItemSeparatorComponent={separatorComponent}
       ListHeaderComponent={headerComponent}
       ListFooterComponent={footerComponent}
-      containerRef={containerRef}
       estimatedItemSize={itemHeight}
       extraData={extraData}
       {...extra}

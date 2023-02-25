@@ -12,7 +12,7 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const UpdateAppModalScreen = ({ navigation }) => {
+const UpdateAppScreen = ({ navigation }) => {
   const [confirmed, setConfirmed] = React.useState(false);
   const dispatch = useDispatch();
   // https://reactnavigation.org/docs/preventing-going-back
@@ -34,7 +34,7 @@ const UpdateAppModalScreen = ({ navigation }) => {
     if (confirmed === true) {
       (async () => {
         await dispatch(actions.ignoreApplicationUpdate());
-        navigation.goBack();
+        // navigation.goBack();
       })();
     }
   }, [dispatch, confirmed]);
@@ -73,4 +73,4 @@ const UpdateAppModalScreen = ({ navigation }) => {
   );
 };
 
-export default compose(withContainer(true))(UpdateAppModalScreen);
+export default compose(withContainer(true))(UpdateAppScreen);

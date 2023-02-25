@@ -11,7 +11,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { compose } from '@reduxjs/toolkit';
 import { BlurView } from 'expo-blur';
 import * as Device from 'expo-device';
-import { processFontFamily } from 'expo-font';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
 import { initializeApp } from 'firebase/app';
@@ -19,14 +18,17 @@ import { getDatabase, ref, onValue } from 'firebase/database';
 import React from 'react';
 import {
   StyleSheet,
-  ActivityIndicator,
   Platform,
   View,
   DeviceEventEmitter,
+  Text,
 } from 'react-native';
 import QuickActions from 'react-native-quick-actions';
 import { useSelector, shallowEqual, useDispatch, batch } from 'react-redux';
 
+import { MaterialHeaderButtons, Item } from './HeaderButtons';
+import withContainer from './withContainer';
+import withRates from './withRates';
 import * as actions from '../actions';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
@@ -35,29 +37,46 @@ import AboutScreen from '../screens/AboutScreen';
 import AdvancedNotificationsScreen from '../screens/AdvancedNotificationsScreen';
 import AppearanceScreen from '../screens/AppearanceScreen';
 import ConversionScreen from '../screens/ConversionScreen';
+import CustomizeRatesScreen from '../screens/CustomizeRatesScreen';
 import DeveloperScreen from '../screens/DeveloperScreen';
+import InitialScreen from '../screens/InitialScreen';
 import MainScreen from '../screens/MainScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import RateDetailScreen from '../screens/RateDetailScreen';
+import RateOrderScreen from '../screens/RateOrderScreen';
 import RateRawDetailScreen from '../screens/RateRawDetailScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
-import UpdateAppModalScreen from '../screens/UpdateAppModalScreen';
+import UpdateAppScreen from '../screens/UpdateAppScreen';
 import Amplitude from '../utilities/Amplitude';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
-import ActionButton from './ActionButton';
-import ContentView from './ContentView';
-import { MaterialHeaderButtons, Item } from './HeaderButtons';
-import MessageView from './MessageView';
-import withContainer from './withContainer';
 
-const BackButton = ({ navigation }) => (
-  <MaterialHeaderButtons left>
-    <Item title="back" iconName="arrow-back" onPress={navigation.goBack} />
+const BackButton = ({ navigation, popToTop = false }) => (
+  <MaterialHeaderButtons>
+    <Item
+      title="Atras"
+      iconName="arrow-back"
+      onPress={popToTop === true ? navigation.popToTop : navigation.goBack}
+    />
   </MaterialHeaderButtons>
 );
+
+const DoneButton = ({ navigation, popToTop = false }) => {
+  const { fonts } = Helper.useTheme();
+  return (
+    <MaterialHeaderButtons>
+      <Item
+        title="Listo"
+        onPress={popToTop === true ? navigation.popToTop : navigation.goBack}
+        buttonStyle={{
+          ...fonts.body,
+        }}
+      />
+    </MaterialHeaderButtons>
+  );
+};
 
 // for market capture purposes
 const BLUR_EFFECT_ON_NAVIGATION_BARS = true;
@@ -89,8 +108,8 @@ const NavigatorBackgroundView = ({ style }) => {
   );
 };
 
-const useNavigatorScreenOptions = () => {
-  const { theme } = Helper.useTheme();
+const useNavigatorScreenOptions = (modal = false) => {
+  const { theme, fonts } = Helper.useTheme();
   const headerBackground = React.useCallback(
     () => <NavigatorBackgroundView />,
     []
@@ -98,23 +117,23 @@ const useNavigatorScreenOptions = () => {
   return {
     headerBackVisible: false,
     headerShadowVisible: false,
-    headerTintColor: Settings.getForegroundColor(theme),
     headerTitleAlign: 'center',
-    headerTitleStyle: {
-      // fonts.title
-      fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
-      fontSize: 20,
-      fontWeight: '400',
-    },
+    // solve vertical center issues on iOS
+    headerTitle: ({ children }) => <Text style={fonts.title}>{children}</Text>,
     ...Platform.select({
       ios: {
         ...(!BLUR_EFFECT_ON_NAVIGATION_BARS
           ? { headerBackground }
-          : { headerBlurEffect: theme }),
+          : {
+              headerBlurEffect: modal
+                ? `systemMaterial${AmbitoDolar.getCapitalized(theme)}`
+                : theme,
+            }),
         headerTransparent: true,
       },
       android: {
-        headerBackground,
+        // doesn't work correctly on android
+        // headerBackground,
       },
     }),
   };
@@ -233,6 +252,22 @@ const SettingsStackScreen = () => {
         })}
         component={AppearanceScreen}
       />
+      <SettingsStack.Screen
+        name="CustomizeRates"
+        options={({ navigation }) => ({
+          title: Helper.getScreenTitle(I18n.t('customize_rates')),
+          headerLeft: () => <BackButton {...{ navigation }} />,
+        })}
+        component={CustomizeRatesScreen}
+      />
+      <SettingsStack.Screen
+        name="RateOrder"
+        options={({ navigation }) => ({
+          title: Helper.getScreenTitle(I18n.t('rate_order')),
+          headerLeft: () => <BackButton {...{ navigation }} />,
+        })}
+        component={RateOrderScreen}
+      />
     </SettingsStack.Navigator>
   );
 };
@@ -260,7 +295,15 @@ const MainStackScreen = () => {
           borderTopWidth: 0,
           elevation: 0,
         },
-        tabBarBackground,
+        ...Platform.select({
+          ios: {
+            tabBarBackground,
+          },
+          android: {
+            // doesn't work correctly on android
+            // tabBarBackground,
+          },
+        }),
       }}
     >
       <Tab.Screen
@@ -316,6 +359,38 @@ const MainStackScreen = () => {
   );
 };
 
+const ModalsStack = createNativeStackNavigator();
+const ModalsStackScreen = () => {
+  const navigatorScreenOptions = useNavigatorScreenOptions(true);
+  return (
+    <ModalsStack.Navigator screenOptions={navigatorScreenOptions}>
+      <ModalsStack.Screen
+        name="CustomizeRates"
+        options={({ navigation }) => ({
+          title: Helper.getScreenTitle(I18n.t('customize_rates')),
+          ...Platform.select({
+            ios: {
+              headerRight: () => <DoneButton {...{ navigation }} />,
+            },
+            android: {
+              headerLeft: () => <BackButton {...{ navigation }} />,
+            },
+          }),
+        })}
+        component={CustomizeRatesScreen}
+      />
+      <ModalsStack.Screen
+        name="RateOrder"
+        options={({ navigation }) => ({
+          title: Helper.getScreenTitle(I18n.t('rate_order')),
+          headerLeft: () => <BackButton {...{ navigation }} />,
+        })}
+        component={RateOrderScreen}
+      />
+    </ModalsStack.Navigator>
+  );
+};
+
 let initialQuickAction;
 // https://github.com/jordanbyron/react-native-quick-actions#listening-for-quick-actions
 Settings.IS_PRODUCTION &&
@@ -324,19 +399,14 @@ Settings.IS_PRODUCTION &&
     .catch(console.error);
 
 const RootStack = createNativeStackNavigator();
-const AppNavigationContainer = ({ showAppUpdateMessage }) => {
+const AppContainer = ({
+  rates,
+  loadingError,
+  stillLoading,
+  fetchRates,
+  showAppUpdateMessage,
+}) => {
   const { theme } = Helper.useTheme();
-  const navigationTheme = React.useMemo(
-    () => ({
-      dark: theme === 'dark',
-      colors: {
-        // background: Settings.getBackgroundColor(theme, true),
-        card: Settings.getContentColor(theme),
-        border: Settings.getSeparatorColor(theme),
-      },
-    }),
-    [theme]
-  );
   const trackScreen = React.useCallback((name) => {
     if (__DEV__) {
       console.log('👀 Track screen', name);
@@ -373,13 +443,6 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       });
     }
   }, [lastNotificationResponse]);
-  React.useEffect(() => {
-    if (showAppUpdateMessage === true) {
-      navigationRef.navigate('ApplicationUpdate', {
-        // pass
-      });
-    }
-  }, [showAppUpdateMessage]);
   // QUICK ACTIONS
   const onQuickAction = React.useCallback((data) => {
     if (__DEV__) {
@@ -407,51 +470,191 @@ const AppNavigationContainer = ({ showAppUpdateMessage }) => {
       subscription.remove();
     };
   }, []);
+  const onReady = React.useCallback(() => {
+    // TODO: send signal to remove splash screen ???
+    routeNameRef.current = navigationRef.getCurrentRoute().name;
+    // console.log('👌 Navigation is ready');
+  }, []);
+  const onStateChange = React.useCallback(() => {
+    const previousRouteName = routeNameRef.current;
+    const currentRouteName = navigationRef.getCurrentRoute().name;
+    if (previousRouteName !== currentRouteName) {
+      trackScreen(currentRouteName);
+    }
+    // save the current route name for later comparision
+    routeNameRef.current = currentRouteName;
+  }, []);
+  const navigationTheme = React.useMemo(
+    () => ({
+      dark: theme === 'dark',
+      colors: {
+        card: Settings.getContentColor(theme),
+        border: Settings.getSeparatorColor(theme),
+      },
+    }),
+    [theme]
+  );
+  const navigatorScreenOptions = useNavigatorScreenOptions();
+  const statusBarStyle = Helper.getInvertedTheme(theme);
+  const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
   return (
     <NavigationContainer
       {...{
         ref: navigationRef,
-        onReady: () => {
-          // TODO: send signal to remove splash screen ???
-          routeNameRef.current = navigationRef.getCurrentRoute().name;
-        },
-        onStateChange: () => {
-          const previousRouteName = routeNameRef.current;
-          const currentRouteName = navigationRef.getCurrentRoute().name;
-          if (previousRouteName !== currentRouteName) {
-            trackScreen(currentRouteName);
-          }
-          // save the current route name for later comparision
-          routeNameRef.current = currentRouteName;
-        },
+        onReady,
+        onStateChange,
         theme: navigationTheme,
       }}
     >
       <RootStack.Navigator
         screenOptions={{
+          ...navigatorScreenOptions,
           headerShown: false,
+          statusBarStyle,
+          statusBarTranslucent: true,
         }}
       >
-        <RootStack.Group>
+        {!hasRates ? (
+          <RootStack.Screen name={Settings.INITIAL_ROUTE_NAME}>
+            {(props) => (
+              <InitialScreen
+                {...{
+                  rates,
+                  loadingError,
+                  stillLoading,
+                  fetchRates,
+                  ...props,
+                }}
+              />
+            )}
+          </RootStack.Screen>
+        ) : showAppUpdateMessage ? (
           <RootStack.Screen
             name={Settings.INITIAL_ROUTE_NAME}
-            component={MainStackScreen}
+            component={UpdateAppScreen}
           />
-        </RootStack.Group>
-        <RootStack.Group
-          screenOptions={{
-            // animation: 'none',
-            presentation: 'transparentModal',
-            gestureEnabled: false,
-          }}
-        >
-          <RootStack.Screen
-            name="ApplicationUpdate"
-            component={UpdateAppModalScreen}
-          />
-        </RootStack.Group>
+        ) : (
+          <>
+            <RootStack.Screen
+              name={Settings.INITIAL_ROUTE_NAME}
+              component={MainStackScreen}
+            />
+            <RootStack.Screen
+              name="Modals"
+              component={ModalsStackScreen}
+              options={{
+                // works only on iOS
+                presentation: 'modal',
+              }}
+            />
+          </>
+        )}
       </RootStack.Navigator>
     </NavigationContainer>
+  );
+};
+
+const firebaseApp =
+  Settings.FIREBASE_CONFIG_JSON &&
+  initializeApp(JSON.parse(Settings.FIREBASE_CONFIG_JSON));
+
+const withRealtime = (Component) => (props) => {
+  const rates = props.rates;
+  const isInitial = !rates;
+  const dispatch = useDispatch();
+  const [, setUpdatingRates] = Helper.useSharedState('updatingRates');
+  const [error, setError] = React.useState(false);
+  const [stillLoading, setStillLoading] = React.useState(false);
+  const fetchRates = React.useCallback(
+    (initial) => {
+      if (__DEV__) {
+        console.log('💫 Fetching rates', initial);
+      }
+      setUpdatingRates(true);
+      setError(false);
+      setStillLoading(false);
+      const timer_id = setTimeout(() => {
+        setStillLoading(true);
+      }, Settings.STILL_LOADING_TIMEOUT);
+      return Helper.getRates(initial)
+        .then((data) => {
+          batch(() => {
+            dispatch(actions.addRates(data));
+            dispatch(actions.registerApplicationDownloadRates());
+          });
+          return WidgetKit.standard.reloadAllTimelines();
+        })
+        .catch(() => {
+          setError(true);
+        })
+        .finally(() => {
+          setUpdatingRates(false);
+          clearTimeout(timer_id);
+        });
+    },
+    [dispatch]
+  );
+  // UPDATE CHECK
+  const updatedAt = useSelector((state) => state.rates.updated_at);
+  const updatedAtRef = React.useRef();
+  React.useEffect(() => {
+    updatedAtRef.current = updatedAt;
+  }, [updatedAt]);
+  React.useEffect(() => {
+    if (!isInitial) {
+      if (firebaseApp) {
+        if (__DEV__) {
+          console.log('🚀 Connect to firebase');
+        }
+        const db = getDatabase(firebaseApp);
+        return onValue(ref(db, '/u'), (snapshot) => {
+          if (!snapshot.exists()) {
+            // this should never happen
+            console.error('No data available on firebase');
+            return;
+          }
+          const data = snapshot.val();
+          // use rates file format
+          const updated_at = AmbitoDolar.getTimezoneDate(data * 1000).format();
+          Sentry.addBreadcrumb({
+            message: 'Firebase update event',
+            data: updated_at,
+          });
+          if (__DEV__) {
+            console.log(
+              '⚡️ Firebase updated',
+              updated_at,
+              updatedAtRef.current
+            );
+          }
+          if (updated_at !== updatedAtRef.current) {
+            fetchRates(false);
+          } else {
+            if (__DEV__) {
+              console.log('Rates already updated', updated_at);
+            }
+          }
+        });
+      }
+      if (__DEV__) {
+        console.log('❄️ No realtime updates');
+      }
+    } else {
+      if (__DEV__) {
+        console.log('🚀 Initial fetch');
+      }
+    }
+    fetchRates(true);
+  }, [isInitial]);
+  return (
+    <Component
+      {...{
+        loadingError: error,
+        stillLoading,
+        fetchRates,
+        ...props,
+      }}
+    />
   );
 };
 
@@ -662,153 +865,11 @@ const withUserActivity = (Component) => (props) => {
   return <Component {...props} />;
 };
 
-const EnhancedAppNavigationContainer = compose(
+export default compose(
+  withRates(),
+  withRealtime,
   withAppUpdateCheck,
   withAppStatistics,
-  withUserActivity
-)(AppNavigationContainer);
-
-const firebaseApp =
-  Settings.FIREBASE_CONFIG_JSON &&
-  initializeApp(JSON.parse(Settings.FIREBASE_CONFIG_JSON));
-
-const AppContainer = () => {
-  const { theme } = Helper.useTheme();
-  const rates = Helper.useRates();
-  const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
-  const isInitial = !rates;
-  const dispatch = useDispatch();
-  const [, setUpdatingRates] = Helper.useSharedState('updatingRates');
-  const [error, setError] = React.useState(false);
-  const [stillLoading, setStillLoading] = React.useState(false);
-  const fetchRates = React.useCallback(
-    (initial) => {
-      if (__DEV__) {
-        console.log('💫 Fetching rates', initial);
-      }
-      setUpdatingRates(true);
-      setError(false);
-      setStillLoading(false);
-      const timer_id = setTimeout(() => {
-        setStillLoading(true);
-      }, Settings.STILL_LOADING_TIMEOUT);
-      return Helper.getRates(initial)
-        .then((data) => {
-          batch(() => {
-            dispatch(actions.addRates(data));
-            dispatch(actions.registerApplicationDownloadRates());
-          });
-          return WidgetKit.standard.reloadAllTimelines();
-        })
-        .catch(() => {
-          setError(true);
-        })
-        .finally(() => {
-          setUpdatingRates(false);
-          clearTimeout(timer_id);
-        });
-    },
-    [dispatch]
-  );
-  // UPDATE CHECK
-  const updatedAt = useSelector((state) => state.rates?.updated_at);
-  const updatedAtRef = React.useRef();
-  React.useEffect(() => {
-    updatedAtRef.current = updatedAt;
-  }, [updatedAt]);
-  React.useEffect(() => {
-    if (!isInitial) {
-      if (firebaseApp) {
-        if (__DEV__) {
-          console.log('🚀 Connect to firebase');
-        }
-        const db = getDatabase(firebaseApp);
-        return onValue(ref(db, '/u'), (snapshot) => {
-          if (!snapshot.exists()) {
-            // this should never happen
-            console.error('No data available on firebase');
-            return;
-          }
-          const data = snapshot.val();
-          // use rates file format
-          const updated_at = AmbitoDolar.getTimezoneDate(data * 1000).format();
-          Sentry.addBreadcrumb({
-            message: 'Firebase update event',
-            data: updated_at,
-          });
-          if (__DEV__) {
-            console.log(
-              '⚡️ Firebase updated',
-              updated_at,
-              updatedAtRef.current
-            );
-          }
-          if (updated_at !== updatedAtRef.current) {
-            fetchRates(false);
-          } else {
-            if (__DEV__) {
-              console.log('Rates already updated', updated_at);
-            }
-          }
-        });
-      }
-      if (__DEV__) {
-        console.log('❄️ No realtime updates');
-      }
-    } else {
-      if (__DEV__) {
-        console.log('🚀 Initial fetch');
-      }
-    }
-    fetchRates(true);
-  }, [isInitial]);
-  if (isInitial && error) {
-    return (
-      <ContentView>
-        <MessageView
-          style={{
-            marginBottom: Settings.PADDING,
-          }}
-          message={I18n.t('rates_loading_error')}
-        />
-        <ActionButton
-          title={I18n.t('retry')}
-          handleOnPress={() => fetchRates(true)}
-          alternativeBackground
-        />
-      </ContentView>
-    );
-  }
-  if (!rates) {
-    return (
-      <ContentView>
-        <ActivityIndicator
-          animating
-          color={Settings.getForegroundColor(theme)}
-          size="small"
-        />
-        {stillLoading && (
-          <MessageView
-            style={{
-              marginTop: Settings.PADDING,
-            }}
-            message={I18n.t('still_loading')}
-          />
-        )}
-      </ContentView>
-    );
-  }
-  if (rates && !hasRates) {
-    return (
-      <ContentView>
-        <MessageView message={I18n.t('no_available_rates')} />
-      </ContentView>
-    );
-  }
-  return <EnhancedAppNavigationContainer />;
-};
-
-export default compose(
-  // only when plain messages, AppNavigationContainer uses from screens
+  withUserActivity,
   withContainer(true)
 )(AppContainer);

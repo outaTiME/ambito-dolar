@@ -1,4 +1,5 @@
 import update from 'immutability-helper';
+import * as _ from 'lodash';
 
 import {
   NOTIFICATIONS_REGISTER_PENDING,
@@ -18,6 +19,11 @@ import {
   APP_DOWNLOAD_HISTORICAL_RATES,
   APP_DETAILED_RATES,
   CHANGE_APPEARANCE,
+  CHANGE_RATE_ORDER,
+  CHANGE_RATE_ORDER_DIRECTION,
+  EXCLUDE_RATE,
+  UPDATE_RATE_TYPES,
+  RESTORE_CUSTOMIZATION,
   APP_USAGE,
 } from '../actions/types';
 import DateUtils from '../utilities/Date';
@@ -39,6 +45,10 @@ const INITIAL_STATE = {
   downloaded_historical_rates: 0,
   detailed_rates: 0,
   appearance: null,
+  rate_order: null,
+  rate_order_direction: null,
+  excluded_rates: null,
+  rate_types: null,
   // version check
   version: null,
   invalid_version: false,
@@ -127,6 +137,38 @@ export default (state = INITIAL_STATE, action) => {
     case CHANGE_APPEARANCE:
       return update(state, {
         appearance: { $set: action.payload },
+      });
+    case CHANGE_RATE_ORDER:
+      return update(state, {
+        rate_order: { $set: action.payload },
+      });
+    case CHANGE_RATE_ORDER_DIRECTION:
+      return update(state, {
+        rate_order_direction: { $set: action.payload },
+      });
+    case EXCLUDE_RATE: {
+      const { type, value } = action.payload;
+      if (value === true) {
+        return {
+          ...state,
+          excluded_rates: _.without(state.excluded_rates, type),
+        };
+      }
+      return {
+        ...state,
+        excluded_rates: [type].concat(state.excluded_rates || []),
+      };
+    }
+    case UPDATE_RATE_TYPES:
+      return update(state, {
+        rate_types: { $set: action.payload },
+      });
+    case RESTORE_CUSTOMIZATION:
+      return update(state, {
+        rate_order: { $set: null },
+        rate_order_direction: { $set: null },
+        excluded_rates: { $set: null },
+        rate_types: { $set: null },
       });
     case PRUNE:
       return INITIAL_STATE;

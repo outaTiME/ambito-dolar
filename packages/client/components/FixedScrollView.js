@@ -1,6 +1,5 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentView from './ContentView';
 import ScrollView from './ScrollView';
@@ -11,16 +10,16 @@ const FixedScrollView = ({
   contentContainerRef,
   headerHeight,
   tabBarheight,
-  containerRef,
   ...extra
 }) => {
-  const insets = useSafeAreaInsets();
   return (
     <ScrollView
+      // automaticallyAdjustContentInsets={false}
       scrollIndicatorInsets={{
-        // top: headerHeight,
-        bottom: tabBarheight - insets.bottom,
+        top: headerHeight,
+        bottom: tabBarheight,
       }}
+      automaticallyAdjustsScrollIndicatorInsets={false}
       contentContainerStyle={[
         {
           flexGrow: 1,
@@ -31,12 +30,13 @@ const FixedScrollView = ({
           }),
         },
       ]}
-      style={
+      /* style={
         {
-          // backgroundColor: 'pink',
+          backgroundColor: 'pink',
         }
-      }
-      containerRef={containerRef}
+      } */
+      // contentInsetAdjustmentBehavior="automatic"
+      // scrollToOverflowEnabled
       {...extra}
     >
       <ContentView

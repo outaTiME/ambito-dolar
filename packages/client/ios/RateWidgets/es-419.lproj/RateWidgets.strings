@@ -1,50 +1,34 @@
-"8RLG09-8zyjGs" = "Just to confirm, you wanted ‘Promedio’?";
+"2L3ggI" = "Promedio";
 
-"8RLG09-XhX2Ct" = "Just to confirm, you wanted ‘Compra’?";
+"5sHUsS" = "Mostrar";
 
-"8RLG09-rzw8kx" = "Just to confirm, you wanted ‘Venta’?";
+"8xttmQ" = "Select Rate Types";
 
-"8zyjGs" = "Promedio";
+"K7GNUY" = "Compra";
 
-"IFSeS0" = "Mostrar";
+"MeFFNy-2L3ggI" = "There are ${count} options matching ‘Promedio’.";
 
-"IFi3wa" = "Rate Type";
+"MeFFNy-K7GNUY" = "There are ${count} options matching ‘Compra’.";
 
-"KUxNyv" = "Cotizaciones";
+"MeFFNy-pHY7Qk" = "There are ${count} options matching ‘Venta’.";
 
-"O6XbCw" = "Mostrar";
+"VeD0tt" = "Cotización";
 
-"XQ93ev" = "Value Type";
-
-"XhX2Ct" = "Compra";
-
-"aQaqCv-8zyjGs" = "There are ${count} options matching ‘Promedio’.";
-
-"aQaqCv-XhX2Ct" = "There are ${count} options matching ‘Compra’.";
-
-"aQaqCv-rzw8kx" = "There are ${count} options matching ‘Venta’.";
-
-"bRKF4y-8zyjGs" = "There are ${count} options matching ‘Promedio’.";
-
-"bRKF4y-XhX2Ct" = "There are ${count} options matching ‘Compra’.";
-
-"bRKF4y-rzw8kx" = "There are ${count} options matching ‘Venta’.";
-
-"fMepsL" = "Cotización";
+"XYs91y" = "Cotizaciones";
 
 "gpCwrM" = "Select Rate Type";
 
-"mzsB6x" = "Select Rate Types";
+"gtExRu" = "Mostrar";
 
-"rzw8kx" = "Venta";
+"kevQ15" = "Value Type";
 
-"tVvJ9c" = "Select Rate Type";
+"pHY7Qk" = "Venta";
 
-"tv1uzv-8zyjGs" = "Just to confirm, you wanted ‘Promedio’?";
+"rq2xbP" = "Rate Type";
 
-"tv1uzv-XhX2Ct" = "Just to confirm, you wanted ‘Compra’?";
+"wwigdH-2L3ggI" = "Just to confirm, you wanted ‘Promedio’?";
 
-"tv1uzv-rzw8kx" = "Just to confirm, you wanted ‘Venta’?";
+"wwigdH-K7GNUY" = "Just to confirm, you wanted ‘Compra’?";
 
-"vGr8cL" = "Select Rate Types";
+"wwigdH-pHY7Qk" = "Just to confirm, you wanted ‘Venta’?";
 

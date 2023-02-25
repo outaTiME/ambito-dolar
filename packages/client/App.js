@@ -9,18 +9,15 @@ import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import * as SystemUI from 'expo-system-ui';
 import React from 'react';
 import { Text, TextInput, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootSiblingParent } from 'react-native-root-siblings';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components';
 
-import AppContainer from './components/AppContainer.js';
+import AppContainer from './components/AppContainer';
 import Settings from './config/settings';
 import useColorScheme from './hooks/useColorScheme';
 import { store, persistor } from './store';
@@ -48,22 +45,11 @@ if (Platform.OS === 'android') {
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
-  const statusBarStyle = colorScheme
-    ? Helper.getInvertedTheme(colorScheme)
-    : 'auto';
-  // same as AppContainer
-  const backgroundColor = Settings.getBackgroundColor(colorScheme, true);
-  React.useEffect(() => {
-    SystemUI.setBackgroundColorAsync(backgroundColor).catch(console.warn);
-  }, [backgroundColor]);
   return (
     <ThemeProvider theme={theme}>
-      <StatusBar style={statusBarStyle} animated />
       <RootSiblingParent>
         <ActionSheetProvider>
-          <SafeAreaProvider>
-            <AppContainer />
-          </SafeAreaProvider>
+          <AppContainer />
         </ActionSheetProvider>
       </RootSiblingParent>
     </ThemeProvider>
@@ -99,6 +85,7 @@ export default function App() {
   }, []);
   const onLayoutRootView = React.useCallback(async () => {
     if (!appIsLoading) {
+      // console.log('👌 Application is loaded');
       await SplashScreen.hideAsync().catch(console.warn);
     }
   }, [appIsLoading]);

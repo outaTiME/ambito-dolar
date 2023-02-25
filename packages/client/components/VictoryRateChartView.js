@@ -17,10 +17,10 @@ import {
   VictoryLabel,
 } from 'victory-native';
 
+import ChartAnimatedView from './ChartAnimatedView';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
-import ChartAnimatedView from './ChartAnimatedView';
 
 const AXIS_FONT_SIZE = 10;
 const TICKS_X = Settings.MAX_NUMBER_OF_STATS;

@@ -2,7 +2,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Alert } from 'react-native';
-import { useSelector, useDispatch, batch } from 'react-redux';
+import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
 
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
@@ -11,6 +11,7 @@ import SegmentedControlTab from '../components/SegmentedControlTab';
 import VictoryRateChartView from '../components/VictoryRateChartView';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
+import withRates from '../components/withRates';
 import withScreenshotShareSheet from '../components/withScreenshotShareSheet';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
@@ -19,10 +20,9 @@ import Helper from '../utilities/Helper';
 
 const RANGE_TYPES = [I18n.t('week'), I18n.t('month'), I18n.t('year')];
 
-const RateDetailScreen = ({ route: { params }, navigation }) => {
+const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
   const [rangeIndex, setRangeIndex] = React.useState(0);
   const prev_rangeIndex = Helper.usePrevious(rangeIndex);
-  const rates = Helper.useRates();
   const { type } = params;
   const rate = React.useMemo(() => rates[type], [rates, type]);
   const base_stats = rate.stats;
@@ -30,8 +30,12 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
   const prev_base_stats = Helper.usePrevious(base_stats);
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
-  const historical_rates = useSelector(
-    (state) => state.rates?.historical_rates
+  const { historical_rates, excluded_rates } = useSelector(
+    ({ rates: { historical_rates }, application: { excluded_rates } }) => ({
+      historical_rates,
+      excluded_rates,
+    }),
+    shallowEqual
   );
   const prev_historical_rates = Helper.usePrevious(historical_rates);
   const updateHistoricalRates = React.useCallback(() => {
@@ -161,6 +165,12 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
       }
     }
   }, [type, rates, stat]);
+  // reset when current rate is excluded
+  React.useEffect(() => {
+    if ((excluded_rates || []).includes(type)) {
+      navigation.popToTop();
+    }
+  }, [excluded_rates]);
   return (
     <>
       <SegmentedControlTab
@@ -226,6 +236,7 @@ const RateDetailScreen = ({ route: { params }, navigation }) => {
 export default compose(
   withContainer(),
   withDividersOverlay,
+  withRates(),
   // withScreenshotShareSheet('Compartir cotización')
-  withScreenshotShareSheet
+  withScreenshotShareSheet()
 )(RateDetailScreen);

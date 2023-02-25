@@ -4,7 +4,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components';
 
 import AppContainer from './components/AppContainer';
@@ -14,9 +13,7 @@ const ThemedApp = () => {
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
   return (
     <ThemeProvider theme={theme}>
-      <SafeAreaProvider>
-        <AppContainer />
-      </SafeAreaProvider>
+      <AppContainer />
     </ThemeProvider>
   );
 };

@@ -4,7 +4,6 @@ export default (fetchData, interval) => {
   const [data, setData] = React.useState({});
   const [error, setError] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
-
   React.useEffect(() => {
     async function runFetch() {
       setIsLoading(true);
@@ -20,6 +19,5 @@ export default (fetchData, interval) => {
     const id = window.setInterval(runFetch, interval);
     return () => window.clearInterval(id);
   }, []);
-
   return { data, error, isLoading };
 };

@@ -17,7 +17,7 @@ import useAppState from './useAppState';
 // https://github.com/facebook/react-native/issues/28525#issuecomment-1041610688
 
 const useColorScheme = () => {
-  const appearance = useSelector((state) => state.application?.appearance);
+  const appearance = useSelector((state) => state.application.appearance);
   const colorScheme = _useColorScheme();
   const [currentScheme, setCurrentScheme] = React.useState(
     appearance ?? colorScheme

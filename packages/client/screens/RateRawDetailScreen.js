@@ -8,6 +8,7 @@ import CardItemView from '../components/CardItemView';
 import FixedFlatList from '../components/FixedFlatList';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
+import withRates from '../components/withRates';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
@@ -47,15 +48,13 @@ const RateRawDetailItem = ({ timestamp, value, change }) => {
 const RateRawDetailScreen = ({
   headerHeight,
   tabBarheight,
+  rates,
   route: { params },
 }) => {
-  const rates = Helper.useRates();
   const { type, rangeIndex } = params;
   const rate = React.useMemo(() => rates[type], [rates, type]);
   const base_stats = rate.stats;
-  const historical_rates = useSelector(
-    (state) => state.rates?.historical_rates
-  );
+  const historical_rates = useSelector((state) => state.rates.historical_rates);
   const prev_historical_rates = Helper.usePrevious(historical_rates);
   const chartStats = React.useMemo(() => {
     // prevent back and forth on chart when revalidation
@@ -125,5 +124,6 @@ const RateRawDetailScreen = ({
 
 export default compose(
   withContainer(),
-  withDividersOverlay
+  withDividersOverlay,
+  withRates()
 )(RateRawDetailScreen);

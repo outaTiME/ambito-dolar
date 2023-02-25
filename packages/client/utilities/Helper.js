@@ -1,12 +1,14 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { useHeaderHeight } from '@react-navigation/elements';
 import * as d3Array from 'd3-array';
 import * as Application from 'expo-application';
 import * as Localization from 'expo-localization';
 import * as MailComposer from 'expo-mail-composer';
+import * as Sharing from 'expo-sharing';
 import * as _ from 'lodash';
 import React from 'react';
 import { Platform, Linking } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
 import semverDiff from 'semver/functions/diff';
@@ -233,19 +235,117 @@ export default {
   },
   getNotificationSettings,
   getNotificationSettingsSelector,
+  getSortedRates(rates, order, orderDirection, excludedRates, rateTypes) {
+    // defaults
+    order ?? (order = 'default');
+    orderDirection ?? (orderDirection = 'asc');
+    rateTypes ?? (rateTypes = Object.keys(rates));
+    // Unexpected token: operator (?) on expo with hermes
+    // order ??= 'default';
+    // orderDirection ??= 'asc';
+    /* console.log(
+      '>>> getSortedRates',
+      order,
+      orderDirection,
+      excludedRates,
+      rateTypes
+    ); */
+    let chain = _.chain(rates).omit(excludedRates).toPairs();
+    if (order === 'default' && orderDirection === 'desc') {
+      chain = chain
+        // .orderBy(1, 'desc')
+        .reverse();
+    } else if (order === 'name') {
+      chain = chain.orderBy(([type]) => {
+        const title = AmbitoDolar.getRateTitle(type);
+        return title;
+      }, orderDirection);
+    } else if (order === 'price') {
+      chain = chain.orderBy(([, { stats }]) => {
+        const stat = _.last(stats);
+        const value = AmbitoDolar.getRateValue(stat);
+        return value;
+      }, orderDirection);
+    } else if (order === 'change') {
+      chain = chain.orderBy(([, { stats }]) => {
+        const stat = _.last(stats);
+        const change = stat[2];
+        return change;
+      }, orderDirection);
+    } else if (order === 'update') {
+      chain = chain.orderBy(([, { stats }]) => {
+        const stat = _.last(stats);
+        const timestamp = stat[0];
+        return timestamp;
+      }, orderDirection);
+    } else if (order === 'custom') {
+      chain = chain.orderBy(([type]) => {
+        const index = rateTypes.indexOf(type);
+        return index;
+      }, orderDirection);
+    }
+    return chain.fromPairs().value();
+  },
   getAvailableRates(rates) {
     if (rates) {
-      rates = _.omit(rates, [
-        // rates to exclude
-      ]);
-      rates = AmbitoDolar.getAvailableRates(rates);
-      // strip rates with invalid stats
-      return _.pickBy(rates, ({ stats }) => stats?.length > 1);
+      return (
+        _.chain(rates)
+          // rates to exclude
+          /* .omit([
+          // AmbitoDolar.OFFICIAL_TYPE,
+          // AmbitoDolar.INFORMAL_TYPE,
+          // AmbitoDolar.TOURIST_TYPE,
+          AmbitoDolar.QATAR_TYPE,
+          AmbitoDolar.CCL_TYPE,
+          AmbitoDolar.MEP_TYPE,
+          AmbitoDolar.CCB_TYPE,
+          // AmbitoDolar.WHOLESALER_TYPE,
+        ]) */
+          .thru((rates) => AmbitoDolar.getAvailableRates(rates))
+          .pickBy(({ stats }) => stats?.length > 1)
+          // .thru((rates) => this.getSortedRates(rates, order, orderDirection))
+          .value()
+      );
     }
   },
-  useRates() {
-    const rates = useSelector((state) => state.rates?.rates);
-    return this.getAvailableRates(rates);
+  useRates(customized = false) {
+    const {
+      rates,
+      rate_order: order,
+      rate_order_direction: orderDirection,
+      excluded_rates: excludedRates,
+      rate_types: rateTypes,
+    } = useSelector(
+      ({
+        rates: { rates },
+        application: {
+          rate_order,
+          rate_order_direction,
+          excluded_rates,
+          rate_types,
+        },
+      }) => ({
+        rates,
+        rate_order,
+        rate_order_direction,
+        excluded_rates,
+        rate_types,
+      }),
+      shallowEqual
+    );
+    return React.useMemo(() => {
+      const availableRates = this.getAvailableRates(rates);
+      if (customized === true) {
+        return this.getSortedRates(
+          availableRates,
+          order,
+          orderDirection,
+          excludedRates,
+          rateTypes
+        );
+      }
+      return availableRates;
+    }, [customized, rates, order, orderDirection, excludedRates, rateTypes]);
   },
   isValid: (obj) => !_.isEmpty(obj),
   usePrevious(value) {
@@ -281,6 +381,9 @@ export default {
   },
   getAppearanceString(colorScheme) {
     return I18n.t((colorScheme ?? 'system') + '_appearance');
+  },
+  getRateOrderString(order) {
+    return I18n.t((order ?? 'default') + '_rate_order');
   },
   getInvertedTheme(theme) {
     return theme === 'light' ? 'dark' : 'light';
@@ -349,19 +452,27 @@ export default {
     const [, setContactAvailable] = this.useSharedState('contactAvailable');
     const [, setStoreAvailable] = this.useSharedState('storeAvailable');
     const [, setInstallationTime] = this.useSharedState('installationTime');
+    const [, setSharingAvailable] = this.useSharedState('sharingAvailable');
     React.useEffect(() => {
       Promise.all([
         MailComposer.isAvailableAsync(),
         Linking.canOpenURL(Settings.APP_STORE_URI),
         Application.getInstallationTimeAsync(),
+        Sharing.isAvailableAsync(),
       ]).then((data) => {
         if (__DEV__) {
           console.log('Application constants', data);
         }
-        const [contactAvailable, storeAvailable, installationTime] = data;
+        const [
+          contactAvailable,
+          storeAvailable,
+          installationTime,
+          sharingAvailable,
+        ] = data;
         setContactAvailable(contactAvailable);
         setStoreAvailable(storeAvailable);
         setInstallationTime(installationTime);
+        setSharingAvailable(sharingAvailable);
         // done
         setConstantsLoaded(true);
       });
@@ -372,5 +483,35 @@ export default {
     const { theme } = this.useTheme();
     return theme === 'light' ? 'black' : 'white';
   },
+  useHeaderHeight: (modal = false) => {
+    const headerHeight = useHeaderHeight();
+    if (Platform.OS === 'ios') {
+      if (modal === true) {
+        // https://github.com/react-navigation/react-navigation/blob/main/packages/elements/src/Header/getDefaultHeaderHeight.tsx#L26
+        return 56;
+      }
+      // 59 - iPhone 14 Pro / 14 Pro Max
+      // 50 - iPhone 13 mini
+      // 47 - iPhone 12 / 12 Pro / 13 / 13 Pro / 13 Pro Max / 14 / 14 Plus
+      // 44 - on iPhoneX
+      // 20 - on iOS device
+      if (headerHeight === 103) {
+        // adjust header height for dynamic island devices using fixed value (53.67) of UINavigationBar Y frame
+        return headerHeight - (59 - 53.67);
+      }
+    }
+    return headerHeight;
+  },
   removeProtocol: (url) => url.replace(/^https?:\/\//, ''),
+  // https://ethercreative.github.io/react-native-shadow-generator/
+  getShadowDefaults: () => ({
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    elevation: 10,
+  }),
 };

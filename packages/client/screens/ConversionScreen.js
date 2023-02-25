@@ -9,18 +9,20 @@ import {
   Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import * as actions from '../actions';
+import ActionButton from '../components/ActionButton';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import ContentView from '../components/ContentView';
 import DividerView from '../components/DividerView';
+import MessageView from '../components/MessageView';
 import ScrollView from '../components/ScrollView';
 import SegmentedControlTab from '../components/SegmentedControlTab';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
+import withRates from '../components/withRates';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -31,10 +33,12 @@ const CONVERSION_TYPES = [I18n.t('buy'), I18n.t('average'), I18n.t('sell')];
 const DEFAULT_NUMBER = 1;
 
 const ConversionScreen = ({
+  navigation,
   headerHeight,
   tabBarheight,
+  rates,
+  rateTypes,
   route: { params },
-  navigation: { setParams },
 }) => {
   const { theme, fonts } = Helper.useTheme();
   const [numberValue, setNumberValue] = React.useState(DEFAULT_NUMBER);
@@ -90,8 +94,6 @@ const ConversionScreen = ({
     }
     return sell;
   }, []);
-  const rates = Helper.useRates();
-  const rateTypes = React.useMemo(() => Object.keys(rates), [rates]);
   const getItemView = React.useCallback(
     (type) => {
       const stats = rates[type].stats;
@@ -128,7 +130,7 @@ const ConversionScreen = ({
       const task = InteractionManager.runAfterInteractions(() => {
         if (params?.focus === true) {
           inputTextRef.current?.focus();
-          setParams({
+          navigation.setParams({
             focus: false,
           });
         }
@@ -136,7 +138,10 @@ const ConversionScreen = ({
       return () => task.cancel();
     }, [params])
   );
-  const insets = useSafeAreaInsets();
+  const shoudStretch = React.useMemo(
+    () => Settings.shoudStretchRates(rateTypes, headerHeight, tabBarheight),
+    [rateTypes, headerHeight, tabBarheight]
+  );
   return (
     <>
       <TouchableWithoutFeedback onPress={dismissKeyboard} accessible={false}>
@@ -200,9 +205,11 @@ const ConversionScreen = ({
       </TouchableWithoutFeedback>
       <DividerView />
       <ScrollView
+        // automaticallyAdjustContentInsets={false}
         scrollIndicatorInsets={{
-          bottom: tabBarheight - insets.bottom,
+          bottom: tabBarheight,
         }}
+        automaticallyAdjustsScrollIndicatorInsets={false}
         contentContainerStyle={[
           {
             flexGrow: 1,
@@ -215,6 +222,7 @@ const ConversionScreen = ({
         style={{
           backgroundColor: Settings.getContentColor(theme),
         }}
+        // contentInsetAdjustmentBehavior="automatic"
         onScrollBeginDrag={dismissKeyboard}
       >
         <ContentView
@@ -225,21 +233,65 @@ const ConversionScreen = ({
               // marginHorizontal: Settings.CARD_PADDING,
               marginVertical: -Settings.CARD_PADDING,
               // paddingVertical: 0,
+              // justifyContent: 'center',
             },
           ]}
         >
-          <CardView
-            plain
-            style={{
-              flex: 1,
-            }}
-          >
-            {rateTypes.map((type) => getItemView(type))}
-          </CardView>
+          {rateTypes.length === 0 ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                // backgroundColor: 'red',
+              }}
+            >
+              <MessageView
+                style={{
+                  marginBottom: Settings.PADDING,
+                }}
+                message={I18n.t('no_selected_rates')}
+              />
+              <ActionButton
+                handleOnPress={() => {
+                  navigation.navigate('Modals', {
+                    screen: 'CustomizeRates',
+                    params: {
+                      modal: true,
+                    },
+                    // https://reactnavigation.org/docs/nesting-navigators/#rendering-initial-route-defined-in-the-navigator
+                    // initial: false,
+                  });
+                  /* navigation.navigate('SettingsTab', {
+                    screen: 'CustomizeRates',
+                    // https://reactnavigation.org/docs/nesting-navigators/#rendering-initial-route-defined-in-the-navigator
+                    initial: false,
+                  }); */
+                }}
+                title={I18n.t('select_rates')}
+                alternativeBackground
+              />
+            </View>
+          ) : (
+            <CardView
+              plain
+              style={{
+                // TODO: remove when customization is allowed
+                ...(shoudStretch && {
+                  flex: 1,
+                }),
+              }}
+            >
+              {rateTypes.map((type) => getItemView(type))}
+            </CardView>
+          )}
         </ContentView>
       </ScrollView>
     </>
   );
 };
 
-export default compose(withContainer(), withDividersOverlay)(ConversionScreen);
+export default compose(
+  withContainer(),
+  withDividersOverlay,
+  withRates(true)
+)(ConversionScreen);

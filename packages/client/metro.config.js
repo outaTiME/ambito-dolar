@@ -1,22 +1,25 @@
-// Learn more https://docs.expo.io/guides/customizing-metro
+// Learn more https://docs.expo.dev/guides/monorepos
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('path');
 
-// Find the workspace root, this can be replaced with `find-yarn-workspace-root`
-// eslint-disable-next-line no-undef
+// Find the project and workspace directories
 const projectRoot = __dirname;
+// This can be replaced with `find-yarn-workspace-root`
 const workspaceRoot = path.resolve(projectRoot, '../..');
 
 const config = getDefaultConfig(projectRoot);
 
 // 1. Watch all files within the monorepo
 config.watchFolders = [workspaceRoot];
-// 2. Let Metro know where to resolve packages, and in what order
+// 2. Let Metro know where to resolve packages and in what order
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
 ];
-// required by firebase
-config.resolver.sourceExts.push('cjs');
+// 3. Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
+config.resolver.disableHierarchicalLookup = true;
+
+// required by sentry and firebase
+// config.resolver.sourceExts.push('cjs');
 
 module.exports = config;

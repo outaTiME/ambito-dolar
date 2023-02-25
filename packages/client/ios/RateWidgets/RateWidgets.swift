@@ -171,50 +171,50 @@ struct RateWidgetEntryView : View {
   var body: some View {
     let rates = entry.rates
     switch widgetFamily {
-      /* case .accessoryCircular:
-       if #available(iOSApplicationExtension 16.0, *) {
-       if rates?.isEmpty == false, let rate = rates?[0] {
-       ZStack {
-       AccessoryWidgetBackground()
-       VStack {
-       Text(rate.name)
-       .font(.custom(fontName, size: 10))
-       // .minimumScaleFactor(0.5)
-       .lineLimit(1)
-       Text(rate.price)
-       .font(.custom(fontName, size: 20))
-       .minimumScaleFactor(0.5)
-       .lineLimit(1)
-       .widgetAccentable()
-       if rate.plainChange != nil {
-       Text((rate.plainChange)!)
-       .font(.custom(fontName, size: 10))
-       // .minimumScaleFactor(0.5)
-       .lineLimit(1)
-       }
-       }
-       .padding(8)
-       }
-       // .background(bgColor)
-       .background(.ultraThinMaterial)
-       } else {
-       ZStack {
-       AccessoryWidgetBackground()
-       VStack {
-       Text("N/D")
-       .font(.custom(fontName, size: 14))
-       .lineLimit(1)
-       .widgetAccentable()
-       /* Image(systemName: "xmark.icloud.fill")
-        .font(.custom(fontName, size: 20))
-        .widgetAccentable() */
-       }
-       .padding(8)
-       }
-       // .background(bgColor)
-       .background(.ultraThinMaterial)
-       }
-       } */
+    case .accessoryCircular:
+      if #available(iOSApplicationExtension 16.0, *) {
+        if rates?.isEmpty == false, let rate = rates?[0] {
+          ZStack {
+            AccessoryWidgetBackground()
+            VStack {
+              Text(rate.name)
+                .font(.custom(fontName, size: 10))
+              // .minimumScaleFactor(0.5)
+                .lineLimit(1)
+              Text(rate.price)
+                .font(.custom(fontName, size: 20))
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
+                .widgetAccentable()
+              if rate.plainChange != nil {
+                Text((rate.plainChange)!)
+                  .font(.custom(fontName, size: 10))
+                // .minimumScaleFactor(0.5)
+                  .lineLimit(1)
+              }
+            }
+            .padding(8)
+          }
+          // .background(bgColor)
+          .background(.ultraThinMaterial)
+        } else {
+          ZStack {
+            AccessoryWidgetBackground()
+            VStack {
+              Text("N/D")
+                .font(.custom(fontName, size: 14))
+                .lineLimit(1)
+                .widgetAccentable()
+              /* Image(systemName: "xmark.icloud.fill")
+               .font(.custom(fontName, size: 20))
+               .widgetAccentable() */
+            }
+            .padding(8)
+          }
+          // .background(bgColor)
+          .background(.ultraThinMaterial)
+        }
+      }
     default:
       if rates?.isEmpty == false, let rate = rates?[0] {
         VStack(alignment: .leading) {
@@ -279,19 +279,19 @@ struct RateWidgetEntryView : View {
 struct RateWidget: Widget {
   let kind: String = "RateWidget"
   private var supportedFamilies: [WidgetFamily] {
-    /* if #available(iOSApplicationExtension 16.0, *) {
-     return [
+    if #available(iOSApplicationExtension 16.0, *) {
+      return [
+        .systemSmall,
+        .accessoryCircular,
+      ]
+    } else {
+      return [
+        .systemSmall,
+      ]
+    }
+    /* return [
      .systemSmall,
-     .accessoryCircular,
-     ]
-     } else {
-     return [
-     .systemSmall,
-     ]
-     } */
-    return [
-      .systemSmall,
-    ]
+     ] */
   }
   var body: some WidgetConfiguration {
     IntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateProvider()) { entry in
@@ -440,8 +440,9 @@ struct RateWidgets_Previews: PreviewProvider {
       RateWidgetEntryView(entry: entry)
         .previewContext(WidgetPreviewContext(family: .systemSmall))
         .previewDisplayName("RateWidget")
-      /* RateWidgetEntryView(entry: entry)
-       .previewContext(WidgetPreviewContext(family: .accessoryCircular)) */
+      RateWidgetEntryView(entry: entry)
+        .previewContext(WidgetPreviewContext(family: .accessoryCircular))
+        .previewDisplayName("RateWidget (Lock screen)")
       ListRatesWidgetEntryView(entry: entry)
         .previewContext(WidgetPreviewContext(family: .systemSmall))
         .previewDisplayName("ListRatesWidget")

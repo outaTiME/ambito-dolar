@@ -1,32 +1,17 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { View, Text, Switch } from 'react-native';
+import { View, Text, Switch, TouchableOpacity } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import { RectButton } from 'react-native-gesture-handler';
 
+import ActionView from './ActionView';
 import { Separator } from '../components/CardView';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const ActionView = ({ iconName, color }) => {
-  const { theme } = Helper.useTheme();
-  return (
-    <MaterialIcons
-      name={iconName}
-      size={Settings.ICON_SIZE}
-      color={color ?? Settings.getStrokeColor(theme)}
-      style={{
-        marginLeft: Settings.PADDING,
-        height: Settings.ICON_SIZE,
-      }}
-    />
-  );
-};
-
-const ChevronActionView = () => {
-  return <ActionView iconName="chevron-right" />;
-};
+const ChevronActionView = ({ isModal }) => (
+  <ActionView iconName="chevron-right" isModal={isModal} />
+);
 
 const CheckActionView = () => {
   const { theme } = Helper.useTheme();
@@ -46,6 +31,10 @@ export default ({
   selectable = false,
   chevron = true,
   check = false,
+  drag,
+  isActive,
+  disableSwitch = false,
+  isModal,
   ...extra
 }) => {
   const { theme, fonts } = Helper.useTheme();
@@ -63,9 +52,33 @@ export default ({
         ]}
         onPress={onAction}
         activeOpacity={1}
-        underlayColor={Settings.getStrokeColor(theme, true)}
+        underlayColor={Settings.getStrokeColor(theme, true, isModal)}
       >
         <>
+          {drag && (
+            <TouchableOpacity
+              activeOpacity={1}
+              // onLongPress={drag}
+              // delayLongPress={60}
+              onPressIn={drag}
+              // delayPressIn={60}
+              disabled={isActive}
+              // style={{ borderWidth: 1, borderColor: 'red' }}
+              // hitSlop={Settings.SMALL_PADDING}
+              hitSlop={Settings.PADDING}
+            >
+              <ActionView
+                community
+                iconName="drag-horizontal-variant"
+                // iconName="circle-outline"
+                // iconName="check-circle"
+                style={{
+                  marginLeft: 0,
+                }}
+                isModal={isModal}
+              />
+            </TouchableOpacity>
+          )}
           <View
             style={[
               {
@@ -73,6 +86,9 @@ export default ({
                 flexDirection: 'row',
                 alignItems: 'center',
                 paddingVertical: Settings.PADDING,
+              },
+              drag && {
+                marginLeft: Settings.PADDING,
               },
               extra.titleContainerStyle,
             ]}
@@ -132,12 +148,20 @@ export default ({
               ))}
           </View>
           {useSwitch && (
-            <Switch value={value === true} onValueChange={onValueChange} />
+            <Switch
+              value={value === true}
+              onValueChange={onValueChange}
+              disabled={disableSwitch}
+            />
           )}
           {!useSwitch &&
             onAction &&
             (chevron || check) &&
-            (chevron ? <ChevronActionView /> : <CheckActionView />)}
+            (chevron ? (
+              <ChevronActionView isModal={isModal} />
+            ) : (
+              <CheckActionView />
+            ))}
         </>
       </CardContainer>
       {customization === true && (
@@ -145,7 +169,7 @@ export default ({
           duration={Settings.ANIMATION_DURATION}
           collapsed={value !== true}
         >
-          <Separator />
+          <Separator isModal={isModal} />
           <RectButton
             style={[
               {
@@ -156,7 +180,7 @@ export default ({
             ]}
             onPress={onAction}
             activeOpacity={1}
-            underlayColor={Settings.getStrokeColor(theme, true)}
+            underlayColor={Settings.getStrokeColor(theme, true, isModal)}
           >
             <>
               <View
@@ -173,7 +197,7 @@ export default ({
                   {I18n.t('customize')}
                 </Text>
               </View>
-              <ChevronActionView />
+              <ChevronActionView isModal={isModal} />
             </>
           </RectButton>
         </Collapsible>

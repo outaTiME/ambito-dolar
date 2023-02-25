@@ -3,8 +3,9 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { compose } from '@reduxjs/toolkit';
 import * as _ from 'lodash';
 import React from 'react';
-import { View, Text, ActivityIndicator, Image } from 'react-native';
+import { View, Text, ActivityIndicator, Image, StyleSheet } from 'react-native';
 
+import WatermarkOverlayView from './WatermarkOverlayView';
 import appIcon from '../assets/about-icon-borderless.png';
 import CardView from '../components/CardView';
 import MessageView from '../components/MessageView';
@@ -14,7 +15,6 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
-import WatermarkOverlayView from './WatermarkOverlayView';
 
 const LAYOUT_RATE_COLUMNS = 2;
 
@@ -24,19 +24,23 @@ const SocialPortraitView = ({ square, watermark = true, children }) => {
   return (
     <>
       <View
-        style={{
-          padding: Settings.CARD_PADDING,
-          alignSelf: 'center',
-          // fixed size required by social notifier
-          width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
-          height: isSquare
-            ? AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH
-            : AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
-          borderColor: Settings.getSeparatorColor(theme),
-          borderStyle: 'dashed',
-          borderRadius: Settings.BORDER_RADIUS,
-          // borderWidth: 1,
-        }}
+        style={[
+          {
+            padding: Settings.CARD_PADDING,
+            alignSelf: 'center',
+            // fixed size required by social notifier
+            width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
+            height: isSquare
+              ? AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH
+              : AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
+          },
+          __DEV__ && {
+            borderColor: Settings.getSeparatorColor(theme),
+            borderStyle: 'dashed',
+            borderRadius: Settings.BORDER_RADIUS,
+            borderWidth: 1,
+          },
+        ]}
       >
         {children}
       </View>
@@ -97,27 +101,13 @@ const StatView = ({ title, current, change }) => {
     () => AmbitoDolar.getRateChange(change, true),
     [change]
   );
-  /* const change_fmt = React.useMemo(
-    () => AmbitoDolar.getRateChange([null, current, change, prev], true),
-    [change]
-  ); */
   return (
-    <CardView
-      style={
-        {
-          // flex: 1,
-          // paddingHorizontal: Settings.CARD_PADDING * 2,
-          // paddingVertical: Settings.CARD_PADDING,
-        }
-      }
-    >
+    <CardView>
       <View
         style={[
           {
             flexDirection: 'row',
             alignItems: 'center',
-            // alignSelf: 'stretch',
-            // padding: Settings.CARD_PADDING * 2,
           },
         ]}
       >
@@ -135,10 +125,7 @@ const StatView = ({ title, current, change }) => {
         </Text>
         <View style={{ alignItems: 'flex-end' }}>
           <Text style={[fonts.largeTitle]} numberOfLines={1}>
-            {
-              // AmbitoDolar.formatNumberHumanized(current)
-              Helper.formatIntegerNumber(current)
-            }
+            {AmbitoDolar.formatNumberHumanized(current)}
           </Text>
           <Text
             style={[
@@ -166,17 +153,16 @@ const FundingContainer = compose(withStats)(
         <View
           style={{
             flex: 1,
-            paddingHorizontal: 75,
+            paddingHorizontal: 50,
             marginTop: -Settings.CARD_PADDING,
             marginBottom: -Settings.CARD_PADDING,
+            justifyContent: 'space-evenly',
           }}
         >
           <View
             style={{
-              flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
-              // margin: Settings.CARD_PADDING,
               marginBottom: -Settings.CARD_PADDING,
             }}
           >
@@ -202,7 +188,12 @@ const FundingContainer = compose(withStats)(
                 `Métricas de ${AmbitoDolar.getCapitalized(currentMonth)}`}
             </Text>
           </View>
-          <>
+          <View
+            style={{
+              paddingHorizontal: 50,
+              justifyContent: 'center',
+            }}
+          >
             <StatView
               {...{
                 title: 'Interacciones',
@@ -227,13 +218,23 @@ const FundingContainer = compose(withStats)(
                 change: conversions[2],
               }}
             />
-          </>
+            {false && (
+              <View
+                style={{
+                  margin: Settings.CARD_PADDING * 2,
+                  marginBottom: Settings.CARD_PADDING,
+                  backgroundColor: Settings.getSeparatorColor(theme),
+                  height: StyleSheet.hairlineWidth,
+                  width: 100,
+                  alignSelf: 'center',
+                }}
+              />
+            )}
+          </View>
           <View
             style={{
-              flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
-              // margin: Settings.CARD_PADDING,
               paddingHorizontal: Settings.PADDING,
               marginTop: -Settings.CARD_PADDING,
             }}
@@ -247,36 +248,28 @@ const FundingContainer = compose(withStats)(
                 },
               ]}
             >
-              {/* Esta aplicación es gratuita, de código abierto y sin publicidades,
-            opera de forma totalmente transparente y comparte sus métricas con
-            la comunidad. Tu contribución es de suma importancia para su
-            desarrollo y mantenimiento.*/}
-              Esta aplicación es gratuita, de código abierto y sin publicidades,
-              recordamos que tu contribución es de suma importancia para su
-              desarrollo y mantenimiento.
+              {`${Settings.APP_NAME} opera de forma transparente compartiendo sus métricas mensuales con la comunidad.`}
             </Text>
-            <FundingView
-              style={[
-                fonts.title,
-                {
-                  paddingTop: Settings.PADDING,
-                  // textTransform: 'uppercase',
-                  // marginVertical: Settings.CARD_PADDING * 2,
-                },
-              ]}
-            />
             {false && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop: Settings.PADDING,
-                }}
-              >
-                <SocialView />
-              </View>
+              <FundingView
+                style={[
+                  // fonts.title,
+                  {
+                    paddingTop: Settings.PADDING,
+                  },
+                ]}
+              />
             )}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: Settings.CARD_PADDING * 2,
+              }}
+            >
+              <SocialView />
+            </View>
           </View>
         </View>
       </SocialPortraitView>
@@ -290,7 +283,7 @@ const SocialView = ({ extraSpace = false }) => {
     <>
       <FontAwesome5
         name="twitter"
-        size={17}
+        size={Settings.SOCIAL_ICON_SIZE}
         color={Settings.getGrayColor(theme)}
         style={{
           marginRight: Settings.PADDING,
@@ -298,7 +291,7 @@ const SocialView = ({ extraSpace = false }) => {
       />
       <FontAwesome5
         name="telegram-plane"
-        size={17}
+        size={Settings.SOCIAL_ICON_SIZE}
         color={Settings.getGrayColor(theme)}
         style={{
           marginRight: Settings.PADDING,
@@ -306,7 +299,7 @@ const SocialView = ({ extraSpace = false }) => {
       />
       <FontAwesome5
         name="instagram"
-        size={17}
+        size={Settings.SOCIAL_ICON_SIZE}
         color={Settings.getGrayColor(theme)}
         style={{
           marginRight: Settings.PADDING,
@@ -314,7 +307,7 @@ const SocialView = ({ extraSpace = false }) => {
       />
       <FontAwesome5
         name="facebook"
-        size={17}
+        size={Settings.SOCIAL_ICON_SIZE}
         color={Settings.getGrayColor(theme)}
         style={{
           marginRight: Settings.PADDING,
@@ -322,23 +315,15 @@ const SocialView = ({ extraSpace = false }) => {
       />
       <FontAwesome5
         name="reddit-alien"
-        size={17}
+        size={Settings.SOCIAL_ICON_SIZE}
         color={Settings.getGrayColor(theme)}
         style={{
           marginRight: Settings.PADDING,
         }}
       />
       <FontAwesome5
-        name="discord"
-        size={17}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          marginRight: Settings.PADDING,
-        }}
-      />
-      <FontAwesome5
-        name="slack"
-        size={17}
+        name="mastodon"
+        size={Settings.SOCIAL_ICON_SIZE}
         color={Settings.getGrayColor(theme)}
         style={{
           marginRight: Settings.PADDING,
@@ -346,7 +331,7 @@ const SocialView = ({ extraSpace = false }) => {
       />
       <FontAwesome5
         name="github"
-        size={17}
+        size={Settings.SOCIAL_ICON_SIZE}
         color={Settings.getGrayColor(theme)}
         style={{
           ...(extraSpace === true && {
@@ -506,7 +491,6 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
                 >
                   <View
                     style={{
-                      // alignSelf: 'stretch',
                       flexDirection: 'row',
                       justifyContent: 'center',
                     }}
@@ -524,7 +508,6 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
         <View
           style={{
             flexDirection: 'row',
-            // justifyContent: 'space-between',
             justifyContent: 'flex-end',
             margin: Settings.CARD_PADDING,
             alignItems: 'center',
@@ -538,9 +521,14 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
   );
 });
 
+/* const getUrlParameter = function (key) {
+  return (location.search.match(new RegExp(key + '=(.*?)($|&)', 'i')) || [])[1];
+}; */
+
 const AppContainer = () => {
   const params = new URLSearchParams(document.location.search);
   const { type, ...data } = Object.fromEntries(params);
+  // const data = AmbitoDolar.uncrushJson(getUrlParameter('data')) || {};
   if (type === 'funding') {
     return <FundingContainer {...data} />;
   }

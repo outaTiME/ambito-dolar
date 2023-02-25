@@ -77,10 +77,13 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
           alreadyShowingToastRef.current = false;
         },
         opacity: 1,
+        shadow: false,
         containerStyle: {
           paddingHorizontal: 10 * 2,
           borderRadius: Settings.BORDER_RADIUS,
           backgroundColor: Settings.getBackgroundColor(invertedTheme, true),
+          // custom shadow config
+          ...Helper.getShadowDefaults(),
         },
         // force white
         // textStyle: [Settings.getFontObject('dark', 'callout')],

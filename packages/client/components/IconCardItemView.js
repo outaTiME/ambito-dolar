@@ -23,8 +23,8 @@ export default ({ title, iconName, iconColor, onAction }) => {
         >
           <FontAwesome5
             name={iconName}
-            size={17}
-            color={iconColor || Settings.getForegroundColor(theme)}
+            size={Settings.SOCIAL_ICON_SIZE}
+            color={iconColor ?? Settings.getForegroundColor(theme)}
           />
           <Text
             style={[fonts.body, { marginLeft: Settings.PADDING }]}

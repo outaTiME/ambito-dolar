@@ -13,7 +13,6 @@ import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
 // social links
-const TWEETBOT_DEEP_LINK = 'tweetbot:///user_profile/AmbitoDolar';
 const TWITTER_DEEP_LINK = 'twitter://user?screen_name=AmbitoDolar';
 const TWITTER_WEB_URL = 'https://twitter.com/AmbitoDolar';
 const TELEGRAM_DEEP_LINK = 'tg://resolve?domain=AmbitoDolar';
@@ -29,13 +28,11 @@ const APOLLO_DEEP_LINK = `apollo://${REDDIT_URI}`;
 // const REDDIT_DEEP_LINK = 'reddit:///r/AmbitoDolar';
 const REDDIT_DEEP_LINK = `reddit://${REDDIT_URI}`;
 const REDDIT_WEB_URL = `https://${REDDIT_URI}`;
-const DISCORD_URI = 'discord.gg/jwfDsy4EKe';
-const DISCORD_DEEP_LINK = `com.hammerandchisel.discord://${DISCORD_URI}`;
-const DISCORD_WEB_URL = `https://${DISCORD_URI}`;
-const SLACK_URI =
-  'join.slack.com/t/ambitodolar/shared_invite/zt-1a3j77xsn-AZ4_zFTKobu1e6P21E~wdg';
-const SLACK_DEEP_LINK = `slack://${SLACK_URI}`;
-const SLACK_WEB_URL = `https://${SLACK_URI}`;
+const IVORY_DEEP_LINK = `ivory:///user_profile/AmbitoDolar@mastodon.social`;
+const MASTODON_URI = 'mastodon.social/@AmbitoDolar';
+// https://github.com/mastodon/mastodon-ios/blob/develop/Mastodon/Info.plist#L28
+const MASTODON_DEEP_LINK = `mastodon://${MASTODON_URI}`;
+const MASTODON_WEB_URL = `https://${MASTODON_URI}`;
 const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
 const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
 const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
@@ -46,15 +43,11 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
     Linking.openURL(Settings.WEBSITE_URL).catch(console.warn);
   }, []);
   const onPressTwitter = React.useCallback(() => {
-    Linking.canOpenURL(TWEETBOT_DEEP_LINK)
+    Linking.canOpenURL(TWITTER_DEEP_LINK)
       .then((supported) =>
         supported
-          ? Linking.openURL(TWEETBOT_DEEP_LINK)
-          : Linking.canOpenURL(TWITTER_DEEP_LINK).then((supported) =>
-              supported
-                ? Linking.openURL(TWITTER_DEEP_LINK)
-                : Linking.openURL(TWITTER_WEB_URL)
-            )
+          ? Linking.openURL(TWITTER_DEEP_LINK)
+          : Linking.openURL(TWITTER_WEB_URL)
       )
       .catch(console.warn);
   }, []);
@@ -98,21 +91,16 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       )
       .catch(console.warn);
   }, []);
-  const onPressDiscord = React.useCallback(() => {
-    Linking.canOpenURL(DISCORD_DEEP_LINK)
+  const onPressMastodon = React.useCallback(() => {
+    Linking.canOpenURL(IVORY_DEEP_LINK)
       .then((supported) =>
         supported
-          ? Linking.openURL(DISCORD_DEEP_LINK)
-          : Linking.openURL(DISCORD_WEB_URL)
-      )
-      .catch(console.warn);
-  }, []);
-  const onPressSlack = React.useCallback(() => {
-    Linking.canOpenURL(SLACK_DEEP_LINK)
-      .then((supported) =>
-        supported
-          ? Linking.openURL(SLACK_DEEP_LINK)
-          : Linking.openURL(SLACK_WEB_URL)
+          ? Linking.openURL(IVORY_DEEP_LINK)
+          : Linking.canOpenURL(MASTODON_DEEP_LINK).then((supported) =>
+              supported
+                ? Linking.openURL(MASTODON_DEEP_LINK)
+                : Linking.openURL(MASTODON_WEB_URL)
+            )
       )
       .catch(console.warn);
   }, []);
@@ -204,14 +192,9 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
           onAction={onPressReddit}
         />
         <IconCardItemView
-          title="Discord"
-          iconName="discord"
-          onAction={onPressDiscord}
-        />
-        <IconCardItemView
-          title="Slack"
-          iconName="slack"
-          onAction={onPressSlack}
+          title="Mastodon"
+          iconName="mastodon"
+          onAction={onPressMastodon}
         />
         <IconCardItemView
           title="GitHub"

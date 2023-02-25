@@ -13,16 +13,26 @@ const MaterialHeaderButton = (props) => {
       IconComponent={MaterialIcons}
       iconSize={Settings.ICON_SIZE}
       color={Settings.getForegroundColor(theme)}
-      buttonStyle={{
-        // required native stack
-        marginHorizontal: 0,
-      }}
+      buttonStyle={[
+        {
+          // required native stack
+          marginHorizontal: 0,
+          // borderWidth: 1,
+          // borderColor: 'red',
+        },
+        props.buttonStyle,
+      ]}
     />
   );
 };
 
 export const MaterialHeaderButtons = (props) => (
-  <HeaderButtons HeaderButtonComponent={MaterialHeaderButton} {...props} />
+  <HeaderButtons
+    HeaderButtonComponent={MaterialHeaderButton}
+    // remove extraSideMargin on wrapper
+    left={null}
+    {...props}
+  />
 );
 
 export { Item } from 'react-navigation-header-buttons';

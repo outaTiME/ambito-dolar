@@ -28,7 +28,8 @@
     "g:eslint": "cd $INIT_CWD && eslint .",
     "client:start": "yarn workspace @ambito-dolar/client run start",
     "client:upgrade": "yarn workspace @ambito-dolar/client exec expo-cli upgrade",
-    "client:prebuild": "yarn workspace @ambito-dolar/client run prebuild",
+    "client:doctor": "yarn workspace @ambito-dolar/client exec expo-cli doctor",
+    "client:prebuild:ios": "yarn workspace @ambito-dolar/client run prebuild:ios",
     "client:build": "yarn workspace @ambito-dolar/client exec eas build --clear-cache",
     "api:start": "yarn sst start",
     "api:publish": "yarn sst deploy",
@@ -41,6 +42,6 @@
   },
   "packageManager": "yarn@3.4.1",
   "resolutions": {
-    "eslint": "^8.6.0"
+    "remark-mdx": "2.0.0-next.9"
   }
 }

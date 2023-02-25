@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
-const version = '6.4.0';
-const buildNumber = 88;
+const version = '6.5.0';
+const buildNumber = 90;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -31,11 +31,20 @@ export default {
   }, */
   version,
   platforms: ['android', 'ios', 'web'],
+  githubUrl:
+    'https://github.com/outaTiME/ambito-dolar/tree/master/packages/client',
   userInterfaceStyle: 'automatic',
+  // required by modal on iOS
+  backgroundColor: '#000000',
   icon: './assets/icon.png',
   notification: {
     icon: './assets/icon.notification.png',
     color: '#00AE6B',
+  },
+  // https://github.com/expo/expo/issues/11604#issuecomment-1018355394
+  androidStatusBar: {
+    backgroundColor: '#00000000',
+    // translucent: false,
   },
   extra: {
     registerDeviceUri: process.env.REGISTER_DEVICE_URI,
@@ -74,9 +83,10 @@ export default {
         initialOrientation: 'ALL',
       },
     ],
+    './plugins/withAndroidSplashScreen.js',
   ],
   splash: LIGHT_SPLASH,
-  jsEngine: 'hermes',
+  // jsEngine: 'hermes',
   ios: {
     bundleIdentifier: 'im.outa.AmbitoDolar',
     buildNumber: buildNumber.toString(),
@@ -97,18 +107,18 @@ export default {
         'UIInterfaceOrientationLandscapeRight',
       ],
       LSApplicationQueriesSchemes: [
-        'tweetbot',
         'twitter',
         'tg',
         'instagram',
         'fb',
         'apollo',
         'reddit',
-        'com.hammerandchisel.discord',
-        'slack',
         'github',
         'itms-apps',
+        'ivory',
+        'mastodon',
       ],
+      UIViewControllerBasedStatusBarAppearance: true,
     },
     ...SHARED_SPLASH,
   },
@@ -123,7 +133,9 @@ export default {
     playStoreUrl:
       'https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar',
     permissions: [],
-    googleServicesFile: './google-services.json',
+    ...(process.env.GOOGLE_SERVICES_FILE && {
+      googleServicesFile: process.env.GOOGLE_SERVICES_FILE,
+    }),
     ...SHARED_SPLASH,
     allowBackup: false,
     softwareKeyboardLayoutMode: 'pan',

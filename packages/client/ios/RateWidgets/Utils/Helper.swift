@@ -15,6 +15,7 @@ struct Helper {
       RateType(identifier: "turista", display: "Tarjeta"),
       RateType(identifier: "ahorro", display: "Ahorro"),
       RateType(identifier: "qatar", display: "Qatar"),
+      // RateType(identifier: "qatar", display: "Turista"),
       RateType(identifier: "ccl", display: "CCL"),
       RateType(identifier: "mep", display: "MEP"),
       RateType(identifier: "ccb", display: "Cripto"),

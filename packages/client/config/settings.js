@@ -7,8 +7,16 @@ import { human, iOSColors } from 'react-native-typography';
 
 const PADDING = 16;
 const SMALL_PADDING = PADDING / 4;
+
+const DEVICE_TYPE = DeviceInfo.getDeviceType();
+const IS_TABLET = DEVICE_TYPE === 'Tablet';
+const IS_HANDSET = DEVICE_TYPE === 'Handset';
+const IS_IPAD = Platform.OS === 'ios' && IS_TABLET;
+
 // const HEADER_HEIGHT = 54 + Constants.statusBarHeight;
 const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = Dimensions.get('window');
+// FIXME: check use width on tablets ?
+// const SMALL_DISPLAY_HEIGHT = Math.round(IS_HANDSET ? DEVICE_HEIGHT : DEVICE_WIDTH) <= 731; // 5.0"
 const SMALL_DISPLAY_HEIGHT = Math.round(DEVICE_HEIGHT) <= 731; // 5.0"
 const EXTRA_MARGIN_ON_LARGE_DISPLAY = true;
 const CARD_PADDING =
@@ -32,6 +40,7 @@ const STILL_LOADING_TIMEOUT = 10 * 1000; // 10 secs
 const ANIMATION_DURATION = 250;
 // same as header fonts.title size
 const ICON_SIZE = 24;
+const SOCIAL_ICON_SIZE = 17;
 const APP_IGNORE_UPDATE_EXPIRATION = 30 * 24 * 60 * 60 * 1000; // 30 days
 const {
   manifest: {
@@ -79,10 +88,7 @@ const HIT_SLOP = {
   left: PADDING,
 };
 const CHART_STROKE_WIDTH = 3 - 0.5;
-const INITIAL_ROUTE_NAME = 'Main';
-const DEVICE_TYPE = DeviceInfo.getDeviceType();
-const IS_TABLET = DEVICE_TYPE === 'Tablet';
-const IS_HANDSET = DEVICE_TYPE === 'Handset';
+const MAIN_ROUTE_NAME = 'Main';
 
 // use 50% of landscape viewing area on tablets
 const MAX_CONTENT_WIDTH = IS_HANDSET ? DEVICE_WIDTH : DEVICE_WIDTH * 0.5;
@@ -125,6 +131,7 @@ export default {
   STILL_LOADING_TIMEOUT,
   ANIMATION_DURATION,
   ICON_SIZE,
+  SOCIAL_ICON_SIZE,
   APP_IGNORE_UPDATE_EXPIRATION,
   APP_NAME,
   APP_VERSION,
@@ -139,9 +146,12 @@ export default {
   HIT_SLOP,
   CHART_STROKE_WIDTH,
   CONTENT_WIDTH,
-  INITIAL_ROUTE_NAME,
+  INITIAL_ROUTE_NAME: MAIN_ROUTE_NAME,
   IS_TABLET,
   IS_HANDSET,
+  IS_IPAD,
+  // https://sarunw.com/posts/dark-color-cheat-sheet/
+  // https://noahgilmore.com/blog/dark-mode-uicolor-compatibility/
   getLightColor(alternative = false) {
     if (alternative !== false) {
       return iOSColors.white;
@@ -157,40 +167,62 @@ export default {
     }
     return this.getDarkColor();
   },
-  getBackgroundColor(theme, alternative = false) {
+  getBackgroundColor(theme, alternative = false, modal = false) {
     if (theme === 'dark') {
+      if (modal && Platform.OS === 'ios' /* && IS_IPAD */) {
+        // systemGray6
+        return 'rgb(28,28,30)';
+      }
       return this.getDarkColor();
     }
     return this.getLightColor(alternative);
   },
-  getContentColor(theme, alternative = false) {
-    // systemGray6
+  getContentColor(theme, alternative = false, modal = false) {
     if (theme === 'dark') {
+      if (modal && Platform.OS === 'ios' /* && IS_IPAD */) {
+        // systemGray5
+        return 'rgb(44,44,46)';
+      }
+      // systemGray6
       return 'rgb(28,28,30)';
     }
     return this.getLightColor(!alternative);
   },
-  getStrokeColor(theme, soft) {
+  getStrokeColor(theme, soft = false, modal = false) {
     if (soft === true) {
-      // systemGray5
       if (theme === 'dark') {
+        if (modal && Platform.OS === 'ios' /* && IS_IPAD */) {
+          // systemGray4
+          return 'rgb(58,58,60)';
+        }
+        // systemGray5
         return 'rgb(44,44,46)';
       }
+      // systemGray5
       return 'rgb(229,229,234)';
     }
-    // systemGray4
     if (theme === 'dark') {
+      if (modal && Platform.OS === 'ios' /* && IS_IPAD */) {
+        // systemGray3
+        return 'rgb(72,72,74)';
+      }
+      // systemGray4
       return 'rgb(58,58,60)';
+      // return 'rgba(56, 56, 58, 1.0)';
     }
+    // systemGray4
     return 'rgb(209,209,214)';
+    // return 'rgba(198, 198, 200, 1.0)';
   },
   // adapt to the current appearance (dynamic colors on ios)
   getSeparatorColor(theme) {
     if (Platform.OS === 'ios') {
       if (theme === 'dark') {
-        return 'rgba(255,255,255,0.15)';
+        return 'rgba(84, 84, 88, 0.6)';
+        // return 'rgba(255,255,255,0.15)';
       }
-      return 'rgba(0,0,0,0.25)';
+      return 'rgba(60, 60, 67, 0.29)';
+      // return 'rgba(0,0,0,0.25)';
     }
     return this.getStrokeColor(theme);
   },
@@ -230,4 +262,28 @@ export default {
     };
   },
   moderateScale,
+  shoudStretchRates(rateTypes, headerHeight, tabBarheight) {
+    // ignore on web
+    if (Platform.OS === 'web') {
+      return true;
+    }
+    const device_height =
+      Math.round(DEVICE_HEIGHT) - headerHeight - tabBarheight;
+    // rate height ~100px
+    const rates_per_page = Math.floor(device_height / 100);
+    /* if (SMALL_DISPLAY_HEIGHT) {
+      rates_per_page += 1;
+    } */
+    // disable stretch if few rates
+    const stretch = rateTypes?.length >= rates_per_page;
+    /* console.log(
+      '>>> shoudStretchRates',
+      rateTypes,
+      headerHeight,
+      tabBarheight,
+      rates_per_page,
+      stretch
+    ); */
+    return stretch;
+  },
 };

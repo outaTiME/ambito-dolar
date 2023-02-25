@@ -5,7 +5,12 @@ import { RectButton } from 'react-native-gesture-handler';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-export const Separator = ({ full = false, style, soft = false }) => {
+export const Separator = ({
+  full = false,
+  style,
+  soft = false,
+  isModal = false,
+}) => {
   const { theme } = Helper.useTheme();
   return (
     <View
@@ -13,7 +18,7 @@ export const Separator = ({ full = false, style, soft = false }) => {
         full === false && { marginLeft: Settings.PADDING },
         {
           height: StyleSheet.hairlineWidth,
-          backgroundColor: Settings.getStrokeColor(theme, soft),
+          backgroundColor: Settings.getStrokeColor(theme, soft, isModal),
         },
         style,
       ]}
@@ -31,6 +36,7 @@ export default ({
   plain,
   separatorStyle,
   transparent,
+  isModal,
 }) => {
   const { theme, fonts } = Helper.useTheme();
   const row_items = React.useMemo(
@@ -43,11 +49,15 @@ export default ({
           return [
             child,
             index !== array.length - 1 && (
-              <Separator key={`sep-${index}`} style={separatorStyle} />
+              <Separator
+                key={`sep-${index}`}
+                style={separatorStyle}
+                isModal={isModal}
+              />
             ),
           ];
         }),
-    [children]
+    [children, isModal]
   );
   return (
     <View
@@ -85,7 +95,7 @@ export default ({
           {
             borderRadius: Settings.BORDER_RADIUS,
             ...(transparent !== true && {
-              backgroundColor: Settings.getContentColor(theme),
+              backgroundColor: Settings.getContentColor(theme, false, isModal),
             }),
             // flexGrow: 1,
             // TODO: flexGrow required when customization on CardItemView

@@ -99,6 +99,21 @@ const i18n = new I18n({
     system_appearance: 'Sistema',
     light_appearance: 'Claro',
     dark_appearance: 'Oscuro',
+    // custom rates
+    customize_rates: 'Cotizaciones',
+    edit: 'Editar',
+    customize_rates_note:
+      'Podés ajustar el orden manteniendo presionado el selector lateral y arrastrando.',
+    rate_order: 'Orden',
+    default_rate_order: 'Predeterminado',
+    name_rate_order: 'Nombre',
+    price_rate_order: 'Valor',
+    change_rate_order: 'Variación',
+    update_rate_order: 'Actualización',
+    custom_rate_order: 'Manual',
+    select_rates: 'Seleccionar',
+    // no_selected_rates: 'Agregá las cotizaciones que deseas visualizar.',
+    no_selected_rates: 'No se han seleccionado cotizaciones a visualizar.',
   },
 });
 

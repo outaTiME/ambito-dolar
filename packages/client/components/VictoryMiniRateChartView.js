@@ -13,14 +13,16 @@ const VictoryMiniRateChartView = ({
   color,
   borderless,
 }) => {
-  const data = React.useMemo(() => {
-    return stats.map((datum, index) => ({
-      x: index,
-      y: AmbitoDolar.getRateValue(datum),
-      // prevent rendering issues when values are close to 0
-      y0: -Settings.PADDING * 2,
-    }));
-  }, [stats]);
+  const data = React.useMemo(
+    () =>
+      stats.map((datum, index) => ({
+        x: index,
+        y: AmbitoDolar.getRateValue(datum),
+        // prevent rendering issues when values are close to 0
+        y0: -Settings.PADDING * 2,
+      })),
+    [stats]
+  );
   // data normalization
   const sell_rates = React.useMemo(() => data.map(({ y }) => y), [data]);
   const min_x = React.useMemo(() => data[0].x, [data]);

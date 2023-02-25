@@ -17,7 +17,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>6.4.0</string>
+    <string>6.5.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -36,24 +36,23 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>88</string>
+    <string>90</string>
     <key>EXDefaultScreenOrientationMask</key>
     <string>UIInterfaceOrientationMaskAll</string>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
     <key>LSApplicationQueriesSchemes</key>
     <array>
-      <string>tweetbot</string>
       <string>twitter</string>
       <string>tg</string>
       <string>instagram</string>
       <string>fb</string>
       <string>apollo</string>
       <string>reddit</string>
-      <string>com.hammerandchisel.discord</string>
-      <string>slack</string>
       <string>github</string>
       <string>itms-apps</string>
+      <string>ivory</string>
+      <string>mastodon</string>
     </array>
     <key>LSRequiresIPhoneOS</key>
     <true/>
@@ -75,6 +74,8 @@
       <string>SelectRateTypeIntent</string>
       <string>SelectRateTypesIntent</string>
     </array>
+    <key>RCTRootViewBackgroundColor</key>
+    <integer>4278190080</integer>
     <key>UIApplicationShortcutItems</key>
     <array>
       <dict>
@@ -115,6 +116,6 @@
     <key>UIUserInterfaceStyle</key>
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
-    <false/>
+    <true/>
   </dict>
 </plist>

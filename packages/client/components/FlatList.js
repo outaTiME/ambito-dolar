@@ -1,12 +1,19 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
+import DraggableFlatList from 'react-native-draggable-flatlist';
+// import DragList from 'react-native-draglist';
 
 import Helper from '../utilities/Helper';
 
-export default ({ containerRef, ...extra }) => {
+export default (props) => {
   const indicatorStyle = Helper.useIndicatorStyle();
-  const ref = React.useRef(containerRef?.current);
+  const ref = React.useRef(null);
   useScrollToTop(ref);
-  return <FlashList indicatorStyle={indicatorStyle} ref={ref} {...extra} />;
+  let Component = FlashList;
+  if (props.draggable === true) {
+    Component = DraggableFlatList;
+    // Component = DragList;
+  }
+  return <Component indicatorStyle={indicatorStyle} ref={ref} {...props} />;
 };

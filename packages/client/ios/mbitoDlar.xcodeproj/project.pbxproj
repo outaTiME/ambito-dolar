@@ -7,56 +7,56 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0411E565E5B04DDDA9EF5B2F /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5655BD6FBA9249369387F418 /* noop-file.swift */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		27B95FF6F73E4B0FACF2F2E1 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A36E372A6F49E387BE9D76 /* noop-file.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		96905EF65AED1B983A6B3ABC /* libPods-mbitoDlar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C2284AA828E348BF00B264FD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2284AA728E348BF00B264FD /* WidgetKit.framework */; };
-		C2284AAA28E348BF00B264FD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2284AA928E348BF00B264FD /* SwiftUI.framework */; };
-		C2284AAD28E348BF00B264FD /* RateWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2284AAC28E348BF00B264FD /* RateWidgets.swift */; };
-		C2284AB028E348C000B264FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2284AAF28E348C000B264FD /* Assets.xcassets */; };
-		C2284AB628E348C000B264FD /* RateWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2284AA628E348BF00B264FD /* RateWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C2284ABB28E34AAB00B264FD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */; };
-		C2284ABC28E34AAB00B264FD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */; };
-		C2284AC428E34BBF00B264FD /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2284AC328E34BBF00B264FD /* Helper.swift */; };
-		C2284AC628E34C1200B264FD /* FiraGO-Regular-Minimal.otf in Resources */ = {isa = PBXBuildFile; fileRef = C2284AC528E34C1200B264FD /* FiraGO-Regular-Minimal.otf */; };
-		C2284ACD28E34D6800B264FD /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2284ACC28E34D6800B264FD /* Intents.framework */; };
-		C2284AD028E34D6800B264FD /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2284ACF28E34D6800B264FD /* IntentHandler.swift */; };
-		C2284AD428E34D6800B264FD /* RateIntents.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2284ACB28E34D6800B264FD /* RateIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C2284AD828E34D7E00B264FD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */; };
-		C2284AD928E34DCE00B264FD /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2284AC328E34BBF00B264FD /* Helper.swift */; };
+		C2E754DB295A6E7900EED1DD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2E754DA295A6E7900EED1DD /* WidgetKit.framework */; };
+		C2E754DD295A6E7900EED1DD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2E754DC295A6E7900EED1DD /* SwiftUI.framework */; };
+		C2E754E2295A6E7900EED1DD /* RateWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E754E1295A6E7900EED1DD /* RateWidgets.swift */; };
+		C2E754E5295A6E7A00EED1DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2E754E4295A6E7A00EED1DD /* Assets.xcassets */; };
+		C2E754EB295A6E7A00EED1DD /* RateWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2E754D9295A6E7900EED1DD /* RateWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C2E754F0295A733200EED1DD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */; };
+		C2E754F1295A733200EED1DD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */; };
+		C2E754F7295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf in Resources */ = {isa = PBXBuildFile; fileRef = C2E754F6295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf */; };
+		C2E754FE295A9CD200EED1DD /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2E754FD295A9CD200EED1DD /* Intents.framework */; };
+		C2E75501295A9CD200EED1DD /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E75500295A9CD200EED1DD /* IntentHandler.swift */; };
+		C2E75505295A9CD200EED1DD /* RateIntents.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2E754FC295A9CD200EED1DD /* RateIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C2E75509295A9CFA00EED1DD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */; };
+		C2E7550D295A9D6300EED1DD /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E7550C295A9D6300EED1DD /* Helper.swift */; };
+		C2E7550E295A9D6300EED1DD /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E7550C295A9D6300EED1DD /* Helper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		C2284AB428E348C000B264FD /* PBXContainerItemProxy */ = {
+		C2E754E9295A6E7A00EED1DD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C2284AA528E348BF00B264FD;
+			remoteGlobalIDString = C2E754D8295A6E7900EED1DD;
 			remoteInfo = RateWidgetsExtension;
 		};
-		C2284AD228E34D6800B264FD /* PBXContainerItemProxy */ = {
+		C2E75503295A9CD200EED1DD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C2284ACA28E34D6800B264FD;
+			remoteGlobalIDString = C2E754FB295A9CD200EED1DD;
 			remoteInfo = RateIntents;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		C2284AB728E348C000B264FD /* Embed Foundation Extensions */ = {
+		C2E754EF295A6E7A00EED1DD /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				C2284AD428E34D6800B264FD /* RateIntents.appex in Embed Foundation Extensions */,
-				C2284AB628E348C000B264FD /* RateWidgetsExtension.appex in Embed Foundation Extensions */,
+				C2E75505295A9CD200EED1DD /* RateIntents.appex in Embed Foundation Extensions */,
+				C2E754EB295A6E7A00EED1DD /* RateWidgetsExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -65,32 +65,32 @@
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		04A36E372A6F49E387BE9D76 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "mbitoDlar/noop-file.swift"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* mbitoDlar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mbitoDlar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = mbitoDlar/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = mbitoDlar/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mbitoDlar/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mbitoDlar/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mbitoDlar/main.m; sourceTree = "<group>"; };
+		5655BD6FBA9249369387F418 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "mbitoDlar/noop-file.swift"; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mbitoDlar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-mbitoDlar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.debug.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-mbitoDlar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.release.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = mbitoDlar/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C2284AA628E348BF00B264FD /* RateWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		C2284AA728E348BF00B264FD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		C2284AA928E348BF00B264FD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		C2284AAC28E348BF00B264FD /* RateWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateWidgets.swift; sourceTree = "<group>"; };
-		C2284AAF28E348C000B264FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		C2284AB128E348C000B264FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C2284ABF28E34AAE00B264FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/RateWidgets.intentdefinition; sourceTree = "<group>"; };
-		C2284AC328E34BBF00B264FD /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
-		C2284AC528E34C1200B264FD /* FiraGO-Regular-Minimal.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FiraGO-Regular-Minimal.otf"; path = "../../assets/fonts/FiraGO-Regular-Minimal.otf"; sourceTree = "<group>"; };
-		C2284ACB28E34D6800B264FD /* RateIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		C2284ACC28E34D6800B264FD /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
-		C2284ACF28E34D6800B264FD /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
-		C2284AD128E34D6800B264FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C2F0BBEC290B59B5000F9CC7 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/RateWidgets.strings"; sourceTree = "<group>"; };
+		C2E754D9295A6E7900EED1DD /* RateWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2E754DA295A6E7900EED1DD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C2E754DC295A6E7900EED1DD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C2E754E1295A6E7900EED1DD /* RateWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateWidgets.swift; sourceTree = "<group>"; };
+		C2E754E4295A6E7A00EED1DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C2E754E6295A6E7A00EED1DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2E754F2295A733200EED1DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/RateWidgets.intentdefinition; sourceTree = "<group>"; };
+		C2E754F6295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FiraGO-Regular-Minimal.otf"; path = "../../assets/fonts/FiraGO-Regular-Minimal.otf"; sourceTree = "<group>"; };
+		C2E754FC295A9CD200EED1DD /* RateIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2E754FD295A9CD200EED1DD /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		C2E75500295A9CD200EED1DD /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
+		C2E75502295A9CD200EED1DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2E7550C295A9D6300EED1DD /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		C2FAE76C295F0F9D00D90AF4 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/RateWidgets.strings"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-mbitoDlar/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -104,20 +104,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2284AA328E348BF00B264FD /* Frameworks */ = {
+		C2E754D6295A6E7900EED1DD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2284AAA28E348BF00B264FD /* SwiftUI.framework in Frameworks */,
-				C2284AA828E348BF00B264FD /* WidgetKit.framework in Frameworks */,
+				C2E754DD295A6E7900EED1DD /* SwiftUI.framework in Frameworks */,
+				C2E754DB295A6E7900EED1DD /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2284AC828E34D6800B264FD /* Frameworks */ = {
+		C2E754F9295A9CD200EED1DD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2284ACD28E34D6800B264FD /* Intents.framework in Frameworks */,
+				C2E754FE295A9CD200EED1DD /* Intents.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +135,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				04A36E372A6F49E387BE9D76 /* noop-file.swift */,
+				5655BD6FBA9249369387F418 /* noop-file.swift */,
 			);
 			name = mbitoDlar;
 			sourceTree = "<group>";
@@ -145,9 +145,9 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */,
-				C2284AA728E348BF00B264FD /* WidgetKit.framework */,
-				C2284AA928E348BF00B264FD /* SwiftUI.framework */,
-				C2284ACC28E34D6800B264FD /* Intents.framework */,
+				C2E754DA295A6E7900EED1DD /* WidgetKit.framework */,
+				C2E754DC295A6E7900EED1DD /* SwiftUI.framework */,
+				C2E754FD295A9CD200EED1DD /* Intents.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -164,8 +164,8 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* mbitoDlar */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				C2284AAB28E348BF00B264FD /* RateWidgets */,
-				C2284ACE28E34D6800B264FD /* RateIntents */,
+				C2E754DE295A6E7900EED1DD /* RateWidgets */,
+				C2E754FF295A9CD200EED1DD /* RateIntents */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
@@ -180,8 +180,8 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* mbitoDlar.app */,
-				C2284AA628E348BF00B264FD /* RateWidgetsExtension.appex */,
-				C2284ACB28E34D6800B264FD /* RateIntents.appex */,
+				C2E754D9295A6E7900EED1DD /* RateWidgetsExtension.appex */,
+				C2E754FC295A9CD200EED1DD /* RateIntents.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -203,34 +203,34 @@
 			path = mbitoDlar/Supporting;
 			sourceTree = "<group>";
 		};
-		C2284AAB28E348BF00B264FD /* RateWidgets */ = {
+		C2E754DE295A6E7900EED1DD /* RateWidgets */ = {
 			isa = PBXGroup;
 			children = (
-				C2284AC528E34C1200B264FD /* FiraGO-Regular-Minimal.otf */,
-				C2284AC228E34BA100B264FD /* Utils */,
-				C2284AAC28E348BF00B264FD /* RateWidgets.swift */,
-				C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */,
-				C2284AAF28E348C000B264FD /* Assets.xcassets */,
-				C2284AB128E348C000B264FD /* Info.plist */,
+				C2E7550B295A9D3600EED1DD /* Utils */,
+				C2E754F6295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf */,
+				C2E754E1295A6E7900EED1DD /* RateWidgets.swift */,
+				C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */,
+				C2E754E4295A6E7A00EED1DD /* Assets.xcassets */,
+				C2E754E6295A6E7A00EED1DD /* Info.plist */,
 			);
 			path = RateWidgets;
 			sourceTree = "<group>";
 		};
-		C2284AC228E34BA100B264FD /* Utils */ = {
+		C2E754FF295A9CD200EED1DD /* RateIntents */ = {
 			isa = PBXGroup;
 			children = (
-				C2284AC328E34BBF00B264FD /* Helper.swift */,
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
-		C2284ACE28E34D6800B264FD /* RateIntents */ = {
-			isa = PBXGroup;
-			children = (
-				C2284ACF28E34D6800B264FD /* IntentHandler.swift */,
-				C2284AD128E34D6800B264FD /* Info.plist */,
+				C2E75500295A9CD200EED1DD /* IntentHandler.swift */,
+				C2E75502295A9CD200EED1DD /* Info.plist */,
 			);
 			path = RateIntents;
+			sourceTree = "<group>";
+		};
+		C2E7550B295A9D3600EED1DD /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				C2E7550C295A9D6300EED1DD /* Helper.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
@@ -264,28 +264,27 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				8CBAAE15D1154E57B511D143 /* Upload Debug Symbols to Sentry */,
-				38CCD8A00F21755F3D9933F7 /* [CP] Embed Pods Frameworks */,
-				C2284AB728E348C000B264FD /* Embed Foundation Extensions */,
+				F6055B1FBCBF4DBD9CD4F50B /* Upload Debug Symbols to Sentry */,
+				C2E754EF295A6E7A00EED1DD /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				C2284AB528E348C000B264FD /* PBXTargetDependency */,
-				C2284AD328E34D6800B264FD /* PBXTargetDependency */,
+				C2E754EA295A6E7A00EED1DD /* PBXTargetDependency */,
+				C2E75504295A9CD200EED1DD /* PBXTargetDependency */,
 			);
 			name = mbitoDlar;
 			productName = mbitoDlar;
 			productReference = 13B07F961A680F5B00A75B9A /* mbitoDlar.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C2284AA528E348BF00B264FD /* RateWidgetsExtension */ = {
+		C2E754D8295A6E7900EED1DD /* RateWidgetsExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C2284ABA28E348C000B264FD /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */;
+			buildConfigurationList = C2E754EC295A6E7A00EED1DD /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */;
 			buildPhases = (
-				C2284AA228E348BF00B264FD /* Sources */,
-				C2284AA328E348BF00B264FD /* Frameworks */,
-				C2284AA428E348BF00B264FD /* Resources */,
+				C2E754D5295A6E7900EED1DD /* Sources */,
+				C2E754D6295A6E7900EED1DD /* Frameworks */,
+				C2E754D7295A6E7900EED1DD /* Resources */,
 			);
 			buildRules = (
 			);
@@ -293,16 +292,16 @@
 			);
 			name = RateWidgetsExtension;
 			productName = RateWidgetsExtension;
-			productReference = C2284AA628E348BF00B264FD /* RateWidgetsExtension.appex */;
+			productReference = C2E754D9295A6E7900EED1DD /* RateWidgetsExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		C2284ACA28E34D6800B264FD /* RateIntents */ = {
+		C2E754FB295A9CD200EED1DD /* RateIntents */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C2284AD528E34D6800B264FD /* Build configuration list for PBXNativeTarget "RateIntents" */;
+			buildConfigurationList = C2E75506295A9CD200EED1DD /* Build configuration list for PBXNativeTarget "RateIntents" */;
 			buildPhases = (
-				C2284AC728E34D6800B264FD /* Sources */,
-				C2284AC828E34D6800B264FD /* Frameworks */,
-				C2284AC928E34D6800B264FD /* Resources */,
+				C2E754F8295A9CD200EED1DD /* Sources */,
+				C2E754F9295A9CD200EED1DD /* Frameworks */,
+				C2E754FA295A9CD200EED1DD /* Resources */,
 			);
 			buildRules = (
 			);
@@ -310,7 +309,7 @@
 			);
 			name = RateIntents;
 			productName = RateIntents;
-			productReference = C2284ACB28E34D6800B264FD /* RateIntents.appex */;
+			productReference = C2E754FC295A9CD200EED1DD /* RateIntents.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -319,18 +318,18 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1400;
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
 					};
-					C2284AA528E348BF00B264FD = {
-						CreatedOnToolsVersion = 14.0;
+					C2E754D8295A6E7900EED1DD = {
+						CreatedOnToolsVersion = 14.2;
 						ProvisioningStyle = Automatic;
 					};
-					C2284ACA28E34D6800B264FD = {
-						CreatedOnToolsVersion = 14.0;
+					C2E754FB295A9CD200EED1DD = {
+						CreatedOnToolsVersion = 14.2;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -350,8 +349,8 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* mbitoDlar */,
-				C2284AA528E348BF00B264FD /* RateWidgetsExtension */,
-				C2284ACA28E34D6800B264FD /* RateIntents */,
+				C2E754D8295A6E7900EED1DD /* RateWidgetsExtension */,
+				C2E754FB295A9CD200EED1DD /* RateIntents */,
 			);
 		};
 /* End PBXProject section */
@@ -367,16 +366,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2284AA428E348BF00B264FD /* Resources */ = {
+		C2E754D7295A6E7900EED1DD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2284AC628E34C1200B264FD /* FiraGO-Regular-Minimal.otf in Resources */,
-				C2284AB028E348C000B264FD /* Assets.xcassets in Resources */,
+				C2E754F7295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf in Resources */,
+				C2E754E5295A6E7A00EED1DD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2284AC928E34D6800B264FD /* Resources */ = {
+		C2E754FA295A9CD200EED1DD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -398,7 +397,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nif [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\n`node --print \"require.resolve('@sentry/cli/package.json').slice(0, -13) + '/bin/sentry-cli'\"` react-native xcode --force-foreground `\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nif [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" $PROJECT_ROOT ios relative | tail -n 1)\"\nfi\n\n`node --print \"require.resolve('@sentry/cli/package.json').slice(0, -13) + '/bin/sentry-cli'\"` react-native xcode --force-foreground `\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
 		};
 		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -420,24 +419,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		38CCD8A00F21755F3D9933F7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
@@ -468,7 +449,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8CBAAE15D1154E57B511D143 /* Upload Debug Symbols to Sentry */ = {
+		F6055B1FBCBF4DBD9CD4F50B /* Upload Debug Symbols to Sentry */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -510,53 +491,53 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
-				C2284ABB28E34AAB00B264FD /* RateWidgets.intentdefinition in Sources */,
+				C2E754F0295A733200EED1DD /* RateWidgets.intentdefinition in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				27B95FF6F73E4B0FACF2F2E1 /* noop-file.swift in Sources */,
+				0411E565E5B04DDDA9EF5B2F /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2284AA228E348BF00B264FD /* Sources */ = {
+		C2E754D5295A6E7900EED1DD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2284ABC28E34AAB00B264FD /* RateWidgets.intentdefinition in Sources */,
-				C2284AAD28E348BF00B264FD /* RateWidgets.swift in Sources */,
-				C2284AC428E34BBF00B264FD /* Helper.swift in Sources */,
+				C2E754F1295A733200EED1DD /* RateWidgets.intentdefinition in Sources */,
+				C2E754E2295A6E7900EED1DD /* RateWidgets.swift in Sources */,
+				C2E7550D295A9D6300EED1DD /* Helper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2284AC728E34D6800B264FD /* Sources */ = {
+		C2E754F8295A9CD200EED1DD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2284AD828E34D7E00B264FD /* RateWidgets.intentdefinition in Sources */,
-				C2284AD028E34D6800B264FD /* IntentHandler.swift in Sources */,
-				C2284AD928E34DCE00B264FD /* Helper.swift in Sources */,
+				C2E75509295A9CFA00EED1DD /* RateWidgets.intentdefinition in Sources */,
+				C2E75501295A9CD200EED1DD /* IntentHandler.swift in Sources */,
+				C2E7550E295A9D6300EED1DD /* Helper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		C2284AB528E348C000B264FD /* PBXTargetDependency */ = {
+		C2E754EA295A6E7A00EED1DD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2284AA528E348BF00B264FD /* RateWidgetsExtension */;
-			targetProxy = C2284AB428E348C000B264FD /* PBXContainerItemProxy */;
+			target = C2E754D8295A6E7900EED1DD /* RateWidgetsExtension */;
+			targetProxy = C2E754E9295A6E7A00EED1DD /* PBXContainerItemProxy */;
 		};
-		C2284AD328E34D6800B264FD /* PBXTargetDependency */ = {
+		C2E75504295A9CD200EED1DD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2284ACA28E34D6800B264FD /* RateIntents */;
-			targetProxy = C2284AD228E34D6800B264FD /* PBXContainerItemProxy */;
+			target = C2E754FB295A9CD200EED1DD /* RateIntents */;
+			targetProxy = C2E75503295A9CD200EED1DD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		C2284ABE28E34AAB00B264FD /* RateWidgets.intentdefinition */ = {
+		C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */ = {
 			isa = PBXVariantGroup;
 			children = (
-				C2284ABF28E34AAE00B264FD /* Base */,
-				C2F0BBEC290B59B5000F9CC7 /* es-419 */,
+				C2E754F2295A733200EED1DD /* Base */,
+				C2FAE76C295F0F9D00D90AF4 /* es-419 */,
 			);
 			name = RateWidgets.intentdefinition;
 			sourceTree = "<group>";
@@ -579,7 +560,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = mbitoDlar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -606,7 +587,7 @@
 				CODE_SIGN_ENTITLEMENTS = mbitoDlar/mbitoDlar.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = mbitoDlar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -654,7 +635,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -670,9 +651,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
-				LIBRARY_SEARCH_PATHS = "\"$(inherited)\"";
+				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
@@ -712,7 +693,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -721,9 +702,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
-				LIBRARY_SEARCH_PATHS = "\"$(inherited)\"";
+				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -731,7 +712,7 @@
 			};
 			name = Release;
 		};
-		C2284AB828E348C000B264FD /* Debug */ = {
+		C2E754ED295A6E7A00EED1DD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -768,7 +749,7 @@
 			};
 			name = Debug;
 		};
-		C2284AB928E348C000B264FD /* Release */ = {
+		C2E754EE295A6E7A00EED1DD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -804,7 +785,7 @@
 			};
 			name = Release;
 		};
-		C2284AD628E34D6800B264FD /* Debug */ = {
+		C2E75507295A9CD200EED1DD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -839,7 +820,7 @@
 			};
 			name = Debug;
 		};
-		C2284AD728E34D6800B264FD /* Release */ = {
+		C2E75508295A9CD200EED1DD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -894,20 +875,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C2284ABA28E348C000B264FD /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */ = {
+		C2E754EC295A6E7A00EED1DD /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C2284AB828E348C000B264FD /* Debug */,
-				C2284AB928E348C000B264FD /* Release */,
+				C2E754ED295A6E7A00EED1DD /* Debug */,
+				C2E754EE295A6E7A00EED1DD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C2284AD528E34D6800B264FD /* Build configuration list for PBXNativeTarget "RateIntents" */ = {
+		C2E75506295A9CD200EED1DD /* Build configuration list for PBXNativeTarget "RateIntents" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C2284AD628E34D6800B264FD /* Debug */,
-				C2284AD728E34D6800B264FD /* Release */,
+				C2E75507295A9CD200EED1DD /* Debug */,
+				C2E75508295A9CD200EED1DD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

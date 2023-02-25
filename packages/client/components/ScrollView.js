@@ -4,12 +4,12 @@ import { ScrollView } from 'react-native';
 
 import Helper from '../utilities/Helper';
 
-export default ({ children, containerRef, ...extra }) => {
+export default ({ children, ...props }) => {
   const indicatorStyle = Helper.useIndicatorStyle();
-  const ref = React.useRef(containerRef?.current);
+  const ref = React.useRef(null);
   useScrollToTop(ref);
   return (
-    <ScrollView indicatorStyle={indicatorStyle} ref={ref} {...extra}>
+    <ScrollView indicatorStyle={indicatorStyle} ref={ref} {...props}>
       {children}
     </ScrollView>
   );

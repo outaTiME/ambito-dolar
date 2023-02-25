@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-import Settings from '../config/settings';
-import Helper from '../utilities/Helper';
 import CardItemView from './CardItemView';
 import CardView from './CardView';
+import Settings from '../config/settings';
+import Helper from '../utilities/Helper';
 
 export default ({ style, text, onLongPress }) => {
   const { theme, fonts } = Helper.useTheme();

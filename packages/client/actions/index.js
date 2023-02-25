@@ -1,7 +1,5 @@
 import * as Notifications from 'expo-notifications';
 
-import Settings from '../config/settings';
-import Helper from '../utilities/Helper';
 import {
   NOTIFICATIONS_REGISTER_PENDING,
   NOTIFICATIONS_REGISTER_SUCCESS,
@@ -19,12 +17,19 @@ import {
   APP_DOWNLOAD_HISTORICAL_RATES,
   APP_DETAILED_RATES,
   CHANGE_APPEARANCE,
+  CHANGE_RATE_ORDER,
+  CHANGE_RATE_ORDER_DIRECTION,
+  EXCLUDE_RATE,
+  UPDATE_RATE_TYPES,
+  RESTORE_CUSTOMIZATION,
   ADD_RATES,
   UPDATE_HISTORICAL_RATES,
   PRUNE_RATES,
   PRUNE,
   APP_USAGE,
 } from './types';
+import Settings from '../config/settings';
+import Helper from '../utilities/Helper';
 
 export const addRates = (payload) => ({
   type: ADD_RATES,
@@ -182,6 +187,33 @@ export const registerApplicationRateDetail = () => ({
 export const changeAppearance = (payload) => ({
   type: CHANGE_APPEARANCE,
   payload,
+});
+
+export const changeRateOrder = (payload) => ({
+  type: CHANGE_RATE_ORDER,
+  payload,
+});
+
+export const changeRateOrderDirection = (payload) => ({
+  type: CHANGE_RATE_ORDER_DIRECTION,
+  payload,
+});
+
+export const excludeRate = (type, value) => ({
+  type: EXCLUDE_RATE,
+  payload: {
+    type,
+    value,
+  },
+});
+
+export const updateRateTypes = (payload) => ({
+  type: UPDATE_RATE_TYPES,
+  payload,
+});
+
+export const restoreCustomization = () => ({
+  type: RESTORE_CUSTOMIZATION,
 });
 
 export const clearRates = () => ({
