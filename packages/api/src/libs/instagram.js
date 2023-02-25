@@ -11,6 +11,19 @@ const centeredSticker = (width, height) => ({
   rotation: 0.0,
 });
 
+const loadSession = async (ig, serialized_session) => {
+  if (serialized_session) {
+    try {
+      await ig.state.deserialize(serialized_session);
+      // try any request to check if the session is still valid
+      return await ig.account.currentUser();
+    } catch {
+      return false;
+    }
+  }
+  return false;
+};
+
 // https://github.com/dilame/instagram-private-api/blob/master/examples/session.example.ts
 export const publish = async (file, caption, story_file) => {
   try {
@@ -20,12 +33,6 @@ export const publish = async (file, caption, story_file) => {
     const start_time = Date.now();
     const ig = new IgApiClient();
     ig.state.generateDevice(IG_USERNAME);
-    // This function executes after every request
-    ig.request.end$.subscribe(async () => {
-      const serialized = await ig.state.serialize();
-      delete serialized.constants; // this deletes the version info, so you'll always use the version provided by the library
-      await Shared.storeJsonObject(IG_SESSION_KEY, serialized);
-    });
     const serialized_session = await Shared.getJsonObject(IG_SESSION_KEY).catch(
       (error) => {
         console.warn(
@@ -35,14 +42,19 @@ export const publish = async (file, caption, story_file) => {
         // ignore
       }
     );
-    if (serialized_session) {
-      // import state accepts both a string as well as an object
-      // the string should be a JSON object
-      await ig.state.deserialize(serialized_session);
+    const current_session = await loadSession(ig, serialized_session);
+    if (!current_session) {
+      ig.request.end$.subscribe(async () => {
+        const serialized = await ig.state.serialize();
+        // this deletes the version info, so you'll always use the version provided by the library
+        delete serialized.constants;
+        await Shared.storeJsonObject(IG_SESSION_KEY, serialized);
+      });
+      await ig.account.login(IG_USERNAME, IG_PASSWORD);
+      console.info('Session created');
+    } else {
+      console.info('Session restored');
     }
-    // This call will provoke request.end$ stream
-    await ig.account.login(IG_USERNAME, IG_PASSWORD);
-    // Most of the time you don't have to login after loading the state
     const {
       status,
       upload_id,
