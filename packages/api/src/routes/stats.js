@@ -15,14 +15,17 @@ export const handler = Shared.wrapHandler(async () => {
       },
     }).then(async (response) => {
       const { data } = await response.json();
-      const [users, events, conversions] = _.chunk(data?.values?.[0], 3);
-      const stats = {
-        users,
-        events,
-        conversions,
-      };
-      if (!_.isEmpty(stats)) {
-        return stats;
+      const [users, events, conversions] = _.chain(data?.values)
+        .last()
+        .chunk(3)
+        .filter((stats) => stats.length === 3)
+        .value();
+      if (users && events && conversions) {
+        return {
+          users,
+          events,
+          conversions,
+        };
       }
       throw new Error('No data available');
     });
