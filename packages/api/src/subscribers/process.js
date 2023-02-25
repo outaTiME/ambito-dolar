@@ -204,7 +204,7 @@ const getNewRates = (rates, new_rates) =>
 const getRates = (rates) =>
   Promise.all([
     getRate(AmbitoDolar.OFFICIAL_TYPE),
-    getRate(AmbitoDolar.INFORMAL_TYPE),
+    // getRate(AmbitoDolar.INFORMAL_TYPE),
     getRate(AmbitoDolar.TOURIST_TYPE),
     getRate(AmbitoDolar.QATAR_TYPE),
     getRate(AmbitoDolar.SAVING_TYPE),
@@ -218,7 +218,8 @@ const getRates = (rates) =>
 // process these rates only on business days
 const getBusinessDayRates = (rates, realtime) => {
   const promises = [
-    // pass
+    // (for now) updates on holidays
+    getRate(AmbitoDolar.INFORMAL_TYPE),
   ];
   if (realtime) {
     promises.push(
