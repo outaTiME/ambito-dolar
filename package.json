@@ -17,7 +17,7 @@
     "@serverless-stack/cli": "1.18.4",
     "@serverless-stack/resources": "1.18.4",
     "aws-cdk-lib": "2.50.0",
-    "eslint": "^8.34.0",
+    "eslint": "^8.35.0",
     "eslint-config-universe": "^11.2.0",
     "husky": "^8.0.3",
     "lerna": "^6.5.1",
