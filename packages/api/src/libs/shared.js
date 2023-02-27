@@ -76,33 +76,31 @@ const getFirebaseAccessToken = async () => {
   });
 };
 
+const fetchRetry = require('@vercel/fetch-retry')(fetch);
+
 const fetchFirebaseData = async (uri, opts = {}) => {
   const access_token = await getFirebaseAccessToken();
   const url = new URL(`${process.env.FIREBASE_DATABASE_URL}/${uri}`);
   url.pathname = url.pathname + '.json';
   url.searchParams.set('access_token', access_token);
-  return fetch(url.href, opts).then(async (response) => {
+  return fetchRetry(url.href, opts).then((response) => {
     if (response.ok) {
-      return await response.json();
+      return response.json();
     }
     throw Error(response.statusText);
   });
 };
 
-const putFirebaseData = async (uri, payload = {}) => {
-  try {
-    return await fetchFirebaseData(uri, {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    });
-  } catch (error) {
+const putFirebaseData = async (uri, payload = {}) =>
+  fetchFirebaseData(uri, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  }).catch((error) => {
     console.warn(
       'Unable update firebase with payload',
       JSON.stringify({ uri, payload, error: error.message })
     );
-    // trace and continue
-  }
-};
+  });
 
 const serviceResponse = (res, code, json) => {
   if (res) {
@@ -537,7 +535,7 @@ const triggerEvent = async (event, payload) => {
       payload,
     })
   );
-  return fetch(
+  return fetchRetry(
     `https://maker.ifttt.com/trigger/${event}/with/key/${process.env.IFTTT_KEY}`,
     {
       method: 'POST',
@@ -582,8 +580,8 @@ const triggerSendSocialNotificationsEvent = async (caption, image_url) => {
 };
 
 const storeImgurFile = async (image) =>
-  // fetch('https://api.imgur.com/3/image', {
-  fetch('https://api.imgur.com/3/upload', {
+  // fetchRetry('https://api.imgur.com/3/image', {
+  fetchRetry('https://api.imgur.com/3/upload', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
@@ -602,7 +600,7 @@ const storeImgurFile = async (image) =>
   });
 
 const fetchImage = async (url) =>
-  fetch(url).then(async (response) => {
+  fetchRetry(url).then(async (response) => {
     if (response.ok) {
       return Buffer.from(await response.arrayBuffer());
     }
@@ -627,12 +625,12 @@ const wrapHandler = (handler) => {
 };
 
 export default {
+  fetch: fetchRetry,
   // fetchFirebaseData,
   putFirebaseData,
   serviceResponse,
   getDynamoDBClient,
   getAllDataFromDynamoDB,
-  fetch,
   isSemverLt,
   isSemverGte,
   getVariationThreshold,
