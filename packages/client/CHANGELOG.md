@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.4.0...@ambito-dolar/client@6.5.0) (2023-02-28)
+
+### Features
+
+- enable m1 support on EAS ([bd5e315](https://github.com/outaTiME/ambito-dolar/commit/bd5e3152253bd5cabd347bba4245917959ff853b))
+- update to Expo SDK47 and allow customization on rates ([aa9555a](https://github.com/outaTiME/ambito-dolar/commit/aa9555aa5b7ba7d358ff88482967d412fa919400)), closes [#1](https://github.com/outaTiME/ambito-dolar/issues/1)
+
 # [6.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.3.0...@ambito-dolar/client@6.4.0) (2022-10-31)
 
 ### Bug Fixes

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.4.0...@ambito-dolar/api@3.5.0) (2023-02-28)
+
+### Bug Fixes
+
+- filter the stats of current month for funding ([1711e7f](https://github.com/outaTiME/ambito-dolar/commit/1711e7f9720152ce578dd72365eafa2f2709eb07))
+- leave out the informal rate for opening ([c3809b1](https://github.com/outaTiME/ambito-dolar/commit/c3809b1b272d2e65ad557a4174f7978a8022a4f2))
+- update session handling on IG ([16a51ed](https://github.com/outaTiME/ambito-dolar/commit/16a51edb790ba13b76912744b3829be987638a6a))
+
+### Features
+
+- add mastodon social ([7d0b76d](https://github.com/outaTiME/ambito-dolar/commit/7d0b76d0b8c1c423dd835cdd681ea45dcc13cff0))
+- add retries over node-fetch ([7573352](https://github.com/outaTiME/ambito-dolar/commit/75733527d6ada5f401b103c54acdd7b2f06ad184))
+
 # [3.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.3.2...@ambito-dolar/api@3.4.0) (2022-10-31)
 
 ### Features

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.2.0...@ambito-dolar/core@3.3.0) (2023-02-28)
+
+### Features
+
+- add mastodon social ([7d0b76d](https://github.com/outaTiME/ambito-dolar/commit/7d0b76d0b8c1c423dd835cdd681ea45dcc13cff0))
+
 # [3.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.1.2...@ambito-dolar/core@3.2.0) (2022-10-31)
 
 ### Features
