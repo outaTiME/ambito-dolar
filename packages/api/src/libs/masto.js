@@ -1,5 +1,4 @@
 import { login } from 'masto';
-// import sleep from 'sleep-promise';
 
 // https://github.com/neet/masto.js/blob/main/examples/create-new-status-with-image.ts
 export const publish = async (caption, file) => {
@@ -8,16 +7,15 @@ export const publish = async (caption, file) => {
     const masto = await login({
       url: process.env.MASTODON_URL,
       accessToken: process.env.MASTODON_ACCESS_TOKEN,
-      logLevel: 'debug',
+      ...(process.env.SST_STAGE !== 'prod' && {
+        logLevel: 'debug',
+      }),
     });
     const attachment =
       file &&
       (await masto.v2.mediaAttachments.create({
         file,
       }));
-    console.log('>>> attachment', JSON.stringify(attachment));
-    // https://github.com/neet/masto.js/issues/823#issuecomment-1396347864
-    // await sleep(5 * 1000);
     const { id: status_id } = await masto.v1.statuses.create({
       status: caption,
       visibility: process.env.SST_STAGE === 'prod' ? 'public' : 'private',

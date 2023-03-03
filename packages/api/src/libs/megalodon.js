@@ -13,10 +13,8 @@ export const publish = async (caption, file) => {
     if (file) {
       attachment = await client.uploadMedia(file);
     }
-    console.log('>>> attachment', JSON.stringify(attachment));
     const status = await client.postStatus(caption, {
-      // visibility: 'public',
-      visibility: 'private',
+      visibility: process.env.SST_STAGE === 'prod' ? 'public' : 'private',
       ...(attachment && {
         media_ids: [attachment.id],
       }),
