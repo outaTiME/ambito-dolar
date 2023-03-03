@@ -571,13 +571,11 @@ const triggerEvent = async (event, payload) => {
     });
 };
 
-const triggerSendSocialNotificationsEvent = async (caption, image_url) => {
-  const event = 'send-social-notifications';
-  return triggerEvent(image_url ? event + '-with-photo' : event, {
+const triggerSendSocialNotificationsEvent = async (caption, image_url) =>
+  triggerEvent('ambito-dolar-social-notifications', {
     value1: caption,
     ...(image_url && { value2: image_url }),
   });
-};
 
 const storeImgurFile = async (image) =>
   // fetchRetry('https://api.imgur.com/3/image', {
