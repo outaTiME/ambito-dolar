@@ -49,10 +49,10 @@ __metadata:
     "@expo/webpack-config": ^0.17.4
     "@react-native-community/hooks": ^3.0.0
     "@react-native-segmented-control/segmented-control": 2.4.0
-    "@react-navigation/bottom-tabs": ^6.5.7
-    "@react-navigation/elements": ^1.3.17
-    "@react-navigation/native": ^6.1.6
-    "@react-navigation/native-stack": ^6.9.12
+    "@react-navigation/bottom-tabs": ^6.5.6
+    "@react-navigation/elements": ^1.3.16
+    "@react-navigation/native": ^6.1.5
+    "@react-navigation/native-stack": ^6.9.11
     "@reduxjs/toolkit": ^1.9.3
     "@sentry/react-native": 4.9.0
     "@shopify/flash-list": 1.4.1
@@ -72,7 +72,7 @@ __metadata:
     expo-font: ~11.0.1
     expo-haptics: ~12.0.1
     expo-image-manipulator: ~11.0.0
-    expo-linking: ~3.3.1
+    expo-linking: ~3.3.0
     expo-localization: ~14.0.0
     expo-mail-composer: ~12.0.0
     expo-notifications: ~0.17.0
@@ -83,7 +83,7 @@ __metadata:
     expo-store-review: ~6.0.0
     expo-system-ui: ~2.0.1
     expo-updates: ~0.15.6
-    firebase: ^9.17.2
+    firebase: ^9.17.1
     i18n-js: ^4.2.2
     immutability-helper: ^3.1.1
     lodash: ^4.17.21
@@ -113,7 +113,7 @@ __metadata:
     reselect: ^4.1.7
     semver: ^7.3.8
     sentry-expo: ~6.0.0
-    styled-components: ^5.3.8
+    styled-components: ^5.3.6
     swr: ^2.0.4
     victory: 36.6.8
     victory-native: 36.6.8
@@ -6850,7 +6850,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/bottom-tabs@npm:^6.5.7":
+"@react-navigation/bottom-tabs@npm:^6.5.6":
   version: 6.5.7
   resolution: "@react-navigation/bottom-tabs@npm:6.5.7"
   dependencies:
@@ -6883,7 +6883,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/elements@npm:^1.3.17":
+"@react-navigation/elements@npm:^1.3.16, @react-navigation/elements@npm:^1.3.17":
   version: 1.3.17
   resolution: "@react-navigation/elements@npm:1.3.17"
   peerDependencies:
@@ -6895,7 +6895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/native-stack@npm:^6.9.12":
+"@react-navigation/native-stack@npm:^6.9.11":
   version: 6.9.12
   resolution: "@react-navigation/native-stack@npm:6.9.12"
   dependencies:
@@ -6911,7 +6911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/native@npm:^6.1.6":
+"@react-navigation/native@npm:^6.1.5":
   version: 6.1.6
   resolution: "@react-navigation/native@npm:6.1.6"
   dependencies:
@@ -16012,7 +16012,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-linking@npm:~3.3.1":
+"expo-linking@npm:~3.3.0":
   version: 3.3.1
   resolution: "expo-linking@npm:3.3.1"
   dependencies:
@@ -17030,7 +17030,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase@npm:^9.17.2":
+"firebase@npm:^9.17.1":
   version: 9.17.2
   resolution: "firebase@npm:9.17.2"
   dependencies:
@@ -31400,7 +31400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:^5.3.8":
+"styled-components@npm:^5.3.6":
   version: 5.3.8
   resolution: "styled-components@npm:5.3.8"
   dependencies:
