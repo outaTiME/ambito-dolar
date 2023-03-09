@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.5.0...@ambito-dolar/api@3.6.0) (2023-03-09)
+
+### Features
+
+- add reddit social ([39489bf](https://github.com/outaTiME/ambito-dolar/commit/39489bf7f4218cc5190104e21e7d50c4f8666f33))
+- new single event trigger on IFTTT ([9227983](https://github.com/outaTiME/ambito-dolar/commit/9227983c810f548ce8cbeb9f29933a47e4ea0ea0))
+
 # [3.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.4.0...@ambito-dolar/api@3.5.0) (2023-02-28)
 
 ### Bug Fixes
