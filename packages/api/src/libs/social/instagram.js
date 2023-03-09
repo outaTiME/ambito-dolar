@@ -1,6 +1,6 @@
 import { IgApiClient } from 'instagram-private-api';
 
-import Shared from './shared';
+import Shared from '../shared';
 
 // https://github.com/dilame/instagram-private-api/blob/3e1605831996c19e59f7b91461eea3539cd3521f/examples/story-upload.example.ts#L89
 const centeredSticker = (width, height) => ({

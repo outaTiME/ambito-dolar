@@ -1,8 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 
 import { generateScreenshot } from '../libs/chrome';
-import { publish as publishToInstagram } from '../libs/instagram';
-import { publish as publishToMastodon } from '../libs/masto';
 import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
@@ -10,9 +8,8 @@ export const handler = Shared.wrapHandler(async (event) => {
     type,
     title = AmbitoDolar.getNotificationTitle(type),
     caption,
-    ig_only,
-    mastodon_only,
     generate_only,
+    targets,
   } = JSON.parse(event.Records[0].Sns.Message);
   // must required for social notification
   if (!type || !title || !caption) {
@@ -24,41 +21,37 @@ export const handler = Shared.wrapHandler(async (event) => {
       type,
       title,
       caption,
-      ig_only,
-      mastodon_only,
       generate_only,
+      targets,
     })
   );
-  const screenshot_url = Shared.getSocialScreenshotUrl({
-    // type: 'rates',
-    title,
-  });
   const promises = [];
   if (
     type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE ||
     generate_only === true
   ) {
+    const screenshot_url = Shared.getSocialScreenshotUrl({
+      // type: 'rates',
+      title,
+    });
     try {
       const {
-        file,
         target_url: image_url,
-        ig_file,
-        ig_story_file,
+        ig_file: file,
+        ig_story_file: story_file,
       } = await generateScreenshot(screenshot_url);
       if (generate_only === true) {
         return { image_url };
       }
-      if (mastodon_only !== true) {
-        promises.push(publishToInstagram(ig_file, caption, ig_story_file));
-      }
-      if (ig_only !== true) {
-        promises.push(publishToMastodon(caption, file));
-      }
-      if (ig_only !== true && mastodon_only !== true) {
-        promises.push(
-          Shared.triggerSendSocialNotificationsEvent(caption, image_url)
-        );
-      }
+      promises.push(
+        ...Shared.getSocialTriggers(
+          targets,
+          caption,
+          image_url,
+          file,
+          story_file
+        )
+      );
     } catch (error) {
       console.warn(
         'Unable to generate the screenshot for notification',
@@ -69,12 +62,7 @@ export const handler = Shared.wrapHandler(async (event) => {
   }
   // when NOTIFICATION_VARIATION_TYPE or error
   if (promises.length === 0) {
-    if (ig_only !== true) {
-      promises.push(publishToMastodon(caption));
-    }
-    if (ig_only !== true && mastodon_only !== true) {
-      promises.push(Shared.triggerSendSocialNotificationsEvent(caption));
-    }
+    promises.push(...Shared.getSocialTriggers(targets, caption));
   }
   const results = await Promise.all(promises);
   console.info('Completed', JSON.stringify(results));

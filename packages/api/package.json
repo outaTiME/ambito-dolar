@@ -20,10 +20,10 @@
     "joi": "^17.8.3",
     "lodash": "^4.17.21",
     "masto": "^5.10.0",
-    "megalodon": "^5.2.0",
     "node-fetch": "^2.6.9",
     "object-hash": "^3.0.0",
     "puppeteer-core": "19.7.2",
+    "reddit": "^1.2.1",
     "semver": "^7.3.8",
     "sharp": "^0.31.3"
   }

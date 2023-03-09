@@ -17,6 +17,10 @@ import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import zlib from 'zlib';
 
+import { publish as publishToInstagram } from './social/instagram';
+import { publish as publishToMastodon } from './social/mastodon';
+import { publish as publishToReddit } from './social/reddit';
+
 // defaults
 
 const ddbClient = new DynamoDBClient({
@@ -577,6 +581,25 @@ const triggerSendSocialNotificationsEvent = async (caption, image_url) =>
     ...(image_url && { value2: image_url }),
   });
 
+const getSocialTriggers = (targets, caption, url, file, story_file) =>
+  _.chain(targets ?? ['ifttt', 'instagram', 'mastodon', 'reddit'])
+    .map((target) => {
+      switch (target) {
+        case 'ifttt':
+          return triggerSendSocialNotificationsEvent(caption, url);
+        case 'instagram':
+          return publishToInstagram(file, caption, story_file);
+        case 'mastodon':
+          return publishToMastodon(caption, file);
+        case 'reddit':
+          return publishToReddit(caption, url);
+      }
+      // invalid
+    })
+    // remove falsey
+    .compact()
+    .value();
+
 const storeImgurFile = async (image) =>
   // fetchRetry('https://api.imgur.com/3/image', {
   fetchRetry('https://api.imgur.com/3/upload', {
@@ -651,6 +674,7 @@ export default {
   triggerSocialNotifyEvent,
   triggerFundingNotifyEvent,
   triggerSendSocialNotificationsEvent,
+  getSocialTriggers,
   storeImgurFile,
   fetchImage,
   wrapHandler,
