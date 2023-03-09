@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.6.0...@ambito-dolar/api@3.6.1) (2023-03-09)
+
+### Bug Fixes
+
+- remove ig trigger when no image ([7f55bcf](https://github.com/outaTiME/ambito-dolar/commit/7f55bcf471528f9d1be0ae339d473e327f5b6b9a))
+
 # [3.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.5.0...@ambito-dolar/api@3.6.0) (2023-03-09)
 
 ### Features
