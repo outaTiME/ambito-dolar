@@ -588,7 +588,7 @@ const getSocialTriggers = (targets, caption, url, file, story_file) =>
         case 'ifttt':
           return triggerSendSocialNotificationsEvent(caption, url);
         case 'instagram':
-          return publishToInstagram(file, caption, story_file);
+          return file && publishToInstagram(file, caption, story_file);
         case 'mastodon':
           return publishToMastodon(caption, file);
         case 'reddit':
