@@ -10,12 +10,11 @@ jobs:
       fail-fast: false
       matrix:
         node-version:
-          - 14
           - 16
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - run: yarn
+      - run: YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn
       - run: yarn test
