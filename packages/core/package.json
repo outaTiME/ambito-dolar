@@ -1,7 +1,7 @@
 {
   "name": "@ambito-dolar/core",
   "private": true,
-  "version": "3.3.0",
+  "version": "3.3.1",
   "dependencies": {
     "@jsonurl/jsonurl": "^1.1.7",
     "lodash.isempty": "^4.4.0",
