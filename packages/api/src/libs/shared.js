@@ -20,6 +20,7 @@ import zlib from 'zlib';
 import { publish as publishToInstagram } from './social/instagram';
 import { publish as publishToMastodon } from './social/mastodon';
 import { publish as publishToReddit } from './social/reddit';
+import { publish as publishToTwitter } from './social/twitter';
 
 // defaults
 
@@ -581,24 +582,54 @@ const triggerSendSocialNotificationsEvent = async (caption, image_url) =>
     ...(image_url && { value2: image_url }),
   });
 
-const getSocialTriggers = (targets, caption, url, file, story_file) =>
-  _.chain(targets ?? ['ifttt', 'instagram', 'mastodon', 'reddit'])
+const triggerSocials = async (targets, caption, url, file, story_file) => {
+  const promises = _.chain(
+    targets ?? ['ifttt', 'instagram', 'mastodon', 'reddit', 'twitter']
+  )
     .map((target) => {
+      let promise;
       switch (target) {
         case 'ifttt':
-          return triggerSendSocialNotificationsEvent(caption, url);
+          promise = triggerSendSocialNotificationsEvent(caption, url);
+          break;
         case 'instagram':
-          return file && publishToInstagram(file, caption, story_file);
+          if (file) {
+            promise = publishToInstagram(file, caption, story_file);
+          }
+          break;
         case 'mastodon':
-          return publishToMastodon(caption, file);
+          promise = publishToMastodon(caption, file);
+          break;
         case 'reddit':
-          return publishToReddit(caption, url);
+          promise = publishToReddit(caption, url);
+          break;
+        case 'twitter':
+          promise = publishToTwitter(caption, file);
+          break;
+      }
+      if (promise) {
+        return [target, promise];
       }
       // invalid
     })
     // remove falsey
     .compact()
+    .map(([target, promise]) =>
+      // ignore error and trace
+      promise.catch((error) => {
+        console.warn(
+          'Unable to trigger social',
+          JSON.stringify({
+            target,
+            error: error.message,
+          })
+        );
+      })
+    )
     .value();
+  // remove errors
+  return Promise.all(promises).then(_.compact);
+};
 
 const storeImgurFile = async (image) =>
   // fetchRetry('https://api.imgur.com/3/image', {
@@ -674,7 +705,7 @@ export default {
   triggerSocialNotifyEvent,
   triggerFundingNotifyEvent,
   triggerSendSocialNotificationsEvent,
-  getSocialTriggers,
+  triggerSocials,
   storeImgurFile,
   fetchImage,
   wrapHandler,

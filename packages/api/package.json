@@ -25,6 +25,7 @@
     "puppeteer-core": "19.7.3",
     "reddit": "^1.2.1",
     "semver": "^7.3.8",
-    "sharp": "^0.31.3"
+    "sharp": "^0.32.0",
+    "twitter-api-v2": "^1.14.2"
   }
 }

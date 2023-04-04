@@ -17,7 +17,6 @@ export const handler = Shared.wrapHandler(async (event) => {
     'Recordá que tu contribución es de suma importancia para el desarrollo y mantenimiento de esta aplicación.',
     'https://cafecito.app/ambitodolar',
   ].join(' ');
-  const promises = [];
   try {
     const {
       target_url: image_url,
@@ -29,16 +28,19 @@ export const handler = Shared.wrapHandler(async (event) => {
     if (generate_only === true) {
       return { image_url };
     }
-    promises.push(
-      ...Shared.getSocialTriggers(targets, caption, image_url, file, story_file)
+    const results = await Shared.triggerSocials(
+      targets,
+      caption,
+      image_url,
+      file,
+      story_file
     );
+    console.info('Completed', JSON.stringify(results));
+    return results;
   } catch (error) {
     console.warn(
       'Unable to generate the screenshot for notification',
       JSON.stringify({ error: error.message })
     );
   }
-  const results = await Promise.all(promises);
-  console.info('Completed', JSON.stringify(results));
-  return results;
 });

@@ -25,7 +25,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       targets,
     })
   );
-  const promises = [];
+  let results;
   if (
     type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE ||
     generate_only === true
@@ -43,14 +43,12 @@ export const handler = Shared.wrapHandler(async (event) => {
       if (generate_only === true) {
         return { image_url };
       }
-      promises.push(
-        ...Shared.getSocialTriggers(
-          targets,
-          caption,
-          image_url,
-          file,
-          story_file
-        )
+      results = await Shared.triggerSocials(
+        targets,
+        caption,
+        image_url,
+        file,
+        story_file
       );
     } catch (error) {
       console.warn(
@@ -61,10 +59,9 @@ export const handler = Shared.wrapHandler(async (event) => {
     }
   }
   // when NOTIFICATION_VARIATION_TYPE or error
-  if (promises.length === 0) {
-    promises.push(...Shared.getSocialTriggers(targets, caption));
+  if (!results) {
+    results = await Shared.triggerSocials(targets, caption);
   }
-  const results = await Promise.all(promises);
   console.info('Completed', JSON.stringify(results));
   return results;
   // screenshot generation on local environment
