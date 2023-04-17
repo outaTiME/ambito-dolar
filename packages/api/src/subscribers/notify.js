@@ -354,6 +354,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       ExpressionAttributeValues: expression_attribute_values,
     }),
   };
+  // FIXME: may throw 'ProvisionedThroughputExceededException' in case of many consecutive calls
   const items = await Shared.getAllDataFromDynamoDB(params);
   const results = await notify(
     items,
