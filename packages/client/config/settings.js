@@ -12,6 +12,7 @@ const DEVICE_TYPE = DeviceInfo.getDeviceType();
 const IS_TABLET = DEVICE_TYPE === 'Tablet';
 const IS_HANDSET = DEVICE_TYPE === 'Handset';
 const IS_IPAD = Platform.OS === 'ios' && IS_TABLET;
+const HAPTICS_ENABLED = Platform.OS === 'ios';
 
 // const HEADER_HEIGHT = 54 + Constants.statusBarHeight;
 const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = Dimensions.get('window');
@@ -38,6 +39,9 @@ const MAX_DAYS_FOR_REVIEW = 5;
 const MAX_NUMBER_OF_STATS = 7; // 1 week
 const STILL_LOADING_TIMEOUT = 10 * 1000; // 10 secs
 const ANIMATION_DURATION = 250;
+// half from longPress default
+// const INTERACTION_DELAY = 185;
+const INTERACTION_DELAY = 120;
 // same as header fonts.title size
 const ICON_SIZE = 24;
 const SOCIAL_ICON_SIZE = 17;
@@ -130,6 +134,7 @@ export default {
   MAX_NUMBER_OF_STATS,
   STILL_LOADING_TIMEOUT,
   ANIMATION_DURATION,
+  INTERACTION_DELAY,
   ICON_SIZE,
   SOCIAL_ICON_SIZE,
   APP_IGNORE_UPDATE_EXPIRATION,
@@ -150,6 +155,7 @@ export default {
   IS_TABLET,
   IS_HANDSET,
   IS_IPAD,
+  HAPTICS_ENABLED,
   // https://sarunw.com/posts/dark-color-cheat-sheet/
   // https://noahgilmore.com/blog/dark-mode-uicolor-compatibility/
   getLightColor(alternative = false) {

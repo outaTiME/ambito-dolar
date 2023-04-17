@@ -17,7 +17,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>6.5.0</string>
+    <string>6.6.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -36,7 +36,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>90</string>
+    <string>93</string>
     <key>EXDefaultScreenOrientationMask</key>
     <string>UIInterfaceOrientationMaskAll</string>
     <key>ITSAppUsesNonExemptEncryption</key>
@@ -50,9 +50,9 @@
       <string>apollo</string>
       <string>reddit</string>
       <string>github</string>
-      <string>itms-apps</string>
       <string>ivory</string>
       <string>mastodon</string>
+      <string>itms-apps</string>
     </array>
     <key>LSRequiresIPhoneOS</key>
     <true/>

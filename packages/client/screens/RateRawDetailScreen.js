@@ -59,13 +59,19 @@ const RateRawDetailScreen = ({
   const chartStats = React.useMemo(() => {
     // prevent back and forth on chart when revalidation
     const current_historical_rates = historical_rates || prev_historical_rates;
-    if (current_historical_rates && (rangeIndex === 1 || rangeIndex === 2)) {
+    if (current_historical_rates && rangeIndex > 0) {
       const stats = current_historical_rates[type] || [];
       if (stats.length > 0) {
         const moment_to = DateUtils.get(stats[stats.length - 1][0]);
         const moment_from =
           rangeIndex === 1
             ? moment_to.clone().subtract(1, 'month')
+            : rangeIndex === 2
+            ? moment_to.clone().subtract(3, 'months')
+            : rangeIndex === 3
+            ? moment_to.clone().subtract(6, 'months')
+            : rangeIndex === 4
+            ? moment_to.clone().startOf('year')
             : DateUtils.get(stats[0][0]);
         return stats.filter(([timestamp]) =>
           DateUtils.get(timestamp).isBetween(

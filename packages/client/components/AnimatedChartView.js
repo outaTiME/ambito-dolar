@@ -1,7 +1,7 @@
 import * as d3Shape from 'd3-shape';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { LongPressGestureHandler } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedGestureHandler,
@@ -23,7 +23,6 @@ const DEBUG_CHART = false;
 const CURSOR_SIZE = 10;
 const CURSOR_CONTAINER_SIZE = Settings.PADDING * 2;
 const EXTRA_OFFSET = Settings.PADDING;
-const HAPTICS_ENABLED = Platform.OS === 'ios';
 
 const springDefaultConfig = {
   damping: 15,
@@ -36,14 +35,14 @@ const Cursor = ({ length, isLoading, point, width, color }) => {
   const onGestureEvent = useAnimatedGestureHandler({
     onActive: (event) => {
       if (!isActive.value) {
-        HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
+        Settings.HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
       }
       isActive.value = true;
       length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
     },
     onEnd: () => {
       length.value = width;
-      HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
+      Settings.HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
       isActive.value = false;
     },
   });
@@ -65,7 +64,7 @@ const Cursor = ({ length, isLoading, point, width, color }) => {
   return (
     <LongPressGestureHandler
       onGestureEvent={onGestureEvent}
-      minDurationMs={60}
+      minDurationMs={Settings.INTERACTION_DELAY}
       maxDist={Number.MAX_SAFE_INTEGER}
       shouldCancelWhenOutside={false}
       // hitSlop={Settings.PADDING}

@@ -8,7 +8,7 @@
 			<key>INEnumDisplayName</key>
 			<string>Value Type</string>
 			<key>INEnumDisplayNameID</key>
-			<string>kevQ15</string>
+			<string>oEufjL</string>
 			<key>INEnumGeneratesHeader</key>
 			<true/>
 			<key>INEnumName</key>
@@ -21,7 +21,7 @@
 					<key>INEnumValueDisplayName</key>
 					<string>unknown</string>
 					<key>INEnumValueDisplayNameID</key>
-					<string>UPw3gA</string>
+					<string>nXavPS</string>
 					<key>INEnumValueName</key>
 					<string>unknown</string>
 				</dict>
@@ -29,7 +29,7 @@
 					<key>INEnumValueDisplayName</key>
 					<string>Compra</string>
 					<key>INEnumValueDisplayNameID</key>
-					<string>K7GNUY</string>
+					<string>pfnzhV</string>
 					<key>INEnumValueIndex</key>
 					<integer>1</integer>
 					<key>INEnumValueName</key>
@@ -39,7 +39,7 @@
 					<key>INEnumValueDisplayName</key>
 					<string>Promedio</string>
 					<key>INEnumValueDisplayNameID</key>
-					<string>2L3ggI</string>
+					<string>g8v3kF</string>
 					<key>INEnumValueIndex</key>
 					<integer>2</integer>
 					<key>INEnumValueName</key>
@@ -49,7 +49,7 @@
 					<key>INEnumValueDisplayName</key>
 					<string>Venta</string>
 					<key>INEnumValueDisplayNameID</key>
-					<string>pHY7Qk</string>
+					<string>7SfjBD</string>
 					<key>INEnumValueIndex</key>
 					<integer>3</integer>
 					<key>INEnumValueName</key>
@@ -63,16 +63,18 @@
 	<key>INIntentDefinitionNamespace</key>
 	<string>88xZPY</string>
 	<key>INIntentDefinitionSystemVersion</key>
-	<string>22C65</string>
+	<string>22E261</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>14C18</string>
+	<string>14E222b</string>
 	<key>INIntentDefinitionToolsVersion</key>
-	<string>14.2</string>
+	<string>14.3</string>
 	<key>INIntents</key>
 	<array>
 		<dict>
 			<key>INIntentCategory</key>
 			<string>information</string>
+			<key>INIntentDescription</key>
+			<string>Seleccionar cotización</string>
 			<key>INIntentDescriptionID</key>
 			<string>tVvJ9c</string>
 			<key>INIntentEligibleForWidgets</key>
@@ -91,7 +93,7 @@
 					<key>INIntentParameterDisplayName</key>
 					<string>Cotización</string>
 					<key>INIntentParameterDisplayNameID</key>
-					<string>VeD0tt</string>
+					<string>8HNm8u</string>
 					<key>INIntentParameterDisplayPriority</key>
 					<integer>1</integer>
 					<key>INIntentParameterName</key>
@@ -128,7 +130,7 @@
 					<key>INIntentParameterDisplayName</key>
 					<string>Mostrar</string>
 					<key>INIntentParameterDisplayNameID</key>
-					<string>5sHUsS</string>
+					<string>ATwB6u</string>
 					<key>INIntentParameterDisplayPriority</key>
 					<integer>2</integer>
 					<key>INIntentParameterEnumType</key>
@@ -155,6 +157,26 @@
 							<true/>
 							<key>INIntentParameterPromptDialogType</key>
 							<string>Primary</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogFormatString</key>
+							<string>There are ${count} options matching ‘${valueType}’.</string>
+							<key>INIntentParameterPromptDialogFormatStringID</key>
+							<string>lYn6uD</string>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>DisambiguationIntroduction</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogFormatString</key>
+							<string>Just to confirm, you wanted ‘${valueType}’?</string>
+							<key>INIntentParameterPromptDialogFormatStringID</key>
+							<string>wDOI0z</string>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Confirmation</string>
 						</dict>
 					</array>
 					<key>INIntentParameterTag</key>
@@ -191,14 +213,16 @@
 		<dict>
 			<key>INIntentCategory</key>
 			<string>information</string>
+			<key>INIntentDescription</key>
+			<string>Seleccionar cotizaciones</string>
 			<key>INIntentDescriptionID</key>
-			<string>NzSlXC</string>
+			<string>awIy14</string>
 			<key>INIntentEligibleForWidgets</key>
 			<true/>
 			<key>INIntentIneligibleForSuggestions</key>
 			<true/>
 			<key>INIntentLastParameterTag</key>
-			<integer>5</integer>
+			<integer>6</integer>
 			<key>INIntentName</key>
 			<string>SelectRateTypes</string>
 			<key>INIntentParameters</key>
@@ -260,7 +284,7 @@
 					<key>INIntentParameterDisplayName</key>
 					<string>Cotizaciones</string>
 					<key>INIntentParameterDisplayNameID</key>
-					<string>XYs91y</string>
+					<string>mMMBEY</string>
 					<key>INIntentParameterDisplayPriority</key>
 					<integer>1</integer>
 					<key>INIntentParameterFixedSizeArray</key>
@@ -301,7 +325,7 @@
 					<key>INIntentParameterDisplayName</key>
 					<string>Mostrar</string>
 					<key>INIntentParameterDisplayNameID</key>
-					<string>gtExRu</string>
+					<string>3pxwCJ</string>
 					<key>INIntentParameterDisplayPriority</key>
 					<integer>2</integer>
 					<key>INIntentParameterEnumType</key>
@@ -335,7 +359,7 @@
 							<key>INIntentParameterPromptDialogFormatString</key>
 							<string>There are ${count} options matching ‘${valueType}’.</string>
 							<key>INIntentParameterPromptDialogFormatStringID</key>
-							<string>MeFFNy</string>
+							<string>v6zxOy</string>
 							<key>INIntentParameterPromptDialogType</key>
 							<string>DisambiguationIntroduction</string>
 						</dict>
@@ -345,13 +369,13 @@
 							<key>INIntentParameterPromptDialogFormatString</key>
 							<string>Just to confirm, you wanted ‘${valueType}’?</string>
 							<key>INIntentParameterPromptDialogFormatStringID</key>
-							<string>wwigdH</string>
+							<string>wcG5ws</string>
 							<key>INIntentParameterPromptDialogType</key>
 							<string>Confirmation</string>
 						</dict>
 					</array>
 					<key>INIntentParameterTag</key>
-					<integer>5</integer>
+					<integer>6</integer>
 					<key>INIntentParameterType</key>
 					<string>Integer</string>
 				</dict>
@@ -375,7 +399,7 @@
 			<key>INIntentTitle</key>
 			<string>Select Rate Types</string>
 			<key>INIntentTitleID</key>
-			<string>8xttmQ</string>
+			<string>KJVrGQ</string>
 			<key>INIntentType</key>
 			<string>Custom</string>
 			<key>INIntentVerb</key>
@@ -388,7 +412,7 @@
 			<key>INTypeDisplayName</key>
 			<string>Rate Type</string>
 			<key>INTypeDisplayNameID</key>
-			<string>rq2xbP</string>
+			<string>bCcw0O</string>
 			<key>INTypeLastPropertyTag</key>
 			<integer>99</integer>
 			<key>INTypeName</key>

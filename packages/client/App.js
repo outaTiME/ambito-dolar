@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/order
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'expo-dev-client';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
@@ -11,8 +13,8 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import { Text, TextInput, Platform } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootSiblingParent } from 'react-native-root-siblings';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components';
@@ -93,12 +95,17 @@ export default function App() {
     return null;
   }
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-          <ThemedApp />
-        </GestureHandlerRootView>
-      </PersistGate>
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <GestureHandlerRootView
+            style={{ flex: 1 }}
+            onLayout={onLayoutRootView}
+          >
+            <ThemedApp />
+          </GestureHandlerRootView>
+        </PersistGate>
+      </Provider>
+    </SafeAreaProvider>
   );
 }

@@ -1,10 +1,5 @@
 import React from 'react';
 import { Text, Platform } from 'react-native';
-import {
-  // ScaleDecorator,
-  ShadowDecorator,
-  // OpacityDecorator,
-} from 'react-native-draggable-flatlist';
 
 import { Separator } from './CardView';
 import ContentView from './ContentView';
@@ -94,16 +89,24 @@ const FixedFlatList = ({
   const { theme } = Helper.useTheme();
   const { shadowColor, shadowOpacity, shadowRadius, elevation } =
     Helper.getShadowDefaults();
+
   const renderItem = React.useCallback(
     ({ item: { component }, index, drag, isActive, getIndex, onStartDrag }) => {
       index = index ?? getIndex();
-      const contents = (
+      return (
         <ContentView
           contentContainerStyle={[
             {
               backgroundColor: Settings.getContentColor(theme, false, isModal),
               marginVertical: 0,
               marginHorizontal: Settings.CARD_PADDING * 2,
+              // add shadow while dragging
+              ...(isActive && {
+                shadowColor,
+                shadowOpacity,
+                shadowRadius,
+                elevation,
+              }),
             },
             index === 0 && {
               borderTopLeftRadius: Settings.BORDER_RADIUS,
@@ -125,22 +128,6 @@ const FixedFlatList = ({
               })}
         </ContentView>
       );
-      // react-native-draggable-flatlist
-      if (drag) {
-        return (
-          <ShadowDecorator
-            {...{
-              color: shadowColor,
-              opacity: shadowOpacity,
-              radius: shadowRadius,
-              elevation,
-            }}
-          >
-            {contents}
-          </ShadowDecorator>
-        );
-      }
-      return contents;
     },
     [theme, data, isModal]
   );

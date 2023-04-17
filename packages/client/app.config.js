@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
-const version = '6.5.0';
-const buildNumber = 90;
+const version = '6.6.0';
+const buildNumber = 93;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -65,6 +65,7 @@ export default {
   },
   assetBundlePatterns: ['**/*'],
   plugins: [
+    'expo-localization',
     'sentry-expo',
     [
       '@config-plugins/react-native-quick-actions',
@@ -84,9 +85,17 @@ export default {
       },
     ],
     './plugins/withAndroidSplashScreen.js',
+    /* [
+      'expo-build-properties',
+      {
+        ios: {
+          flipper: false,
+        },
+      },
+    ], */
   ],
   splash: LIGHT_SPLASH,
-  // jsEngine: 'hermes',
+  jsEngine: 'hermes',
   ios: {
     bundleIdentifier: 'im.outa.AmbitoDolar',
     buildNumber: buildNumber.toString(),
@@ -114,9 +123,9 @@ export default {
         'apollo',
         'reddit',
         'github',
-        'itms-apps',
         'ivory',
         'mastodon',
+        'itms-apps',
       ],
       UIViewControllerBasedStatusBarAppearance: true,
     },
@@ -140,14 +149,17 @@ export default {
     allowBackup: false,
     softwareKeyboardLayoutMode: 'pan',
   },
-  ...(process.env.SENTRY_HOOK_CONFIG_JSON && {
-    hooks: {
-      postPublish: [
-        {
-          file: 'sentry-expo/upload-sourcemaps',
-          config: JSON.parse(process.env.SENTRY_HOOK_CONFIG_JSON),
+  hooks: {
+    postPublish: [
+      {
+        file: 'sentry-expo/upload-sourcemaps',
+        config: {
+          organization: 'ambito-dolar',
+          project: 'expo',
+          // https://github.com/expo/sentry-expo/issues/256#issuecomment-1164017755
+          // authToken: false,
         },
-      ],
-    },
-  }),
+      },
+    ],
+  },
 };

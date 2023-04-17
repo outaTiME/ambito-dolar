@@ -7,7 +7,7 @@ import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
-import SegmentedControlTab from '../components/SegmentedControlTab';
+import SegmentedControlTab from '../components/SegmentedControl';
 import VictoryRateChartView from '../components/VictoryRateChartView';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
@@ -18,7 +18,14 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const RANGE_TYPES = [I18n.t('week'), I18n.t('month'), I18n.t('year')];
+const RANGE_TYPES = [
+  I18n.t('one_week'),
+  I18n.t('one_month'),
+  I18n.t('three_months'),
+  I18n.t('six_months'),
+  I18n.t('year'),
+  I18n.t('one_year'),
+];
 
 const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
   const [rangeIndex, setRangeIndex] = React.useState(0);
@@ -58,16 +65,19 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
         // prevent back and forth on chart when revalidation
         const current_historical_rates =
           historical_rates || prev_historical_rates;
-        if (
-          current_historical_rates &&
-          (rangeIndex === 1 || rangeIndex === 2)
-        ) {
+        if (current_historical_rates && rangeIndex > 0) {
           const stats = current_historical_rates[type] || [];
           if (stats.length > 0) {
             const moment_to = DateUtils.get(stats[stats.length - 1][0]);
             const moment_from =
               rangeIndex === 1
                 ? moment_to.clone().subtract(1, 'month')
+                : rangeIndex === 2
+                ? moment_to.clone().subtract(3, 'months')
+                : rangeIndex === 3
+                ? moment_to.clone().subtract(6, 'months')
+                : rangeIndex === 4
+                ? moment_to.clone().startOf('year')
                 : DateUtils.get(stats[0][0]);
             setChartStats(
               stats.filter(([timestamp]) =>
@@ -95,7 +105,7 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
   React.useEffect(() => {
     const must_revalidate =
       prev_base_stats !== undefined && base_stats !== prev_base_stats;
-    if (must_revalidate && (rangeIndex === 1 || rangeIndex === 2)) {
+    if (must_revalidate && rangeIndex > 0) {
       updateHistoricalRates().catch(() => {
         // silent ignore when error
       });
@@ -105,11 +115,7 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
   React.useEffect(() => {
     const range_updated =
       prev_rangeIndex !== undefined && prev_rangeIndex !== rangeIndex;
-    if (
-      range_updated &&
-      (rangeIndex === 1 || rangeIndex === 2) &&
-      !historical_rates
-    ) {
+    if (range_updated && rangeIndex > 0 && !historical_rates) {
       setLoading(true);
       // wait at least ANIMATION_DURATION before request to prevent fast dialogs on fails
       Helper.delay(Settings.ANIMATION_DURATION).then(() =>
@@ -154,8 +160,8 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
         const official_rate_value = AmbitoDolar.getRateValue(official_stat);
         // calculate from open / close rate and truncate
         /* const rate_change_percent = AmbitoDolar.getNumber(
-        (rate_value / official_rate_value - 1) * 100
-      ); */
+          (rate_value / official_rate_value - 1) * 100
+        ); */
         return AmbitoDolar.getRateChange([
           null,
           rate_value,
@@ -178,6 +184,7 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
         selectedIndex={rangeIndex}
         onTabPress={onTabPress}
         enabled={loading === false}
+        animated
       />
       <CardView style={{ flex: 1 }} plain>
         <View
@@ -220,7 +227,7 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
         <CardView plain>
           <CardItemView
             title={I18n.t('all-time_high')}
-            titleDetail={DateUtils.humanize(rate.max_date, 4)}
+            titleDetail={DateUtils.humanize(rate.max_date, 5)}
             useSwitch={false}
             value={Helper.getCurrency(rate.max)}
           />

@@ -7,56 +7,56 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0411E565E5B04DDDA9EF5B2F /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5655BD6FBA9249369387F418 /* noop-file.swift */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		311E88742E7940028BD04581 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01B3F524842449AB6C27D8A /* noop-file.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		96905EF65AED1B983A6B3ABC /* libPods-mbitoDlar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C2E754DB295A6E7900EED1DD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2E754DA295A6E7900EED1DD /* WidgetKit.framework */; };
-		C2E754DD295A6E7900EED1DD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2E754DC295A6E7900EED1DD /* SwiftUI.framework */; };
-		C2E754E2295A6E7900EED1DD /* RateWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E754E1295A6E7900EED1DD /* RateWidgets.swift */; };
-		C2E754E5295A6E7A00EED1DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2E754E4295A6E7A00EED1DD /* Assets.xcassets */; };
-		C2E754EB295A6E7A00EED1DD /* RateWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2E754D9295A6E7900EED1DD /* RateWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C2E754F0295A733200EED1DD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */; };
-		C2E754F1295A733200EED1DD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */; };
-		C2E754F7295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf in Resources */ = {isa = PBXBuildFile; fileRef = C2E754F6295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf */; };
-		C2E754FE295A9CD200EED1DD /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2E754FD295A9CD200EED1DD /* Intents.framework */; };
-		C2E75501295A9CD200EED1DD /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E75500295A9CD200EED1DD /* IntentHandler.swift */; };
-		C2E75505295A9CD200EED1DD /* RateIntents.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2E754FC295A9CD200EED1DD /* RateIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C2E75509295A9CFA00EED1DD /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */; };
-		C2E7550D295A9D6300EED1DD /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E7550C295A9D6300EED1DD /* Helper.swift */; };
-		C2E7550E295A9D6300EED1DD /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E7550C295A9D6300EED1DD /* Helper.swift */; };
+		C2507AD129BAC9CE0018DDCA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2507AD029BAC9CE0018DDCA /* WidgetKit.framework */; };
+		C2507AD329BAC9CE0018DDCA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2507AD229BAC9CE0018DDCA /* SwiftUI.framework */; };
+		C2507AD829BAC9CE0018DDCA /* RateWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2507AD729BAC9CE0018DDCA /* RateWidgets.swift */; };
+		C2507ADB29BAC9CF0018DDCA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2507ADA29BAC9CF0018DDCA /* Assets.xcassets */; };
+		C2507AE129BAC9CF0018DDCA /* RateWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2507ACF29BAC9CE0018DDCA /* RateWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C2507AE629BACC500018DDCA /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2507AE929BACC500018DDCA /* RateWidgets.intentdefinition */; };
+		C2507AE729BACC500018DDCA /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2507AE929BACC500018DDCA /* RateWidgets.intentdefinition */; };
+		C2507AED29BACC9C0018DDCA /* FiraGO-Regular-Minimal.otf in Resources */ = {isa = PBXBuildFile; fileRef = C2507AEC29BACC9C0018DDCA /* FiraGO-Regular-Minimal.otf */; };
+		C2507AF429BACCFB0018DDCA /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2507AF329BACCFB0018DDCA /* Intents.framework */; };
+		C2507AF729BACCFB0018DDCA /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2507AF629BACCFB0018DDCA /* IntentHandler.swift */; };
+		C2507AFB29BACCFB0018DDCA /* RateIntents.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2507AF229BACCFB0018DDCA /* RateIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C2507AFF29BACD110018DDCA /* RateWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C2507AE929BACC500018DDCA /* RateWidgets.intentdefinition */; };
+		C2507B0229BACD530018DDCA /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2507B0129BACD530018DDCA /* Helper.swift */; };
+		C2507B0329BACD530018DDCA /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2507B0129BACD530018DDCA /* Helper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		C2E754E9295A6E7A00EED1DD /* PBXContainerItemProxy */ = {
+		C2507ADF29BAC9CF0018DDCA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C2E754D8295A6E7900EED1DD;
+			remoteGlobalIDString = C2507ACE29BAC9CE0018DDCA;
 			remoteInfo = RateWidgetsExtension;
 		};
-		C2E75503295A9CD200EED1DD /* PBXContainerItemProxy */ = {
+		C2507AF929BACCFB0018DDCA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C2E754FB295A9CD200EED1DD;
+			remoteGlobalIDString = C2507AF129BACCFB0018DDCA;
 			remoteInfo = RateIntents;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		C2E754EF295A6E7A00EED1DD /* Embed Foundation Extensions */ = {
+		C2507AE529BAC9CF0018DDCA /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				C2E75505295A9CD200EED1DD /* RateIntents.appex in Embed Foundation Extensions */,
-				C2E754EB295A6E7A00EED1DD /* RateWidgetsExtension.appex in Embed Foundation Extensions */,
+				C2507AFB29BACCFB0018DDCA /* RateIntents.appex in Embed Foundation Extensions */,
+				C2507AE129BAC9CF0018DDCA /* RateWidgetsExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,27 +71,27 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mbitoDlar/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mbitoDlar/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mbitoDlar/main.m; sourceTree = "<group>"; };
-		5655BD6FBA9249369387F418 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "mbitoDlar/noop-file.swift"; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mbitoDlar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-mbitoDlar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.debug.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-mbitoDlar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.release.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = mbitoDlar/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C2E754D9295A6E7900EED1DD /* RateWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		C2E754DA295A6E7900EED1DD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		C2E754DC295A6E7900EED1DD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		C2E754E1295A6E7900EED1DD /* RateWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateWidgets.swift; sourceTree = "<group>"; };
-		C2E754E4295A6E7A00EED1DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		C2E754E6295A6E7A00EED1DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C2E754F2295A733200EED1DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/RateWidgets.intentdefinition; sourceTree = "<group>"; };
-		C2E754F6295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FiraGO-Regular-Minimal.otf"; path = "../../assets/fonts/FiraGO-Regular-Minimal.otf"; sourceTree = "<group>"; };
-		C2E754FC295A9CD200EED1DD /* RateIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		C2E754FD295A9CD200EED1DD /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
-		C2E75500295A9CD200EED1DD /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
-		C2E75502295A9CD200EED1DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C2E7550C295A9D6300EED1DD /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
-		C2FAE76C295F0F9D00D90AF4 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/RateWidgets.strings"; sourceTree = "<group>"; };
+		C2507ACF29BAC9CE0018DDCA /* RateWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2507AD029BAC9CE0018DDCA /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C2507AD229BAC9CE0018DDCA /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C2507AD729BAC9CE0018DDCA /* RateWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateWidgets.swift; sourceTree = "<group>"; };
+		C2507ADA29BAC9CF0018DDCA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C2507ADC29BAC9CF0018DDCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2507AE829BACC500018DDCA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/RateWidgets.intentdefinition; sourceTree = "<group>"; };
+		C2507AEC29BACC9C0018DDCA /* FiraGO-Regular-Minimal.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FiraGO-Regular-Minimal.otf"; path = "../../assets/fonts/FiraGO-Regular-Minimal.otf"; sourceTree = "<group>"; };
+		C2507AF229BACCFB0018DDCA /* RateIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RateIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2507AF329BACCFB0018DDCA /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		C2507AF629BACCFB0018DDCA /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
+		C2507AF829BACCFB0018DDCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2507B0129BACD530018DDCA /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		C29F8C0129ED70E9005A4F50 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/RateWidgets.strings"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F01B3F524842449AB6C27D8A /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "mbitoDlar/noop-file.swift"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-mbitoDlar/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -104,20 +104,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2E754D6295A6E7900EED1DD /* Frameworks */ = {
+		C2507ACC29BAC9CE0018DDCA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2E754DD295A6E7900EED1DD /* SwiftUI.framework in Frameworks */,
-				C2E754DB295A6E7900EED1DD /* WidgetKit.framework in Frameworks */,
+				C2507AD329BAC9CE0018DDCA /* SwiftUI.framework in Frameworks */,
+				C2507AD129BAC9CE0018DDCA /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2E754F9295A9CD200EED1DD /* Frameworks */ = {
+		C2507AEF29BACCFB0018DDCA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2E754FE295A9CD200EED1DD /* Intents.framework in Frameworks */,
+				C2507AF429BACCFB0018DDCA /* Intents.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +135,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				5655BD6FBA9249369387F418 /* noop-file.swift */,
+				F01B3F524842449AB6C27D8A /* noop-file.swift */,
 			);
 			name = mbitoDlar;
 			sourceTree = "<group>";
@@ -145,9 +145,9 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */,
-				C2E754DA295A6E7900EED1DD /* WidgetKit.framework */,
-				C2E754DC295A6E7900EED1DD /* SwiftUI.framework */,
-				C2E754FD295A9CD200EED1DD /* Intents.framework */,
+				C2507AD029BAC9CE0018DDCA /* WidgetKit.framework */,
+				C2507AD229BAC9CE0018DDCA /* SwiftUI.framework */,
+				C2507AF329BACCFB0018DDCA /* Intents.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -164,8 +164,8 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* mbitoDlar */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				C2E754DE295A6E7900EED1DD /* RateWidgets */,
-				C2E754FF295A9CD200EED1DD /* RateIntents */,
+				C2507AD429BAC9CE0018DDCA /* RateWidgets */,
+				C2507AF529BACCFB0018DDCA /* RateIntents */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
@@ -180,8 +180,8 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* mbitoDlar.app */,
-				C2E754D9295A6E7900EED1DD /* RateWidgetsExtension.appex */,
-				C2E754FC295A9CD200EED1DD /* RateIntents.appex */,
+				C2507ACF29BAC9CE0018DDCA /* RateWidgetsExtension.appex */,
+				C2507AF229BACCFB0018DDCA /* RateIntents.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -203,32 +203,32 @@
 			path = mbitoDlar/Supporting;
 			sourceTree = "<group>";
 		};
-		C2E754DE295A6E7900EED1DD /* RateWidgets */ = {
+		C2507AD429BAC9CE0018DDCA /* RateWidgets */ = {
 			isa = PBXGroup;
 			children = (
-				C2E7550B295A9D3600EED1DD /* Utils */,
-				C2E754F6295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf */,
-				C2E754E1295A6E7900EED1DD /* RateWidgets.swift */,
-				C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */,
-				C2E754E4295A6E7A00EED1DD /* Assets.xcassets */,
-				C2E754E6295A6E7A00EED1DD /* Info.plist */,
+				C2507B0029BACD2F0018DDCA /* Utils */,
+				C2507AEC29BACC9C0018DDCA /* FiraGO-Regular-Minimal.otf */,
+				C2507AD729BAC9CE0018DDCA /* RateWidgets.swift */,
+				C2507AE929BACC500018DDCA /* RateWidgets.intentdefinition */,
+				C2507ADA29BAC9CF0018DDCA /* Assets.xcassets */,
+				C2507ADC29BAC9CF0018DDCA /* Info.plist */,
 			);
 			path = RateWidgets;
 			sourceTree = "<group>";
 		};
-		C2E754FF295A9CD200EED1DD /* RateIntents */ = {
+		C2507AF529BACCFB0018DDCA /* RateIntents */ = {
 			isa = PBXGroup;
 			children = (
-				C2E75500295A9CD200EED1DD /* IntentHandler.swift */,
-				C2E75502295A9CD200EED1DD /* Info.plist */,
+				C2507AF629BACCFB0018DDCA /* IntentHandler.swift */,
+				C2507AF829BACCFB0018DDCA /* Info.plist */,
 			);
 			path = RateIntents;
 			sourceTree = "<group>";
 		};
-		C2E7550B295A9D3600EED1DD /* Utils */ = {
+		C2507B0029BACD2F0018DDCA /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				C2E7550C295A9D6300EED1DD /* Helper.swift */,
+				C2507B0129BACD530018DDCA /* Helper.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -264,27 +264,28 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				F6055B1FBCBF4DBD9CD4F50B /* Upload Debug Symbols to Sentry */,
-				C2E754EF295A6E7A00EED1DD /* Embed Foundation Extensions */,
+				8067CBB883904445BF62D5CF /* Upload Debug Symbols to Sentry */,
+				76E18F0776DAC6B0B05C38E3 /* [CP] Embed Pods Frameworks */,
+				C2507AE529BAC9CF0018DDCA /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				C2E754EA295A6E7A00EED1DD /* PBXTargetDependency */,
-				C2E75504295A9CD200EED1DD /* PBXTargetDependency */,
+				C2507AE029BAC9CF0018DDCA /* PBXTargetDependency */,
+				C2507AFA29BACCFB0018DDCA /* PBXTargetDependency */,
 			);
 			name = mbitoDlar;
 			productName = mbitoDlar;
 			productReference = 13B07F961A680F5B00A75B9A /* mbitoDlar.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C2E754D8295A6E7900EED1DD /* RateWidgetsExtension */ = {
+		C2507ACE29BAC9CE0018DDCA /* RateWidgetsExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C2E754EC295A6E7A00EED1DD /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */;
+			buildConfigurationList = C2507AE229BAC9CF0018DDCA /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */;
 			buildPhases = (
-				C2E754D5295A6E7900EED1DD /* Sources */,
-				C2E754D6295A6E7900EED1DD /* Frameworks */,
-				C2E754D7295A6E7900EED1DD /* Resources */,
+				C2507ACB29BAC9CE0018DDCA /* Sources */,
+				C2507ACC29BAC9CE0018DDCA /* Frameworks */,
+				C2507ACD29BAC9CE0018DDCA /* Resources */,
 			);
 			buildRules = (
 			);
@@ -292,16 +293,16 @@
 			);
 			name = RateWidgetsExtension;
 			productName = RateWidgetsExtension;
-			productReference = C2E754D9295A6E7900EED1DD /* RateWidgetsExtension.appex */;
+			productReference = C2507ACF29BAC9CE0018DDCA /* RateWidgetsExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		C2E754FB295A9CD200EED1DD /* RateIntents */ = {
+		C2507AF129BACCFB0018DDCA /* RateIntents */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C2E75506295A9CD200EED1DD /* Build configuration list for PBXNativeTarget "RateIntents" */;
+			buildConfigurationList = C2507AFC29BACCFB0018DDCA /* Build configuration list for PBXNativeTarget "RateIntents" */;
 			buildPhases = (
-				C2E754F8295A9CD200EED1DD /* Sources */,
-				C2E754F9295A9CD200EED1DD /* Frameworks */,
-				C2E754FA295A9CD200EED1DD /* Resources */,
+				C2507AEE29BACCFB0018DDCA /* Sources */,
+				C2507AEF29BACCFB0018DDCA /* Frameworks */,
+				C2507AF029BACCFB0018DDCA /* Resources */,
 			);
 			buildRules = (
 			);
@@ -309,7 +310,7 @@
 			);
 			name = RateIntents;
 			productName = RateIntents;
-			productReference = C2E754FC295A9CD200EED1DD /* RateIntents.appex */;
+			productReference = C2507AF229BACCFB0018DDCA /* RateIntents.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -324,11 +325,11 @@
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
 					};
-					C2E754D8295A6E7900EED1DD = {
+					C2507ACE29BAC9CE0018DDCA = {
 						CreatedOnToolsVersion = 14.2;
 						ProvisioningStyle = Automatic;
 					};
-					C2E754FB295A9CD200EED1DD = {
+					C2507AF129BACCFB0018DDCA = {
 						CreatedOnToolsVersion = 14.2;
 						ProvisioningStyle = Automatic;
 					};
@@ -349,8 +350,8 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* mbitoDlar */,
-				C2E754D8295A6E7900EED1DD /* RateWidgetsExtension */,
-				C2E754FB295A9CD200EED1DD /* RateIntents */,
+				C2507ACE29BAC9CE0018DDCA /* RateWidgetsExtension */,
+				C2507AF129BACCFB0018DDCA /* RateIntents */,
 			);
 		};
 /* End PBXProject section */
@@ -366,16 +367,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2E754D7295A6E7900EED1DD /* Resources */ = {
+		C2507ACD29BAC9CE0018DDCA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2E754F7295A73AA00EED1DD /* FiraGO-Regular-Minimal.otf in Resources */,
-				C2E754E5295A6E7A00EED1DD /* Assets.xcassets in Resources */,
+				C2507AED29BACC9C0018DDCA /* FiraGO-Regular-Minimal.otf in Resources */,
+				C2507ADB29BAC9CF0018DDCA /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2E754FA295A9CD200EED1DD /* Resources */ = {
+		C2507AF029BACCFB0018DDCA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -421,6 +422,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		76E18F0776DAC6B0B05C38E3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -449,7 +468,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F6055B1FBCBF4DBD9CD4F50B /* Upload Debug Symbols to Sentry */ = {
+		8067CBB883904445BF62D5CF /* Upload Debug Symbols to Sentry */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -491,53 +510,53 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
-				C2E754F0295A733200EED1DD /* RateWidgets.intentdefinition in Sources */,
+				C2507AE629BACC500018DDCA /* RateWidgets.intentdefinition in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				0411E565E5B04DDDA9EF5B2F /* noop-file.swift in Sources */,
+				311E88742E7940028BD04581 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2E754D5295A6E7900EED1DD /* Sources */ = {
+		C2507ACB29BAC9CE0018DDCA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2E754F1295A733200EED1DD /* RateWidgets.intentdefinition in Sources */,
-				C2E754E2295A6E7900EED1DD /* RateWidgets.swift in Sources */,
-				C2E7550D295A9D6300EED1DD /* Helper.swift in Sources */,
+				C2507AE729BACC500018DDCA /* RateWidgets.intentdefinition in Sources */,
+				C2507AD829BAC9CE0018DDCA /* RateWidgets.swift in Sources */,
+				C2507B0229BACD530018DDCA /* Helper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C2E754F8295A9CD200EED1DD /* Sources */ = {
+		C2507AEE29BACCFB0018DDCA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2E75509295A9CFA00EED1DD /* RateWidgets.intentdefinition in Sources */,
-				C2E75501295A9CD200EED1DD /* IntentHandler.swift in Sources */,
-				C2E7550E295A9D6300EED1DD /* Helper.swift in Sources */,
+				C2507AFF29BACD110018DDCA /* RateWidgets.intentdefinition in Sources */,
+				C2507AF729BACCFB0018DDCA /* IntentHandler.swift in Sources */,
+				C2507B0329BACD530018DDCA /* Helper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		C2E754EA295A6E7A00EED1DD /* PBXTargetDependency */ = {
+		C2507AE029BAC9CF0018DDCA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2E754D8295A6E7900EED1DD /* RateWidgetsExtension */;
-			targetProxy = C2E754E9295A6E7A00EED1DD /* PBXContainerItemProxy */;
+			target = C2507ACE29BAC9CE0018DDCA /* RateWidgetsExtension */;
+			targetProxy = C2507ADF29BAC9CF0018DDCA /* PBXContainerItemProxy */;
 		};
-		C2E75504295A9CD200EED1DD /* PBXTargetDependency */ = {
+		C2507AFA29BACCFB0018DDCA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2E754FB295A9CD200EED1DD /* RateIntents */;
-			targetProxy = C2E75503295A9CD200EED1DD /* PBXContainerItemProxy */;
+			target = C2507AF129BACCFB0018DDCA /* RateIntents */;
+			targetProxy = C2507AF929BACCFB0018DDCA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		C2E754F3295A733200EED1DD /* RateWidgets.intentdefinition */ = {
+		C2507AE929BACC500018DDCA /* RateWidgets.intentdefinition */ = {
 			isa = PBXVariantGroup;
 			children = (
-				C2E754F2295A733200EED1DD /* Base */,
-				C2FAE76C295F0F9D00D90AF4 /* es-419 */,
+				C2507AE829BACC500018DDCA /* Base */,
+				C29F8C0129ED70E9005A4F50 /* es-419 */,
 			);
 			name = RateWidgets.intentdefinition;
 			sourceTree = "<group>";
@@ -562,6 +581,7 @@
 				INFOPLIST_FILE = mbitoDlar/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -589,6 +609,7 @@
 				INFOPLIST_FILE = mbitoDlar/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -635,7 +656,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -693,7 +714,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -712,7 +733,7 @@
 			};
 			name = Release;
 		};
-		C2E754ED295A6E7A00EED1DD /* Debug */ = {
+		C2507AE329BAC9CF0018DDCA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -749,7 +770,7 @@
 			};
 			name = Debug;
 		};
-		C2E754EE295A6E7A00EED1DD /* Release */ = {
+		C2507AE429BAC9CF0018DDCA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -785,7 +806,7 @@
 			};
 			name = Release;
 		};
-		C2E75507295A9CD200EED1DD /* Debug */ = {
+		C2507AFD29BACCFB0018DDCA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -820,7 +841,7 @@
 			};
 			name = Debug;
 		};
-		C2E75508295A9CD200EED1DD /* Release */ = {
+		C2507AFE29BACCFB0018DDCA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -875,20 +896,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C2E754EC295A6E7A00EED1DD /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */ = {
+		C2507AE229BAC9CF0018DDCA /* Build configuration list for PBXNativeTarget "RateWidgetsExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C2E754ED295A6E7A00EED1DD /* Debug */,
-				C2E754EE295A6E7A00EED1DD /* Release */,
+				C2507AE329BAC9CF0018DDCA /* Debug */,
+				C2507AE429BAC9CF0018DDCA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C2E75506295A9CD200EED1DD /* Build configuration list for PBXNativeTarget "RateIntents" */ = {
+		C2507AFC29BACCFB0018DDCA /* Build configuration list for PBXNativeTarget "RateIntents" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C2E75507295A9CD200EED1DD /* Debug */,
-				C2E75508295A9CD200EED1DD /* Release */,
+				C2507AFD29BACCFB0018DDCA /* Debug */,
+				C2507AFE29BACCFB0018DDCA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

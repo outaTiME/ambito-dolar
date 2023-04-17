@@ -58,13 +58,29 @@ export default ({
           {drag && (
             <TouchableOpacity
               activeOpacity={1}
-              // onLongPress={drag}
-              // delayLongPress={60}
-              onPressIn={drag}
+              onLongPress={drag}
+              // delayLongPress={0}
+              // delayLongPress={185}
+              // half from longPress default
+              // delayLongPress={185}
+              delayLongPress={Settings.INTERACTION_DELAY}
+              // onPressIn={drag}
               // delayPressIn={60}
               disabled={isActive}
-              // style={{ borderWidth: 1, borderColor: 'red' }}
+              /* style={{
+                borderWidth: 1,
+                borderColor: 'red',
+                padding: Settings.PADDING,
+                margin: -Settings.PADDING,
+              }} */
               // hitSlop={Settings.SMALL_PADDING}
+              // hitSlop={Settings.PADDING}
+              /* hitSlop={{
+                top: Settings.PADDING,
+                left: Settings.PADDING,
+                bottom: Settings.PADDING,
+                right: Settings.PADDING,
+              }} */
               hitSlop={Settings.PADDING}
             >
               <ActionView

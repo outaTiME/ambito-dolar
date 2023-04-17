@@ -19,7 +19,7 @@ import ContentView from '../components/ContentView';
 import DividerView from '../components/DividerView';
 import MessageView from '../components/MessageView';
 import ScrollView from '../components/ScrollView';
-import SegmentedControlTab from '../components/SegmentedControlTab';
+import SegmentedControlTab from '../components/SegmentedControl';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
 import withRates from '../components/withRates';
@@ -194,11 +194,13 @@ const ConversionScreen = ({
               values={CURRENCY_TYPES}
               selectedIndex={currencyIndex}
               onTabPress={handleCurrencyTypeChange}
+              animated
             />
             <SegmentedControlTab
               values={CONVERSION_TYPES}
               selectedIndex={typeIndex}
               onTabPress={handleConversionTypeChange}
+              animated
             />
           </ContentView>
         </View>

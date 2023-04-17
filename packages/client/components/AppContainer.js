@@ -544,6 +544,7 @@ const AppContainer = ({
               component={ModalsStackScreen}
               options={{
                 // works only on iOS
+                gestureEnabled: false,
                 presentation: 'modal',
               }}
             />

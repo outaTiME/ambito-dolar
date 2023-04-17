@@ -68,7 +68,7 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const handleOnPress = React.useCallback(() => {
     if (alreadyShowingToastRef.current === false) {
       alreadyShowingToastRef.current = true;
-      Haptics.selectionAsync();
+      Settings.HAPTICS_ENABLED && Haptics.selectionAsync();
       Toast.show(I18n.t('text_copied'), {
         // duration: Settings.ANIMATION_DURATION,
         // position: -(tabBarheight + Settings.CARD_PADDING),

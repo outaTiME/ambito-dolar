@@ -113,6 +113,9 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
                                 result: 'data-uri',
                               }).then(
                                 (uri) => {
+                                  // Remove line breaks to prevent image component fails on Expo48
+                                  // https://github.com/facebook/react-native/issues/36512
+                                  uri = uri.replace(/[\r\n]+/gm, '');
                                   Image.getSize(uri, (width, height) => {
                                     setCapturedImage({
                                       uri,

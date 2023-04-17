@@ -53,17 +53,17 @@ export default {
       // return date.format('D MMM H:mm');
       return date.format('DD/MM H:mm');
     } else if (style === 2) {
-      // timestamp on web and rate chart
+      // timestamp on web, rate chart
       return date.format('dddd, D [de] MMM [de] YYYY H:mm');
     } else if (style === 3) {
       // rate chart axis
       return date.format('D/M');
     } else if (style === 4) {
-      // rate all-time_high
-      return date.format('dddd, D [de] MMM [de] YYYY');
+      // rate all-time_high (DEPRECATED)
+      // return date.format('dddd, D [de] MMM [de] YYYY');
     } else if (style === 5) {
-      // rate raw detail (DEPRECATED)
-      // return date.format('ddd, D MMM YYYY H:mm');
+      // rate raw detail, all-time_high rate
+      return date.format('ddd, D MMM YYYY H:mm');
     } else if (style === 6) {
       // screenshot (DEPRECATED)
       // return date.format('D MMM YYYY H:mm');

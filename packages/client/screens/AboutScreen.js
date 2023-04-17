@@ -1,8 +1,11 @@
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Image, Text, Linking, Platform } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { runOnJS } from 'react-native-reanimated';
 
 import appIcon from '../assets/about-icon-borderless.png';
+import AnimatedConfettiView from '../components/AnimatedConfettiView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import IconCardItemView from '../components/IconCardItemView';
@@ -37,8 +40,34 @@ const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
 const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
 const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
 
+const CONFETTI_FALL_SPEED = 50;
+const CONFETTI_ITEM_WIDTH = 20;
+const CONFETTI_ITEM_HEIGHT = CONFETTI_ITEM_WIDTH / 2;
+
+// https://gist.github.com/imcrainjames/e86893a1d6f85328174d036a9b263dd0#file-confetti-js-L39
+const CONFETTI_ANIMATION_DURATION =
+  ((Settings.DEVICE_HEIGHT + CONFETTI_ITEM_HEIGHT) /
+    (CONFETTI_FALL_SPEED * 3 * 2)) *
+  // add max delay
+  3 *
+  1000;
+
 const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const { theme, fonts } = Helper.useTheme();
+  const [makeItRain, setMakeItRain] = React.useState(false);
+  const tap = Gesture.Tap()
+    .numberOfTaps(2)
+    .onStart(() => {
+      runOnJS(setMakeItRain)(true);
+    });
+  React.useEffect(() => {
+    if (makeItRain) {
+      const timer_id = setTimeout(() => {
+        setMakeItRain(false);
+      }, CONFETTI_ANIMATION_DURATION);
+      return () => clearTimeout(timer_id);
+    }
+  }, [makeItRain]);
   const onPressWebsite = React.useCallback(() => {
     Linking.openURL(Settings.WEBSITE_URL).catch(console.warn);
   }, []);
@@ -114,99 +143,120 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       .catch(console.warn);
   }, []);
   return (
-    <FixedScrollView
-      {...{
-        headerHeight,
-        tabBarheight,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          margin: Settings.CARD_PADDING,
-          paddingVertical: Settings.PADDING,
+    <>
+      <FixedScrollView
+        {...{
+          headerHeight,
+          tabBarheight,
         }}
       >
-        <Image
-          style={{
-            width: 72,
-            height: 72,
-            borderRadius: Settings.BORDER_RADIUS,
-          }}
-          source={appIcon}
-        />
         <View
           style={{
-            marginLeft: Settings.PADDING,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: Settings.CARD_PADDING,
+            paddingVertical: Settings.PADDING,
           }}
         >
-          <Text style={fonts.body} numberOfLines={1}>
-            {Settings.APP_NAME} {Settings.APP_VERSION}
-          </Text>
-          <Text
-            style={[
-              fonts.subhead,
-              {
-                color: Settings.getGrayColor(theme),
-              },
-            ]}
-            numberOfLines={1}
+          <GestureDetector gesture={tap}>
+            <Image
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: Settings.BORDER_RADIUS,
+              }}
+              source={appIcon}
+            />
+          </GestureDetector>
+          <View
+            style={{
+              marginLeft: Settings.PADDING,
+            }}
           >
-            por Ariel Falduto
-          </Text>
+            <Text style={fonts.body} numberOfLines={1}>
+              {Settings.APP_NAME} {Settings.APP_VERSION}
+            </Text>
+            <Text
+              style={[
+                fonts.subhead,
+                {
+                  color: Settings.getGrayColor(theme),
+                },
+              ]}
+              numberOfLines={1}
+            >
+              por Ariel Falduto
+            </Text>
+          </View>
         </View>
-      </View>
-      <CardView plain>
-        <IconCardItemView
-          title="Sitio web"
-          iconName="link"
-          onAction={onPressWebsite}
+        <CardView plain>
+          <IconCardItemView
+            title="Sitio web"
+            iconName="link"
+            onAction={onPressWebsite}
+          />
+        </CardView>
+        <CardView plain>
+          <IconCardItemView
+            title="Twitter"
+            iconName="twitter"
+            onAction={onPressTwitter}
+          />
+          <IconCardItemView
+            title="Telegram"
+            iconName="telegram-plane"
+            onAction={onPressTelegram}
+          />
+          <IconCardItemView
+            title="Instagram"
+            iconName="instagram"
+            onAction={onPressInstagram}
+          />
+          <IconCardItemView
+            title="Facebook"
+            iconName="facebook"
+            onAction={onPressFacebook}
+          />
+          <IconCardItemView
+            title="Reddit"
+            iconName="reddit-alien"
+            onAction={onPressReddit}
+          />
+          <IconCardItemView
+            title="Mastodon"
+            iconName="mastodon"
+            onAction={onPressMastodon}
+          />
+          <IconCardItemView
+            title="GitHub"
+            iconName="github"
+            onAction={onPressGithub}
+          />
+        </CardView>
+        <TextCardView
+          // style={{ flexGrow: 1 }}
+          text={`${Settings.APP_COPYRIGHT} ${Settings.DASH_SEPARATOR} Hecho con ♥ en Buenos Aires, Argentina.`}
         />
-      </CardView>
-      <CardView plain>
-        <IconCardItemView
-          title="Twitter"
-          iconName="twitter"
-          onAction={onPressTwitter}
+      </FixedScrollView>
+      {makeItRain === true && (
+        <AnimatedConfettiView
+          {...{
+            numItems: 100,
+            itemDimensions: {
+              width: CONFETTI_ITEM_WIDTH,
+              height: CONFETTI_ITEM_HEIGHT,
+            },
+            itemColors: ['#00E4B2', '#09AEC5', '#107ED5'],
+            itemTintStrength: 0.8,
+            fallSpeed: CONFETTI_FALL_SPEED,
+            flipSpeed: 3,
+            horizSpeed: 50,
+            continuous: false,
+          }}
         />
-        <IconCardItemView
-          title="Telegram"
-          iconName="telegram-plane"
-          onAction={onPressTelegram}
-        />
-        <IconCardItemView
-          title="Instagram"
-          iconName="instagram"
-          onAction={onPressInstagram}
-        />
-        <IconCardItemView
-          title="Facebook"
-          iconName="facebook"
-          onAction={onPressFacebook}
-        />
-        <IconCardItemView
-          title="Reddit"
-          iconName="reddit-alien"
-          onAction={onPressReddit}
-        />
-        <IconCardItemView
-          title="Mastodon"
-          iconName="mastodon"
-          onAction={onPressMastodon}
-        />
-        <IconCardItemView
-          title="GitHub"
-          iconName="github"
-          onAction={onPressGithub}
-        />
-      </CardView>
-      <TextCardView
-        // style={{ flexGrow: 1 }}
-        text={`${Settings.APP_COPYRIGHT} ${Settings.DASH_SEPARATOR} Hecho con ♥ en Buenos Aires, Argentina.`}
-      />
-    </FixedScrollView>
+      )}
+    </>
   );
 };
 

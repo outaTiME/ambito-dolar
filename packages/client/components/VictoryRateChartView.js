@@ -17,7 +17,7 @@ import {
   VictoryLabel,
 } from 'victory-native';
 
-import ChartAnimatedView from './ChartAnimatedView';
+import AnimatedChartView from './AnimatedChartView';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
@@ -166,7 +166,7 @@ const InteractiveRateChartView = ({
       position: 'absolute',
       top: Settings.PADDING,
       left: AXIS_OFFSET + axis_y_width_rounded + Settings.PADDING,
-      // size required by ChartAnimatedView
+      // size required by AnimatedChartView
       width:
         width - (AXIS_OFFSET + axis_y_width_rounded + Settings.PADDING * 2),
       height:
@@ -369,7 +369,7 @@ const InteractiveRateChartView = ({
         )}
       </View>
       <View style={overlay_style}>
-        <ChartAnimatedView
+        <AnimatedChartView
           {...{
             data,
             domain,

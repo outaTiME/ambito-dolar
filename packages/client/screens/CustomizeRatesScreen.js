@@ -1,4 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { useLayout } from '@react-native-community/hooks';
 import { compose } from '@reduxjs/toolkit';
 import * as Haptics from 'expo-haptics';
 import * as _ from 'lodash';
@@ -36,38 +37,51 @@ const CustomizeRatesScreen = ({
     shallowEqual
   );
   const dispatch = useDispatch();
-  const rateTypes = React.useMemo(() => {
-    // use rates when nullish rate_types
-    const rateTypes = _.intersection(
-      rate_types ?? Object.keys(rates),
-      Object.keys(rates)
-    );
-    console.log('>>> rateTypes', rate_types, Object.keys(rates), rateTypes);
-    return rateTypes;
-  }, [rates, rate_types]);
-  const data = React.useMemo(() => {
-    return rateTypes.map((type, _index) => ({
-      type,
-      component: ({ drag, isActive, isModal }) => {
-        const included = !excluded_rates?.includes(type);
-        return (
-          <CardItemView
-            {...{
-              title: AmbitoDolar.getRateTitle(type),
-              value: included,
-              onValueChange: (value) => {
-                dispatch(actions.excludeRate(type, value));
-              },
-              chevron: false,
-              drag,
-              isActive,
-              isModal,
-            }}
-          />
-        );
-      },
-    }));
-  }, [rateTypes, excluded_rates]);
+  const rateTypes = React.useMemo(
+    () =>
+      _.intersection(
+        // use rates when nullish rate_types
+        rate_types ?? Object.keys(rates),
+        Object.keys(rates)
+      ),
+    [rates, rate_types]
+  );
+  const data = React.useMemo(
+    () =>
+      rateTypes.map((type, _index) => ({
+        type,
+        component: ({ drag, isActive, isModal }) => {
+          const included = !excluded_rates?.includes(type);
+          return (
+            <CardItemView
+              {...{
+                title: AmbitoDolar.getRateTitle(type),
+                value: included,
+                onValueChange: (value) => {
+                  dispatch(actions.excludeRate(type, value));
+                },
+                chevron: false,
+                drag,
+                isActive,
+                isModal,
+              }}
+            />
+          );
+        },
+      })),
+    [rateTypes, excluded_rates]
+  );
+  const { onLayout, width: screenWidth } = useLayout();
+  const dragHitSlop = React.useMemo(
+    () => ({
+      left: -(
+        (screenWidth - Settings.CONTENT_WIDTH) / 2 +
+        Settings.CARD_PADDING * 2
+      ),
+      width: Settings.PADDING + Settings.ICON_SIZE + Settings.PADDING,
+    }),
+    [screenWidth]
+  );
   return (
     <>
       <FixedFlatList
@@ -115,14 +129,9 @@ const CustomizeRatesScreen = ({
             </ContentView>
           ),
           isModal,
+          onLayout,
           // react-native-draggable-flatlist
           keyExtractor: (item) => item.type,
-          onDragBegin: async () => {
-            await Haptics.selectionAsync();
-          },
-          onRelease: () => {
-            Haptics.selectionAsync();
-          },
           onDragEnd: ({ data }) => {
             const customRateTypes = _.map(data, 'type');
             // force manual order on update
@@ -132,18 +141,12 @@ const CustomizeRatesScreen = ({
               dispatch(actions.updateRateTypes(customRateTypes));
             }
           },
-          activationDistance: 10,
-          onPlaceholderIndexChange: () => {
-            // console.log('>>> onPlaceholderIndexChange', index);
-            Haptics.selectionAsync();
-          },
-          /* dragHitSlop: {
-            left: 0,
-            width:
-              Settings.CARD_PADDING * 2 +
-              Settings.ICON_SIZE +
-              Settings.PADDING * 2,
-          }, */
+          ...(Settings.HAPTICS_ENABLED && {
+            onDragBegin: Haptics.selectionAsync,
+            onRelease: Haptics.selectionAsync,
+            onPlaceholderIndexChange: Haptics.selectionAsync,
+          }),
+          dragHitSlop,
         }}
       />
     </>
