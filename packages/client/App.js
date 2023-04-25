@@ -1,3 +1,7 @@
+/* eslint-disable import/no-duplicates */
+import 'react-native-reanimated';
+import 'react-native-gesture-handler';
+
 // eslint-disable-next-line import/order
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'expo-dev-client';
@@ -95,17 +99,14 @@ export default function App() {
     return null;
   }
   return (
-    <SafeAreaProvider>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <GestureHandlerRootView
-            style={{ flex: 1 }}
-            onLayout={onLayoutRootView}
-          >
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+          <SafeAreaProvider>
             <ThemedApp />
-          </GestureHandlerRootView>
-        </PersistGate>
-      </Provider>
-    </SafeAreaProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </PersistGate>
+    </Provider>
   );
 }
