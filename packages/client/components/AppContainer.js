@@ -396,7 +396,7 @@ let initialQuickAction;
 Settings.IS_PRODUCTION &&
   QuickActions.popInitialAction()
     .then((data) => (initialQuickAction = data))
-    .catch(console.error);
+    .catch(console.warn);
 
 const RootStack = createNativeStackNavigator();
 const AppContainer = ({
@@ -841,13 +841,11 @@ const withUserActivity = (Component) => (props) => {
         if (Device.isDevice) {
           StoreReview.isAvailableAsync().then((result) => {
             if (result === true) {
-              // fails on android when no play services
-              // https://github.com/expo/expo/issues/11784
               StoreReview.requestReview()
-                .catch(console.warn)
                 .then(() => {
                   dispatch(actions.registerApplicationReview(version));
-                });
+                })
+                .catch(console.warn);
             } else {
               // not supported
             }

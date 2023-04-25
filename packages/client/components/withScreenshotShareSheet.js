@@ -183,9 +183,11 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
           // https://github.com/expo/expo/issues/6920#issuecomment-580966657
           Sharing.shareAsync(new_uri, {
             // pass
-          }).then(() => {
-            dispatch(actions.registerApplicationShareRates());
-          });
+          })
+            .then(() => {
+              dispatch(actions.registerApplicationShareRates());
+            })
+            .catch(console.warn);
         },
         (error) =>
           console.error('Unable to generate the snapshot for sharing', error)
