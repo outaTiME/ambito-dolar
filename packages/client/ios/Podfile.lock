@@ -26,7 +26,7 @@ PODS:
     - EXJSONUtils
   - EXNotifications (0.18.1):
     - ExpoModulesCore
-  - Expo (48.0.11):
+  - Expo (48.0.13):
     - ExpoModulesCore
   - expo-dev-client (2.2.1):
     - EXManifests
@@ -100,7 +100,7 @@ PODS:
     - expo-dev-menu/GestureHandler
     - expo-dev-menu/Reanimated
     - expo-dev-menu/SafeAreaView
-  - ExpoBlur (12.2.2):
+  - ExpoBlur (12.3.0):
     - ExpoModulesCore
   - ExpoClipboard (4.1.2):
     - ExpoModulesCore
@@ -506,13 +506,13 @@ PODS:
     - ExpoModulesCore
   - RNDeviceInfo (10.6.0):
     - React-Core
-  - RNFlashList (1.4.2):
+  - RNFlashList (1.4.3):
     - React-Core
   - RNGestureHandler (2.9.0):
     - React-Core
   - RNQuickAction (0.3.13):
     - React
-  - RNReanimated (2.14.4):
+  - RNReanimated (2.17.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -815,12 +815,12 @@ SPEC CHECKSUMS:
   EXJSONUtils: 48b1e764ac35160e6f54d21ab60d7d9501f3e473
   EXManifests: 500666d48e8dd7ca5a482c9e729e4a7a6c34081b
   EXNotifications: dd628737af60fc8cc62dccebacd326b0fbbc0dcb
-  Expo: 81418098ffb16914b2e190f54e06db923248e4a1
+  Expo: 6ef2bde82e056dcdd966ad5016f31450ef1ca08c
   expo-dev-client: 92b9e487ad6a05a3ad1dda70334729ccaf622bfe
   expo-dev-launcher: 5275974e9f825f70a33bb79301a8ab894179fa94
   expo-dev-menu: 348b181882edfdfe910ec1acd779f0836502443a
   expo-dev-menu-interface: 6c82ae323c4b8724dead4763ce3ff24a2108bdb1
-  ExpoBlur: fac3c6318fdf409dd5740afd3313b2bd52a35bac
+  ExpoBlur: b0d995dbfc725fc5b7ee60da076131995300815d
   ExpoClipboard: 9b87df0ad145e3aa841614fab6aea54b7a604850
   ExpoDevice: e0bebf68f978b3d353377ce42e73c20c0a070215
   ExpoHaptics: 5156bc5160d8e04c170dd6e645a71154951a2ad9
@@ -875,10 +875,10 @@ SPEC CHECKSUMS:
   ReactCommon: 0c43eaeaaee231d7d8dc24fc5a6e4cf2b75bf196
   ReactNativeWidgetKit: d356de3387427cb3e92e556408460abfb3a207ed
   RNDeviceInfo: 475a4c447168d0ad4c807e48ef5e0963a0f4eb1b
-  RNFlashList: 7fbca4fc075484a9426f1610d648dbea2de94eb0
+  RNFlashList: ade81b4e928ebd585dd492014d40fb8d0e848aab
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
-  RNReanimated: cc5e3aa479cb9170bcccf8204291a6950a3be128
+  RNReanimated: f186e85d9f28c9383d05ca39e11dd194f59093ec
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSentry: acebe4104a6f5915ae871eb59dc73f13dcc92ef7
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
