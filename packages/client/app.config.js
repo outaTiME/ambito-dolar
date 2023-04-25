@@ -128,6 +128,8 @@ export default {
         'itms-apps',
       ],
       UIViewControllerBasedStatusBarAppearance: true,
+      // optimizes ProMotion refresh rates
+      CADisableMinimumFrameDurationOnPhone: true,
     },
     ...SHARED_SPLASH,
   },
