@@ -53,6 +53,8 @@ private func formatNumber(num: Double) -> String {
   let nf = NumberFormatter()
   nf.usesGroupingSeparator = true
   nf.minimumFractionDigits = 2
+  // nf.maximumFractionDigits = 2
+  nf.roundingMode = .down
   return nf.string(for: num)!
 }
 
@@ -69,8 +71,8 @@ private func getChangeSymbol(num: Double) -> String {
   return "↓"
 }
 
-private func formatRateChange(num: Double, symbol: Bool = true) -> String {
-  let change = (num > 0 ? "+" : "") + formatRateCurrency(num: num) + "%"
+private func formatRateChange(num: Double, type: ChangeType, symbol: Bool = true) -> String {
+  let change = (num > 0 ? "+" : "") + formatRateCurrency(num: num) + (type == ChangeType.percentage ? "%" : "")
   if symbol == true {
     return change + " " + getChangeSymbol(num: num)
   }
@@ -86,7 +88,7 @@ private func getChangeColor(num: Double) -> Color {
   return Color(UIColor.systemRed);
 }
 
-private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes(), valueType: ValueType = ValueType.sell ) -> [RateValue]? {
+private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes(), valueType: ValueType = ValueType.sell, changeType: ChangeType = ChangeType.percentage ) -> [RateValue]? {
   let rates = getRates()
   return rateTypes.map {
     let type = $0.identifier
@@ -94,8 +96,10 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
     if rates != nil, let rate = rates![type!] as? [Any] {
       let rateValue = rate[1]
       let value: Double
+      let amount: Double
       if rateValue is Double {
         value = rateValue as! Double
+        amount = value
         // price = formatRateCurrency(num: rateValue as! Double)
       } else {
         /* var arr = [String]()
@@ -116,12 +120,16 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
         } else {
           value = sell
         }
+        amount = sell
         // price = formatRateCurrency(num: arr.max()!)
       }
       let price = formatRateCurrency(num: value)
-      let rateChange = rate[2] as! Double
-      let change = formatRateChange(num: rateChange)
-      let plainChange = formatRateChange(num: rateChange, symbol: false )
+      var rateChange = rate[2] as! Double
+      if (changeType == ChangeType.amount) {
+        rateChange = amount - (rate[3] as! Double)
+      }
+      let change = formatRateChange(num: rateChange, type: changeType)
+      let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false )
       let changeColor = getChangeColor(num: rateChange)
       let rateDate = ISO8601DateFormatter().date(from: rate[0] as! String)
       let dateFormatter = DateFormatter()
