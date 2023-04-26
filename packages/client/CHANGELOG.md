@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.6.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.6.0...@ambito-dolar/client@6.6.1) (2023-04-26)
+
+### Bug Fixes
+
+- catch errors on async functions ([dff32d3](https://github.com/outaTiME/ambito-dolar/commit/dff32d3d67af7aa6e0511aaa4ebc5c3db5d9847b))
+- optimizations over App.js ([039c043](https://github.com/outaTiME/ambito-dolar/commit/039c0435c522f76496d845d41262bec54af45fa9))
+- rates order on widget ([dec49f7](https://github.com/outaTiME/ambito-dolar/commit/dec49f7ac54ad68200a233903678e18a20ef0e76))
+- support for ProMotion refresh rates on iOS ([f380e77](https://github.com/outaTiME/ambito-dolar/commit/f380e7787f57cd35ee959d7560f1ab706d3df325))
+
 # [6.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.5.1...@ambito-dolar/client@6.6.0) (2023-04-17)
 
 ### Features
