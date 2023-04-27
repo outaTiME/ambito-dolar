@@ -15,5 +15,16 @@ export default (props) => {
     Component = DraggableFlatList;
     // Component = DragList;
   }
-  return <Component indicatorStyle={indicatorStyle} ref={ref} {...props} />;
+  return (
+    <Component
+      indicatorStyle={indicatorStyle}
+      ref={ref}
+      {...props}
+      {...(Component === DraggableFlatList && {
+        containerStyle: {
+          flex: 1,
+        },
+      })}
+    />
+  );
 };
