@@ -10,7 +10,8 @@ export const generateScreenshot = async (url, opts) => {
   const isSquare = opts?.square === true;
   const browser = await puppeteer.launch({
     args: chromium.args,
-    executablePath: await chromium.executablePath,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
     headless: chromium.headless,
   });
   const page = await browser.newPage();
