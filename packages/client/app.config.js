@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
-const version = '6.6.1';
-const buildNumber = 94;
+const version = '6.6.2';
+const buildNumber = 95;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -57,6 +57,22 @@ export default {
     statsUri: process.env.STATS_URI,
     eas: {
       projectId: '88dc0a10-eec5-11e8-bdb0-e9d94f6dfa7d',
+      build: {
+        experimental: {
+          ios: {
+            appExtensions: [
+              {
+                targetName: 'RateWidgetsExtension',
+                bundleIdentifier: 'im.outa.AmbitoDolar.RateWidgets',
+              },
+              {
+                targetName: 'RateIntents',
+                bundleIdentifier: 'im.outa.AmbitoDolar.RateIntents',
+              },
+            ],
+          },
+        },
+      },
     },
   },
   updates: {
