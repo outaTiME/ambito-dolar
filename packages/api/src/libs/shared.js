@@ -20,7 +20,7 @@ import zlib from 'zlib';
 import { publish as publishToInstagram } from './social/instagram';
 import { publish as publishToMastodon } from './social/mastodon';
 import { publish as publishToReddit } from './social/reddit';
-import { publish as publishToTwitter } from './social/twitter';
+// import { publish as publishToTwitter } from './social/twitter';
 
 // defaults
 
@@ -584,7 +584,7 @@ const triggerSendSocialNotificationsEvent = async (caption, image_url) =>
 
 const triggerSocials = async (targets, caption, url, file, story_file) => {
   const promises = _.chain(
-    targets ?? ['ifttt', 'instagram', 'mastodon', 'reddit', 'twitter']
+    targets ?? ['ifttt', 'instagram', 'mastodon', 'reddit' /*, 'twitter' */]
   )
     .map((target) => {
       let promise;
@@ -603,9 +603,9 @@ const triggerSocials = async (targets, caption, url, file, story_file) => {
         case 'reddit':
           promise = publishToReddit(caption, url);
           break;
-        case 'twitter':
+        /* case 'twitter':
           promise = publishToTwitter(caption, file);
-          break;
+          break; */
       }
       if (promise) {
         return [target, promise];

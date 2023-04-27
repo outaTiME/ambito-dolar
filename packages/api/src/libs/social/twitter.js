@@ -14,9 +14,16 @@ export const publish = async (caption, file) => {
       (await client.v1.uploadMedia(file, {
         mimeType: EUploadMimeType.Jpeg,
       }));
-    const {
+    /* const {
       data: { id },
     } = await client.v2.tweet(caption, {
+      ...(media_id && {
+        media: {
+          media_ids: [media_id],
+        },
+      }),
+    }); */
+    const { id } = await client.v1.tweet(caption, {
       ...(media_id && {
         media: {
           media_ids: [media_id],
