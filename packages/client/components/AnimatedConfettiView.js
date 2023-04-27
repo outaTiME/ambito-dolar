@@ -40,7 +40,8 @@ const Confetti = (props) => {
         screenWidth * (index % 2 ? 0.25 : 0.75) - props.itemDimensions.width / 2
       ), */
       x: new Value(Math.random() * (screenWidth - props.itemDimensions.width)),
-      y: new Value(-props.itemDimensions.height * 2),
+      // y: new Value(-props.itemDimensions.height * 2),
+      y: new Animated.Value(-60),
       angle: new Value(0),
       xVel: new Value(Math.random() * xVelMax - xVelMax / 2),
       yVel: new Value(Math.random() * yVelMax + yVelMax),
