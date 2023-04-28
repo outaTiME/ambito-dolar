@@ -38,7 +38,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>95</string>
+    <string>96</string>
     <key>EXDefaultScreenOrientationMask</key>
     <string>UIInterfaceOrientationMaskAll</string>
     <key>ITSAppUsesNonExemptEncryption</key>

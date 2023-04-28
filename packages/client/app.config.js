@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 const version = '6.6.2';
-const buildNumber = 95;
+const buildNumber = 96;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
