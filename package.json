@@ -12,16 +12,10 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^17.6.1",
-    "@commitlint/config-conventional": "^17.6.1",
-    "@serverless-stack/cli": "1.18.4",
-    "@serverless-stack/resources": "1.18.4",
-    "aws-cdk-lib": "2.50.0",
-    "eslint": "^8.39.0",
-    "eslint-config-universe": "^11.2.0",
+    "aws-cdk-lib": "2.72.1",
+    "constructs": "10.1.156",
     "husky": "^8.0.3",
-    "lerna": "^6.6.1",
-    "prettier": "^2.8.8"
+    "sst": "^2.8.26"
   },
   "scripts": {
     "test": "lerna run test",
@@ -31,9 +25,9 @@
     "client:doctor": "yarn workspace @ambito-dolar/client exec npx expo-doctor",
     "client:prebuild:ios": "yarn workspace @ambito-dolar/client run prebuild:ios",
     "client:build": "yarn workspace @ambito-dolar/client exec eas build --clear-cache",
-    "api:start": "yarn sst start",
+    "api:start": "yarn sst dev",
     "api:publish": "yarn sst deploy",
-    "api:remove": "yarn sst remove --debug-stack",
+    "api:remove": "yarn sst remove",
     "website:start": "yarn workspace @ambito-dolar/website run start",
     "publish": "lerna version --conventional-commits --conventional-graduate",
     "version": "yarn install && git stage yarn.lock",

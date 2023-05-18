@@ -1,5 +1,0 @@
-{
-  "name": "ambito-dolar",
-  "region": "us-east-1",
-  "main": "stacks/index.js"
-}

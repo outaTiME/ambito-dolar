@@ -1,10 +1,10 @@
-import * as sst from '@serverless-stack/resources';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { SubscriptionFilter } from 'aws-cdk-lib/aws-sns';
+import { Api, Function, StaticSite, Topic, Cron } from 'sst/constructs';
 
-export function Stack({ stack }) {
+export function MainStack({ stack }) {
   const IS_PRODUCTION = stack.stage === 'prod';
   // existing resources
   const bucket = s3.Bucket.fromBucketName(
@@ -28,7 +28,7 @@ export function Stack({ stack }) {
     process.env.DOMAIN_CERTIFICATE_ARN
   );
   // expo web build
-  const screenshotSite = new sst.StaticSite(stack, 'ScreenshotSite', {
+  const screenshotSite = new StaticSite(stack, 'ScreenshotSite', {
     buildCommand: 'yarn expo export:web',
     buildOutput: 'web-build',
     environment: {
@@ -37,11 +37,11 @@ export function Stack({ stack }) {
     path: 'packages/client',
   });
   // sns
-  const topic = new sst.Topic(stack, 'Topic');
+  const topic = new Topic(stack, 'Topic');
   topic.addSubscribers(stack, {
     process: {
       function: {
-        handler: 'src/subscribers/process.handler',
+        handler: 'packages/api/src/subscribers/process.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
@@ -60,7 +60,7 @@ export function Stack({ stack }) {
     },
     invalidateReceipts: {
       function: {
-        handler: 'src/subscribers/invalidate-receipts.handler',
+        handler: 'packages/api/src/subscribers/invalidate-receipts.handler',
         // ~15s
         timeout: '30 seconds',
       },
@@ -76,7 +76,7 @@ export function Stack({ stack }) {
     },
     notify: {
       function: {
-        handler: 'src/subscribers/notify.handler',
+        handler: 'packages/api/src/subscribers/notify.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
@@ -95,9 +95,11 @@ export function Stack({ stack }) {
     },
     socialNotify: {
       function: {
-        handler: 'src/subscribers/social-notify.handler',
-        bundle: {
-          externalModules: ['@sparticuz/chromium', 'sharp'],
+        handler: 'packages/api/src/subscribers/social-notify.handler',
+        nodejs: {
+          esbuild: {
+            external: ['@sparticuz/chromium', 'sharp'],
+          },
         },
         environment: {
           SOCIAL_SCREENSHOT_URL: screenshotSite.url,
@@ -118,9 +120,11 @@ export function Stack({ stack }) {
     },
     fundingNotify: {
       function: {
-        handler: 'src/subscribers/funding-notify.handler',
-        bundle: {
-          externalModules: ['@sparticuz/chromium', 'sharp'],
+        handler: 'packages/api/src/subscribers/funding-notify.handler',
+        nodejs: {
+          esbuild: {
+            external: ['@sparticuz/chromium', 'sharp'],
+          },
         },
         environment: {
           SOCIAL_SCREENSHOT_URL: screenshotSite.url,
@@ -143,10 +147,10 @@ export function Stack({ stack }) {
   topic.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
   // jobs
   // eslint-disable-next-line no-new
-  new sst.Cron(stack, 'Process', {
+  new Cron(stack, 'Process', {
     job: {
       function: {
-        handler: 'src/jobs/process.handler',
+        handler: 'packages/api/src/jobs/process.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
@@ -158,10 +162,10 @@ export function Stack({ stack }) {
     enabled: IS_PRODUCTION,
   });
   // eslint-disable-next-line no-new
-  new sst.Cron(stack, 'ProcessClose', {
+  new Cron(stack, 'ProcessClose', {
     job: {
       function: {
-        handler: 'src/jobs/process-close.handler',
+        handler: 'packages/api/src/jobs/process-close.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
@@ -173,10 +177,10 @@ export function Stack({ stack }) {
     enabled: IS_PRODUCTION,
   });
   // eslint-disable-next-line no-new
-  new sst.Cron(stack, 'InvalidateReceipts', {
+  new Cron(stack, 'InvalidateReceipts', {
     job: {
       function: {
-        handler: 'src/jobs/invalidate-receipts.handler',
+        handler: 'packages/api/src/jobs/invalidate-receipts.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
@@ -188,10 +192,10 @@ export function Stack({ stack }) {
     enabled: IS_PRODUCTION,
   });
   // eslint-disable-next-line no-new
-  new sst.Cron(stack, 'FundingNotify', {
+  new Cron(stack, 'FundingNotify', {
     job: {
       function: {
-        handler: 'src/jobs/funding-notify.handler',
+        handler: 'packages/api/src/jobs/funding-notify.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
@@ -203,12 +207,12 @@ export function Stack({ stack }) {
     enabled: IS_PRODUCTION,
   });
   // api endpoints
-  const api = new sst.Api(stack, 'Api', {
+  const api = new Api(stack, 'Api', {
     accessLog: false,
     authorizers: {
       basicAuthorizer: {
-        function: new sst.Function(stack, 'Authorizer', {
-          handler: 'src/authorizers/basic.handler',
+        function: new Function(stack, 'Authorizer', {
+          handler: 'packages/api/src/authorizers/basic.handler',
         }),
         responseTypes: ['simple'],
         resultsCacheTtl: '30 seconds',
@@ -237,45 +241,46 @@ export function Stack({ stack }) {
     },
     routes: {
       // private
-      'GET /process': 'src/routes/process.handler',
-      'GET /active-devices': 'src/routes/active-devices.handler',
-      'GET /prune-devices': 'src/routes/prune-devices.handler',
-      'GET /notify': 'src/routes/notify.handler',
-      'GET /invalidate-receipts': 'src/routes/invalidate-receipts.handler',
-      'GET /social-notify': 'src/routes/social-notify.handler',
-      'GET /funding-notify': 'src/routes/funding-notify.handler',
-      'POST /update-rates': 'src/routes/update-rates.handler',
+      'GET /process': 'packages/api/src/routes/process.handler',
+      'GET /active-devices': 'packages/api/src/routes/active-devices.handler',
+      'GET /prune-devices': 'packages/api/src/routes/prune-devices.handler',
+      'GET /notify': 'packages/api/src/routes/notify.handler',
+      'GET /invalidate-receipts':
+        'packages/api/src/routes/invalidate-receipts.handler',
+      'GET /social-notify': 'packages/api/src/routes/social-notify.handler',
+      'GET /funding-notify': 'packages/api/src/routes/funding-notify.handler',
+      'POST /update-rates': 'packages/api/src/routes/update-rates.handler',
       'POST /update-historical-rates':
-        'src/routes/update-historical-rates.handler',
+        'packages/api/src/routes/update-historical-rates.handler',
       // public
       'GET /test': {
         authorizer: 'none',
-        function: 'src/routes/test.handler',
+        function: 'packages/api/src/routes/test.handler',
       },
       'GET /fetch': {
         authorizer: 'none',
-        function: 'src/routes/fetch.handler',
+        function: 'packages/api/src/routes/fetch.handler',
       },
       'POST /register-device': {
         authorizer: 'none',
-        function: 'src/routes/register-device.handler',
+        function: 'packages/api/src/routes/register-device.handler',
       },
       'GET /stats': {
         authorizer: 'none',
-        function: 'src/routes/stats.handler',
+        function: 'packages/api/src/routes/stats.handler',
       },
     },
   });
   api.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
   // landing page with accesss to legacy api
-  const landingSite = new sst.StaticSite(stack, 'LandingSite', {
-    buildCommand: 'yarn build',
+  const landingSite = new StaticSite(stack, 'LandingSite', {
+    buildCommand: 'NODE_OPTIONS=--openssl-legacy-provider yarn build',
     buildOutput: 'public',
     errorPage: 'redirect_to_index_page',
     path: 'packages/website',
     // waitForInvalidation: IS_PRODUCTION,
   });
-  const legacyApi = new sst.Api(stack, 'LegacyApi', {
+  const legacyApi = new Api(stack, 'LegacyApi', {
     accessLog: false,
     ...(IS_PRODUCTION && {
       customDomain: {

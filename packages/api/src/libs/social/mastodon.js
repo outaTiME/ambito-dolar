@@ -14,6 +14,8 @@ export const publish = async (caption, file) => {
     const attachment =
       file &&
       (await masto.v2.mediaAttachments.create({
+        // native support of `fetch` on node 18
+        // file: new Blob([file]),
         file,
       }));
     const { id: status_id } = await masto.v1.statuses.create({
