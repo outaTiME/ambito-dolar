@@ -34,10 +34,10 @@ export const publish = async (caption, file) => {
       duration,
     };
   } catch (error) {
-    console.error(
+    /* console.error(
       'Unable to publish to mastodon',
       JSON.stringify({ error: error.message })
-    );
+    ); */
     // unhandled error
     throw error;
   }

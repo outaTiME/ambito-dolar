@@ -4,7 +4,6 @@ import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
   const { generate_only, targets } = event.queryStringParameters || {};
-
   try {
     const message_id = await Shared.triggerFundingNotifyEvent({
       generate_only: boolean(generate_only),

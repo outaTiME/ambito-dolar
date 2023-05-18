@@ -82,10 +82,10 @@ export const publish = async (file, caption, story_file) => {
       duration,
     };
   } catch (error) {
-    console.error(
+    /* console.error(
       'Unable to publish to instagram',
       JSON.stringify({ error: error.message })
-    );
+    ); */
     // unhandled error
     throw error;
   }

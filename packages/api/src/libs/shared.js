@@ -6,6 +6,7 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
+// import { StandardRetryStrategy } from '@aws-sdk/util-retry';
 import { CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations';
 import * as Sentry from '@sentry/serverless';
 import { parallelScan } from '@shelf/dynamodb-parallel-scan';
@@ -25,7 +26,8 @@ import { publish as publishToReddit } from './social/reddit';
 // defaults
 
 const ddbClient = new DynamoDBClient({
-  // pass
+  // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_util_retry.html#maxattempts
+  // retryStrategy: new StandardRetryStrategy(5),
 });
 
 const s3Client = new S3Client({
@@ -92,7 +94,7 @@ const fetchFirebaseData = async (uri, opts = {}) => {
     if (response.ok) {
       return response.json();
     }
-    throw Error(response.statusText);
+    throw new Error(response.statusText);
   });
 };
 
@@ -494,17 +496,17 @@ const publishMessageToTopic = async (event, payload = {}) => {
   };
   return snsClient
     .send(new PublishCommand(params))
-    .then((data) => {
+    .then(({ MessageId: id }) => {
       const duration = (Date.now() - start_time) / 1000;
       console.info(
         'Message published to sns topic',
         JSON.stringify({
-          id: data.MessageId,
+          id,
           event,
           duration,
         })
       );
-      return data.MessageId;
+      return id;
     })
     .catch((error) => {
       console.warn(
@@ -565,7 +567,7 @@ const triggerEvent = async (event, payload) => {
           duration,
         };
       }
-      throw Error(response.statusText);
+      throw new Error(response.statusText);
     })
     .catch((error) => {
       // ignore error and trace
@@ -648,7 +650,7 @@ const storeImgurFile = async (image) =>
       const { data } = await response.json();
       return data.link;
     }
-    throw Error(response.statusText);
+    throw new Error(response.statusText);
   });
 
 const fetchImage = async (url) =>
@@ -656,7 +658,7 @@ const fetchImage = async (url) =>
     if (response.ok) {
       return Buffer.from(await response.arrayBuffer());
     }
-    throw Error(response.statusText);
+    throw new Error(response.statusText);
   });
 
 const wrapHandler = (handler) => {

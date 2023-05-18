@@ -39,10 +39,10 @@ export const publish = async (caption, file) => {
       duration,
     };
   } catch (error) {
-    console.error(
+    /* console.error(
       'Unable to publish to twitter',
       JSON.stringify({ error: error.message })
-    );
+    ); */
     // unhandled error
     throw error;
   }

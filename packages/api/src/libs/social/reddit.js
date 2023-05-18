@@ -29,10 +29,10 @@ export const publish = async (caption, image_url) => {
       duration,
     };
   } catch (error) {
-    console.error(
+    /* console.error(
       'Unable to publish to reddit',
       JSON.stringify({ error: error.message })
-    );
+    ); */
     // unhandled error
     throw error;
   }
