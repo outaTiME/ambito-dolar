@@ -146,22 +146,19 @@ const checkForSetting = (notification_settings = {}, type) => {
   return settings.enabled === true && settings[type].enabled === true;
 };
 
-const notify = async (
-  items,
-  type = AmbitoDolar.NOTIFICATION_CLOSE_TYPE,
-  { message: body_message, rates },
-  social
+const sendPushNotifications = async (
+  items = [],
+  { message: body_message, type, rates }
 ) => {
   if (body_message) {
     type = 'custom';
   }
   console.info(
-    'New notification',
+    'Send push notifications',
     JSON.stringify({
-      type,
       body_message,
+      type,
       rates,
-      social,
     })
   );
   const tickets = [];
@@ -177,7 +174,6 @@ const notify = async (
       .uniqBy('push_token')
       .value();
     if (body_message) {
-      // TODO: custom message support for broadcasting?
       const { installation_id, app_version, push_token } = items[0];
       // single item only allowed (installation_id as parameter)
       messages.push(
@@ -193,38 +189,17 @@ const notify = async (
         })
       );
     } else {
-      // uses getRates when NOTIFICATION_CLOSE_TYPE
-      rates = rates || (await Shared.getRates());
-      // useful for holidays when NOTIFICATION_CLOSE_TYPE
-      const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
-      if (has_rates_from_today) {
-        // filter the items that have this type of notification enabled
-        items = _.filter(items, ({ notification_settings }) =>
-          checkForSetting(notification_settings, type)
+      // filter the items that have this type of notification enabled
+      items = _.filter(items, ({ notification_settings }) =>
+        checkForSetting(notification_settings, type)
+      );
+      // leave testing device only for new notifications when development
+      if (process.env.IS_LOCAL && items.length > 1) {
+        throw new Error(
+          'Only single messages can be sent while running in development mode'
         );
-        // leave testing device only for new notifications when development
-        if (process.env.IS_LOCAL && items.length > 1) {
-          throw new Error(
-            'Only single message can be sent when running on development mode.'
-          );
-        }
-        // exclude when installation_id
-        if (social === true) {
-          const social_rates = _.omit(rates, [
-            // rates to exclude
-          ]);
-          await Shared.triggerSocialNotifyEvent({
-            type,
-            title: AmbitoDolar.getNotificationTitle(type),
-            caption: getSocialCaption(type, social_rates),
-          });
-        }
-        messages.push(
-          ...(await getMessagesFromCurrentRate(items, type, rates))
-        );
-      } else {
-        console.warn('No day rates to notify');
       }
+      messages.push(...(await getMessagesFromCurrentRate(items, type, rates)));
     }
     console.info(
       'Generated messages',
@@ -276,7 +251,7 @@ const notify = async (
       );
       const sending_duration = (Date.now() - expo_start_time) / 1000;
       console.info(
-        'Sent messages',
+        'Messages sent',
         JSON.stringify({
           chunks: chunks.length,
           ...(failedChunks.length > 0 && {
@@ -307,7 +282,7 @@ const notify = async (
         Shared.storeTickets(notification_date, type, tickets),
       ]).catch((error) => {
         console.warn(
-          'Unable to store the notification tickets',
+          'Unable to store notification tickets',
           JSON.stringify({
             error: error.message,
           })
@@ -323,16 +298,25 @@ const notify = async (
 };
 
 export const handler = Shared.wrapHandler(async (event) => {
-  const { type, installation_id, message, rates } = JSON.parse(
-    event.Records[0].Sns.Message
-  );
+  const {
+    installation_id,
+    message,
+    type = AmbitoDolar.NOTIFICATION_CLOSE_TYPE,
+    rates,
+    social = true,
+  } = JSON.parse(event.Records[0].Sns.Message);
+  // TODO: support message broadcasting?
+  if (!installation_id && message) {
+    throw new Error('Message is malformed, missing or has an invalid value');
+  }
   console.info(
     'Message received',
     JSON.stringify({
-      type,
       installation_id,
       message,
+      type,
       rates,
+      social,
     })
   );
   let filter_expression =
@@ -354,17 +338,55 @@ export const handler = Shared.wrapHandler(async (event) => {
       ExpressionAttributeValues: expression_attribute_values,
     }),
   };
+  const promises = [];
   // FIXME: may throw 'ProvisionedThroughputExceededException' in case of many consecutive calls
-  const items = await Shared.getAllDataFromDynamoDB(params);
-  const results = await notify(
-    items,
-    type,
-    {
-      message,
-      rates,
-    },
-    !installation_id && !process.env.IS_LOCAL
-  );
+  const items = await Shared.getAllDataFromDynamoDB(params).catch((error) => {
+    console.warn(
+      'Unable to get devices for push notifications',
+      JSON.stringify({
+        installation_id,
+        error: error.message,
+      })
+    );
+  });
+  if (items && installation_id && message) {
+    // send plain message
+    promises.push(
+      sendPushNotifications(items, {
+        message,
+      })
+    );
+  } else {
+    // uses getRates when NOTIFICATION_CLOSE_TYPE
+    const current_rates = rates || (await Shared.getRates());
+    // useful for holidays when NOTIFICATION_CLOSE_TYPE
+    const has_rates_from_today = AmbitoDolar.hasRatesFromToday(current_rates);
+    if (has_rates_from_today) {
+      if (items) {
+        promises.push(
+          sendPushNotifications(items, {
+            type,
+            rates: current_rates,
+          })
+        );
+      }
+      if (social && !installation_id && !process.env.IS_LOCAL) {
+        const social_rates = _.omit(current_rates, [
+          // rates to exclude
+        ]);
+        promises.push(
+          Shared.triggerSocialNotifyEvent({
+            type,
+            title: AmbitoDolar.getNotificationTitle(type),
+            caption: getSocialCaption(type, social_rates),
+          })
+        );
+      }
+    } else {
+      console.info('No daily rates for notification');
+    }
+  }
+  const results = await Promise.all(promises);
   console.info('Completed', JSON.stringify(results));
   return results;
 });
