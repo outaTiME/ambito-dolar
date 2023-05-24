@@ -339,7 +339,6 @@ export const handler = Shared.wrapHandler(async (event) => {
     }),
   };
   const promises = [];
-  // FIXME: may throw 'ProvisionedThroughputExceededException' in case of many consecutive calls
   const items = await Shared.getAllDataFromDynamoDB(params).catch((error) => {
     console.warn(
       'Unable to get devices for push notifications',
