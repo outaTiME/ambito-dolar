@@ -409,9 +409,13 @@ const storeRatesJsonObject = async (rates, is_updated) => {
 };
 
 const getDataProviderForRate = (type) => {
-  if (type === AmbitoDolar.CCL_TYPE || type === AmbitoDolar.MEP_TYPE) {
+  /* if (type === AmbitoDolar.CCL_TYPE || type === AmbitoDolar.MEP_TYPE) {
     return 'Rava Bursátil';
-  } else if (type === AmbitoDolar.CCB_TYPE) {
+  } else */ if (
+    type === AmbitoDolar.CCL_TYPE ||
+    type === AmbitoDolar.MEP_TYPE ||
+    type === AmbitoDolar.CCB_TYPE
+  ) {
     return 'CriptoYa';
   }
   return 'Ámbito Financiero';
