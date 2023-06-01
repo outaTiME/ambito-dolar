@@ -90,9 +90,9 @@ const fetchFirebaseData = async (uri, opts) => {
   return AmbitoDolar.fetch(url.href, opts).then((response) => response.json());
 };
 
-const putFirebaseData = async (uri, payload = {}) =>
+const updateFirebaseData = async (uri, payload = {}) =>
   fetchFirebaseData(uri, {
-    method: 'PUT',
+    method: 'PATCH',
     body: JSON.stringify(payload),
   }).catch((error) => {
     console.warn(
@@ -663,7 +663,7 @@ const wrapHandler = (handler) => {
 
 export default {
   // fetchFirebaseData,
-  putFirebaseData,
+  updateFirebaseData,
   serviceResponse,
   getDynamoDBClient,
   getAllDataFromDynamoDB,
