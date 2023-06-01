@@ -97,3 +97,26 @@ test('Rate should be of the current day', function (t) {
   const yesterday = AmbitoDolar.getTimezoneDate().subtract(1, 'day');
   t.false(AmbitoDolar.isRateFromToday([yesterday]));
 });
+
+test('Fetch should timeout with abort signal', function (t) {
+  return AmbitoDolar.fetch('https://httpstat.us/200', {
+    timeout: Number.MIN_VALUE,
+  }).catch((err) => {
+    t.is(err.type, 'aborted');
+  });
+});
+
+test('Fetch should retry after a network error', function (t) {
+  const max_retries = 1;
+  let retries = 0;
+  return AmbitoDolar.fetch('https://httpstat.us/500', {
+    retry: {
+      retries: max_retries,
+      onRetry: () => {
+        ++retries;
+      },
+    },
+  }).catch(() => {
+    t.is(retries, max_retries);
+  });
+});

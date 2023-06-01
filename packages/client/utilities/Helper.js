@@ -44,46 +44,18 @@ const getNotificationSettingsSelector = createSelector(
   (notification_settings) => getNotificationSettings(notification_settings)
 );
 
-const fetchRetry = require('@vercel/fetch-retry')(fetch);
-
-const fetchTimeout = (url, opts = {}, ms = Settings.FETCH_TIMEOUT) => {
-  // eslint-disable-next-line no-undef
-  const controller = new AbortController();
-  const timeout = setTimeout(() => {
-    controller.abort();
-  }, ms);
-  return fetch(url, {
-    ...opts,
-    signal: controller.signal,
-  }).finally(() => {
-    clearTimeout(timeout);
-  });
-};
-
 const getJson = (url, opts = {}) => {
   if (__DEV__) {
     console.log('Get json', url, opts);
   }
-  const retry = opts.retry;
-  const timeout = opts.timeout;
-  return (retry === true ? fetchRetry : timeout ? fetchTimeout : fetch)(
-    url,
-    {
-      // method: 'GET',
-      headers: {
-        // Accept: 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      ...opts,
+  return AmbitoDolar.fetch(url, {
+    // method: 'GET',
+    headers: {
+      // Accept: 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
     },
-    timeout
-  ).then((response) => {
-    if (!response.ok) {
-      // throw new Error(`${response.status}: ${response.statusText}`);
-      throw new Error(response.statusText || response.status);
-    }
-    return response.json();
-  });
+    ...opts,
+  }).then((response) => response.json());
   /* .then((data) => {
       return data;
     }) */
@@ -188,38 +160,28 @@ export default {
       }),
     ]);
   },
-  registerDevice(data) {
-    return getJson(Settings.REGISTER_DEVICE_URI, {
+  registerDevice: (data = {}) =>
+    getJson(Settings.REGISTER_DEVICE_URI, {
       method: 'POST',
       body: JSON.stringify(data),
-      retry: true,
-    });
-  },
-  getRates(initial) {
+    }),
+  getRates: () => {
     if (Settings.RATES_URI) {
-      return getJson(Settings.RATES_URI, {
-        ...(initial === true
-          ? { timeout: Settings.FETCH_TIMEOUT }
-          : { retry: true }),
-      });
+      return getJson(Settings.RATES_URI);
     }
     if (__DEV__) {
       console.log('Using local rates file');
     }
-    return Promise.resolve(rates);
+    return rates;
   },
-  getHistoricalRates() {
+  getHistoricalRates: () => {
     if (Settings.HISTORICAL_RATES_URI) {
-      return getJson(Settings.HISTORICAL_RATES_URI, {
-        timeout: Settings.FETCH_TIMEOUT,
-      });
+      return getJson(Settings.HISTORICAL_RATES_URI);
+      // return getJson('https://httpstat.us/200?sleep=30000');
     }
-    return Promise.reject(new Error('No historical rates available'));
+    throw new Error('No historical rates available');
   },
-  getStats: () =>
-    getJson(Settings.STATS_URI, {
-      timeout: Settings.FETCH_TIMEOUT,
-    }),
+  getStats: () => getJson(Settings.STATS_URI),
   cleanVersion(version) {
     return semverValid(semverCoerce(version));
   },

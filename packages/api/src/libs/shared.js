@@ -13,7 +13,6 @@ import { parallelScan } from '@shelf/dynamodb-parallel-scan';
 import { Expo } from 'expo-server-sdk';
 import { JWT } from 'google-auth-library';
 import * as _ from 'lodash';
-import fetch from 'node-fetch';
 import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import zlib from 'zlib';
@@ -83,19 +82,12 @@ const getFirebaseAccessToken = async () => {
   });
 };
 
-const fetchRetry = require('@vercel/fetch-retry')(fetch);
-
-const fetchFirebaseData = async (uri, opts = {}) => {
+const fetchFirebaseData = async (uri, opts) => {
   const access_token = await getFirebaseAccessToken();
   const url = new URL(`${process.env.FIREBASE_DATABASE_URL}/${uri}`);
   url.pathname = url.pathname + '.json';
   url.searchParams.set('access_token', access_token);
-  return fetchRetry(url.href, opts).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    throw new Error(response.statusText);
-  });
+  return AmbitoDolar.fetch(url.href, opts).then((response) => response.json());
 };
 
 const putFirebaseData = async (uri, payload = {}) =>
@@ -542,7 +534,7 @@ const triggerEvent = async (event, payload) => {
       payload,
     })
   );
-  return fetchRetry(
+  return AmbitoDolar.fetch(
     `https://maker.ifttt.com/trigger/${event}/with/key/${process.env.IFTTT_KEY}`,
     {
       method: 'POST',
@@ -552,22 +544,19 @@ const triggerEvent = async (event, payload) => {
       body: JSON.stringify(payload),
     }
   )
-    .then((response) => {
+    .then(() => {
       const duration = (Date.now() - start_time) / 1000;
-      if (response.ok) {
-        console.info(
-          'Event triggered',
-          JSON.stringify({
-            event,
-            duration,
-          })
-        );
-        return {
+      console.info(
+        'Event triggered',
+        JSON.stringify({
           event,
           duration,
-        };
-      }
-      throw new Error(response.statusText);
+        })
+      );
+      return {
+        event,
+        duration,
+      };
     })
     .catch((error) => {
       // ignore error and trace
@@ -634,8 +623,8 @@ const triggerSocials = async (targets, caption, url, file, story_file) => {
 };
 
 const storeImgurFile = async (image) =>
-  // fetchRetry('https://api.imgur.com/3/image', {
-  fetchRetry('https://api.imgur.com/3/upload', {
+  // AmbitoDolar.fetch('https://api.imgur.com/3/image', {
+  AmbitoDolar.fetch('https://api.imgur.com/3/upload', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
@@ -646,20 +635,14 @@ const storeImgurFile = async (image) =>
       type: 'base64',
     }),
   }).then(async (response) => {
-    if (response.ok) {
-      const { data } = await response.json();
-      return data.link;
-    }
-    throw new Error(response.statusText);
+    const { data } = await response.json();
+    return data.link;
   });
 
 const fetchImage = async (url) =>
-  fetchRetry(url).then(async (response) => {
-    if (response.ok) {
-      return Buffer.from(await response.arrayBuffer());
-    }
-    throw new Error(response.statusText);
-  });
+  AmbitoDolar.fetch(url).then(async (response) =>
+    Buffer.from(await response.arrayBuffer())
+  );
 
 const wrapHandler = (handler) => {
   if (!process.env.IS_LOCAL) {
@@ -679,7 +662,6 @@ const wrapHandler = (handler) => {
 };
 
 export default {
-  fetch: fetchRetry,
   // fetchFirebaseData,
   putFirebaseData,
   serviceResponse,

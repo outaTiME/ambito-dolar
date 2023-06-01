@@ -15,54 +15,40 @@ const numberValidator = (value, helpers) => {
   return helpers.error('any.invalid');
 };
 
-const getRate = (type) =>
-  new Promise((resolve) => {
-    const start_time = Date.now();
-    const url = Shared.getRateUrl(type);
-    Shared.fetch(url)
-      .then(async (response) => {
-        const data = await response.json();
-        // validate
-        // https://joi.dev/tester/
-        const schema = Joi.object()
-          .keys({
-            fecha: Joi.string().required(),
-            // variacion: Joi.string().required(),
-            compra: Joi.string().required().custom(numberValidator),
-            venta: Joi.string().required().custom(numberValidator),
-            // only when TOURIST_TYPE / QATAR_TYPE / SAVING_TYPE / CCL_TYPE / MEP_TYPE
-            valor: Joi.string().custom(numberValidator),
-          })
-          .unknown(true);
-        const { value, error } = schema.validate(data);
-        if (error) {
-          // log error and continue processing
-          console.warn(
-            'Invalid schema validation on rate',
-            JSON.stringify({ type, data, error: error.message })
-          );
-          resolve();
-        } else {
-          const identity = value.fecha;
-          const rate_last = value.valor
-            ? value.valor
-            : [value.compra, value.venta];
-          const result = {
-            type,
-            rate: [identity, rate_last],
-          };
-          resolve(result);
-        }
-      })
-      .catch((error) => {
+const getRate = (type) => {
+  const start_time = Date.now();
+  const url = Shared.getRateUrl(type);
+  return AmbitoDolar.fetch(url)
+    .then(async (response) => {
+      const data = await response.json();
+      // validate
+      // https://joi.dev/tester/
+      const schema = Joi.object()
+        .keys({
+          fecha: Joi.string().required(),
+          // variacion: Joi.string().required(),
+          compra: Joi.string().required().custom(numberValidator),
+          venta: Joi.string().required().custom(numberValidator),
+          // only when TOURIST_TYPE / QATAR_TYPE / SAVING_TYPE / CCL_TYPE / MEP_TYPE
+          valor: Joi.string().custom(numberValidator),
+        })
+        .unknown(true);
+      const { value, error } = schema.validate(data);
+      if (error) {
         // log error and continue processing
         console.warn(
-          'Unable to fetch rate',
-          JSON.stringify({ type, error: error.message })
+          'Invalid schema validation on rate',
+          JSON.stringify({ type, data, error: error.message })
         );
-        resolve();
-      })
-      .finally(() => {
+      } else {
+        const identity = value.fecha;
+        const rate_last = value.valor
+          ? value.valor
+          : [value.compra, value.venta];
+        const result = {
+          type,
+          rate: [identity, rate_last],
+        };
         const duration = (Date.now() - start_time) / 1000;
         console.info(
           'Fetch rate completed',
@@ -71,58 +57,53 @@ const getRate = (type) =>
             duration,
           })
         );
-      });
-  });
+        return result;
+      }
+    })
+    .catch((error) => {
+      // log error and continue processing
+      console.warn(
+        'Unable to fetch rate',
+        JSON.stringify({ type, error: error.message })
+      );
+    });
+};
 
-const getCryptoRates = (rates) =>
-  new Promise((resolve) => {
-    const start_time = Date.now();
-    // normalize data
-    rates = [].concat(rates).reduce((obj, rate) => {
-      const [type, target_type = type] = [].concat(rate);
-      obj[type] = target_type;
-      return obj;
-    }, {});
-    const url = Shared.getCryptoRatesUrl();
-    Shared.fetch(url)
-      .then(async (response) => {
-        const data = await response.json();
-        // validate
-        // https://joi.dev/tester/
-        const schema = Joi.object()
-          .keys({
-            ..._.mapValues(rates, () =>
-              Joi.number().required().custom(numberValidator)
-            ),
-            time: Joi.number().integer().default(Date.now),
-          })
-          .unknown(true);
-        const { value, error } = schema.validate(data);
-        if (error) {
-          // log error and continue processing
-          console.warn(
-            'Invalid schema validation on crypto rates',
-            JSON.stringify({ rates, data, error: error.message })
-          );
-          resolve();
-        } else {
-          const identity = value.time;
-          const result = Object.entries(rates).map(([type, target_type]) => ({
-            type: target_type,
-            rate: [identity, value[type]],
-          }));
-          resolve(result);
-        }
-      })
-      .catch((error) => {
+const getCryptoRates = (rates) => {
+  const start_time = Date.now();
+  // normalize data
+  rates = [].concat(rates).reduce((obj, rate) => {
+    const [type, target_type = type] = [].concat(rate);
+    obj[type] = target_type;
+    return obj;
+  }, {});
+  const url = Shared.getCryptoRatesUrl();
+  return AmbitoDolar.fetch(url)
+    .then(async (response) => {
+      const data = await response.json();
+      // validate
+      // https://joi.dev/tester/
+      const schema = Joi.object()
+        .keys({
+          ..._.mapValues(rates, () =>
+            Joi.number().required().custom(numberValidator)
+          ),
+          time: Joi.number().integer().default(Date.now),
+        })
+        .unknown(true);
+      const { value, error } = schema.validate(data);
+      if (error) {
         // log error and continue processing
         console.warn(
-          'Unable to fetch crypto rates',
-          JSON.stringify({ rates, error: error.message })
+          'Invalid schema validation on crypto rates',
+          JSON.stringify({ rates, data, error: error.message })
         );
-        resolve();
-      })
-      .finally(() => {
+      } else {
+        const identity = value.time;
+        const result = Object.entries(rates).map(([type, target_type]) => ({
+          type: target_type,
+          rate: [identity, value[type]],
+        }));
         const duration = (Date.now() - start_time) / 1000;
         console.info(
           'Fetch crypto rates completed',
@@ -131,8 +112,17 @@ const getCryptoRates = (rates) =>
             duration,
           })
         );
-      });
-  });
+        return result;
+      }
+    })
+    .catch((error) => {
+      // log error and continue processing
+      console.warn(
+        'Unable to fetch crypto rates',
+        JSON.stringify({ rates, error: error.message })
+      );
+    });
+};
 
 const getHistoricalRate = (type, rate, { max = 0, max_date }) => {
   // in-memory calculation

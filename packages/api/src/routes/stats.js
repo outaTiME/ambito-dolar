@@ -1,3 +1,4 @@
+import AmbitoDolar from '@ambito-dolar/core';
 import * as _ from 'lodash';
 
 import Shared from '../libs/shared';
@@ -9,11 +10,14 @@ export const handler = Shared.wrapHandler(async () => {
         ':'
       )
     ).toString('base64');
-    const results = await Shared.fetch(process.env.AMPLITUDE_USAGE_STATS_URL, {
-      headers: {
-        Authorization: `Basic ${credentials}`,
-      },
-    }).then(async (response) => {
+    const results = await AmbitoDolar.fetch(
+      process.env.AMPLITUDE_USAGE_STATS_URL,
+      {
+        headers: {
+          Authorization: `Basic ${credentials}`,
+        },
+      }
+    ).then(async (response) => {
       const { data } = await response.json();
       const [users, events, conversions] = _.chain(data?.values)
         .last()

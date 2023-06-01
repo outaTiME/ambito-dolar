@@ -1,4 +1,5 @@
 const JsonURL = require('@jsonurl/jsonurl');
+const fetch = require('cross-fetch');
 const isEmpty = require('lodash.isempty');
 const max = require('lodash.max');
 const merge = require('lodash.merge');
@@ -51,6 +52,8 @@ const SOCIAL_IMAGE_HEIGHT = (SOCIAL_IMAGE_WIDTH / 4) * 5;
 // 1216
 const VIEWPORT_PORTRAIT_STORY_HEIGHT = (VIEWPORT_PORTRAIT_WIDTH / 9) * 16;
 const SOCIAL_STORY_IMAGE_HEIGHT = (SOCIAL_IMAGE_WIDTH / 9) * 16;
+
+const FETCH_TIMEOUT = 30 * 1000; // 30 secs
 
 const getCapitalized = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -316,6 +319,26 @@ const getRateChange = (stat, include_symbol = false) => {
   return str.join('');
 };
 
+const fetchData = (url, { timeout = FETCH_TIMEOUT, ...opts } = {}) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, timeout);
+  return require('@vercel/fetch-retry')(fetch)(url, {
+    ...opts,
+    signal: controller.signal,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response;
+    })
+    .finally(() => {
+      clearTimeout(timeoutId);
+    });
+};
+
 module.exports = {
   TIMEZONE,
   OFFICIAL_TYPE,
@@ -361,4 +384,5 @@ module.exports = {
   getRateChange,
   crushJson: (obj) => JsonURL.stringify(obj, { AQF: true }),
   uncrushJson: (str) => JsonURL.parse(str, { AQF: true }),
+  fetch: fetchData,
 };
