@@ -4,10 +4,10 @@
   "version": "3.7.2",
   "dependencies": {
     "@ambito-dolar/core": "^3.3.1",
-    "@aws-sdk/client-dynamodb": "^3.338.0",
-    "@aws-sdk/client-s3": "^3.338.0",
-    "@aws-sdk/client-sns": "^3.338.0",
-    "@aws-sdk/lib-dynamodb": "^3.338.0",
+    "@aws-sdk/client-dynamodb": "^3.342.0",
+    "@aws-sdk/client-s3": "^3.342.0",
+    "@aws-sdk/client-sns": "^3.342.0",
+    "@aws-sdk/lib-dynamodb": "^3.342.0",
     "@sentry/integrations": "7.29.0",
     "@sentry/serverless": "7.29.0",
     "@shelf/dynamodb-parallel-scan": "^3.4.0",
@@ -24,6 +24,6 @@
     "reddit": "^1.2.1",
     "semver": "^7.5.1",
     "sharp": "^0.32.1",
-    "twitter-api-v2": "^1.14.2"
+    "twitter-api-v2": "^1.14.3"
   }
 }
