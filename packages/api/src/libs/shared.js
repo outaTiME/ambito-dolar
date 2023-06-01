@@ -131,14 +131,16 @@ const isSemverLt = (v1, v2) => semverLt(v1, v2);
 
 const isSemverGte = (v1, v2) => semverGte(v1, v2);
 
-const getVariationThreshold = (type) => {
+const getVariationThreshold = (type, prev_rate, rate) => {
   const realtime_types = [
     AmbitoDolar.CCL_TYPE,
     AmbitoDolar.MEP_TYPE,
     AmbitoDolar.CCB_TYPE,
   ];
   if (realtime_types.includes(type)) {
-    return 2.75;
+    // flexible variation of 1% between updates
+    return ((prev_rate + rate) / 2) * 0.01;
+    // return 2.75;
   }
   return 0.05;
 };

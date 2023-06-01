@@ -270,7 +270,11 @@ const notify = (
             const value_diff = AmbitoDolar.getNumber(
               Math.abs(prev_rate_last - rate_last)
             );
-            const rate_threshold = Shared.getVariationThreshold(type);
+            const rate_threshold = Shared.getVariationThreshold(
+              type,
+              prev_rate_last,
+              rate_last
+            );
             console.info(
               'Looking for rate variation to notify',
               JSON.stringify({
