@@ -40,7 +40,7 @@
     "depcheck": "yarn workspaces foreach --verbose exec npx depcheck",
     "postinstall": "husky install"
   },
-  "packageManager": "yarn@3.5.0",
+  "packageManager": "yarn@3.6.0",
   "resolutions": {
     "remark-mdx": "2.0.0-next.9",
     "babel-plugin-lodash/@babel/types": "~7.20.0"
