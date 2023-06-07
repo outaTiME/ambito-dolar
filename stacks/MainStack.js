@@ -296,10 +296,13 @@ export function MainStack({ stack }) {
         type: 'url',
         url: api.url + '/{proxy}',
       },
-      $default: {
-        type: 'url',
-        url: landingSite.url,
-      },
+      // undefined on remove
+      ...(landingSite.url && {
+        $default: {
+          type: 'url',
+          url: landingSite.url,
+        },
+      }),
     },
   });
   // trace stack
