@@ -1,15 +1,15 @@
 {
   "version": "0.2.0",
   "configurations": [
+    // https://docs.sst.dev/live-lambda-development#launch-configurations
     {
-      "name": "Debug SST Start",
+      "name": "Debug SST Dev",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/sst",
-      "runtimeArgs": ["start", "--increase-timeout"],
+      "runtimeArgs": ["dev", "--increase-timeout"],
       "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"],
-      "env": { "NODE_OPTIONS": "--throw-deprecation" },
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }
