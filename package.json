@@ -19,7 +19,7 @@
     "eslint": "^8.42.0",
     "eslint-config-universe": "^11.3.0",
     "husky": "^8.0.3",
-    "lerna": "^6.6.2",
+    "lerna": "^7.0.0",
     "prettier": "^2.8.8",
     "sst": "2.11.18"
   },

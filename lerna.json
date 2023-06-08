@@ -1,9 +1,6 @@
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "npmClient": "yarn",
-  "useWorkspaces": true,
   "version": "independent",
   "command": {
     "publish": {
@@ -11,9 +8,8 @@
       "conventionalCommits": true,
       "createRelease": "github",
       "message": "chore: publish",
-      "ignoreChanges": [
-        "**/*.md"
-      ]
+      "ignoreChanges": ["**/*.md"]
     }
-  }
+  },
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json"
 }
