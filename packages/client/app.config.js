@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-const version = '6.6.3';
+const version = '6.7.0';
 const buildNumber = 97;
 
 const LIGHT_SPLASH = {
