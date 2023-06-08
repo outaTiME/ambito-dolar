@@ -508,7 +508,7 @@ PODS:
     - React-Core
   - RNFlashList (1.4.3):
     - React-Core
-  - RNGestureHandler (2.10.2):
+  - RNGestureHandler (2.11.0):
     - React-Core
   - RNQuickAction (0.3.13):
     - React
@@ -876,7 +876,7 @@ SPEC CHECKSUMS:
   ReactNativeWidgetKit: d356de3387427cb3e92e556408460abfb3a207ed
   RNDeviceInfo: 475a4c447168d0ad4c807e48ef5e0963a0f4eb1b
   RNFlashList: ade81b4e928ebd585dd492014d40fb8d0e848aab
-  RNGestureHandler: f75d81410b40aaa99e71ae8f8bb7a88620c95042
+  RNGestureHandler: 026038a97d4c8649ce397a22e162ca58b4e6c230
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNReanimated: f186e85d9f28c9383d05ca39e11dd194f59093ec
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
