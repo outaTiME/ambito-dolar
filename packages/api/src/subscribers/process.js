@@ -208,13 +208,15 @@ const getRates = (rates) =>
 // process these rates only on business days
 const getBusinessDayRates = (rates, realtime) => {
   const promises = [
-    // (for now) updates on holidays
+    // (for now) informal rate updates on holidays
     getRate(AmbitoDolar.INFORMAL_TYPE),
+    getRate(AmbitoDolar.CCL_TYPE),
+    getRate(AmbitoDolar.MEP_TYPE),
   ];
   if (realtime) {
     promises.push(
-      getRate(AmbitoDolar.CCL_TYPE),
-      getRate(AmbitoDolar.MEP_TYPE),
+      // getRate(AmbitoDolar.CCL_TYPE),
+      // getRate(AmbitoDolar.MEP_TYPE),
       getCryptoRates([
         // ['cclgd30', AmbitoDolar.CCL_TYPE],
         // ['mepgd30', AmbitoDolar.MEP_TYPE],
