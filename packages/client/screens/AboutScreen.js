@@ -27,8 +27,6 @@ const FACEBOOK_DEEP_LINK = `fb://${
 }116047123558432`;
 const FACEBOOK_WEB_URL = 'https://facebook.com/pg/AmbitoDolar';
 const REDDIT_URI = 'www.reddit.com/r/AmbitoDolar';
-const APOLLO_DEEP_LINK = `apollo://${REDDIT_URI}`;
-// const REDDIT_DEEP_LINK = 'reddit:///r/AmbitoDolar';
 const REDDIT_DEEP_LINK = `reddit://${REDDIT_URI}`;
 const REDDIT_WEB_URL = `https://${REDDIT_URI}`;
 const IVORY_DEEP_LINK = `ivory:///user_profile/AmbitoDolar@mastodon.social`;
@@ -108,16 +106,12 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       .catch(console.warn);
   }, []);
   const onPressReddit = React.useCallback(() => {
-    Linking.canOpenURL(APOLLO_DEEP_LINK)
+    Linking.canOpenURL(REDDIT_DEEP_LINK)
       .then((supported) =>
-        supported
-          ? Linking.openURL(APOLLO_DEEP_LINK)
-          : Linking.canOpenURL(REDDIT_DEEP_LINK).then((supported) =>
               supported
                 ? Linking.openURL(REDDIT_DEEP_LINK)
                 : Linking.openURL(REDDIT_WEB_URL)
             )
-      )
       .catch(console.warn);
   }, []);
   const onPressMastodon = React.useCallback(() => {
