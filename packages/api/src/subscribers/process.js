@@ -18,7 +18,10 @@ const numberValidator = (value, helpers) => {
 const getRate = (type) => {
   const start_time = Date.now();
   const url = Shared.getRateUrl(type);
-  return AmbitoDolar.fetch(url)
+  return AmbitoDolar.fetch(url, {
+    // 15 over default of 30 secs
+    timeout: 45 * 1000,
+  })
     .then(async (response) => {
       const data = await response.json();
       // validate
