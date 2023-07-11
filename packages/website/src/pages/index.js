@@ -1,4 +1,3 @@
-import { useStaticQuery, graphql } from 'gatsby';
 import React from 'react';
 import { IconContext } from 'react-icons';
 import {
@@ -17,22 +16,11 @@ import Icon from '../components/icon';
 import Layout from '../components/layout';
 import Phone from '../components/phone';
 import PlayStore from '../components/play-store';
+import { Seo } from '../components/seo';
+import { useSiteMetadata } from '../hooks/use-site-metadata';
 
 const IndexPage = () => {
-  const { site } = useStaticQuery(
-    graphql`
-      query {
-        site {
-          siteMetadata {
-            title
-            description
-            author
-          }
-        }
-      }
-    `
-  );
-  const title = `${site.siteMetadata.title}`;
+  const { title } = useSiteMetadata();
   React.useEffect(() => {
     document
       .getElementsByClassName('app-store')[0]
@@ -74,7 +62,7 @@ const IndexPage = () => {
                       y efectiva.
                     </p>
                     <p className="social">
-                    <a
+                      <a
                         className="icon"
                         href="https://twitter.com/AmbitoDolar"
                         target="_blank"
@@ -139,7 +127,6 @@ const IndexPage = () => {
                         <Mail />
                       </a>
                     </p>
-
                     <p className="donation">
                       Esta aplicación es gratuita, de código abierto y sin
                       publicidades, podés contribuir con su desarrollo y
@@ -154,7 +141,6 @@ const IndexPage = () => {
                       </a>
                       .
                     </p>
-
                     <div className="feature__action">
                       <AppStore />
                       <PlayStore />
@@ -174,3 +160,5 @@ const IndexPage = () => {
 };
 
 export default IndexPage;
+
+export const Head = () => <Seo />;

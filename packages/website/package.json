@@ -1,32 +1,7 @@
 {
   "name": "@ambito-dolar/website",
-  "private": true,
   "version": "1.7.3",
-  "dependencies": {
-    "gatsby": "^2.32.13",
-    "gatsby-background-image": "^1.6.0",
-    "gatsby-cli": "^2.19.3",
-    "gatsby-image": "^2.11.0",
-    "gatsby-plugin-dark-mode": "^1.1.2",
-    "gatsby-plugin-google-analytics": "^2.11.0",
-    "gatsby-plugin-humans-txt": "^1.1.4",
-    "gatsby-plugin-manifest": "^2.12.1",
-    "gatsby-plugin-no-sourcemaps": "^2.9.0",
-    "gatsby-plugin-offline": "^3.10.2",
-    "gatsby-plugin-react-helmet": "^3.10.0",
-    "gatsby-plugin-robots-txt": "~1.7.1",
-    "gatsby-plugin-sass": "^3.2.0",
-    "gatsby-plugin-sharp": "^2.14.4",
-    "gatsby-plugin-web-font-loader": "^1.0.4",
-    "gatsby-source-filesystem": "^2.11.1",
-    "gatsby-transformer-sharp": "^2.12.1",
-    "prop-types": "^15.8.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-helmet": "^6.1.0",
-    "react-icons": "^4.9.0",
-    "sass": "^1.63.2"
-  },
+  "private": true,
   "scripts": {
     "develop": "gatsby develop",
     "start": "gatsby develop",
@@ -34,7 +9,25 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean"
   },
-  "installConfig": {
-    "hoistingLimits": "workspaces"
+  "dependencies": {
+    "@anatoliygatt/use-prefers-color-scheme": "^1.0.10",
+    "gatsby": "^5.11.0",
+    "gatsby-omni-font-loader": "^2.0.2",
+    "gatsby-plugin-google-gtag": "^5.11.0",
+    "gatsby-plugin-humans-txt": "^1.1.4",
+    "gatsby-plugin-image": "^3.11.0",
+    "gatsby-plugin-manifest": "^5.11.0",
+    "gatsby-plugin-no-sourcemaps": "^5.11.0",
+    "gatsby-plugin-robots-txt": "^1.8.0",
+    "gatsby-plugin-sass": "^6.11.0",
+    "gatsby-plugin-sharp": "^5.11.0",
+    "gatsby-plugin-sitemap": "^6.11.0",
+    "gatsby-source-filesystem": "^5.11.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
+    "react-icons": "^4.10.1",
+    "sass": "^1.63.6"
   }
 }

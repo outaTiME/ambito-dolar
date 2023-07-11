@@ -1,63 +1,37 @@
-import { StaticQuery, graphql } from 'gatsby';
-import Img from 'gatsby-image';
-import { ThemeToggler } from 'gatsby-plugin-dark-mode';
+import { usePrefersColorScheme } from '@anatoliygatt/use-prefers-color-scheme';
+import { StaticImage } from 'gatsby-plugin-image';
 import React from 'react';
-/*
- * This component is built using `gatsby-image` to automatically serve optimized
- * images with lazy loading and reduced file sizes. The image is loaded using a
- * `StaticQuery`, which allows us to load the image from directly within this
- * component, rather than having to pass the image data down from pages.
- *
- * For more information, see the docs:
- * - `gatsby-image`: https://gatsby.dev/gatsby-image
- * - `StaticQuery`: https://gatsby.dev/staticquery
- */
 
-const Phone = () => (
-  <StaticQuery
-    query={graphql`
-      query {
-        lightImage: file(relativePath: { eq: "iphone.png" }) {
-          childImageSharp {
-            fluid(maxWidth: 300) {
-              ...GatsbyImageSharpFluid_withWebp
-              ...GatsbyImageSharpFluidLimitPresentationSize
-            }
-          }
-        }
-        darkImage: file(relativePath: { eq: "iphone-dark.png" }) {
-          childImageSharp {
-            fluid(maxWidth: 300) {
-              ...GatsbyImageSharpFluid_withWebp
-              ...GatsbyImageSharpFluidLimitPresentationSize
-            }
-          }
-        }
-      }
-    `}
-    render={(data) => (
-      <ThemeToggler>
-        {({ theme }) => {
-          // Don't render anything at compile time. Deferring rendering until we
-          // know which theme to use on the client avoids incorrect initial
-          // state being displayed.
-          if (theme == null) {
-            return null;
-          }
-          return (
-            <Img
-              fluid={
-                data[theme === 'dark' ? 'darkImage' : 'lightImage']
-                  .childImageSharp.fluid
-              }
-              style={{
-                margin: `0 auto`,
-              }}
-            />
-          );
-        }}
-      </ThemeToggler>
-    )}
-  />
-);
+const Phone = () => {
+  const [domLoaded, setDomLoaded] = React.useState(false);
+  const prefersColorScheme = usePrefersColorScheme();
+  const isDarkMode = prefersColorScheme === 'dark';
+  // wait for client-side hydration to render
+  React.useEffect(() => {
+    setDomLoaded(true);
+  }, []);
+  if (domLoaded) {
+    if (isDarkMode) {
+      return (
+        <StaticImage
+          alt=""
+          src="../../static/images/iphone-dark.png"
+          layout="constrained"
+          width={300}
+          placeholder="none"
+        />
+      );
+    }
+    return (
+      <StaticImage
+        alt=""
+        src="../../static/images/iphone.png"
+        layout="constrained"
+        width={300}
+        placeholder="none"
+      />
+    );
+  }
+};
+
 export default Phone;

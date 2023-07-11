@@ -1,12 +1,5 @@
 $break-small: 719px;
 
-/*
- * Purpose:
- * Assign height: "100%" to
- * html, body, #___gatsby &
- * div with role="group"
-*/
-
 html, body, #___gatsby, #gatsby-focus-wrapper, main {
   height: 100%;
 }
@@ -20,6 +13,21 @@ body {
     // font-family: PT Serif;
     line-height: 43px;
     color: #1E1C21;
+  }
+
+  main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    // background image
+    background-image: url(../images/seamless-background.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    // extras
+    height: auto;
+    min-height: 100%;
   }
 
   .container {
@@ -36,6 +44,11 @@ body {
 
         .col-6 {
           align-self: center;
+        }
+
+        .col-6.first {
+          justify-content: center;
+          display: flex;
         }
       }
 
@@ -104,7 +117,6 @@ body {
         margin-top: 60px;
 
         .gatsby-image-wrapper {
-          flex: 1;
           cursor: pointer;
         }
 
@@ -117,7 +129,7 @@ body {
     @media screen and (max-width: $break-small) {
       .col-6.first {
         order: 1;
-        display: none;
+        display: none !important;
       }
 
       .col-6 {
@@ -136,6 +148,10 @@ body {
         justify-content: center;
       }
     }
+  }
+
+  .app-icon, .app-store, .play-store {
+    border-radius: 8px;
   }
 
   @media screen and (max-width: $break-small) {

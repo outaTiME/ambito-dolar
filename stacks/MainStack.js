@@ -274,7 +274,7 @@ export function MainStack({ stack }) {
   api.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
   // landing page with accesss to legacy api
   const landingSite = new StaticSite(stack, 'LandingSite', {
-    buildCommand: 'NODE_OPTIONS=--openssl-legacy-provider yarn build',
+    buildCommand: 'yarn build',
     buildOutput: 'public',
     errorPage: 'redirect_to_index_page',
     path: 'packages/website',
