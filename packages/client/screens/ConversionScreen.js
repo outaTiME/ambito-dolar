@@ -129,14 +129,17 @@ const ConversionScreen = ({
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         if (params?.focus === true) {
+          // required to handle the focus on Android
+          setTimeout(() => {
           inputTextRef.current?.focus();
           navigation.setParams({
             focus: false,
           });
+          });
         }
       });
       return () => task.cancel();
-    }, [params])
+    }, [navigation, params])
   );
   const shoudStretch = React.useMemo(
     () => Settings.shoudStretchRates(rateTypes, headerHeight, tabBarheight),
