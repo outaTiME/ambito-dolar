@@ -29,6 +29,8 @@ const RefreshingIndicator = () => {
           height: Settings.ICON_SIZE,
           // borderWidth: 1,
           // borderColor: 'red',
+          // same as MaterialHeaderButton
+          marginHorizontal: Settings.CARD_PADDING * 2 - 16,
         }}
       >
         <ActivityIndicator

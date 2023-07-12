@@ -1,9 +1,9 @@
 /* eslint-disable import/no-duplicates */
-import 'react-native-reanimated';
 import 'react-native-gesture-handler';
+import 'react-native-reanimated';
 
 // eslint-disable-next-line import/order
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React from 'react';
 import 'expo-dev-client';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
@@ -15,10 +15,12 @@ import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
-import React from 'react';
 import { Text, TextInput, Platform } from 'react-native';
+import AnimateableText from 'react-native-animateable-text';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { HeaderButtonsProvider } from 'react-navigation-header-buttons';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components';
@@ -29,13 +31,17 @@ import useColorScheme from './hooks/useColorScheme';
 import { store, persistor } from './store';
 import Helper from './utilities/Helper';
 
-// disable font scaling in whole app (iOS only)
 Text.defaultProps = Text.defaultProps || {};
-Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
-Text.defaultProps.maxFontSizeMultiplier = 1;
+// Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
+Text.defaultProps.maxFontSizeMultiplier = Settings.MAX_FONT_SIZE_MULTIPLIER;
 TextInput.defaultProps = TextInput.defaultProps || {};
-TextInput.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
-TextInput.defaultProps.maxFontSizeMultiplier = 1;
+// TextInput.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
+TextInput.defaultProps.maxFontSizeMultiplier =
+  Settings.MAX_FONT_SIZE_MULTIPLIER;
+AnimateableText.defaultProps = AnimateableText.defaultProps || {};
+// AnimateableText.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
+AnimateableText.defaultProps.maxFontSizeMultiplier =
+  Settings.MAX_FONT_SIZE_MULTIPLIER;
 
 SplashScreen.preventAutoHideAsync().catch(console.warn);
 
@@ -55,7 +61,9 @@ const ThemedApp = () => {
     <ThemeProvider theme={theme}>
       <RootSiblingParent>
         <ActionSheetProvider>
-          <AppContainer />
+          <HeaderButtonsProvider stackType="native">
+            <AppContainer />
+          </HeaderButtonsProvider>
         </ActionSheetProvider>
       </RootSiblingParent>
     </ThemeProvider>

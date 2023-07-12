@@ -2,11 +2,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 import WidgetKit from '@calitb/react-native-widgetkit';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-  NavigationContainer,
-  useNavigationContainerRef,
-  useTheme,
-} from '@react-navigation/native';
+import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { compose } from '@reduxjs/toolkit';
 import { BlurView } from 'expo-blur';
@@ -287,7 +283,7 @@ const MainStackScreen = () => {
         tabBarShowLabel: false,
         tabBarActiveTintColor: Settings.getForegroundColor(theme),
         tabBarInactiveTintColor: Settings.getStrokeColor(theme),
-        tabBarAllowFontScaling: Settings.ALLOW_FONT_SCALING,
+        // tabBarAllowFontScaling: Settings.ALLOW_FONT_SCALING,
         tabBarStyle: {
           ...(Platform.OS === 'ios' && {
             position: 'absolute',
@@ -317,6 +313,8 @@ const MainStackScreen = () => {
               size={size}
             />
           ),
+          // https://github.com/react-navigation/react-navigation/issues/10175#issuecomment-1630642097
+          // lazy: false,
         }}
         component={RatesStackScreen}
       />
@@ -428,7 +426,7 @@ const AppContainer = ({
     trackScreen(Settings.INITIAL_ROUTE_NAME);
   }, []);
   // https://reactnavigation.org/docs/screen-tracking
-  const navigationRef = useNavigationContainerRef();
+  const navigationRef = Helper.getNavigationContainerRef();
   const routeNameRef = React.useRef();
   // NOTIFICATIONS (user interaction)
   const lastNotificationResponse = Notifications.useLastNotificationResponse();
@@ -447,7 +445,7 @@ const AppContainer = ({
   // QUICK ACTIONS
   const onQuickAction = React.useCallback((data) => {
     if (__DEV__) {
-      console.log('Quick action received', data);
+      console.log('🎯 Quick action received', data);
     }
     const type = data?.type;
     if (type) {
@@ -695,8 +693,8 @@ const withRealtime = (Component) => (props) => {
       if (__DEV__) {
         console.log('🚀 Initial fetch');
       }
+      fetchRates(true);
     }
-    fetchRates(true);
   }, [isInitial]);
   return (
     <Component
@@ -760,7 +758,6 @@ const withAppStatistics = (Component) => (props) => {
     }
   }, [dispatch, isActiveAppState]);
   Helper.useInterval(tickCallback);
-
   React.useEffect(() => {
     if (isActiveAppState) {
       dispatch(actions.registerApplicationUsage());

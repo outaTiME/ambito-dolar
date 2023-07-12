@@ -10,6 +10,7 @@ import { ThemeProvider } from 'styled-components';
 import AppContainer from './components/AppContainer';
 import Helper from './utilities/Helper';
 
+SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
@@ -34,22 +35,19 @@ export default function App() {
   React.useEffect(() => {
     async function prepare() {
       try {
-        // Keep the splash screen visible while we fetch resources
-        await SplashScreen.preventAutoHideAsync();
+        // additional async stuff here
       } catch (e) {
         console.warn(e);
+      } finally {
+        setAppIsReady(true);
       }
     }
     prepare();
   }, []);
   const onLayoutRootView = React.useCallback(async () => {
     if (!appIsLoading) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
-      await SplashScreen.hideAsync();
+      // console.log('👌 Application is loaded');
+      await SplashScreen.hideAsync().catch(console.warn);
     }
   }, [appIsLoading]);
   if (appIsLoading) {

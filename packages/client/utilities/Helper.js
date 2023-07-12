@@ -1,5 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { useHeaderHeight } from '@react-navigation/elements';
+import { createNavigationContainerRef } from '@react-navigation/native';
 import * as d3Array from 'd3-array';
 import * as Application from 'expo-application';
 import * as Localization from 'expo-localization';
@@ -119,6 +120,8 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
   return formatted;
 };
 
+const navigationRef = createNavigationContainerRef();
+
 export default {
   getCurrency(str, include_symbol = false, usd = false) {
     if (include_symbol === true) {
@@ -150,7 +153,7 @@ export default {
     });
   },
   // https://github.com/whatwg/fetch/issues/20#issuecomment-196113354
-  timeout(ms, p) {
+  /* timeout(ms, p) {
     return Promise.race([
       p,
       new Promise((_resolve, reject) => {
@@ -159,28 +162,36 @@ export default {
         }, ms);
       }),
     ]);
-  },
+  }, */
   registerDevice: (data = {}) =>
     getJson(Settings.REGISTER_DEVICE_URI, {
       method: 'POST',
       body: JSON.stringify(data),
     }),
-  getRates: () => {
-    if (Settings.RATES_URI) {
-      return getJson(Settings.RATES_URI);
-    }
-    if (__DEV__) {
-      console.log('Using local rates file');
-    }
-    return rates;
-  },
-  getHistoricalRates: () => {
-    if (Settings.HISTORICAL_RATES_URI) {
-      return getJson(Settings.HISTORICAL_RATES_URI);
-      // return getJson('https://httpstat.us/200?sleep=30000');
-    }
-    throw new Error('No historical rates available');
-  },
+  getRates: () =>
+    new Promise((resolve) => {
+      // required by navigator redraw
+      setTimeout(() => {
+        if (Settings.RATES_URI) {
+          return resolve(getJson(Settings.RATES_URI));
+        }
+        if (__DEV__) {
+          console.log('Using local rates file');
+        }
+        return resolve(rates);
+      });
+    }),
+  getHistoricalRates: () =>
+    new Promise((resolve, reject) => {
+      // required by navigator redraw
+      setTimeout(() => {
+        if (Settings.HISTORICAL_RATES_URI) {
+          return resolve(getJson(Settings.HISTORICAL_RATES_URI));
+          // return resolve(getJson('https://httpstat.us/200?sleep=30000'));
+        }
+        return reject(new Error('No historical rates available'));
+      });
+    }),
   getStats: () => getJson(Settings.STATS_URI),
   cleanVersion(version) {
     return semverValid(semverCoerce(version));
@@ -418,29 +429,29 @@ export default {
     const [, setAssets] = this.useSharedState('assets');
     React.useEffect(() => {
       if (assets) {
-      Promise.all([
-        MailComposer.isAvailableAsync(),
-        Linking.canOpenURL(Settings.APP_STORE_URI),
-        Application.getInstallationTimeAsync(),
-        Sharing.isAvailableAsync(),
-      ]).then((data) => {
-        if (__DEV__) {
-          console.log('Application constants', data);
-        }
-        const [
-          contactAvailable,
-          storeAvailable,
-          installationTime,
-          sharingAvailable,
-        ] = data;
-        setContactAvailable(contactAvailable);
-        setStoreAvailable(storeAvailable);
-        setInstallationTime(installationTime);
-        setSharingAvailable(sharingAvailable);
+        Promise.all([
+          MailComposer.isAvailableAsync(),
+          Linking.canOpenURL(Settings.APP_STORE_URI),
+          Application.getInstallationTimeAsync(),
+          Sharing.isAvailableAsync(),
+        ]).then((data) => {
+          if (__DEV__) {
+            console.log('Application constants', data);
+          }
+          const [
+            contactAvailable,
+            storeAvailable,
+            installationTime,
+            sharingAvailable,
+          ] = data;
+          setContactAvailable(contactAvailable);
+          setStoreAvailable(storeAvailable);
+          setInstallationTime(installationTime);
+          setSharingAvailable(sharingAvailable);
           setAssets(assets);
-        // done
-        setConstantsLoaded(true);
-      });
+          // done
+          setConstantsLoaded(true);
+        });
       }
     }, [assets]);
     return constantsLoaded;
@@ -480,6 +491,7 @@ export default {
     shadowRadius: 6.27,
     elevation: 10,
   }),
+  getNavigationContainerRef: () => navigationRef,
   useAppIcon() {
     const [[appIcon]] = this.useSharedState('assets');
     return appIcon;

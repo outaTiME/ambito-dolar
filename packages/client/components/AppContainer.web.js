@@ -1,5 +1,4 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import { FontAwesome5 } from '@expo/vector-icons';
 import { compose } from '@reduxjs/toolkit';
 import * as _ from 'lodash';
 import React from 'react';
@@ -7,10 +6,11 @@ import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
 import AppIconView from './AppIconView';
 import WatermarkOverlayView from './WatermarkOverlayView';
-import appIcon from '../assets/about-icon-borderless.png';
 import CardView from '../components/CardView';
+import FundingView from '../components/FundingView';
 import MessageView from '../components/MessageView';
 import RateView from '../components/RateView';
+import SocialView from '../components/SocialView';
 import withContainer from '../components/withContainer';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
@@ -271,90 +271,6 @@ const FundingContainer = compose(withStats)(
   }
 );
 
-const SocialView = ({ extraSpace = false }) => {
-  const { theme } = Helper.useTheme();
-  return (
-    <>
-      <FontAwesome5
-        name="twitter"
-        size={Settings.SOCIAL_ICON_SIZE}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          marginRight: Settings.PADDING,
-        }}
-      />
-      <FontAwesome5
-        name="telegram-plane"
-        size={Settings.SOCIAL_ICON_SIZE}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          marginRight: Settings.PADDING,
-        }}
-      />
-      <FontAwesome5
-        name="instagram"
-        size={Settings.SOCIAL_ICON_SIZE}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          marginRight: Settings.PADDING,
-        }}
-      />
-      <FontAwesome5
-        name="facebook"
-        size={Settings.SOCIAL_ICON_SIZE}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          marginRight: Settings.PADDING,
-        }}
-      />
-      <FontAwesome5
-        name="reddit-alien"
-        size={Settings.SOCIAL_ICON_SIZE}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          marginRight: Settings.PADDING,
-        }}
-      />
-      <FontAwesome5
-        name="mastodon"
-        size={Settings.SOCIAL_ICON_SIZE}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          marginRight: Settings.PADDING,
-        }}
-      />
-      <FontAwesome5
-        name="github"
-        size={Settings.SOCIAL_ICON_SIZE}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          ...(extraSpace === true && {
-            marginRight: Settings.PADDING,
-          }),
-        }}
-      />
-    </>
-  );
-};
-
-const FundingView = ({ style }) => {
-  const { theme, fonts } = Helper.useTheme();
-  return (
-    <Text
-      style={[
-        fonts.body,
-        {
-          color: Settings.getGrayColor(theme),
-        },
-        style,
-      ]}
-      numberOfLines={1}
-    >
-      {Helper.removeProtocol(Settings.CAFECITO_URL)}
-    </Text>
-  );
-};
-
 const withRates = (Component) => (props) => {
   const { theme } = Helper.useTheme();
   const [data, setData] = React.useState();
@@ -429,32 +345,42 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
       <View
         style={{
           margin: Settings.CARD_PADDING,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <Text
-          style={[
-            Settings.getFontObject(theme, 'largeTitle'),
-            {
-              // pass
-            },
-          ]}
-          numberOfLines={1}
+        <View
+          style={{
+            flex: 1,
+            // marginRight: Settings.CARD_PADDING * 2
+          }}
         >
-          {title || Settings.APP_NAME}
-        </Text>
-        <Text
-          style={[
-            fonts.title,
-            {
-              color: Settings.getGrayColor(theme),
-              marginTop: Settings.SMALL_PADDING * (condensed === true ? 1 : 2),
-            },
-          ]}
-          numberOfLines={1}
-        >
-          {DateUtils.humanize(processedAt, 2)}
-        </Text>
-      </View>
+          <Text
+            style={[
+              Settings.getFontObject(theme, 'largeTitle'),
+              {
+                // pass
+              },
+            ]}
+            numberOfLines={1}
+          >
+            {title || Settings.APP_NAME}
+          </Text>
+          <Text
+            style={[
+              fonts.title,
+              {
+                color: Settings.getGrayColor(theme),
+                marginTop:
+                  Settings.SMALL_PADDING * (condensed === true ? 1 : 2),
+              },
+            ]}
+            numberOfLines={1}
+          >
+            {DateUtils.humanize(processedAt, 2)}
+          </Text>
+        </View>
         {false && <AppIconView />}
       </View>
       {/* two columns layout */}

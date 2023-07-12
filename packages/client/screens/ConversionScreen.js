@@ -131,10 +131,10 @@ const ConversionScreen = ({
         if (params?.focus === true) {
           // required to handle the focus on Android
           setTimeout(() => {
-          inputTextRef.current?.focus();
-          navigation.setParams({
-            focus: false,
-          });
+            inputTextRef.current?.focus();
+            navigation.setParams({
+              focus: false,
+            });
           });
         }
       });
@@ -167,6 +167,7 @@ const ConversionScreen = ({
                 margin: Settings.CARD_PADDING,
                 // perfect size using diff between the lineHeight and size of font
                 padding: Settings.PADDING - (34 - 28) / 2,
+                // padding: Settings.PADDING - (34 - 28) / 2 - 4,
                 backgroundColor: Settings.getContentColor(theme),
               }}
             >
@@ -179,9 +180,11 @@ const ConversionScreen = ({
                 style={[
                   fonts.largeTitle,
                   {
+                    lineHeight: undefined,
+                    includeFontPadding: false,
                     // forced lineHeight required by android
                     // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L25
-                    height: 34,
+                    // height: 34,
                   },
                 ]}
                 underlineColorAndroid="transparent"

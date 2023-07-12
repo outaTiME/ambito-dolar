@@ -15,10 +15,12 @@ const MaterialHeaderButton = (props) => {
       color={Settings.getForegroundColor(theme)}
       buttonStyle={[
         {
-          // required native stack
-          marginHorizontal: 0,
+          // perfect fit on native stack
+          marginHorizontal: Settings.CARD_PADDING * 2 - 16,
+        },
+        {
           // borderWidth: 1,
-          // borderColor: 'red',
+          // borderColor: 'blue',
         },
         props.buttonStyle,
       ]}
@@ -27,12 +29,7 @@ const MaterialHeaderButton = (props) => {
 };
 
 export const MaterialHeaderButtons = (props) => (
-  <HeaderButtons
-    HeaderButtonComponent={MaterialHeaderButton}
-    // remove extraSideMargin on wrapper
-    left={null}
-    {...props}
-  />
+  <HeaderButtons HeaderButtonComponent={MaterialHeaderButton} {...props} />
 );
 
 export { Item } from 'react-navigation-header-buttons';

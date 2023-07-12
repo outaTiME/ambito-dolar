@@ -2,8 +2,9 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { useLayout } from '@react-native-community/hooks';
 import { processFontFamily } from 'expo-font';
 import React from 'react';
-import { View, Text, TextInput } from 'react-native';
-import Animated, {
+import { View, Text } from 'react-native';
+import AnimateableText from 'react-native-animateable-text';
+import {
   useDerivedValue,
   useAnimatedProps,
   useAnimatedStyle,
@@ -29,8 +30,6 @@ const AXIS_TICK_SIZE = 5;
 const AXIS_LABEL_PADDING = Settings.PADDING - AXIS_TICK_SIZE;
 const AXIS_OFFSET = AXIS_TICK_SIZE + AXIS_LABEL_PADDING;
 
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
-
 const RateChartHeaderView = ({ stats, selectionIndex }) => {
   const { theme, fonts } = Helper.useTheme();
   // force valid index using clamp to avoid errors on fast change between details
@@ -55,65 +54,54 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
   }));
   return (
     <>
-      <AnimatedTextInput
-        underlineColorAndroid="transparent"
+      <AnimateableText
         style={[
           fonts.subhead,
           {
             color: Settings.getGrayColor(theme),
-            lineHeight: undefined,
-            // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L67
-            height: 20,
+            marginBottom: Settings.SMALL_PADDING,
+          },
+          {
             // borderWidth: 1,
-            // borderColor: 'pink',
+            // borderColor: 'green',
           },
         ]}
         numberOfLines={1}
         animatedProps={timestamp_props}
-        value={selected_stat.value.timestamp}
-        editable={false}
       />
       <View
-        style={{
-          flexDirection: 'row',
-          marginTop: Settings.SMALL_PADDING,
-          // marginBottom: Settings.PADDING + Settings.PADDING / 2,
-          // marginBottom: Settings.PADDING,
-          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L39
-          // height: 25,
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-        }}
+        style={[
+          {
+            flexDirection: 'row',
+            // justifyContent: 'space-between',
+            alignItems: 'flex-end',
+          },
+          {
+            // borderWidth: 1,
+            // borderColor: 'green',
+          },
+        ]}
       >
-        <AnimatedTextInput
-          underlineColorAndroid="transparent"
+        <AnimateableText
           style={[
             fonts.title,
             {
-              // flex: 1,
-              lineHeight: undefined,
-              // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L39
-              height: 25,
               // borderWidth: 1,
               // borderColor: 'blue',
             },
           ]}
           numberOfLines={1}
           animatedProps={rate_value_props}
-          value={selected_stat.value.value}
-          editable={false}
         />
-        <AnimatedTextInput
-          underlineColorAndroid="transparent"
-          textAlign="right"
+        <AnimateableText
           style={[
             fonts.body,
             {
-              // prevent flicker when cursor changes
+              // prevent flickering when moving the cursor
               flex: 1,
-              lineHeight: undefined,
-              // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L53
-              height: 22,
+              textAlign: 'right',
+            },
+            {
               // borderWidth: 1,
               // borderColor: 'red',
             },
@@ -121,8 +109,6 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           ]}
           numberOfLines={1}
           animatedProps={change_props}
-          value={selected_stat.value.change}
-          editable={false}
         />
       </View>
     </>
@@ -265,6 +251,8 @@ const InteractiveRateChartView = ({
     const fontSize = AXIS_FONT_SIZE;
     return (
       <Text
+        // font scaling is disabled on SVG
+        allowFontScaling={false}
         onLayout={onLayout}
         style={{
           position: 'absolute',
@@ -439,7 +427,8 @@ export default ({ stats }) => {
         style={{
           flex: 1,
           // marginTop: Settings.PADDING + Settings.PADDING / 2,
-          marginTop: Settings.PADDING + Settings.SMALL_PADDING,
+          // marginTop: Settings.PADDING + Settings.SMALL_PADDING,
+          marginTop: Settings.PADDING,
           // marginTop: Settings.PADDING,
           // borderWidth: 1,
           // borderColor: 'red',
