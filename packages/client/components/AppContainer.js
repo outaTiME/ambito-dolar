@@ -622,7 +622,7 @@ const withRealtime = (Component) => (props) => {
       if (__DEV__) {
         console.log('💫 Fetching rates', initial);
       }
-      setUpdatingRates(true);
+      !initial && setUpdatingRates(true);
       setError(false);
       setStillLoading(false);
       const timer_id = setTimeout(() => {
@@ -640,7 +640,7 @@ const withRealtime = (Component) => (props) => {
           setError(true);
         })
         .finally(() => {
-          setUpdatingRates(false);
+          !initial && setUpdatingRates(false);
           clearTimeout(timer_id);
         });
     },
