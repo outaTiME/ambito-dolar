@@ -1,4 +1,5 @@
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
@@ -7,6 +8,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider } from 'styled-components';
 
 import AppContainer from './components/AppContainer';
+import Helper from './utilities/Helper';
+
 
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
@@ -19,12 +22,15 @@ const ThemedApp = () => {
 };
 
 export default function App() {
+  const [assets] = useAssets([require('./assets/about-icon-borderless.png')]);
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
     ...FontAwesome5.font,
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
   });
-  const appIsLoading = !fontsLoaded;
+  const constantsLoaded = Helper.useApplicationConstants(assets);
+  const [appIsReady, setAppIsReady] = React.useState(false);
+  const appIsLoading = !fontsLoaded || !constantsLoaded || !appIsReady;
   React.useEffect(() => {
     async function prepare() {
       try {

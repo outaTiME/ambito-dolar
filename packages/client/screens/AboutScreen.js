@@ -1,11 +1,11 @@
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
-import { View, Image, Text, Linking, Platform } from 'react-native';
+import { View, Text, Linking, Platform } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
 
-import appIcon from '../assets/about-icon-borderless.png';
 import AnimatedConfettiView from '../components/AnimatedConfettiView';
+import AppIconView from '../components/AppIconView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import IconCardItemView from '../components/IconCardItemView';
@@ -108,10 +108,10 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const onPressReddit = React.useCallback(() => {
     Linking.canOpenURL(REDDIT_DEEP_LINK)
       .then((supported) =>
-              supported
-                ? Linking.openURL(REDDIT_DEEP_LINK)
-                : Linking.openURL(REDDIT_WEB_URL)
-            )
+        supported
+          ? Linking.openURL(REDDIT_DEEP_LINK)
+          : Linking.openURL(REDDIT_WEB_URL)
+      )
       .catch(console.warn);
   }, []);
   const onPressMastodon = React.useCallback(() => {
@@ -154,14 +154,7 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
           }}
         >
           <GestureDetector gesture={tap}>
-            <Image
-              style={{
-                width: 72,
-                height: 72,
-                borderRadius: Settings.BORDER_RADIUS,
-              }}
-              source={appIcon}
-            />
+            <AppIconView />
           </GestureDetector>
           <View
             style={{

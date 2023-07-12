@@ -409,13 +409,15 @@ export default {
       }
     }, [handler, leading, delay]);
   },
-  useApplicationConstants() {
+  useApplicationConstants(assets) {
     const [constantsLoaded, setConstantsLoaded] = React.useState(false);
     const [, setContactAvailable] = this.useSharedState('contactAvailable');
     const [, setStoreAvailable] = this.useSharedState('storeAvailable');
     const [, setInstallationTime] = this.useSharedState('installationTime');
     const [, setSharingAvailable] = this.useSharedState('sharingAvailable');
+    const [, setAssets] = this.useSharedState('assets');
     React.useEffect(() => {
+      if (assets) {
       Promise.all([
         MailComposer.isAvailableAsync(),
         Linking.canOpenURL(Settings.APP_STORE_URI),
@@ -435,10 +437,12 @@ export default {
         setStoreAvailable(storeAvailable);
         setInstallationTime(installationTime);
         setSharingAvailable(sharingAvailable);
+          setAssets(assets);
         // done
         setConstantsLoaded(true);
       });
-    }, []);
+      }
+    }, [assets]);
     return constantsLoaded;
   },
   useIndicatorStyle() {
@@ -476,4 +480,8 @@ export default {
     shadowRadius: 6.27,
     elevation: 10,
   }),
+  useAppIcon() {
+    const [[appIcon]] = this.useSharedState('assets');
+    return appIcon;
+  },
 };

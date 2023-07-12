@@ -1,4 +1,5 @@
 import { connectActionSheet } from '@expo/react-native-action-sheet';
+import { useTheme } from '@react-navigation/native';
 import { compose } from '@reduxjs/toolkit';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Sharing from 'expo-sharing';
@@ -16,8 +17,11 @@ import {
 import { captureRef } from 'react-native-view-shot';
 import { useSelector, useDispatch } from 'react-redux';
 
+import AppIconView from './AppIconView';
+import DividerView from './DividerView';
 import FixedScrollView from './FixedScrollView';
 import { MaterialHeaderButtons, Item } from './HeaderButtons';
+import SocialView from './SocialView';
 import WatermarkOverlayView from './WatermarkOverlayView';
 import * as actions from '../actions';
 import I18n from '../config/I18n';
@@ -148,55 +152,64 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
     });
   }, [navigation, rateTypes, sharingAvailable, theme]);
   const dispatch = useDispatch();
-  const capturedImageLoaded = React.useCallback(() => {
-    captureRef(shareViewGeneratedContainerRef.current, {
-      // opts
-    })
-      .then(
-        async (uri) => {
-          const { uri: new_uri } = await ImageManipulator.manipulateAsync(
-            uri,
-            [
-              // ignore
-            ],
-            { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-          );
-          if (__DEV__) {
-            console.log('Snapshot for sharing', new_uri);
-          }
-          /* if (Settings.IS_IPAD) {
-            ActionSheetIOS.showShareActionSheetWithOptions(
-              {
-                url: new_uri,
-                anchor: findNodeHandle(anchorRef.current),
-              },
-              () => {
-                // failure
-              },
-              (success, shareMethod) => {
-                if (success) {
-                  dispatch(actions.registerApplicationShareRates());
-                }
-              }
+  // screen capture customization
+  const [appIconLoaded, setAppIconLoaded] = React.useState(false);
+  const [capturedImageLoaded, setCapturedImageLoaded] = React.useState(false);
+  const screenCaptured = capturedImage && appIconLoaded && capturedImageLoaded;
+  React.useEffect(() => {
+    if (screenCaptured) {
+      captureRef(shareViewGeneratedContainerRef.current, {
+        // opts
+      })
+        .then(
+          async (uri) => {
+            const { uri: new_uri } = await ImageManipulator.manipulateAsync(
+              uri,
+              [
+                // ignore
+              ],
+              { compress: 1, format: ImageManipulator.SaveFormat.PNG }
             );
-          } */
-          // https://github.com/expo/expo/issues/6920#issuecomment-580966657
-          Sharing.shareAsync(new_uri, {
-            // pass
-          })
-            .then(() => {
-              dispatch(actions.registerApplicationShareRates());
+            if (__DEV__) {
+              console.log('Snapshot for sharing', new_uri);
+            }
+            /* if (Settings.IS_IPAD) {
+              ActionSheetIOS.showShareActionSheetWithOptions(
+                {
+                  url: new_uri,
+                  anchor: findNodeHandle(anchorRef.current),
+                },
+                () => {
+                  // failure
+                },
+                (success, shareMethod) => {
+                  if (success) {
+                    dispatch(actions.registerApplicationShareRates());
+                  }
+                }
+              );
+            } */
+            // https://github.com/expo/expo/issues/6920#issuecomment-580966657
+            Sharing.shareAsync(new_uri, {
+              // pass
             })
-            .catch(console.warn);
-        },
-        (error) =>
-          console.error('Unable to generate the snapshot for sharing', error)
-      )
-      .finally(() => {
-        // clear captured image to fire onLoadEnd next time
-        setCapturedImage(null);
-      });
-  }, []);
+              .then(() => {
+                dispatch(actions.registerApplicationShareRates());
+              })
+              .catch(console.warn);
+          },
+          (error) =>
+            console.error('Unable to generate the snapshot for sharing', error)
+        )
+        .finally(() => {
+          // reset
+          setCapturedImage(null);
+          setAppIconLoaded(false);
+          setCapturedImageLoaded(false);
+        });
+    }
+  }, [screenCaptured]);
+  const { colors } = useTheme();
   return (
     <>
       {capturedImage && (
@@ -214,6 +227,47 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
             }}
             ref={shareViewGeneratedContainerRef}
           >
+            <View
+              style={[
+                {
+                  flex: 1,
+                  padding: Settings.CARD_PADDING * 2,
+                  backgroundColor: colors.card,
+                },
+                {
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                },
+              ]}
+            >
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={[
+                    fonts.title,
+                    {
+                      // pass
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {Helper.getNavigationContainerRef().getCurrentOptions().title}
+                </Text>
+                <Text
+                  style={[
+                    fonts.subhead,
+                    {
+                      color: Settings.getGrayColor(theme),
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {DateUtils.humanize(updatedAt, 2)}
+                </Text>
+              </View>
+              <AppIconView half onLoadEnd={() => setAppIconLoaded(true)} />
+            </View>
+            <DividerView />
             <Image
               source={{
                 uri: capturedImage.uri,
@@ -222,13 +276,18 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
                 width: capturedImage.width,
                 height: capturedImage.height,
               }}
-              onLoadEnd={capturedImageLoaded}
+              fadeDuration={0}
+              onLoadEnd={() => setCapturedImageLoaded(true)}
             />
+            <DividerView />
             <View
               style={[
                 {
-                  marginHorizontal: Settings.CARD_PADDING * 2,
-                  marginBottom: Settings.CARD_PADDING * 2,
+                  // footnote lineHeight diff
+                  paddingVertical: Settings.CARD_PADDING * 2 - (18 - 13),
+                  // paddingVertical: Settings.CARD_PADDING,
+                  paddingHorizontal: Settings.CARD_PADDING * 2,
+                  backgroundColor: colors.card,
                 },
                 {
                   borderColor: 'red',
@@ -237,27 +296,37 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
                 {
                   alignItems: 'center',
                   justifyContent: 'center',
-                  paddingHorizontal: Settings.CARD_PADDING,
                 },
               ]}
             >
-              <Text
+              <View
                 style={[
-                  fonts.subhead,
                   {
-                    color: Settings.getGrayColor(theme),
-                    // textTransform: 'uppercase',
-                    textAlign: 'center',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  },
+                  {
+                    borderColor: 'red',
+                    // borderWidth: 1,
                   },
                 ]}
               >
-                {Settings.APP_COPYRIGHT}
-                {updatedAt &&
-                  ` ${Settings.DASH_SEPARATOR} ${DateUtils.humanize(
-                    updatedAt,
-                    6
-                  )}`}
-              </Text>
+                <Text
+                  style={[
+                    fonts.footnote,
+                    {
+                      flex: 1,
+                      color: Settings.getGrayColor(theme),
+                      marginRight: Settings.PADDING,
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {Settings.APP_COPYRIGHT}
+                </Text>
+                <SocialView size={13} />
+              </View>
             </View>
             <WatermarkOverlayView />
           </View>

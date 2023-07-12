@@ -63,9 +63,7 @@ const ThemedApp = () => {
 };
 
 export default function App() {
-  const [assetsLoaded] = useAssets([
-    require('./assets/about-icon-borderless.png'),
-  ]);
+  const [assets] = useAssets([require('./assets/about-icon-borderless.png')]);
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
     ...MaterialCommunityIcons.font,
@@ -73,10 +71,9 @@ export default function App() {
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
     // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
-  const constantsLoaded = Helper.useApplicationConstants();
+  const constantsLoaded = Helper.useApplicationConstants(assets);
   const [appIsReady, setAppIsReady] = React.useState(false);
-  const appIsLoading =
-    !assetsLoaded || !fontsLoaded || !constantsLoaded || !appIsReady;
+  const appIsLoading = !fontsLoaded || !constantsLoaded || !appIsReady;
   React.useEffect(() => {
     async function prepare() {
       try {

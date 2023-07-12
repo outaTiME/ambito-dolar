@@ -3,8 +3,9 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { compose } from '@reduxjs/toolkit';
 import * as _ from 'lodash';
 import React from 'react';
-import { View, Text, ActivityIndicator, Image, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
+import AppIconView from './AppIconView';
 import WatermarkOverlayView from './WatermarkOverlayView';
 import appIcon from '../assets/about-icon-borderless.png';
 import CardView from '../components/CardView';
@@ -166,14 +167,7 @@ const FundingContainer = compose(withStats)(
               marginBottom: -Settings.CARD_PADDING,
             }}
           >
-            <Image
-              style={{
-                width: 62,
-                height: 62,
-                borderRadius: Settings.BORDER_RADIUS,
-              }}
-              source={appIcon}
-            />
+            <AppIconView />
             <Text
               style={[
                 fonts.title,
@@ -460,6 +454,8 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
         >
           {DateUtils.humanize(processedAt, 2)}
         </Text>
+      </View>
+        {false && <AppIconView />}
       </View>
       {/* two columns layout */}
       {rows.map((types, index) => {
