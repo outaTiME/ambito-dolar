@@ -4,7 +4,6 @@ import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import {
   View,
-  TextInput,
   InteractionManager,
   Platform,
   TouchableWithoutFeedback,
@@ -20,6 +19,7 @@ import DividerView from '../components/DividerView';
 import MessageView from '../components/MessageView';
 import ScrollView from '../components/ScrollView';
 import SegmentedControlTab from '../components/SegmentedControl';
+import TextInput from '../components/TextInput';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
 import withRates from '../components/withRates';
