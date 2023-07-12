@@ -11,6 +11,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { compose } from '@reduxjs/toolkit';
 import { BlurView } from 'expo-blur';
 import * as Device from 'expo-device';
+import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
 import { initializeApp } from 'firebase/app';
@@ -470,6 +471,31 @@ const AppContainer = ({
       subscription.remove();
     };
   }, []);
+  // DEEP LINK
+  const onDeepLink = React.useCallback((url) => {
+    if (url) {
+      const { hostname: route, queryParams: params } = Linking.parse(url);
+      if (__DEV__) {
+        console.log('🎯 Deep link received', url, route, params);
+      }
+      if (/^rates?$/i.test(route)) {
+        navigationRef.navigate('RatesTab', {
+          screen: !params.type ? Settings.INITIAL_ROUTE_NAME : 'RateDetail',
+          params,
+          // https://reactnavigation.org/docs/nesting-navigators/#rendering-initial-route-defined-in-the-navigator
+          initial: false,
+        });
+      }
+    }
+  }, []);
+  // https://github.com/expo/expo/blob/main/packages/expo-linking/src/Linking.ts#L365
+  React.useEffect(() => {
+    Linking.getInitialURL().then(onDeepLink);
+    const subscription = Linking.addEventListener('url', ({ url }) =>
+      onDeepLink(url)
+    );
+    return () => subscription.remove();
+  }, []);
   const onReady = React.useCallback(() => {
     // TODO: send signal to remove splash screen ???
     routeNameRef.current = navigationRef.getCurrentRoute().name;
@@ -497,6 +523,30 @@ const AppContainer = ({
   const navigatorScreenOptions = useNavigatorScreenOptions();
   const statusBarStyle = Helper.getInvertedTheme(theme);
   const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
+  /* const linking = React.useMemo(
+    () => ({
+      prefixes: [Linking.createURL('/')],
+      config: {
+        // initialRouteName: Settings.INITIAL_ROUTE_NAME,
+        screens: {
+          [Settings.INITIAL_ROUTE_NAME]: {
+            // initialRouteName: 'RatesTab',
+            screens: {
+              RatesTab: {
+                initialRouteName: Settings.INITIAL_ROUTE_NAME,
+                screens: {
+                  [Settings.INITIAL_ROUTE_NAME]: 'rates',
+                  // FIXME: handle invalid types
+                  RateDetail: 'rate/:type',
+                },
+              },
+            },
+          },
+        },
+      },
+    }),
+    []
+  ); */
   return (
     <NavigationContainer
       {...{
@@ -504,6 +554,7 @@ const AppContainer = ({
         onReady,
         onStateChange,
         theme: navigationTheme,
+        // linking,
       }}
     >
       <RootStack.Navigator

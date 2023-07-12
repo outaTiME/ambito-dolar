@@ -10,13 +10,15 @@ import SwiftUI
 import Intents
 
 struct RateValue: Identifiable, Equatable {
+  let id: String
   let name: String
   let change: String?
   let plainChange: String?
   let changeColor: Color?
   let price: String
   let date: String
-  init(name: String, change: String?, plainChange: String?, changeColor: Color?, price: String, date: String) {
+  init(id: String, name: String, change: String?, plainChange: String?, changeColor: Color?, price: String, date: String) {
+    self.id = id
     self.name = name
     self.change = change
     self.plainChange = plainChange
@@ -24,7 +26,6 @@ struct RateValue: Identifiable, Equatable {
     self.price = price
     self.date = date
   }
-  var id: String { name }
 }
 
 private func getRates() -> [String: Any]? {
@@ -88,54 +89,62 @@ private func getChangeColor(num: Double) -> Color {
   return Color(UIColor.systemRed);
 }
 
+private func getWidgetUrl(id: String? = nil) -> URL? {
+  if let id = id {
+    return URL(string: "ambito-dolar://rate?type=" + id)
+  }
+  return URL(string: "ambito-dolar://rates")
+}
+
 private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes(), valueType: ValueType = ValueType.sell, changeType: ChangeType = ChangeType.percentage ) -> [RateValue]? {
   let rates = getRates()
   return rateTypes.map {
-    let type = $0.identifier
-    let name = $0.displayString
-    if rates != nil, let rate = rates![type!] as? [Any] {
-      let rateValue = rate[1]
-      let value: Double
-      let amount: Double
-      if rateValue is Double {
-        value = rateValue as! Double
-        amount = value
-        // price = formatRateCurrency(num: rateValue as! Double)
-      } else {
-        /* var arr = [String]()
-         for item in rateValue as! NSArray {
-         arr.append(formatRateCurrency(num: item as! Double))
-         }
-         price = arr.joined(separator: "–") */
-        var arr = [Double]()
-        for item in rateValue as! NSArray {
-          arr.append(item as! Double)
-        }
-        let buy = arr[0]
-        let sell = arr[1]
-        if valueType == ValueType.buy {
-          value = buy
-        } else if valueType == ValueType.avg {
-          value = (buy + sell) / 2
+    if let type = $0.identifier {
+      let name = $0.displayString
+      if rates != nil, let rate = rates![type] as? [Any] {
+        let rateValue = rate[1]
+        let value: Double
+        let amount: Double
+        if rateValue is Double {
+          value = rateValue as! Double
+          amount = value
+          // price = formatRateCurrency(num: rateValue as! Double)
         } else {
-          value = sell
+          /* var arr = [String]()
+           for item in rateValue as! NSArray {
+           arr.append(formatRateCurrency(num: item as! Double))
+           }
+           price = arr.joined(separator: "–") */
+          var arr = [Double]()
+          for item in rateValue as! NSArray {
+            arr.append(item as! Double)
+          }
+          let buy = arr[0]
+          let sell = arr[1]
+          if valueType == ValueType.buy {
+            value = buy
+          } else if valueType == ValueType.avg {
+            value = (buy + sell) / 2
+          } else {
+            value = sell
+          }
+          amount = sell
+          // price = formatRateCurrency(num: arr.max()!)
         }
-        amount = sell
-        // price = formatRateCurrency(num: arr.max()!)
+        let price = formatRateCurrency(num: value)
+        var rateChange = rate[2] as! Double
+        if (changeType == ChangeType.amount) {
+          rateChange = amount - (rate[3] as! Double)
+        }
+        let change = formatRateChange(num: rateChange, type: changeType)
+        let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false )
+        let changeColor = getChangeColor(num: rateChange)
+        let rateDate = ISO8601DateFormatter().date(from: rate[0] as! String)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM HH:mm"
+        let date = dateFormatter.string(from: rateDate!)
+        return RateValue(id: type, name: name, change: change, plainChange: plainChange, changeColor: changeColor, price: price, date: date)
       }
-      let price = formatRateCurrency(num: value)
-      var rateChange = rate[2] as! Double
-      if (changeType == ChangeType.amount) {
-        rateChange = amount - (rate[3] as! Double)
-      }
-      let change = formatRateChange(num: rateChange, type: changeType)
-      let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false )
-      let changeColor = getChangeColor(num: rateChange)
-      let rateDate = ISO8601DateFormatter().date(from: rate[0] as! String)
-      let dateFormatter = DateFormatter()
-      dateFormatter.dateFormat = "dd/MM HH:mm"
-      let date = dateFormatter.string(from: rateDate!)
-      return RateValue(name: name, change: change, plainChange: plainChange, changeColor: changeColor, price: price, date: date)
     }
     return nil
   }.compactMap{ $0 }
@@ -205,6 +214,7 @@ struct RateWidgetEntryView : View {
           }
           // .background(bgColor)
           .background(.ultraThinMaterial)
+          .widgetURL(getWidgetUrl(id: rate.id))
         } else {
           ZStack {
             AccessoryWidgetBackground()
@@ -221,6 +231,7 @@ struct RateWidgetEntryView : View {
           }
           // .background(bgColor)
           .background(.ultraThinMaterial)
+          .widgetURL(getWidgetUrl())
         }
       }
     default:
@@ -263,6 +274,7 @@ struct RateWidgetEntryView : View {
         )
         .padding(16)
         .background(bgColor)
+        .widgetURL(getWidgetUrl(id: rate.id))
       } else {
         VStack {
           Text("Sin cotización disponible")
@@ -279,6 +291,7 @@ struct RateWidgetEntryView : View {
         )
         .padding(16)
         .background(bgColor)
+        .widgetURL(getWidgetUrl())
       }
     }
   }
@@ -392,6 +405,7 @@ struct ListRatesWidgetEntryView : View {
         )
         .padding(16)
         .background(bgColor)
+        .widgetURL(getWidgetUrl())
       } else {
         VStack {
           Text("Sin cotizaciones disponibles")
@@ -408,6 +422,7 @@ struct ListRatesWidgetEntryView : View {
         )
         .padding(16)
         .background(bgColor)
+        .widgetURL(getWidgetUrl())
       }
     }
   }

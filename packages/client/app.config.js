@@ -46,6 +46,7 @@ export default {
     backgroundColor: '#00000000',
     // translucent: false,
   },
+  scheme: 'ambito-dolar',
   extra: {
     registerDeviceUri: process.env.REGISTER_DEVICE_URI,
     ratesUri: process.env.RATES_URI,
@@ -136,7 +137,6 @@ export default {
         'tg',
         'instagram',
         'fb',
-        'apollo',
         'reddit',
         'github',
         'ivory',

@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>ambito-dolar</string>
           <string>im.outa.AmbitoDolar</string>
         </array>
       </dict>
@@ -49,7 +50,6 @@
       <string>tg</string>
       <string>instagram</string>
       <string>fb</string>
-      <string>apollo</string>
       <string>reddit</string>
       <string>github</string>
       <string>ivory</string>
