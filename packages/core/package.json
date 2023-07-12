@@ -5,7 +5,7 @@
   "dependencies": {
     "@jsonurl/jsonurl": "^1.1.7",
     "@vercel/fetch-retry": "https://gitpkg.vercel.app/api/pkg.tgz?url=outaTiME/fetch/packages/fetch-retry&commit=main",
-    "cross-fetch": "^3.1.6",
+    "cross-fetch": "^4.0.0",
     "lodash.isempty": "^4.4.0",
     "lodash.max": "^4.0.1",
     "lodash.merge": "^4.6.2",
@@ -15,7 +15,7 @@
     "numeral": "^2.0.6"
   },
   "devDependencies": {
-    "ava": "^5.3.0"
+    "ava": "^5.3.1"
   },
   "scripts": {
     "test": "yarn g:eslint && ava"
