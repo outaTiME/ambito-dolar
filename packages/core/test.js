@@ -54,6 +54,10 @@ test('Dates should use the default timezone', function (t) {
     AmbitoDolar.getTimezoneDate('2022-05-13T18:00:39-03:00').unix(),
     1652475639
   );
+  t.is(
+    AmbitoDolar.getTimezoneDate(1689265824 * 1000).format(),
+    '2023-07-13T13:30:24-03:00'
+  );
 });
 
 test('Number should be formatted as a percentage', function (t) {

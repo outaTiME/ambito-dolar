@@ -76,11 +76,7 @@ const getDate = (date, format, start_of_day) => {
 };
 
 const getTimezoneDate = (date, format, start_of_day) => {
-  // keep local time only when dates
-  const keep_time = !!date;
-  // fixed-offset timezone with the provided offset
-  date = moment.parseZone(date, format);
-  date = getDate(date, format).tz(TIMEZONE, keep_time);
+  date = getDate(date, format).tz(TIMEZONE);
   // start_of_day must be applied after the timezone conversion
   if (start_of_day === true) {
     date = date.startOf('day');
