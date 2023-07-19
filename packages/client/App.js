@@ -1,9 +1,6 @@
 /* eslint-disable import/no-duplicates */
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
-
-// eslint-disable-next-line import/order
-import React from 'react';
 import 'expo-dev-client';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
@@ -15,6 +12,7 @@ import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
+import React from 'react';
 import { Text, TextInput, Platform } from 'react-native';
 import AnimateableText from 'react-native-animateable-text';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -94,19 +92,13 @@ export default function App() {
     }
     prepare();
   }, []);
-  const onLayoutRootView = React.useCallback(async () => {
-    if (!appIsLoading) {
-      // console.log('👌 Application is loaded');
-      await SplashScreen.hideAsync().catch(console.warn);
-    }
-  }, [appIsLoading]);
   if (appIsLoading) {
     return null;
   }
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
             <ThemedApp />
           </SafeAreaProvider>

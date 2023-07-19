@@ -9,6 +9,7 @@ import { BlurView } from 'expo-blur';
 import * as Device from 'expo-device';
 import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
+import * as SplashScreen from 'expo-splash-screen';
 import * as StoreReview from 'expo-store-review';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
@@ -494,10 +495,15 @@ const AppContainer = ({
     );
     return () => subscription.remove();
   }, []);
-  const onReady = React.useCallback(() => {
-    // TODO: send signal to remove splash screen ???
-    routeNameRef.current = navigationRef.getCurrentRoute().name;
-    // console.log('👌 Navigation is ready');
+  const onReady = React.useCallback(async () => {
+    // wait a while to avoid flickering
+    Helper.delay(Settings.ANIMATION_DURATION).then(() => {
+      if (__DEV__) {
+        console.log('👌 Application loading is done');
+      }
+      routeNameRef.current = navigationRef.getCurrentRoute().name;
+      return SplashScreen.hideAsync().catch(console.warn);
+    });
   }, []);
   const onStateChange = React.useCallback(() => {
     const previousRouteName = routeNameRef.current;
