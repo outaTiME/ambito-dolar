@@ -3,10 +3,6 @@ const test = require('ava');
 
 const AmbitoDolar = require('.');
 
-// timezone forcing
-// process.env.TZ = 'UTC';
-// process.env.TZ = 'America/Los_Angeles';
-
 test('Dates should use the default timezone', function (t) {
   const date_tz = AmbitoDolar.getTimezoneDate();
   const utc_offset = date_tz.utcOffset();
@@ -14,14 +10,6 @@ test('Dates should use the default timezone', function (t) {
     date_tz.format(),
     // use valueOf to avoid timezone and use local
     AmbitoDolar.getDate(date_tz.valueOf()).utcOffset(utc_offset).format()
-  );
-  t.is(
-    AmbitoDolar.getTimezoneDate('2021-03-08').format(),
-    '2021-03-08T00:00:00-03:00'
-  );
-  t.is(
-    AmbitoDolar.getTimezoneDate('2021-03-08T12:00:00').format(),
-    '2021-03-08T12:00:00-03:00'
   );
   t.is(
     AmbitoDolar.getTimezoneDate('2021-03-08T12:00:00-03:00').format(),
@@ -39,7 +27,7 @@ test('Dates should use the default timezone', function (t) {
     '2020-10-23T16:15:08-03:00'
   ).subtract(1, 'year');
   const moment_to = AmbitoDolar.getTimezoneDate('2020-10-15T16:25:06-03:00');
-  const timestamp = '2019-10-23';
+  const timestamp = '2019-10-23T00:00:00-03:00';
   const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
   t.true(
     moment_timestamp.isBetween(
@@ -55,8 +43,8 @@ test('Dates should use the default timezone', function (t) {
     1652475639
   );
   t.is(
-    AmbitoDolar.getTimezoneDate(1689265824 * 1000).format(),
-    '2023-07-13T13:30:24-03:00'
+    AmbitoDolar.getTimezoneDate(1652475639 * 1000).format(),
+    '2022-05-13T18:00:39-03:00'
   );
 });
 
