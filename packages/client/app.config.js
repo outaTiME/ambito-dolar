@@ -77,8 +77,7 @@ export default {
     },
   },
   updates: {
-    fallbackToCacheTimeout: 0,
-    // url: 'https://u.expo.dev/88dc0a10-eec5-11e8-bdb0-e9d94f6dfa7d',
+    enabled: false,
   },
   assetBundlePatterns: ['**/*'],
   plugins: [
