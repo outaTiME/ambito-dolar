@@ -24,7 +24,7 @@
     "@react-navigation/native-stack": "^6.9.13",
     "@reduxjs/toolkit": "^1.9.5",
     "@sentry/react-native": "4.15.2",
-    "@shopify/flash-list": "1.4.3",
+    "@shopify/flash-list": "1.5.0",
     "d3-array": "^3.2.4",
     "d3-shape": "^3.2.0",
     "dotenv": "^16.3.1",
@@ -61,7 +61,7 @@
     "react-native": "0.71.8",
     "react-native-animateable-text": "^0.11.0",
     "react-native-collapsible": "^1.6.1",
-    "react-native-device-info": "^10.7.0",
+    "react-native-device-info": "^10.8.0",
     "react-native-draggable-flatlist": "outaTiME/react-native-draggable-flatlist",
     "react-native-gesture-handler": "^2.12.0",
     "react-native-quick-actions": "^0.3.13",
@@ -83,13 +83,13 @@
     "reselect": "^4.1.8",
     "semver": "^7.5.4",
     "sentry-expo": "~6.2.2",
-    "styled-components": "^6.0.3",
+    "styled-components": "^6.0.4",
     "swr": "^2.2.0",
     "victory": "36.6.11",
     "victory-native": "36.6.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.8",
+    "@babel/core": "^7.22.9",
     "@expo/webpack-config": "^18.1.1"
   },
   "version": "6.6.1",
