@@ -52,7 +52,7 @@
     "expo-store-review": "~6.2.1",
     "expo-system-ui": "~2.2.1",
     "expo-updates": "~0.16.4",
-    "firebase": "^10.0.0",
+    "firebase": "^10.1.0",
     "i18n-js": "^4.3.0",
     "immutability-helper": "^3.1.1",
     "lodash": "^4.17.21",
@@ -83,14 +83,14 @@
     "reselect": "^4.1.8",
     "semver": "^7.5.4",
     "sentry-expo": "~6.2.2",
-    "styled-components": "^6.0.4",
+    "styled-components": "^6.0.5",
     "swr": "^2.2.0",
     "victory": "36.6.11",
     "victory-native": "36.6.11"
   },
   "devDependencies": {
     "@babel/core": "^7.22.9",
-    "@expo/webpack-config": "^18.1.1"
+    "@expo/webpack-config": "^18.1.2"
   },
   "version": "6.6.1",
   "installConfig": {
