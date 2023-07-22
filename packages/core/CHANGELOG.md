@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.3.1...@ambito-dolar/core@3.4.0) (2023-07-22)
+
+### Bug Fixes
+
+- date strings must include timezone ([fdc75c8](https://github.com/outaTiME/ambito-dolar/commit/fdc75c85ba1ad16508d6e5d5f2525d81c7c0a307))
+- force the use of the local timezone ([6d001dc](https://github.com/outaTiME/ambito-dolar/commit/6d001dcd6f28521a6a0f2c475ab9814c5d2fd711))
+
+### Features
+
+- single-point fetch setup ([5de8d4c](https://github.com/outaTiME/ambito-dolar/commit/5de8d4c02512ee814316b848b14acf3de26039da))
+
 ## [3.3.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.3.0...@ambito-dolar/core@3.3.1) (2023-04-04)
 
 **Note:** Version bump only for package @ambito-dolar/core

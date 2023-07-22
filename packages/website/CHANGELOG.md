@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.7.3...@ambito-dolar/website@1.8.0) (2023-07-22)
+
+### Features
+
+- update gatsby to v5 ([b07344f](https://github.com/outaTiME/ambito-dolar/commit/b07344f6a905502bf0888ae5f98cf896f7381602))
+
 ## [1.7.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.7.2...@ambito-dolar/website@1.7.3) (2023-04-17)
 
 **Note:** Version bump only for package @ambito-dolar/website

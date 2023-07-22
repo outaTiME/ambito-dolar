@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.7.2...@ambito-dolar/api@3.8.0) (2023-07-22)
+
+### Bug Fixes
+
+- add (again) informal rate on opening ([b34a6ff](https://github.com/outaTiME/ambito-dolar/commit/b34a6ff54af2edad1b8caf9fd8b06cbba6bd2356))
+- add CCL and MEP from real-time updates ([caf89a8](https://github.com/outaTiME/ambito-dolar/commit/caf89a8bc9792bdca57f791630c98200d4b09fb1))
+- increase concurrency on parallel scans ([329bb9d](https://github.com/outaTiME/ambito-dolar/commit/329bb9dd258e71ae4bd91e43f59f70f8c4d7c642))
+- increase timeout on rate requests ([05e2c4d](https://github.com/outaTiME/ambito-dolar/commit/05e2c4d5ab6d64d50a5b8e2383e13c840b7ff163))
+- most reliable provider for CCL and MEP ([ccc7dbb](https://github.com/outaTiME/ambito-dolar/commit/ccc7dbb4b5d984a65922ddfd0696ad7c79e91f4f))
+- provider rollback for CCL and MEP ([0c8a2ff](https://github.com/outaTiME/ambito-dolar/commit/0c8a2ff1e5404b3d4f6525d317250b89b23ca94e))
+- remove CCL and MEP from real-time updates ([93574ba](https://github.com/outaTiME/ambito-dolar/commit/93574bac323ce4d4c348d9fe2bd751dc3b0e2b90))
+- update concurrency on scans to avoid exceptions ([c55c9ad](https://github.com/outaTiME/ambito-dolar/commit/c55c9ad3614dc11ac3bad8225731b4a927b454c8))
+
+### Features
+
+- dynamic variation threshold for CCL and MEP notifications ([87ac0e2](https://github.com/outaTiME/ambito-dolar/commit/87ac0e2b77a7741540b2bd01d350603ea3ad2eef))
+- leave social twitter on IFTTT ([0b93353](https://github.com/outaTiME/ambito-dolar/commit/0b933535d85ed9face963322c6b78419268f4be5))
+- migrate to SST 2.x and node 18 support ([6823a4a](https://github.com/outaTiME/ambito-dolar/commit/6823a4a9bd8326859d17f49d05ed849585eb7094))
+- send social even when push notifications fail ([110f460](https://github.com/outaTiME/ambito-dolar/commit/110f460c2124d1cce42c80a055b742626fb07f27))
+- single-point fetch setup ([5de8d4c](https://github.com/outaTiME/ambito-dolar/commit/5de8d4c02512ee814316b848b14acf3de26039da))
+- update chromium to v111.0.0 ([5a2d9b9](https://github.com/outaTiME/ambito-dolar/commit/5a2d9b903b6c0de95869a0fd18ede6990ff944b3))
+- update firebase data in one request ([445ce75](https://github.com/outaTiME/ambito-dolar/commit/445ce75336c229c8145bd4cbd8c177f5e0dde575))
+
 ## [3.7.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.7.1...@ambito-dolar/api@3.7.2) (2023-04-26)
 
 **Note:** Version bump only for package @ambito-dolar/api

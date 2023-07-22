@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.7.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.6.1...@ambito-dolar/client@6.7.0) (2023-07-22)
+
+### Bug Fixes
+
+- avoid flickering and flashing on cold start ([86765b5](https://github.com/outaTiME/ambito-dolar/commit/86765b532b2f4b1a688a0aa32118a7ef99b6d0d0))
+- confetti view for android devices ([257d098](https://github.com/outaTiME/ambito-dolar/commit/257d098d53fe986b9501cda58815924c07c33a1e))
+- disable expo updates ([3510b95](https://github.com/outaTiME/ambito-dolar/commit/3510b959d3888230106cfc54f8b07b8b55b34847))
+- force flex on DraggableFlatList ([26a40f7](https://github.com/outaTiME/ambito-dolar/commit/26a40f7999ebf4988ef82cfd34f27f70b79793c3))
+- remove Apollo client support ([4422563](https://github.com/outaTiME/ambito-dolar/commit/4422563cb7dcd39d827ee36b7c3af5f478b6dd5b))
+- remove updating indicator on initial fetch ([1e97f1a](https://github.com/outaTiME/ambito-dolar/commit/1e97f1a638f24db81b19375cb51b1f70afb53cf5))
+- textinput focus on android when long press from bottom bar ([a1e83fd](https://github.com/outaTiME/ambito-dolar/commit/a1e83fdd9c22d615fc0b6cdfc5bbe422850c4891))
+
+### Features
+
+- add color scheme support on textinputs ([621482d](https://github.com/outaTiME/ambito-dolar/commit/621482d7f9d50d43049cf3cbbdee8c8f3a74d879))
+- deep linking support ([c64b21e](https://github.com/outaTiME/ambito-dolar/commit/c64b21e65a774953655baad50690dc9d66c36730))
+- font scaling support (up to 1.2x) and general improvements ([cad1aea](https://github.com/outaTiME/ambito-dolar/commit/cad1aea4474d40d50df877eb74336bc5bdb43cbd))
+- image redesign for sharing ([842c602](https://github.com/outaTiME/ambito-dolar/commit/842c60250ddd860fa59e97439be071423493a0cf))
+- single-point fetch setup ([5de8d4c](https://github.com/outaTiME/ambito-dolar/commit/5de8d4c02512ee814316b848b14acf3de26039da))
+
 ## [6.6.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.6.0...@ambito-dolar/client@6.6.1) (2023-04-26)
 
 ### Bug Fixes
