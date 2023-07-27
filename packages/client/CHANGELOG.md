@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.7.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.7.0...@ambito-dolar/client@6.7.1) (2023-07-27)
+
+### Bug Fixes
+
+- boot error on android devices with API < 23 ([9a66ca7](https://github.com/outaTiME/ambito-dolar/commit/9a66ca7e7f355be85d55e60ed75a05cc2e18deb8))
+
 # [6.7.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.6.1...@ambito-dolar/client@6.7.0) (2023-07-22)
 
 ### Bug Fixes
