@@ -69,7 +69,7 @@
     "react-native-redash": "^18.1.0",
     "react-native-root-toast": "^3.4.1",
     "react-native-safe-area-context": "4.7.1",
-    "react-native-screens": "~3.22.1",
+    "react-native-screens": "~3.23.0",
     "react-native-segmented-control-tab": "^4.0.0",
     "react-native-svg": "13.10.0",
     "react-native-typography": "^1.4.1",
