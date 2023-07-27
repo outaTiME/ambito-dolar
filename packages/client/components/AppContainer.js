@@ -495,13 +495,14 @@ const AppContainer = ({
     );
     return () => subscription.remove();
   }, []);
-  const onReady = React.useCallback(async () => {
+  const onReady = React.useCallback(() => {
+    // https://reactnavigation.org/docs/navigating-without-navigation-prop/#handling-initialization
+    routeNameRef.current = navigationRef.getCurrentRoute().name;
     // wait a while to avoid flickering
     Helper.delay(Settings.ANIMATION_DURATION).then(() => {
       if (__DEV__) {
         console.log('👌 Application loading is done');
       }
-      routeNameRef.current = navigationRef.getCurrentRoute().name;
       return SplashScreen.hideAsync().catch(console.warn);
     });
   }, []);
