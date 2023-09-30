@@ -17,6 +17,7 @@ import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import zlib from 'zlib';
 
+import { publish as publishToBsky } from './social/bsky';
 import { publish as publishToInstagram } from './social/instagram';
 import { publish as publishToMastodon } from './social/mastodon';
 import { publish as publishToReddit } from './social/reddit';
@@ -579,7 +580,14 @@ const triggerSendSocialNotificationsEvent = async (caption, image_url) =>
 
 const triggerSocials = async (targets, caption, url, file, story_file) => {
   const promises = _.chain(
-    targets ?? ['ifttt', 'instagram', 'mastodon', 'reddit' /*, 'twitter' */]
+    targets ?? [
+      'ifttt',
+      'instagram',
+      'mastodon',
+      'reddit',
+      // 'twitter',
+      'bsky',
+    ],
   )
     .map((target) => {
       let promise;
@@ -601,6 +609,9 @@ const triggerSocials = async (targets, caption, url, file, story_file) => {
         /* case 'twitter':
           promise = publishToTwitter(caption, file);
           break; */
+        case 'bsky':
+          promise = publishToBsky(caption, file);
+          break;
       }
       if (promise) {
         return [target, promise];
