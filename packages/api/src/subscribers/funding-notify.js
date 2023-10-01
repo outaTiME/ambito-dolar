@@ -8,7 +8,7 @@ export const handler = Shared.wrapHandler(async (event) => {
     JSON.stringify({
       generate_only,
       targets,
-    })
+    }),
   );
   const screenshot_url = Shared.getSocialScreenshotUrl({
     type: 'funding',
@@ -33,14 +33,14 @@ export const handler = Shared.wrapHandler(async (event) => {
       caption,
       image_url,
       file,
-      story_file
+      story_file,
     );
     console.info('Completed', JSON.stringify(results));
     return results;
   } catch (error) {
     console.warn(
       'Unable to generate the screenshot for notification',
-      JSON.stringify({ error: error.message })
+      JSON.stringify({ error: error.message }),
     );
   }
 });

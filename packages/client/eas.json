@@ -1,17 +1,20 @@
 {
   "cli": {
-    "version": ">= 0.52.0"
+    "version": ">= 4.1.2"
   },
   "build": {
     "fast": {
       "ios": {
-        "resourceClass": "m-medium"
-      }
+        "resourceClass": "m-medium",
+        "image": "latest"
+      },
+      "channel": "fast"
     },
     "development": {
       "extends": "fast",
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development"
     },
     "preview": {
       "extends": "fast",
@@ -26,7 +29,8 @@
       "extends": "development",
       "ios": {
         "simulator": true
-      }
+      },
+      "channel": "simulator"
     }
   },
   "submit": {

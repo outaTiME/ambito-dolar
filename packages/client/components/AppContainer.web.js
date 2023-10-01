@@ -96,11 +96,11 @@ const StatView = ({ title, current, change }) => {
   change = parseFloat(change);
   const color = React.useMemo(
     () => Helper.getChangeColor(change, theme),
-    [change, theme]
+    [change, theme],
   );
   const change_fmt = React.useMemo(
     () => AmbitoDolar.getRateChange(change, true),
-    [change]
+    [change],
   );
   return (
     <CardView>
@@ -145,131 +145,133 @@ const StatView = ({ title, current, change }) => {
   );
 };
 
-const FundingContainer = compose(withStats)(
-  ({ title, users, events, conversions }) => {
-    const { theme, fonts } = Helper.useTheme();
-    const currentMonth = DateUtils.get().format('MMMM YYYY');
-    return (
-      <SocialPortraitView square watermark>
+const FundingContainer = compose(withStats)(({
+  title,
+  users,
+  events,
+  conversions,
+}) => {
+  const { theme, fonts } = Helper.useTheme();
+  const currentMonth = DateUtils.get().format('MMMM YYYY');
+  return (
+    <SocialPortraitView square watermark>
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: 50,
+          marginTop: -Settings.CARD_PADDING,
+          marginBottom: -Settings.CARD_PADDING,
+          justifyContent: 'space-evenly',
+        }}
+      >
         <View
           style={{
-            flex: 1,
-            paddingHorizontal: 50,
-            marginTop: -Settings.CARD_PADDING,
+            justifyContent: 'center',
+            alignItems: 'center',
             marginBottom: -Settings.CARD_PADDING,
-            justifyContent: 'space-evenly',
           }}
         >
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: -Settings.CARD_PADDING,
-            }}
+          <AppIconView />
+          <Text
+            style={[
+              fonts.title,
+              {
+                marginTop: Settings.CARD_PADDING * 2,
+                // textTransform: 'uppercase',
+              },
+            ]}
+            numberOfLines={1}
           >
-            <AppIconView />
-            <Text
-              style={[
-                fonts.title,
-                {
-                  marginTop: Settings.CARD_PADDING * 2,
-                  // textTransform: 'uppercase',
-                },
-              ]}
-              numberOfLines={1}
-            >
-              {title ||
-                `Métricas de ${AmbitoDolar.getCapitalized(currentMonth)}`}
-            </Text>
-          </View>
-          <View
-            style={{
-              paddingHorizontal: 50,
-              justifyContent: 'center',
+            {title || `Métricas de ${AmbitoDolar.getCapitalized(currentMonth)}`}
+          </Text>
+        </View>
+        <View
+          style={{
+            paddingHorizontal: 50,
+            justifyContent: 'center',
+          }}
+        >
+          <StatView
+            {...{
+              title: 'Interacciones',
+              prev: events[0],
+              current: events[1],
+              change: events[2],
             }}
-          >
-            <StatView
-              {...{
-                title: 'Interacciones',
-                prev: events[0],
-                current: events[1],
-                change: events[2],
-              }}
-            />
-            <StatView
-              {...{
-                title: 'Nuevos usuarios',
-                prev: users[0],
-                current: users[1],
-                change: users[2],
-              }}
-            />
-            <StatView
-              {...{
-                title: 'Conversiones',
-                prev: conversions[0],
-                current: conversions[1],
-                change: conversions[2],
-              }}
-            />
-            {false && (
-              <View
-                style={{
-                  margin: Settings.CARD_PADDING * 2,
-                  marginBottom: Settings.CARD_PADDING,
-                  backgroundColor: Settings.getSeparatorColor(theme),
-                  height: StyleSheet.hairlineWidth,
-                  width: 100,
-                  alignSelf: 'center',
-                }}
-              />
-            )}
-          </View>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingHorizontal: Settings.PADDING,
-              marginTop: -Settings.CARD_PADDING,
+          />
+          <StatView
+            {...{
+              title: 'Nuevos usuarios',
+              prev: users[0],
+              current: users[1],
+              change: users[2],
             }}
-          >
-            <Text
-              style={[
-                fonts.callout,
-                {
-                  color: Settings.getGrayColor(theme),
-                  textAlign: 'center',
-                },
-              ]}
-            >
-              {`${Settings.APP_NAME} opera de forma transparente compartiendo sus métricas mensuales con la comunidad.`}
-            </Text>
-            {false && (
-              <FundingView
-                style={[
-                  // fonts.title,
-                  {
-                    paddingTop: Settings.PADDING,
-                  },
-                ]}
-              />
-            )}
+          />
+          <StatView
+            {...{
+              title: 'Conversiones',
+              prev: conversions[0],
+              current: conversions[1],
+              change: conversions[2],
+            }}
+          />
+          {false && (
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: Settings.CARD_PADDING * 2,
+                margin: Settings.CARD_PADDING * 2,
+                marginBottom: Settings.CARD_PADDING,
+                backgroundColor: Settings.getSeparatorColor(theme),
+                height: StyleSheet.hairlineWidth,
+                width: 100,
+                alignSelf: 'center',
               }}
-            >
-              <SocialView />
-            </View>
+            />
+          )}
+        </View>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: Settings.PADDING,
+            marginTop: -Settings.CARD_PADDING,
+          }}
+        >
+          <Text
+            style={[
+              fonts.callout,
+              {
+                color: Settings.getGrayColor(theme),
+                textAlign: 'center',
+              },
+            ]}
+          >
+            {`${Settings.APP_NAME} opera de forma transparente compartiendo sus métricas mensuales con la comunidad.`}
+          </Text>
+          {false && (
+            <FundingView
+              style={[
+                // fonts.title,
+                {
+                  paddingTop: Settings.PADDING,
+                },
+              ]}
+            />
+          )}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: Settings.CARD_PADDING * 2,
+            }}
+          >
+            <SocialView />
           </View>
         </View>
-      </SocialPortraitView>
-    );
-  }
-);
+      </View>
+    </SocialPortraitView>
+  );
+});
 
 const withRates = (Component) => (props) => {
   const { theme } = Helper.useTheme();
@@ -319,11 +321,11 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
   const { theme, fonts } = Helper.useTheme();
   const rateTypes = React.useMemo(
     () => Object.keys(rates) /*.slice(0, -1)*/,
-    [rates]
+    [rates],
   );
   const rows = React.useMemo(
     () => _.chunk(rateTypes, LAYOUT_RATE_COLUMNS),
-    [rateTypes]
+    [rateTypes],
   );
   const condensed = rows.length > 4;
   const getItemView = React.useCallback(
@@ -338,7 +340,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
         }}
       />
     ),
-    [rates, condensed]
+    [rates, condensed],
   );
   return (
     <SocialPortraitView>

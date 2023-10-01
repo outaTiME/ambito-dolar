@@ -34,7 +34,7 @@ const CustomizeRatesScreen = ({
       excluded_rates,
       rate_types,
     }),
-    shallowEqual
+    shallowEqual,
   );
   const dispatch = useDispatch();
   const rateTypes = React.useMemo(
@@ -42,9 +42,9 @@ const CustomizeRatesScreen = ({
       _.intersection(
         // use rates when nullish rate_types
         rate_types ?? Object.keys(rates),
-        Object.keys(rates)
+        Object.keys(rates),
       ),
-    [rates, rate_types]
+    [rates, rate_types],
   );
   const data = React.useMemo(
     () =>
@@ -69,7 +69,7 @@ const CustomizeRatesScreen = ({
           );
         },
       })),
-    [rateTypes, excluded_rates]
+    [rateTypes, excluded_rates],
   );
   const { onLayout, width: screenWidth } = useLayout();
   const dragHitSlop = React.useMemo(
@@ -80,7 +80,7 @@ const CustomizeRatesScreen = ({
       ),
       width: Settings.PADDING + Settings.ICON_SIZE + Settings.PADDING,
     }),
-    [screenWidth]
+    [screenWidth],
   );
   return (
     <>
@@ -156,5 +156,5 @@ const CustomizeRatesScreen = ({
 export default compose(
   withContainer(),
   withDividersOverlay,
-  withRates()
+  withRates(),
 )(CustomizeRatesScreen);

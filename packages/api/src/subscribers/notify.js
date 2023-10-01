@@ -20,8 +20,8 @@ const getChangeMessage = (rate) => {
   if (Array.isArray(value)) {
     body.push(
       `${AmbitoDolar.formatRateCurrency(
-        value[0]
-      )}–${AmbitoDolar.formatRateCurrency(value[1])}`
+        value[0],
+      )}–${AmbitoDolar.formatRateCurrency(value[1])}`,
     );
   } else {
     body.push(AmbitoDolar.formatRateCurrency(value));
@@ -74,7 +74,7 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
     const messages = items.map(
       ({ installation_id, app_version, push_token, notification_settings }) => {
         const settings = AmbitoDolar.getNotificationSettings(
-          notification_settings
+          notification_settings,
         )[type];
         const rates_for_settings = Object.entries(rates).reduce(
           (obj, [type, value]) => {
@@ -93,7 +93,7 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
             }
             return obj;
           },
-          {}
+          {},
         );
         // remove rates not available in app version
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_MEP)) {
@@ -127,14 +127,14 @@ const getMessagesFromCurrentRate = async (items, type, rates) => {
             },
           });
         }
-      }
+      },
     );
     // remove messages without body
     return _.compact(messages);
   } catch (error) {
     console.warn(
       'Unable to build message for notification',
-      JSON.stringify({ type, error: error.message })
+      JSON.stringify({ type, error: error.message }),
     );
   }
   // empty when rates or error
@@ -148,7 +148,7 @@ const checkForSetting = (notification_settings = {}, type) => {
 
 const sendPushNotifications = async (
   items = [],
-  { message: body_message, type, rates }
+  { message: body_message, type, rates },
 ) => {
   if (body_message) {
     type = 'custom';
@@ -159,7 +159,7 @@ const sendPushNotifications = async (
       body_message,
       type,
       rates,
-    })
+    }),
   );
   const tickets = [];
   if (items.length > 0) {
@@ -168,7 +168,7 @@ const sendPushNotifications = async (
       // leave the most updated devices on top (newest settings first)
       .orderBy(
         (item) => AmbitoDolar.getTimezoneDate(item.last_update).valueOf(),
-        ['desc']
+        ['desc'],
       )
       // exclude duplicates (removing from below)
       .uniqBy('push_token')
@@ -186,32 +186,41 @@ const sendPushNotifications = async (
             app_version,
             push_token,
           },
-        })
+        }),
       );
     } else {
       // filter the items that have this type of notification enabled
       items = _.filter(items, ({ notification_settings }) =>
-        checkForSetting(notification_settings, type)
+        checkForSetting(notification_settings, type),
       );
       // leave testing device only for new notifications when development
       if (process.env.IS_LOCAL && items.length > 1) {
         throw new Error(
-          'Only single messages can be sent while running in development mode'
+          'Only single messages can be sent while running in development mode',
         );
       }
       messages.push(...(await getMessagesFromCurrentRate(items, type, rates)));
     }
-    console.info(
+    /* console.info(
       'Generated messages',
       JSON.stringify({
         amount: messages.length,
       })
-    );
+    ); */
     const expo_start_time = Date.now();
     if (messages.length > 0) {
       const expo = Shared.getExpoClient();
       // https://github.com/expo/expo-server-sdk-node/blob/master/src/ExpoClient.ts#L20
       const chunks = expo.chunkPushNotifications(messages);
+      console.info(
+        'Generated messages',
+        JSON.stringify({
+          messages: messages.length,
+          chunks: chunks.length,
+          limit: expo.pushNotificationChunkSizeLimit,
+        }),
+      );
+      // FIXME: limit promise all to 500 parallel requests
       const failedChunks = [];
       // FIXME: how to prevent "504 Gateway Time-out" errors?
       // concurrent requests using maxConcurrentRequests opt
@@ -221,7 +230,7 @@ const sendPushNotifications = async (
             expo
               .sendPushNotificationsAsync(
                 // remove source from message
-                chunk.map((message) => _.omit(message, 'source'))
+                chunk.map((message) => _.omit(message, 'source')),
               )
               .then((tickets) =>
                 // same order as input
@@ -233,7 +242,7 @@ const sendPushNotifications = async (
                     message,
                     ...source,
                   };
-                })
+                }),
               )
               .catch(() => {
                 // ignore when error
@@ -245,9 +254,9 @@ const sendPushNotifications = async (
                   })
                 ); */
                 failedChunks.push(chunk);
-              })
-          )
-        ).then((ticketChunks) => _.compact(ticketChunks.flat())))
+              }),
+          ),
+        ).then((ticketChunks) => _.compact(ticketChunks.flat()))),
       );
       const sending_duration = (Date.now() - expo_start_time) / 1000;
       console.info(
@@ -259,7 +268,7 @@ const sendPushNotifications = async (
           }),
           tickets: tickets.length,
           duration: sending_duration,
-        })
+        }),
       );
       // save tickets to aws
       const notification_date = AmbitoDolar.getTimezoneDate().format();
@@ -274,7 +283,7 @@ const sendPushNotifications = async (
             tickets: tickets.length,
             duration: sending_duration,
           },
-          _.isNil
+          _.isNil,
         ),
       };
       await Promise.all([
@@ -285,7 +294,7 @@ const sendPushNotifications = async (
           'Unable to store notification tickets',
           JSON.stringify({
             error: error.message,
-          })
+          }),
         );
       });
     }
@@ -317,7 +326,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       type,
       rates,
       social,
-    })
+    }),
   );
   let filter_expression =
     'attribute_exists(push_token) AND attribute_not_exists(invalidated)';
@@ -345,7 +354,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       JSON.stringify({
         installation_id,
         error: error.message,
-      })
+      }),
     );
   });
   if (items && installation_id && message) {
@@ -353,7 +362,7 @@ export const handler = Shared.wrapHandler(async (event) => {
     promises.push(
       sendPushNotifications(items, {
         message,
-      })
+      }),
     );
   } else {
     // uses getRates when NOTIFICATION_CLOSE_TYPE
@@ -366,7 +375,7 @@ export const handler = Shared.wrapHandler(async (event) => {
           sendPushNotifications(items, {
             type,
             rates: current_rates,
-          })
+          }),
         );
       }
       if (social && !installation_id && !process.env.IS_LOCAL) {
@@ -378,7 +387,7 @@ export const handler = Shared.wrapHandler(async (event) => {
             type,
             title: AmbitoDolar.getNotificationTitle(type),
             caption: getSocialCaption(type, social_rates),
-          })
+          }),
         );
       }
     } else {

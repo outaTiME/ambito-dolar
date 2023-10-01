@@ -28,7 +28,7 @@ const IndexPage = () => {
         window.open(
           'https://apps.apple.com/app/id1485120819',
           '_blank',
-          'noopener'
+          'noopener',
         );
       });
     document
@@ -37,7 +37,7 @@ const IndexPage = () => {
         window.open(
           'https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar',
           '_blank',
-          'noopener'
+          'noopener',
         );
       });
   }, []);

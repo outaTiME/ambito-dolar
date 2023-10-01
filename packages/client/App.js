@@ -1,6 +1,5 @@
 /* eslint-disable import/no-duplicates */
 import 'react-native-gesture-handler';
-import 'react-native-reanimated';
 import 'expo-dev-client';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
@@ -48,7 +47,7 @@ if (Platform.OS === 'android') {
   ScreenOrientation.lockAsync(
     Settings.IS_TABLET
       ? ScreenOrientation.OrientationLock.LANDSCAPE
-      : ScreenOrientation.OrientationLock.PORTRAIT_UP
+      : ScreenOrientation.OrientationLock.PORTRAIT_UP,
   ).catch(console.warn);
 }
 

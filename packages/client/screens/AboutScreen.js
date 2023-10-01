@@ -2,7 +2,7 @@ import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Text, Linking, Platform } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { runOnJS } from 'react-native-reanimated';
+// import { runOnJS } from 'react-native-reanimated';
 
 import AnimatedConfettiView from '../components/AnimatedConfettiView';
 import AppIconView from '../components/AppIconView';
@@ -56,7 +56,8 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const tap = Gesture.Tap()
     .numberOfTaps(2)
     .onStart(() => {
-      runOnJS(setMakeItRain)(true);
+      // FIXME: create new confetti component
+      // runOnJS(setMakeItRain)(true);
     });
   React.useEffect(() => {
     if (makeItRain) {
@@ -74,7 +75,7 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       .then((supported) =>
         supported
           ? Linking.openURL(TWITTER_DEEP_LINK)
-          : Linking.openURL(TWITTER_WEB_URL)
+          : Linking.openURL(TWITTER_WEB_URL),
       )
       .catch(console.warn);
   }, []);
@@ -83,7 +84,7 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       .then((supported) =>
         supported
           ? Linking.openURL(TELEGRAM_DEEP_LINK)
-          : Linking.openURL(TELEGRAM_WEB_URL)
+          : Linking.openURL(TELEGRAM_WEB_URL),
       )
       .catch(console.warn);
   }, []);
@@ -92,7 +93,7 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       .then((supported) =>
         supported
           ? Linking.openURL(INSTAGRAM_DEEP_LINK)
-          : Linking.openURL(INSTAGRAM_WEB_URL)
+          : Linking.openURL(INSTAGRAM_WEB_URL),
       )
       .catch(console.warn);
   }, []);
@@ -101,7 +102,7 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       .then((supported) =>
         supported
           ? Linking.openURL(FACEBOOK_DEEP_LINK)
-          : Linking.openURL(FACEBOOK_WEB_URL)
+          : Linking.openURL(FACEBOOK_WEB_URL),
       )
       .catch(console.warn);
   }, []);
@@ -110,7 +111,7 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       .then((supported) =>
         supported
           ? Linking.openURL(REDDIT_DEEP_LINK)
-          : Linking.openURL(REDDIT_WEB_URL)
+          : Linking.openURL(REDDIT_WEB_URL),
       )
       .catch(console.warn);
   }, []);
@@ -122,8 +123,8 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
           : Linking.canOpenURL(MASTODON_DEEP_LINK).then((supported) =>
               supported
                 ? Linking.openURL(MASTODON_DEEP_LINK)
-                : Linking.openURL(MASTODON_WEB_URL)
-            )
+                : Linking.openURL(MASTODON_WEB_URL),
+            ),
       )
       .catch(console.warn);
   }, []);
@@ -132,7 +133,7 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       .then((supported) =>
         supported
           ? Linking.openURL(GITHUB_DEEP_LINK)
-          : Linking.openURL(GITHUB_WEB_URL)
+          : Linking.openURL(GITHUB_WEB_URL),
       )
       .catch(console.warn);
   }, []);

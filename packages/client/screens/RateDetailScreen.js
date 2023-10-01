@@ -42,7 +42,7 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
       historical_rates,
       excluded_rates,
     }),
-    shallowEqual
+    shallowEqual,
   );
   const prev_historical_rates = Helper.usePrevious(historical_rates);
   const updateHistoricalRates = React.useCallback(() => {
@@ -85,9 +85,9 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
                   moment_from,
                   moment_to,
                   'day',
-                  '[]'
-                )
-              )
+                  '[]',
+                ),
+              ),
             );
           } else {
             if (__DEV__) {
@@ -135,18 +135,18 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
               ],
               {
                 cancelable: false,
-              }
+              },
             );
           })
           .finally(() => {
             setLoading(false);
-          })
+          }),
       );
     }
   }, [rangeIndex, historical_rates]);
   const onRawDetail = React.useCallback(
     () => navigation.navigate('RateRawDetail', { type, rangeIndex }),
-    [type, rangeIndex]
+    [type, rangeIndex],
   );
   const onTabPress = React.useCallback((index) => {
     setRangeIndex(index);
@@ -245,5 +245,5 @@ export default compose(
   withDividersOverlay,
   withRates(),
   // withScreenshotShareSheet('Compartir cotización')
-  withScreenshotShareSheet()
+  withScreenshotShareSheet(),
 )(RateDetailScreen);

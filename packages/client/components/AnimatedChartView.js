@@ -95,7 +95,7 @@ export default ({ data, domain, color, selectionIndex, width, height }) => {
       x: [0, width],
       y: [height, 0],
     }),
-    [width, height]
+    [width, height],
   );
   const d = React.useMemo(
     () =>
@@ -104,7 +104,7 @@ export default ({ data, domain, color, selectionIndex, width, height }) => {
         .x(({ x }) => scale(x, domain.x, range.x))
         .y(({ y }) => scale(y, domain.y, range.y))
         .curve(d3Shape.curveMonotoneX)(data),
-    [data, domain, range]
+    [data, domain, range],
   );
   const length = useSharedValue(width);
   const isLoading = useSharedValue(true);
@@ -132,7 +132,7 @@ export default ({ data, domain, color, selectionIndex, width, height }) => {
       // reset selection when last data point
       selectionIndex.value = index === data.length - 1 ? null : index;
     },
-    [data]
+    [data],
   );
   return (
     <>

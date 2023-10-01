@@ -23,7 +23,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       caption,
       generate_only,
       targets,
-    })
+    }),
   );
   let results;
   if (
@@ -48,12 +48,12 @@ export const handler = Shared.wrapHandler(async (event) => {
         caption,
         image_url,
         file,
-        story_file
+        story_file,
       );
     } catch (error) {
       console.warn(
         'Unable to generate the screenshot for notification',
-        JSON.stringify({ type, title, error: error.message })
+        JSON.stringify({ type, title, error: error.message }),
       );
       // send as plain
     }

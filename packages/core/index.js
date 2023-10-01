@@ -126,7 +126,7 @@ const getNumber = (value, maxDigits = FRACTION_DIGITS) => {
 const formatNumber = (
   num,
   maxDigits = FRACTION_DIGITS,
-  forceFractionDigits = true
+  forceFractionDigits = true,
 ) => {
   // truncate to prevent rounding issues
   num = getNumber(num, maxDigits);
@@ -282,7 +282,7 @@ const getNotificationSettings = (notification_settings) => {
         ...type_defaults,
       },
     },
-    notification_settings
+    notification_settings,
   );
 };
 

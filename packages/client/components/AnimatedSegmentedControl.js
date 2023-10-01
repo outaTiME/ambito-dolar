@@ -56,7 +56,7 @@ export default ({
     (index) => {
       onChange(index);
     },
-    [onChange]
+    [onChange],
   );
   useEffect(() => {
     tabTranslateValue.value = currentIndex;
@@ -66,7 +66,7 @@ export default ({
   const tabTranslateAnimatedStyles = useAnimatedStyle(() => {
     const translateX = withSpring(
       tabTranslateValue.value * (translateValue * transitionMultiplier),
-      DEFAULT_SPRING_CONFIG
+      DEFAULT_SPRING_CONFIG,
     );
     return {
       transform: [{ translateX }],

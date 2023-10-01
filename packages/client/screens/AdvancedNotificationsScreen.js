@@ -22,7 +22,7 @@ const AdvancedNotificationsScreen = ({
 }) => {
   const dispatch = useDispatch();
   const notification_settings = useSelector(
-    Helper.getNotificationSettingsSelector
+    Helper.getNotificationSettingsSelector,
   );
   const onValueChange = React.useCallback(
     (type, value) => {
@@ -33,11 +33,11 @@ const AdvancedNotificationsScreen = ({
             [type]: value,
           },
         },
-        params.type
+        params.type,
       );
       dispatch(actions.updateNotificationSettings(settings));
     },
-    [params, notification_settings]
+    [params, notification_settings],
   );
   const getItemView = React.useCallback(
     (type) => {
@@ -59,7 +59,7 @@ const AdvancedNotificationsScreen = ({
         />
       );
     },
-    [params, notification_settings]
+    [params, notification_settings],
   );
   return (
     <FixedScrollView
@@ -82,5 +82,5 @@ const AdvancedNotificationsScreen = ({
 export default compose(
   withContainer(),
   withDividersOverlay,
-  withRates()
+  withRates(),
 )(AdvancedNotificationsScreen);

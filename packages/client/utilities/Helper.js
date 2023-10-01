@@ -24,7 +24,7 @@ import Settings from '../config/settings';
 
 const getNotificationSettings = (notification_settings, value, type) => {
   notification_settings = AmbitoDolar.getNotificationSettings(
-    notification_settings
+    notification_settings,
   );
   let setting =
     typeof value === 'boolean'
@@ -42,7 +42,7 @@ const getNotificationSettings = (notification_settings, value, type) => {
 
 const getNotificationSettingsSelector = createSelector(
   ({ application }) => application.notification_settings,
-  (notification_settings) => getNotificationSettings(notification_settings)
+  (notification_settings) => getNotificationSettings(notification_settings),
 );
 
 const getJson = (url, opts = {}) => {
@@ -304,7 +304,7 @@ export default {
         excluded_rates,
         rate_types,
       }),
-      shallowEqual
+      shallowEqual,
     );
     return React.useMemo(() => {
       const availableRates = this.getAvailableRates(rates);
@@ -314,7 +314,7 @@ export default {
           order,
           orderDirection,
           excludedRates,
-          rateTypes
+          rateTypes,
         );
       }
       return availableRates;
@@ -376,7 +376,7 @@ export default {
     const context = React.useContext(ThemeContext);
     const colorScheme = React.useMemo(
       () => context?.colorScheme || 'light',
-      [context]
+      [context],
     );
     const theme = React.useMemo(
       () => ({
@@ -399,14 +399,14 @@ export default {
         // TODO: add fonts with theme here ??
         // getFontObject: (name) => Settings.getFontObject(theme, name),
       }),
-      [colorScheme]
+      [colorScheme],
     );
     return theme;
   },
   useInterval: (callback, { leading = true, delay = 60 * 1000 } = {}) => {
     const handler = React.useCallback(
       (...args) => callback?.(...args),
-      [callback]
+      [callback],
     );
     React.useEffect(() => {
       if (leading === true) {

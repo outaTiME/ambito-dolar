@@ -78,8 +78,8 @@ const RateRawDetailScreen = ({
             moment_from,
             moment_to,
             'day',
-            '[]'
-          )
+            '[]',
+          ),
         );
       } else {
         if (__DEV__) {
@@ -93,9 +93,9 @@ const RateRawDetailScreen = ({
     () =>
       DateUtils.formatRange(
         chartStats[0][0],
-        chartStats[chartStats.length - 1][0]
+        chartStats[chartStats.length - 1][0],
       ),
-    [chartStats]
+    [chartStats],
   );
   // reverse the order and normalize
   const data = React.useMemo(
@@ -113,7 +113,7 @@ const RateRawDetailScreen = ({
           />
         ),
       })),
-    [chartStats]
+    [chartStats],
   );
   return (
     <FixedFlatList
@@ -131,5 +131,5 @@ const RateRawDetailScreen = ({
 export default compose(
   withContainer(),
   withDividersOverlay,
-  withRates()
+  withRates(),
 )(RateRawDetailScreen);

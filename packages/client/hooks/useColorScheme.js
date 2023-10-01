@@ -20,7 +20,7 @@ const useColorScheme = () => {
   const appearance = useSelector((state) => state.application.appearance);
   const colorScheme = _useColorScheme();
   const [currentScheme, setCurrentScheme] = React.useState(
-    appearance ?? colorScheme
+    appearance ?? colorScheme,
   );
   const isActiveAppState = useAppState('active');
   React.useEffect(() => {

@@ -44,7 +44,7 @@ const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
       downloadedHistoricalRates,
       detailedRates,
     }),
-    shallowEqual
+    shallowEqual,
   );
 
   return (

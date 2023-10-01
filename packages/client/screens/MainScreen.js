@@ -64,11 +64,11 @@ const MainScreen = ({
       dispatch(actions.registerApplicationRateDetail());
       navigation.navigate('RateDetail', { type });
     },
-    [dispatch]
+    [dispatch],
   );
   const shoudStretch = React.useMemo(
     () => Settings.shoudStretchRates(rateTypes, headerHeight, tabBarheight),
-    [rateTypes, headerHeight, tabBarheight]
+    [rateTypes, headerHeight, tabBarheight],
   );
   const getItemView = React.useCallback(
     (type) => (
@@ -82,7 +82,7 @@ const MainScreen = ({
         }}
       />
     ),
-    [rates, shoudStretch]
+    [rates, shoudStretch],
   );
   if (rateTypes.length === 0) {
     return (
@@ -129,5 +129,5 @@ export default compose(
   withDividersOverlay,
   withRates(true),
   // withScreenshotShareSheet('Compartir cotizaciones')
-  withScreenshotShareSheet([I18n.t('edit')])
+  withScreenshotShareSheet([I18n.t('edit')]),
 )(MainScreen);

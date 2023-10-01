@@ -110,7 +110,7 @@ const useNavigatorScreenOptions = (modal = false) => {
   const { theme, fonts } = Helper.useTheme();
   const headerBackground = React.useCallback(
     () => <NavigatorBackgroundView />,
-    []
+    [],
   );
   return {
     headerBackVisible: false,
@@ -211,7 +211,7 @@ const SettingsStackScreen = () => {
           name="AdvancedNotifications"
           options={({ route: { params }, navigation }) => ({
             title: Helper.getScreenTitle(
-              AmbitoDolar.getNotificationTitle(params.type)
+              AmbitoDolar.getNotificationTitle(params.type),
             ),
             headerLeft: () => <BackButton {...{ navigation }} />,
           })}
@@ -275,7 +275,7 @@ const MainStackScreen = () => {
   const { theme } = Helper.useTheme();
   const tabBarBackground = React.useCallback(
     () => <NavigatorBackgroundView />,
-    []
+    [],
   );
   return (
     <Tab.Navigator
@@ -414,7 +414,7 @@ const AppContainer = ({
     Sentry.addBreadcrumb({
       message: `${name} screen`,
     });
-    Amplitude.logEvent(`${name} screen`);
+    Amplitude.track(`${name} screen`);
   }, []);
   React.useEffect(() => {
     const uid = Settings.INSTALLATION_ID;
@@ -437,7 +437,7 @@ const AppContainer = ({
       lastNotificationResponse.actionIdentifier ===
         Notifications.DEFAULT_ACTION_IDENTIFIER
     ) {
-      Amplitude.logEvent('Select notification');
+      Amplitude.track('Select notification');
       navigationRef.navigate('RatesTab', {
         screen: Settings.INITIAL_ROUTE_NAME,
       });
@@ -450,7 +450,7 @@ const AppContainer = ({
     }
     const type = data?.type;
     if (type) {
-      Amplitude.logEvent('Quick action', { type });
+      Amplitude.track('Quick action', { type });
       navigationRef.navigate(`${type}Tab`, {
         screen: type,
         params: {
@@ -464,7 +464,7 @@ const AppContainer = ({
     initialQuickAction && onQuickAction(initialQuickAction);
     const subscription = DeviceEventEmitter.addListener(
       'quickActionShortcut',
-      onQuickAction
+      onQuickAction,
     );
     return () => {
       subscription.remove();
@@ -491,7 +491,7 @@ const AppContainer = ({
   React.useEffect(() => {
     Linking.getInitialURL().then(onDeepLink);
     const subscription = Linking.addEventListener('url', ({ url }) =>
-      onDeepLink(url)
+      onDeepLink(url),
     );
     return () => subscription.remove();
   }, []);
@@ -523,7 +523,7 @@ const AppContainer = ({
         border: Settings.getSeparatorColor(theme),
       },
     }),
-    [theme]
+    [theme],
   );
   const navigatorScreenOptions = useNavigatorScreenOptions();
   const statusBarStyle = Helper.getInvertedTheme(theme);
@@ -649,7 +649,7 @@ const withRealtime = (Component) => (props) => {
           clearTimeout(timer_id);
         });
     },
-    [dispatch]
+    [dispatch],
   );
   // UPDATE CHECK
   const updatedAt = useSelector((state) => state.rates.updated_at);
@@ -681,7 +681,7 @@ const withRealtime = (Component) => (props) => {
             console.log(
               '⚡️ Firebase updated',
               updated_at,
-              updatedAtRef.current
+              updatedAtRef.current,
             );
           }
           if (updated_at !== updatedAtRef.current) {
@@ -728,7 +728,7 @@ const withAppUpdateCheck = (Component) => (props) => {
       invalidVersion,
       ignoreUpdate,
     }),
-    shallowEqual
+    shallowEqual,
   );
   const dispatch = useDispatch();
   let shouldIgnoreUpdate = false;
@@ -807,7 +807,7 @@ const withUserActivity = (Component) => (props) => {
       version,
       appUpdated,
     }),
-    shallowEqual
+    shallowEqual,
   );
   const isActiveAppState = useAppState('active');
   const dispatch = useDispatch();
@@ -815,7 +815,7 @@ const withUserActivity = (Component) => (props) => {
   const alreadyHandlingRef = React.useRef(false);
   const [, setAllowNotifications] = Helper.useSharedState(
     'allowNotifications',
-    false
+    false,
   );
   React.useEffect(() => {
     // only took values from the store when the app state is active or on startup
@@ -857,7 +857,7 @@ const withUserActivity = (Component) => (props) => {
               if (__DEV__) {
                 console.log(
                   'Device is already registered to receive notifications',
-                  pushToken
+                  pushToken,
                 );
               }
             } else {
@@ -885,7 +885,7 @@ const withUserActivity = (Component) => (props) => {
       const current_date = DateUtils.get();
       const days_from_update = current_date.diff(
         appUpdated ?? Date.now(),
-        'days'
+        'days',
       );
       // https://www.raywenderlich.com/9009-requesting-app-ratings-and-reviews-tutorial-for-ios
       if (
@@ -925,5 +925,5 @@ export default compose(
   withAppUpdateCheck,
   withAppStatistics,
   withUserActivity,
-  withContainer(true)
+  withContainer(true),
 )(AppContainer);

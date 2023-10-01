@@ -21,7 +21,7 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
       updatedAt,
       appearance,
     }),
-    shallowEqual
+    shallowEqual,
   );
   const onPressContact = React.useCallback(() => {
     MailComposer.composeAsync({
@@ -59,13 +59,13 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const [tick, setTick] = React.useState();
   const updatedAtFromNow = React.useMemo(
     () => DateUtils.get(updatedAt).calendar(),
-    [tick]
+    [tick],
   );
   const tickCallback = React.useCallback(
     (tick) => {
       setTick(tick);
     },
-    [updatedAt]
+    [updatedAt],
   );
   Helper.useInterval(tickCallback);
   return (

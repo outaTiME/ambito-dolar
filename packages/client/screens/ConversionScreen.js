@@ -64,7 +64,7 @@ const ConversionScreen = ({
         text: Helper.formatFloatingPointNumber(number),
       });
     },
-    [numberValue]
+    [numberValue],
   );
   const onTextInputChangeText = React.useCallback((text) => {
     inputTextRef.current?.setNativeProps({
@@ -116,14 +116,14 @@ const ConversionScreen = ({
               ? numberValue * rate_value
               : numberValue / rate_value,
             true,
-            currencyIndex === 1
+            currencyIndex === 1,
           )}
           valueStyle={fonts.title}
           selectable
         />
       );
     },
-    [rates, typeIndex, theme, currencyIndex, numberValue, fonts]
+    [rates, typeIndex, theme, currencyIndex, numberValue, fonts],
   );
   useFocusEffect(
     React.useCallback(() => {
@@ -139,11 +139,11 @@ const ConversionScreen = ({
         }
       });
       return () => task.cancel();
-    }, [navigation, params])
+    }, [navigation, params]),
   );
   const shoudStretch = React.useMemo(
     () => Settings.shoudStretchRates(rateTypes, headerHeight, tabBarheight),
-    [rateTypes, headerHeight, tabBarheight]
+    [rateTypes, headerHeight, tabBarheight],
   );
   return (
     <>
@@ -301,5 +301,5 @@ const ConversionScreen = ({
 export default compose(
   withContainer(),
   withDividersOverlay,
-  withRates(true)
+  withRates(true),
 )(ConversionScreen);

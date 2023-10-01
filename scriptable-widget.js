@@ -52,13 +52,13 @@ const getRateTitle = (type) => {
 const FALLBACK_LOCALE = 'es-AR';
 const DEVICE_LOCALE = [].concat(
   Device.preferredLanguages(),
-  FALLBACK_LOCALE
+  FALLBACK_LOCALE,
 )[0];
 
 const formatNumber = (
   num,
   maxDigits = FRACTION_DIGITS,
-  forceFractionDigits = true
+  forceFractionDigits = true,
 ) => {
   return num.toLocaleString(DEVICE_LOCALE, {
     ...(forceFractionDigits === true && {

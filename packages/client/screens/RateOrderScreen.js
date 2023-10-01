@@ -19,7 +19,7 @@ const RateOrderScreen = ({ isModal, headerHeight, tabBarheight }) => {
       rate_order,
       rate_order_direction,
     }),
-    shallowEqual
+    shallowEqual,
   );
   const dispatch = useDispatch();
   return (
@@ -46,7 +46,7 @@ const RateOrderScreen = ({ isModal, headerHeight, tabBarheight }) => {
                 dispatch(actions.changeRateOrder(selection));
               }}
             />
-          )
+          ),
         )}
       </CardView>
       <CardView {...{ plain: true, isModal }}>

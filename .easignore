@@ -49,7 +49,6 @@ packages/client/ios/build
 packages/client/ios/Pods
 packages/client/ios/.xcode.env.local
 /assets
-google-services.json
 /sst.json
 /stacks
 /scriptable-widget.js

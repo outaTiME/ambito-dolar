@@ -85,7 +85,7 @@ export const generateScreenshot = async (url, opts) => {
       url,
       target_url,
       duration,
-    })
+    }),
   );
   return {
     file: sharp_file,

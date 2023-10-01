@@ -21,7 +21,7 @@ const VictoryMiniRateChartView = ({
         // prevent rendering issues when values are close to 0
         y0: -Settings.PADDING * 2,
       })),
-    [stats]
+    [stats],
   );
   // data normalization
   const sell_rates = React.useMemo(() => data.map(({ y }) => y), [data]);
@@ -34,7 +34,7 @@ const VictoryMiniRateChartView = ({
       x: [min_x, max_x],
       y: min_y === max_y ? [min_y - 0.1, max_y + 0.1] : [min_y, max_y],
     }),
-    [min_x, max_x, min_y, max_y]
+    [min_x, max_x, min_y, max_y],
   );
   const area_style = React.useMemo(
     () => ({
@@ -46,7 +46,7 @@ const VictoryMiniRateChartView = ({
         fillOpacity: 0.15,
       },
     }),
-    [color]
+    [color],
   );
   return (
     <VictoryGroup

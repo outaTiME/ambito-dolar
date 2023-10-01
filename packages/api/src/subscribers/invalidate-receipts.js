@@ -29,14 +29,14 @@ const check = async (items = [], readonly) => {
       'Receipts',
       JSON.stringify({
         amount: receiptIds.length,
-      })
+      }),
     );
     const receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
     // leave only the records with errors
     const invalid_receipts = await Promise.all(
       receiptIdChunks.map((chunk) =>
-        expo.getPushNotificationReceiptsAsync(chunk)
-      )
+        expo.getPushNotificationReceiptsAsync(chunk),
+      ),
     )
       // merge objects inside array
       .then((receiptChunks) => Object.assign({}, ...receiptChunks.flat()))
@@ -57,23 +57,23 @@ const check = async (items = [], readonly) => {
             }
             return obj;
           },
-          []
-        )
+          [],
+        ),
       )
       .catch((error) => {
         console.error(
           'Unable to get receipts',
           JSON.stringify({
             error: error.message,
-          })
+          }),
         );
         throw error;
       });
     if (!readonly) {
       await Promise.all(
         invalid_receipts.map(({ installation_id }) =>
-          invalidateDevice(installation_id)
-        )
+          invalidateDevice(installation_id),
+        ),
       );
     }
     return {
@@ -95,7 +95,7 @@ export const handler = Shared.wrapHandler(async (event) => {
     JSON.stringify({
       date_from,
       readonly,
-    })
+    }),
   );
   const filter_expression = '#notification_date >= :date_from';
   const expression_attribute_values = {
@@ -121,12 +121,12 @@ export const handler = Shared.wrapHandler(async (event) => {
       Shared.getTickets(date, type).catch((error) => {
         console.warn(
           'Unable to get notification tickets from bucket',
-          JSON.stringify({ date, type, error: error.message })
+          JSON.stringify({ date, type, error: error.message }),
         );
-      })
-    )
+      }),
+    ),
   ).then((data) =>
-    _.chain(data).flatten().compact().uniqBy('installation_id').value()
+    _.chain(data).flatten().compact().uniqBy('installation_id').value(),
   );
   const results = await check(tickets, readonly === true);
   console.info('Completed', JSON.stringify(results));

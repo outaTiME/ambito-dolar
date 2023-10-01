@@ -27,18 +27,18 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const { invertedTheme } = Helper.useTheme();
   const dispatch = useDispatch();
   const notification_settings = useSelector(
-    Helper.getNotificationSettingsSelector
+    Helper.getNotificationSettingsSelector,
   );
   const onValueChange = React.useCallback(
     (value, type) => {
       const settings = Helper.getNotificationSettings(
         notification_settings,
         value,
-        type
+        type,
       );
       dispatch(actions.updateNotificationSettings(settings));
     },
-    [notification_settings]
+    [notification_settings],
   );
   const getItemView = React.useCallback(
     (type) => (
@@ -59,7 +59,7 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
         />
       </CardView>
     ),
-    [notification_settings]
+    [notification_settings],
   );
   const [allowNotifications] = Helper.useSharedState('allowNotifications');
   const pushToken = useSelector((state) => state.application.push_token);
@@ -150,5 +150,5 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
 
 export default compose(
   withContainer(),
-  withDividersOverlay
+  withDividersOverlay,
 )(NotificationsScreen);

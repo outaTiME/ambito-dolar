@@ -19,7 +19,9 @@ config.resolver.nodeModulesPaths = [
 // 3. Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
 config.resolver.disableHierarchicalLookup = true;
 
-// required by sentry and firebase
-// config.resolver.sourceExts.push('cjs');
+config.resolver.sourceExts.push(
+  // https://github.com/fnando/i18n#im-getting-an-error-like-unable-to-resolve-make-plural-from-node-modulesi18n-jsdistimportpluralizationjs
+  'mjs',
+);
 
 module.exports = config;

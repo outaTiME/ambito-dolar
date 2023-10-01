@@ -38,7 +38,7 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
       selectionIndex.value === null
         ? stats[stats.length - 1]
         : stats[clamp(selectionIndex.value, 0, stats.length - 1)],
-    [stats]
+    [stats],
   );
   const timestamp_props = useAnimatedProps(() => ({
     text: selected_stat.value.timestamp,
@@ -145,7 +145,7 @@ const InteractiveRateChartView = ({
       bottom: AXIS_OFFSET + axis_font_height_rounded,
       left: AXIS_OFFSET + axis_y_width_rounded,
     }),
-    [axis_y_width_rounded, axis_font_height_rounded]
+    [axis_y_width_rounded, axis_font_height_rounded],
   );
   const overlay_style = React.useMemo(
     () => ({
@@ -159,12 +159,12 @@ const InteractiveRateChartView = ({
         height -
         (AXIS_OFFSET + axis_font_height_rounded + Settings.PADDING * 2),
     }),
-    [axis_y_width_rounded, axis_font_height_rounded]
+    [axis_y_width_rounded, axis_font_height_rounded],
   );
   const axis_x_format = React.useCallback(
     // invalid values when animated
     (value) => stats[Math.round(value)]?.timestamp_axis,
-    [stats]
+    [stats],
   );
   const axis_x_style = React.useMemo(
     () => ({
@@ -191,11 +191,11 @@ const InteractiveRateChartView = ({
         fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
       },
     }),
-    [theme]
+    [theme],
   );
   const axis_y_format = React.useCallback(
     (value) => Helper.getCurrency(value),
-    []
+    [],
   );
   const axis_y_style = React.useMemo(
     () => ({
@@ -221,11 +221,11 @@ const InteractiveRateChartView = ({
         fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
       },
     }),
-    [theme]
+    [theme],
   );
   const color = React.useMemo(
     () => stats[stats.length - 1].change_color,
-    [stats]
+    [stats],
   );
   const transparent_axis_style = React.useMemo(
     () => ({
@@ -233,7 +233,7 @@ const InteractiveRateChartView = ({
       ticks: { stroke: 'transparent' },
       tickLabels: { fill: 'transparent' },
     }),
-    []
+    [],
   );
   const area_style = React.useMemo(
     () => ({
@@ -245,7 +245,7 @@ const InteractiveRateChartView = ({
         fillOpacity: 0.15,
       },
     }),
-    [color]
+    [color],
   );
   if (!axis_y_width_rounded && !axis_font_height_rounded) {
     const fontSize = AXIS_FONT_SIZE;
@@ -328,7 +328,7 @@ const InteractiveRateChartView = ({
               fill: Settings.getStrokeColor(theme),
               // https://github.com/expo/expo/issues/1959#issuecomment-780198250
               fontFamily: processFontFamily(
-                Settings.getFontObject().fontFamily
+                Settings.getFontObject().fontFamily,
               ),
             }}
           />
@@ -381,7 +381,7 @@ export default ({ stats }) => {
         // prevent rendering issues when values are close to 0
         y0: -Settings.PADDING * 2,
       })),
-    [stats]
+    [stats],
   );
   // data normalization
   const sell_rates = React.useMemo(() => data.map(({ y }) => y), [data]);
@@ -394,7 +394,7 @@ export default ({ stats }) => {
       x: [min_x, max_x],
       y: min_y === max_y ? [min_y - 0.1, max_y + 0.1] : [min_y, max_y],
     }),
-    [min_x, max_x, min_y, max_y]
+    [min_x, max_x, min_y, max_y],
   );
   // add formatted data to stats (required by worklets)
   const { theme } = Helper.useTheme();
@@ -411,7 +411,7 @@ export default ({ stats }) => {
           change_color: Helper.getChangeColor(stat[2], theme),
         }),
       })),
-    [stats, theme]
+    [stats, theme],
   );
   // shared
   const selection_index = useSharedValue(null);

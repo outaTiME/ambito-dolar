@@ -19,7 +19,7 @@ import rootReducer from '../reducers';
 
 const saveApplicationSubsetBlacklistFilter = createBlacklistFilter(
   'application',
-  ['push_token', 'sending_push_token']
+  ['push_token', 'sending_push_token'],
 );
 
 const STORE_CONFIG_VERSION = 6.1;

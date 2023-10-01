@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
-const version = '6.7.1';
-const buildNumber = 98;
+const version = '6.8.0';
+const buildNumber = 99;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -26,16 +26,14 @@ export default {
   name: 'Ámbito Dólar',
   slug: 'ambito-dolar',
   privacy: 'hidden',
-  /* runtimeVersion: {
-    policy: 'sdkVersion',
-  }, */
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
   version,
   platforms: ['android', 'ios', 'web'],
   githubUrl:
     'https://github.com/outaTiME/ambito-dolar/tree/master/packages/client',
   userInterfaceStyle: 'automatic',
-  // required by modal on iOS
-  backgroundColor: '#000000',
   icon: './assets/icon.png',
   notification: {
     icon: './assets/icon.notification.png',
@@ -44,7 +42,7 @@ export default {
   // https://github.com/expo/expo/issues/11604#issuecomment-1018355394
   androidStatusBar: {
     backgroundColor: '#00000000',
-    // translucent: false,
+    barStyle: 'dark-content',
   },
   scheme: 'ambito-dolar',
   extra: {
@@ -78,6 +76,7 @@ export default {
   },
   updates: {
     enabled: false,
+    url: 'https://u.expo.dev/88dc0a10-eec5-11e8-bdb0-e9d94f6dfa7d',
   },
   assetBundlePatterns: ['**/*'],
   plugins: [
@@ -94,24 +93,10 @@ export default {
         },
       ],
     ],
-    [
-      'expo-screen-orientation',
-      {
-        initialOrientation: 'ALL',
-      },
-    ],
+    // https://www.aronberezkin.com/posts/a-step-by-step-guide-to-writing-your-first-expo-config-plugin
     './plugins/withAndroidSplashScreen.js',
-    /* [
-      'expo-build-properties',
-      {
-        ios: {
-          flipper: false,
-        },
-      },
-    ], */
   ],
   splash: LIGHT_SPLASH,
-  jsEngine: 'hermes',
   ios: {
     bundleIdentifier: 'im.outa.AmbitoDolar',
     buildNumber: buildNumber.toString(),
@@ -166,17 +151,19 @@ export default {
     allowBackup: false,
     softwareKeyboardLayoutMode: 'pan',
   },
-  hooks: {
-    postPublish: [
-      {
-        file: 'sentry-expo/upload-sourcemaps',
-        config: {
-          organization: 'ambito-dolar',
-          project: 'expo',
-          // https://github.com/expo/sentry-expo/issues/256#issuecomment-1164017755
-          // authToken: false,
+  ...(process.env.SENTRY_AUTH_TOKEN && {
+    hooks: {
+      postPublish: [
+        {
+          file: 'sentry-expo/upload-sourcemaps',
+          config: {
+            organization: 'ambito-dolar',
+            project: 'expo',
+            // https://github.com/expo/sentry-expo/issues/256#issuecomment-1164017755
+            // authToken: false,
+          },
         },
-      },
-    ],
-  },
+      ],
+    },
+  }),
 };

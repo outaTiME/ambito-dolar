@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 
 import {
@@ -61,7 +62,7 @@ const doRegisterDevice = (dispatch, state, value = {}) => {
         if (__DEV__) {
           console.log(
             'Update notification settings from remote',
-            notificationSettings
+            notificationSettings,
           );
         }
         // update notification settings from server
@@ -77,14 +78,14 @@ const doRegisterDevice = (dispatch, state, value = {}) => {
         });
       }
       return Promise.resolve();
-    }
+    },
   );
 };
 
 const doRegisterDeviceForNotifications = (
   { data: push_token } = {},
   dispatch,
-  current_state
+  current_state,
 ) => {
   if (push_token) {
     return doRegisterDevice(dispatch, current_state, {
@@ -92,11 +93,11 @@ const doRegisterDeviceForNotifications = (
     }).then(() => push_token);
   }
   return Notifications.getExpoPushTokenAsync({
-    experienceId: '@outatime/ambito-dolar',
+    projectId: Constants.expoConfig.extra.eas.projectId,
   }).then(({ data: push_token }) =>
     doRegisterDevice(dispatch, current_state, { push_token }).then(
-      () => push_token
-    )
+      () => push_token,
+    ),
   );
 };
 
@@ -111,7 +112,7 @@ export const registerDeviceForNotifications =
         dispatch({
           type: NOTIFICATIONS_REGISTER_SUCCESS,
           payload: push_token,
-        })
+        }),
       )
       .catch((error) => {
         if (__DEV__) {

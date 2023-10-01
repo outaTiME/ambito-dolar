@@ -112,7 +112,7 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
                               initial: false,
                             }); */
                             } else if (button_name === share_opt) {
-                              Amplitude.logEvent('Share rates');
+                              Amplitude.track('Share rates');
                               captureRef(shareViewContainerRef.current, {
                                 result: 'data-uri',
                               }).then(
@@ -134,13 +134,13 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
                                 (error) =>
                                   console.error(
                                     'Unable to generate view snapshot',
-                                    error
-                                  )
+                                    error,
+                                  ),
                               );
                             } else if (button_name === crash_opt) {
                               throw new Error('Force application crash');
                             }
-                          }
+                          },
                         );
                       });
                     }}
@@ -168,7 +168,7 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
               [
                 // ignore
               ],
-              { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+              { compress: 1, format: ImageManipulator.SaveFormat.PNG },
             );
             if (__DEV__) {
               console.log('Snapshot for sharing', new_uri);
@@ -199,7 +199,7 @@ const withScreenshotShareSheet = (action_opts) => (Component) => (props) => {
               .catch(console.warn);
           },
           (error) =>
-            console.error('Unable to generate the snapshot for sharing', error)
+            console.error('Unable to generate the snapshot for sharing', error),
         )
         .finally(() => {
           // reset

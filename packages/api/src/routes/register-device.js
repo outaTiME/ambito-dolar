@@ -15,7 +15,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       JSON.parse(event.body || '{}');
     if (!installation_id) {
       throw new Error(
-        'Request query parameter is malformed, missing or has an invalid value'
+        'Request query parameter is malformed, missing or has an invalid value',
       );
     }
     let update_expression = 'ADD app_loads :val ';
@@ -34,7 +34,7 @@ export const handler = Shared.wrapHandler(async (event) => {
         last_update: timestamp,
       },
       // push_token is null on initial registration then undefined
-      _.isNil
+      _.isNil,
       // _.isUndefined
     );
     if (payload.push_token) {
@@ -61,7 +61,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       ReturnValues: 'ALL_NEW',
     };
     const { Attributes: data } = await ddbDocClient.send(
-      new UpdateCommand(params)
+      new UpdateCommand(params),
     );
     const { notification_settings: notificationSettings } = data;
     const results = {
@@ -84,7 +84,7 @@ export const handler = Shared.wrapHandler(async (event) => {
     console.info(
       'Registration or interaction for the device completed',
       // JSON.stringify(data)
-      installation_id
+      installation_id,
     );
     return Shared.serviceResponse(null, 200, results);
   } catch (error) {

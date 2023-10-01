@@ -59,7 +59,7 @@ export default ({
           borderColor: Settings.getStrokeColor(theme),
           backgroundColor: Settings.getContentColor(
             theme,
-            alternativeBackground
+            alternativeBackground,
           ),
           overflow: 'hidden',
         },

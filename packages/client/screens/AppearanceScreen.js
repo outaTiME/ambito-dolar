@@ -13,7 +13,7 @@ import Helper from '../utilities/Helper';
 
 const AppearanceScreen = ({ headerHeight, tabBarheight }) => {
   const selectedAppearance = useSelector(
-    (state) => state.application.appearance
+    (state) => state.application.appearance,
   );
   const dispatch = useDispatch();
   return (
@@ -37,8 +37,8 @@ const AppearanceScreen = ({ headerHeight, tabBarheight }) => {
             onAction={() => {
               dispatch(
                 actions.changeAppearance(
-                  appearance === 'system' ? null : appearance
-                )
+                  appearance === 'system' ? null : appearance,
+                ),
               );
             }}
           />

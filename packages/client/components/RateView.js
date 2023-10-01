@@ -160,6 +160,7 @@ const InlineRateDetailView = ({
         style={[
           fonts.subhead,
           {
+            // FIXME: took width from container and center the chart
             width: 140,
             textAlign: 'right',
             color,
@@ -186,23 +187,23 @@ export default ({
   const { theme } = Helper.useTheme();
   const [timestamp, value, change] = React.useMemo(
     () => stats[stats.length - 1],
-    [stats]
+    [stats],
   );
   const color = React.useMemo(
     () => Helper.getChangeColor(change, theme),
-    [change, theme]
+    [change, theme],
   );
   const value_fmt = React.useMemo(
     () => Helper.getInlineRateValue(value),
-    [value]
+    [value],
   );
   const timestamp_fmt = React.useMemo(
     () => DateUtils.humanize(timestamp, 1),
-    [timestamp]
+    [timestamp],
   );
   const change_fmt = React.useMemo(
     () => AmbitoDolar.getRateChange(stats[stats.length - 1], true),
-    [stats]
+    [stats],
   );
   const onPress = React.useCallback(() => onSelected(type), [onSelected, type]);
   return (

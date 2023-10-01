@@ -28,7 +28,7 @@ const UpdateAppScreen = ({ navigation }) => {
           console.log('You must confirm the current modal screen');
         }
       }),
-    [navigation, confirmed]
+    [navigation, confirmed],
   );
   React.useEffect(() => {
     if (confirmed === true) {

@@ -10,7 +10,7 @@ export default (alternativeBackground) => (Component) => (props) => {
   const background_color = Settings.getBackgroundColor(
     theme,
     alternativeBackground,
-    isModal
+    isModal,
   );
   const container_style = React.useMemo(
     () => ({
@@ -18,7 +18,7 @@ export default (alternativeBackground) => (Component) => (props) => {
       justifyContent: 'center',
       backgroundColor: background_color,
     }),
-    [background_color]
+    [background_color],
   );
   return (
     <View style={container_style}>

@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>6.7.1</string>
+    <string>6.8.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -39,9 +39,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>98</string>
-    <key>EXDefaultScreenOrientationMask</key>
-    <string>UIInterfaceOrientationMaskAll</string>
+    <string>99</string>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
     <key>LSApplicationQueriesSchemes</key>
@@ -76,8 +74,6 @@
       <string>SelectRateTypeIntent</string>
       <string>SelectRateTypesIntent</string>
     </array>
-    <key>RCTRootViewBackgroundColor</key>
-    <integer>4278190080</integer>
     <key>UIApplicationShortcutItems</key>
     <array>
       <dict>

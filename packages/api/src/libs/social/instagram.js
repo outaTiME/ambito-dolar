@@ -37,10 +37,10 @@ export const publish = async (file, caption, story_file) => {
       (error) => {
         console.warn(
           'Unable to get instagram session from bucket',
-          JSON.stringify({ error: error.message })
+          JSON.stringify({ error: error.message }),
         );
         // ignore
-      }
+      },
     );
     const current_session = await loadSession(ig, serialized_session);
     if (!current_session) {

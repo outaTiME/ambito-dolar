@@ -98,7 +98,7 @@ const updateFirebaseData = async (uri, payload = {}) =>
   }).catch((error) => {
     console.warn(
       'Unable update firebase with payload',
-      JSON.stringify({ uri, payload, error: error.message })
+      JSON.stringify({ uri, payload, error: error.message }),
     );
   });
 
@@ -209,7 +209,7 @@ const getRates = async (base_rates) => {
       obj[type] = _.last(rate.stats);
       return obj;
     },
-    {}
+    {},
   );
   return rates;
 };
@@ -219,7 +219,7 @@ const storeJsonObject = async (
   key,
   json,
   bucket = S3_BUCKET,
-  is_public = false
+  is_public = false,
 ) => {
   // try {
   // https://blog.jonathandion.com/posts/json-gzip-s3/
@@ -289,7 +289,7 @@ const storeRateStats = async (rates) => {
       obj[type + '_stats'] = new_stats;
       return obj;
     },
-    {}
+    {},
   );
   return storePublicJsonObject(RATE_STATS_OBJECT_KEY, base_rates);
 };
@@ -306,11 +306,11 @@ const storeHistoricalRatesJsonObject = async (rates) => {
         }
         // unhandled error
         throw error;
-      }
+      },
     );
     Object.entries(rates.rates || {}).forEach(([type, { stats }]) => {
       const moment_from = AmbitoDolar.getTimezoneDate(
-        _.last(stats)[0]
+        _.last(stats)[0],
       ).subtract(1, 'year');
       const moment_to = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
       // limit base_rates excluding stats
@@ -322,7 +322,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
             moment_to,
             'day',
             // moment_to exclusion
-            '[)'
+            '[)',
           );
           return include;
         })
@@ -349,7 +349,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
       obj[type] = rate;
       return obj;
     },
-    {}
+    {},
   );
   return Promise.all([
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
@@ -361,7 +361,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
         AmbitoDolar.QATAR_TYPE,
         // AmbitoDolar.LUXURY_TYPE
         // AmbitoDolar.CULTURAL_TYPE
-      ])
+      ]),
     ),
     storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_rates),
   ]);
@@ -387,7 +387,7 @@ const storeRatesJsonObject = async (rates, is_updated) => {
       obj[type] = rate;
       return obj;
     },
-    {}
+    {},
   );
   return Promise.all([
     is_updated && storeRateStats(rates.rates),
@@ -437,6 +437,8 @@ const getPathForRate = (type) => {
     return 'dolardelujo';
   } else if (type === AmbitoDolar.CULTURAL_TYPE) {
     return 'dolarcoldplay';
+    /* } else if (type === AmbitoDolar.CCB_TYPE) {
+    return 'dolarcripto'; */
   }
   return `dolar/${type}`;
 };
@@ -477,7 +479,7 @@ const publishMessageToTopic = async (event, payload = {}) => {
     JSON.stringify({
       event,
       payload,
-    })
+    }),
   );
   const params = {
     Message: JSON.stringify(payload),
@@ -501,14 +503,14 @@ const publishMessageToTopic = async (event, payload = {}) => {
           id,
           event,
           duration,
-        })
+        }),
       );
       return id;
     })
     .catch((error) => {
       console.warn(
         'Unable to publish message to sns topic',
-        JSON.stringify({ event, error: error.message })
+        JSON.stringify({ event, error: error.message }),
       );
     });
 };
@@ -537,7 +539,7 @@ const triggerEvent = async (event, payload) => {
     JSON.stringify({
       event,
       payload,
-    })
+    }),
   );
   return AmbitoDolar.fetch(
     `https://maker.ifttt.com/trigger/${event}/with/key/${process.env.IFTTT_KEY}`,
@@ -547,7 +549,7 @@ const triggerEvent = async (event, payload) => {
         'Content-Type': 'application/json; charset=utf-8',
       },
       body: JSON.stringify(payload),
-    }
+    },
   )
     .then(() => {
       const duration = (Date.now() - start_time) / 1000;
@@ -556,7 +558,7 @@ const triggerEvent = async (event, payload) => {
         JSON.stringify({
           event,
           duration,
-        })
+        }),
       );
       return {
         event,
@@ -567,7 +569,7 @@ const triggerEvent = async (event, payload) => {
       // ignore error and trace
       console.warn(
         'Unable to trigger the event',
-        JSON.stringify({ event, error: error.message })
+        JSON.stringify({ event, error: error.message }),
       );
     });
 };
@@ -628,9 +630,9 @@ const triggerSocials = async (targets, caption, url, file, story_file) => {
           JSON.stringify({
             target,
             error: error.message,
-          })
+          }),
         );
-      })
+      }),
     )
     .value();
   // remove errors
@@ -656,7 +658,7 @@ const storeImgurFile = async (image) =>
 
 const fetchImage = async (url) =>
   AmbitoDolar.fetch(url).then(async (response) =>
-    Buffer.from(await response.arrayBuffer())
+    Buffer.from(await response.arrayBuffer()),
   );
 
 const wrapHandler = (handler) => {

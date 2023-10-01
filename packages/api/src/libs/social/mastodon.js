@@ -1,10 +1,11 @@
-import { login } from 'masto';
+import { createRestAPIClient } from 'masto';
+import { Blob } from 'node:buffer';
 
 // https://github.com/neet/masto.js/blob/main/examples/create-new-status-with-image.ts
 export const publish = async (caption, file) => {
   try {
     const start_time = Date.now();
-    const masto = await login({
+    const masto = await createRestAPIClient({
       url: process.env.MASTODON_URL,
       accessToken: process.env.MASTODON_ACCESS_TOKEN,
       ...(process.env.SST_STAGE !== 'prod' && {
@@ -13,10 +14,9 @@ export const publish = async (caption, file) => {
     });
     const attachment =
       file &&
-      (await masto.v2.mediaAttachments.create({
-        // native support of `fetch` on node 18
-        // file: new Blob([file]),
-        file,
+      (await masto.v2.media.create({
+        file: new Blob([file]),
+        // file: await fetch(image_url).then((res) => res.blob()),
       }));
     const { id: status_id } = await masto.v1.statuses.create({
       status: caption,

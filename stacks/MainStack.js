@@ -10,22 +10,22 @@ export function MainStack({ stack }) {
   const bucket = s3.Bucket.fromBucketName(
     stack,
     'Bucket',
-    process.env.S3_BUCKET
+    process.env.S3_BUCKET,
   );
   const devicesTable = dynamodb.Table.fromTableName(
     stack,
     'Devices',
-    process.env.DEVICES_TABLE_NAME
+    process.env.DEVICES_TABLE_NAME,
   );
   const notificationsTable = dynamodb.Table.fromTableName(
     stack,
     'Notifications',
-    process.env.NOTIFICATIONS_TABLE_NAME
+    process.env.NOTIFICATIONS_TABLE_NAME,
   );
   const certificate = Certificate.fromCertificateArn(
     stack,
     'ApiCertificate',
-    process.env.DOMAIN_CERTIFICATE_ARN
+    process.env.DOMAIN_CERTIFICATE_ARN,
   );
   // expo web build
   const screenshotSite = new StaticSite(stack, 'ScreenshotSite', {

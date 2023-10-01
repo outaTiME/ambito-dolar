@@ -9,22 +9,22 @@ test('Dates should use the default timezone', function (t) {
   t.is(
     date_tz.format(),
     // use valueOf to avoid timezone and use local
-    AmbitoDolar.getDate(date_tz.valueOf()).utcOffset(utc_offset).format()
+    AmbitoDolar.getDate(date_tz.valueOf()).utcOffset(utc_offset).format(),
   );
   t.is(
     AmbitoDolar.getTimezoneDate('2021-03-08T12:00:00-03:00').format(),
-    '2021-03-08T12:00:00-03:00'
+    '2021-03-08T12:00:00-03:00',
   );
   t.is(
     AmbitoDolar.getTimezoneDate(
       '2021-03-08T12:00:00-03:00',
       undefined,
-      true
+      true,
     ).format(),
-    '2021-03-08T00:00:00-03:00'
+    '2021-03-08T00:00:00-03:00',
   );
   const moment_from = AmbitoDolar.getTimezoneDate(
-    '2020-10-23T16:15:08-03:00'
+    '2020-10-23T16:15:08-03:00',
   ).subtract(1, 'year');
   const moment_to = AmbitoDolar.getTimezoneDate('2020-10-15T16:25:06-03:00');
   const timestamp = '2019-10-23T00:00:00-03:00';
@@ -35,16 +35,16 @@ test('Dates should use the default timezone', function (t) {
       moment_to,
       'day',
       // moment_to exclusion
-      '[)'
-    )
+      '[)',
+    ),
   );
   t.is(
     AmbitoDolar.getTimezoneDate('2022-05-13T18:00:39-03:00').unix(),
-    1652475639
+    1652475639,
   );
   t.is(
     AmbitoDolar.getTimezoneDate(1652475639 * 1000).format(),
-    '2022-05-13T18:00:39-03:00'
+    '2022-05-13T18:00:39-03:00',
   );
 });
 

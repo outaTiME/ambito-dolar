@@ -129,7 +129,7 @@ const FixedFlatList = ({
         </ContentView>
       );
     },
-    [theme, data, isModal]
+    [theme, data, isModal],
   );
   const separatorComponent = React.useCallback(
     () => (
@@ -143,15 +143,15 @@ const FixedFlatList = ({
         <Separator isModal={isModal} />
       </ContentView>
     ),
-    [theme, isModal]
+    [theme, isModal],
   );
   const headerComponent = React.useCallback(
     () => <HeaderComponent {...{ ListHeaderComponent, title }} />,
-    [ListHeaderComponent, title]
+    [ListHeaderComponent, title],
   );
   const footerComponent = React.useCallback(
     () => <FooterComponent {...{ ListFooterComponent, note }} />,
-    [ListFooterComponent, note]
+    [ListFooterComponent, note],
   );
   const extraData = React.useMemo(() => Date.now(), [theme, data]);
   return (

@@ -7,8 +7,8 @@ export const handler = Shared.wrapHandler(async () => {
   try {
     const credentials = Buffer.from(
       [process.env.AMPLITUDE_API_KEY, process.env.AMPLITUDE_SECRET_KEY].join(
-        ':'
-      )
+        ':',
+      ),
     ).toString('base64');
     const results = await AmbitoDolar.fetch(
       process.env.AMPLITUDE_USAGE_STATS_URL,
@@ -16,7 +16,7 @@ export const handler = Shared.wrapHandler(async () => {
         headers: {
           Authorization: `Basic ${credentials}`,
         },
-      }
+      },
     ).then(async (response) => {
       const { data } = await response.json();
       const [users, events, conversions] = _.chain(data?.values)

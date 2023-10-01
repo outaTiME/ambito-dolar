@@ -1,16 +1,14 @@
-// import * as Application from 'expo-application';
 import Constants from 'expo-constants';
-//import * as Updates from 'expo-updates';
+import * as Device from 'expo-device';
 import { Dimensions, Platform } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import { human, iOSColors } from 'react-native-typography';
 
 const PADDING = 16;
 const SMALL_PADDING = PADDING / 4;
 
-const DEVICE_TYPE = DeviceInfo.getDeviceType();
-const IS_TABLET = DEVICE_TYPE === 'Tablet';
-const IS_HANDSET = DEVICE_TYPE === 'Handset';
+const DEVICE_TYPE = Device.deviceType;
+const IS_TABLET = DEVICE_TYPE === Device.DeviceType.TABLET;
+const IS_HANDSET = DEVICE_TYPE === Device.DeviceType.PHONE;
 const IS_IPAD = Platform.OS === 'ios' && IS_TABLET;
 const HAPTICS_ENABLED = Platform.OS === 'ios';
 
@@ -47,7 +45,7 @@ const ICON_SIZE = 24;
 const SOCIAL_ICON_SIZE = 17;
 const APP_IGNORE_UPDATE_EXPIRATION = 30 * 24 * 60 * 60 * 1000; // 30 days
 const {
-  manifest: {
+  expoConfig: {
     name: APP_NAME,
     version: APP_VERSION,
     revisionId: APP_REVISION_ID,
@@ -66,14 +64,6 @@ const {
   },
   installationId: INSTALLATION_ID,
 } = Constants;
-/* const {
-  applicationId: APP_ID,
-  applicationName: APP_NAME,
-  nativeApplicationVersion: APP_VERSION,
-} = Application; */
-/* const {
-  manifest: { revisionId: APP_REVISION_ID },
-} = Updates; */
 const APP_COPYRIGHT = `© ${new Date().getFullYear()} ${APP_NAME}`;
 const APP_DOMAIN = 'ambito-dolar.app';
 const WEBSITE_URL = `https://${APP_DOMAIN}`;

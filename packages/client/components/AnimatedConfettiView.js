@@ -46,7 +46,7 @@ const Confetti = (props) => {
       xVel: new Value(Math.random() * xVelMax - xVelMax / 2),
       yVel: new Value(Math.random() * yVelMax + yVelMax),
       angleVel: new Value(
-        (Math.random() * angleVelMax - angleVelMax / 2) * Math.PI
+        (Math.random() * angleVelMax - angleVelMax / 2) * Math.PI,
       ),
       delay: new Value(Math.floor(index / 10) * 0.3),
       elasticity: Math.random() * 0.9 + 0.1,
@@ -102,18 +102,18 @@ const Confetti = (props) => {
                             set(y, add(y, dy)),
                             set(x, add(x, dx)),
                             set(angle, add(angle, dAngle)),
-                          ]
-                        )
+                          ],
+                        ),
                       ),
                       cond(
                         greaterThan(
                           x,
-                          screenWidth - props.itemDimensions.width
+                          screenWidth - props.itemDimensions.width,
                         ),
                         [
                           set(x, screenWidth - props.itemDimensions.width),
                           set(xVel, multiply(xVel, -elasticity)),
-                        ]
+                        ],
                       ),
                       cond(lessThan(x, 0), [
                         set(x, 0),
@@ -124,13 +124,13 @@ const Confetti = (props) => {
                         cond(
                           greaterThan(
                             y,
-                            screenHeight + props.itemDimensions.height
+                            screenHeight + props.itemDimensions.height,
                           ),
-                          set(y, -props.itemDimensions.height * 2)
-                        )
+                          set(y, -props.itemDimensions.height * 2),
+                        ),
                       ),
                     ],
-                    [startClock(clock), timeDiff]
+                    [startClock(clock), timeDiff],
                   );
                 }}
               </Animated.Code>
@@ -155,7 +155,7 @@ const Confetti = (props) => {
               </Animated.View>
             </React.Fragment>
           );
-        }
+        },
       )}
     </View>
   );

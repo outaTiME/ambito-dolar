@@ -41,7 +41,7 @@ const getRate = (type) => {
         // log error and continue processing
         console.warn(
           'Invalid schema validation on rate',
-          JSON.stringify({ type, data, error: error.message })
+          JSON.stringify({ type, data, error: error.message }),
         );
       } else {
         const identity = value.fecha;
@@ -58,7 +58,7 @@ const getRate = (type) => {
           JSON.stringify({
             type,
             duration,
-          })
+          }),
         );
         return result;
       }
@@ -67,7 +67,7 @@ const getRate = (type) => {
       // log error and continue processing
       console.warn(
         'Unable to fetch rate',
-        JSON.stringify({ type, error: error.message })
+        JSON.stringify({ type, error: error.message }),
       );
     });
 };
@@ -89,7 +89,7 @@ const getCryptoRates = (rates) => {
       const schema = Joi.object()
         .keys({
           ..._.mapValues(rates, () =>
-            Joi.number().required().custom(numberValidator)
+            Joi.number().required().custom(numberValidator),
           ),
           time: Joi.number().integer().default(Date.now),
         })
@@ -99,7 +99,7 @@ const getCryptoRates = (rates) => {
         // log error and continue processing
         console.warn(
           'Invalid schema validation on crypto rates',
-          JSON.stringify({ rates, data, error: error.message })
+          JSON.stringify({ rates, data, error: error.message }),
         );
       } else {
         const identity = value.time;
@@ -113,7 +113,7 @@ const getCryptoRates = (rates) => {
           JSON.stringify({
             rates,
             duration,
-          })
+          }),
         );
         return result;
       }
@@ -122,7 +122,7 @@ const getCryptoRates = (rates) => {
       // log error and continue processing
       console.warn(
         'Unable to fetch crypto rates',
-        JSON.stringify({ rates, error: error.message })
+        JSON.stringify({ rates, error: error.message }),
       );
     });
 };
@@ -140,7 +140,7 @@ const getHistoricalRate = (type, rate, { max = 0, max_date }) => {
     };
     console.info(
       'Historical rate updated',
-      JSON.stringify({ type, old: { max, max_date }, new: result.rate })
+      JSON.stringify({ type, old: { max, max_date }, new: result.rate }),
     );
     return result;
   }
@@ -172,7 +172,7 @@ const getNewRates = (rates, new_rates) =>
         : rate_last_max;
       // calculate from open / close rate and truncate
       const rate_change_percent = AmbitoDolar.getNumber(
-        (rate_last_max / rate_open - 1) * 100
+        (rate_last_max / rate_open - 1) * 100,
       );
       const new_rate = [
         AmbitoDolar.getTimezoneDate().format(),
@@ -188,7 +188,7 @@ const getNewRates = (rates, new_rates) =>
           type,
           old: rate,
           new: new_rate,
-        })
+        }),
       );
     }
     return obj;
@@ -224,7 +224,7 @@ const getBusinessDayRates = (rates, realtime) => {
         // ['cclgd30', AmbitoDolar.CCL_TYPE],
         // ['mepgd30', AmbitoDolar.MEP_TYPE],
         AmbitoDolar.CCB_TYPE,
-      ])
+      ]),
     );
   }
   return Promise.all(promises)
@@ -235,8 +235,8 @@ const getBusinessDayRates = (rates, realtime) => {
 const getHistoricalRates = (rates, base_rates) =>
   Promise.all(
     Object.entries(rates).map(([type, rate]) =>
-      getHistoricalRate(type, rate, base_rates[type])
-    )
+      getHistoricalRate(type, rate, base_rates[type]),
+    ),
   ).then(getObjectRates);
 
 const notify = (
@@ -244,7 +244,7 @@ const notify = (
   rates,
   has_rates_from_today,
   new_rates,
-  has_new_rates
+  has_new_rates,
 ) => {
   const notifications = [];
   if (close_day === true) {
@@ -273,12 +273,12 @@ const notify = (
             const rate_last = AmbitoDolar.getRateValue(rate);
             // truncate decimals
             const value_diff = AmbitoDolar.getNumber(
-              Math.abs(prev_rate_last - rate_last)
+              Math.abs(prev_rate_last - rate_last),
             );
             const rate_threshold = Shared.getVariationThreshold(
               type,
               prev_rate_last,
-              rate_last
+              rate_last,
             );
             console.info(
               'Looking for rate variation to notify',
@@ -286,7 +286,7 @@ const notify = (
                 type,
                 diff: value_diff,
                 threshold: rate_threshold,
-              })
+              }),
             );
             if (value_diff !== 0 && value_diff > rate_threshold) {
               // variation found
@@ -297,7 +297,7 @@ const notify = (
           }
           return obj;
         },
-        {}
+        {},
       );
       if (!_.isEmpty(variation_rates)) {
         // join variations in a single notification
@@ -313,8 +313,8 @@ const notify = (
       Shared.triggerNotifyEvent({
         type,
         rates,
-      })
-    )
+      }),
+    ),
   );
 };
 
@@ -323,14 +323,14 @@ const REALTIME_PROCESSING_INTERVAL = 15;
 
 export const handler = Shared.wrapHandler(async (event) => {
   const { notify: trigger_notification, close: close_day } = JSON.parse(
-    event.Records[0].Sns.Message
+    event.Records[0].Sns.Message,
   );
   console.info(
     'Message received',
     JSON.stringify({
       trigger_notification,
       close_day,
-    })
+    }),
   );
   // avoid fetch delays
   const in_time =
@@ -389,7 +389,7 @@ export const handler = Shared.wrapHandler(async (event) => {
     // took historical data in parallel from new rates
     const new_historical_rates = await getHistoricalRates(
       new_rates,
-      base_rates.rates
+      base_rates.rates,
     );
     // merge new_historical_rates with base_rates
     Object.entries(new_historical_rates).forEach(([type, historical_rate]) => {
@@ -417,7 +417,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       rates,
       has_rates_from_today,
       new_rates,
-      has_new_rates
+      has_new_rates,
     );
   }
   console.info('Completed', JSON.stringify(new_rates));

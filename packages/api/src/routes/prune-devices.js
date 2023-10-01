@@ -52,7 +52,7 @@ export const handler = Shared.wrapHandler(async (event) => {
     };
     const items = await Shared.getAllDataFromDynamoDB(params);
     await Promise.all(
-      items.map(({ installation_id }) => pruneDevice(installation_id))
+      items.map(({ installation_id }) => pruneDevice(installation_id)),
     );
     return Shared.serviceResponse(null, 200, {
       items: _.map(items, 'installation_id'),

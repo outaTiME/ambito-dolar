@@ -182,7 +182,6 @@ struct RateWidgetEntryView : View {
   let entry: RateProvider.Entry
   let fontName = "FiraGO"
   // https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
-  let bgColor = Color(UIColor.systemBackground)
   let fgColor = Color(UIColor.label)
   let fgSecondaryColor = Color(UIColor.secondaryLabel)
   var body: some View {
@@ -196,7 +195,6 @@ struct RateWidgetEntryView : View {
             VStack {
               Text(rate.name)
                 .font(.custom(fontName, size: 10))
-              // .minimumScaleFactor(0.5)
                 .lineLimit(1)
               Text(rate.price)
                 .font(.custom(fontName, size: 20))
@@ -206,14 +204,11 @@ struct RateWidgetEntryView : View {
               if rate.plainChange != nil {
                 Text((rate.plainChange)!)
                   .font(.custom(fontName, size: 10))
-                // .minimumScaleFactor(0.5)
                   .lineLimit(1)
               }
             }
             .padding(8)
           }
-          // .background(bgColor)
-          .background(.ultraThinMaterial)
           .widgetURL(getWidgetUrl(id: rate.id))
         } else {
           ZStack {
@@ -223,14 +218,9 @@ struct RateWidgetEntryView : View {
                 .font(.custom(fontName, size: 14))
                 .lineLimit(1)
                 .widgetAccentable()
-              /* Image(systemName: "xmark.icloud.fill")
-               .font(.custom(fontName, size: 20))
-               .widgetAccentable() */
             }
             .padding(8)
           }
-          // .background(bgColor)
-          .background(.ultraThinMaterial)
           .widgetURL(getWidgetUrl())
         }
       }
@@ -239,60 +229,54 @@ struct RateWidgetEntryView : View {
         VStack(alignment: .leading) {
           Text(rate.name)
             .font(.custom(fontName, size: 20))
-          // .fontWeight(.regular)
             .foregroundColor(fgColor)
-          // .minimumScaleFactor(0.5)
             .lineLimit(1)
           Spacer()
           if rate.change != nil {
             Text((rate.change)!)
               .font(.custom(fontName, size: 14))
-            // .fontWeight(.medium)
               .foregroundColor(rate.changeColor!)
-            // .minimumScaleFactor(0.5)
               .lineLimit(1)
           }
           Text(rate.price)
             .font(.custom(fontName, size: 28))
-          // .fontWeight(.semibold)
             .foregroundColor(fgColor)
-          // .minimumScaleFactor(0.5)
             .lineLimit(1)
           Spacer().frame(height: 8)
-          // (Text("Actualizado ") + Text(entry.date, style: .time))
           Text(rate.date)
             .font(.custom(fontName, size: 10))
-          // .fontWeight(.medium)
             .foregroundColor(fgSecondaryColor)
             .lineLimit(1)
-          // .frame(height: 8, alignment: .bottom)
         }
         .frame(
           maxWidth: .infinity,
           maxHeight: .infinity,
           alignment: .topLeading
         )
-        .padding(16)
-        .background(bgColor)
         .widgetURL(getWidgetUrl(id: rate.id))
       } else {
         VStack {
           Text("Sin cotización disponible")
             .font(.custom(fontName, size: 14))
-          // .fontWeight(.regular)
             .foregroundColor(fgColor)
-          // .minimumScaleFactor(0.5)
-          // .lineLimit(2)
             .multilineTextAlignment(.center)
         }
         .frame(
           maxWidth: .infinity,
           maxHeight: .infinity
         )
-        .padding(16)
-        .background(bgColor)
         .widgetURL(getWidgetUrl())
       }
+    }
+  }
+}
+
+extension WidgetConfiguration {
+  func contentMarginsDisabledIfAvailable() -> some WidgetConfiguration {
+    if #available(iOSApplicationExtension 17.0, *) {
+      return self.contentMarginsDisabled()
+    } else {
+      return self
     }
   }
 }
@@ -310,9 +294,6 @@ struct RateWidget: Widget {
         .systemSmall,
       ]
     }
-    /* return [
-     .systemSmall,
-     ] */
   }
   var body: some WidgetConfiguration {
     IntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateProvider()) { entry in
@@ -321,6 +302,7 @@ struct RateWidget: Widget {
     .configurationDisplayName("Cotizaciones")
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
     .supportedFamilies(supportedFamilies)
+    // .contentMarginsDisabledIfAvailable()
   }
 }
 
@@ -351,7 +333,6 @@ struct ListRatesWidgetEntryView : View {
   let entry: ListRatesProvider.Entry
   let fontName = "FiraGO"
   // https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
-  let bgColor = Color(UIColor.systemBackground)
   let fgColor = Color(UIColor.label)
   let fgSecondaryColor = Color(UIColor.secondaryLabel)
   var body: some View {
@@ -364,32 +345,24 @@ struct ListRatesWidgetEntryView : View {
             HStack {
               Text(rate.name)
                 .font(.custom(fontName, size: 14))
-              // .fontWeight(.regular)
                 .foregroundColor(fgColor)
-              // .minimumScaleFactor(0.5)
                 .lineLimit(1)
               Spacer()
               Text(rate.price)
                 .font(.custom(fontName, size: 14))
-              // .fontWeight(.medium)
                 .foregroundColor(fgColor)
                 .lineLimit(1)
-              // .frame(height: 8, alignment: .bottom)
             }
             HStack {
               Text(rate.date)
                 .font(.custom(fontName, size: 10))
-              // .fontWeight(.regular)
                 .foregroundColor(fgSecondaryColor)
-              // .minimumScaleFactor(0.5)
                 .lineLimit(1)
               Spacer()
               if rate.change != nil {
                 Text(rate.change!)
                   .font(.custom(fontName, size: 10))
-                // .fontWeight(.medium)
                   .foregroundColor(rate.changeColor)
-                // .minimumScaleFactor(0.5)
                   .lineLimit(1)
               }
             }
@@ -403,25 +376,18 @@ struct ListRatesWidgetEntryView : View {
           maxHeight: .infinity,
           alignment: .topLeading
         )
-        .padding(16)
-        .background(bgColor)
         .widgetURL(getWidgetUrl())
       } else {
         VStack {
           Text("Sin cotizaciones disponibles")
             .font(.custom(fontName, size: 14))
-          // .fontWeight(.regular)
             .foregroundColor(fgColor)
-          // .minimumScaleFactor(0.5)
-          // .lineLimit(2)
             .multilineTextAlignment(.center)
         }
         .frame(
           maxWidth: .infinity,
           maxHeight: .infinity
         )
-        .padding(16)
-        .background(bgColor)
         .widgetURL(getWidgetUrl())
       }
     }
@@ -442,6 +408,7 @@ struct ListRatesWidget: Widget {
     .configurationDisplayName("Lista de cotizaciones")
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
     .supportedFamilies(supportedFamilies)
+    // .contentMarginsDisabledIfAvailable()
   }
 }
 

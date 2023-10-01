@@ -40,8 +40,13 @@ export default {
         TWITTER_APP_SECRET: process.env.TWITTER_APP_SECRET,
         TWITTER_ACCESS_TOKEN: process.env.TWITTER_ACCESS_TOKEN,
         TWITTER_ACCESS_SECRET: process.env.TWITTER_ACCESS_SECRET,
+        BSKY_USERNAME: process.env.BSKY_USERNAME,
+        BSKY_PASSWORD: process.env.BSKY_PASSWORD,
         // https://aws.amazon.com/es/blogs/compute/node-js-18-x-runtime-now-available-in-aws-lambda/
-        NODE_OPTIONS: '--no-experimental-fetch',
+        // NODE_OPTIONS: '--no-experimental-fetch',
+        // prevents experimental warnings from buffer.File
+        NODE_OPTIONS: '--no-warnings',
+        // NODE_NO_WARNINGS: 1,
       },
       runtime: 'nodejs18.x',
       tracing: 'disabled',

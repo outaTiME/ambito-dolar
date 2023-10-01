@@ -19,5 +19,5 @@ export default React.forwardRef(
         {children}
       </View>
     </View>
-  )
+  ),
 );

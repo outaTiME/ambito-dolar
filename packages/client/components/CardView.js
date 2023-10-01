@@ -57,7 +57,7 @@ export default ({
             ),
           ];
         }),
-    [children, isModal]
+    [children, isModal],
   );
   return (
     <View
