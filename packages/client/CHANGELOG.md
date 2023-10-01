@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.8.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.7.1...@ambito-dolar/client@6.8.0) (2023-10-01)
+
+### Features
+
+- update to Expo SDK49 and enhancements ([e3363da](https://github.com/outaTiME/ambito-dolar/commit/e3363daa17ea5ccbba9ab7298d404cc4481a8944))
+
 ## [6.7.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.7.0...@ambito-dolar/client@6.7.1) (2023-07-27)
 
 ### Bug Fixes

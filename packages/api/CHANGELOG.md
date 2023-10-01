@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.8.0...@ambito-dolar/api@3.9.0) (2023-10-01)
+
+### Features
+
+- add bluesky social ([e637b80](https://github.com/outaTiME/ambito-dolar/commit/e637b8011052cbd17a3d528d90c9dd742b2a9d6a))
+- update to Expo SDK49 and enhancements ([e3363da](https://github.com/outaTiME/ambito-dolar/commit/e3363daa17ea5ccbba9ab7298d404cc4481a8944))
+
 # [3.8.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.7.2...@ambito-dolar/api@3.8.0) (2023-07-22)
 
 ### Bug Fixes
