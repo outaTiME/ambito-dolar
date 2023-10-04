@@ -7,6 +7,8 @@ const init = (dsn) =>
     dsn,
     // enableInExpoDevelopment: true,
     debug: __DEV__,
+    // https://docs.sentry.io/platforms/react-native/performance/instrumentation/automatic-instrumentation/#opt-out
+    enableAutoPerformanceTracing: false,
   });
 
 Settings.IS_PRODUCTION && Settings.SENTRY_DSN && init(Settings.SENTRY_DSN);
