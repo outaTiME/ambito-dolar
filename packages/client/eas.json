@@ -5,8 +5,7 @@
   "build": {
     "fast": {
       "ios": {
-        "resourceClass": "m-medium",
-        "image": "latest"
+        "resourceClass": "m-medium"
       },
       "channel": "fast"
     },

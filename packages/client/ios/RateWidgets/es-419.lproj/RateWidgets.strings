@@ -14,8 +14,6 @@
 
 "JtpQnj" = "Select Rate Types";
 
-"OsOaCJ" = "Just to confirm, you wanted ‘${rateType}’?";
-
 "PxDzsY-HlAW7E" = "Just to confirm, you wanted ‘Compra’?";
 
 "PxDzsY-RVyQ6W" = "Just to confirm, you wanted ‘Promedio’?";
@@ -24,11 +22,9 @@
 
 "QKKLd7" = "Seleccionar cotizaciones";
 
-"RMvNPo" = "Rate Types";
+"RMvNPo" = "Cotizaciones";
 
 "RVyQ6W" = "Promedio";
-
-"UH8942" = "There are ${count} options matching ‘${rateType}’.";
 
 "Xl84YZ" = "Porcentaje";
 
@@ -42,11 +38,7 @@
 
 "hp2t3T-p2wzTd" = "There are ${count} options matching ‘Venta’.";
 
-"jXfZco" = "Just to confirm, you wanted ‘${rateTypes}’?";
-
 "jzlPZ1" = "Change Type";
-
-"kkUgcF" = "There are ${count} options matching ‘${rateTypes}’.";
 
 "nYMwvW" = "Mostrar";
 

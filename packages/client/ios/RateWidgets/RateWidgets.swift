@@ -176,6 +176,16 @@ struct RateProvider: IntentTimelineProvider {
     completion(timeline)
   }
 }
+extension View {
+  func contentPadding() -> some View {
+    // TODO: enable when compile over XCode 15
+    /* if #unavailable(iOSApplicationExtension 17.0) {
+     return self.padding(16)
+     }
+     return self */
+    return self.padding(16)
+  }
+}
 
 struct RateWidgetEntryView : View {
   @Environment(\.widgetFamily) var widgetFamily
@@ -253,6 +263,7 @@ struct RateWidgetEntryView : View {
           maxHeight: .infinity,
           alignment: .topLeading
         )
+        .contentPadding()
         .widgetURL(getWidgetUrl(id: rate.id))
       } else {
         VStack {
@@ -265,21 +276,33 @@ struct RateWidgetEntryView : View {
           maxWidth: .infinity,
           maxHeight: .infinity
         )
+        .contentPadding()
         .widgetURL(getWidgetUrl())
       }
     }
   }
 }
 
-extension WidgetConfiguration {
+/* extension WidgetConfiguration {
   func contentMarginsDisabledIfAvailable() -> some WidgetConfiguration {
-    if #available(iOSApplicationExtension 17.0, *) {
-      return self.contentMarginsDisabled()
+    #if compiler(>=5.9) // Xcode 15
+      if #available(iOSApplicationExtension 17.0, *) {
+        return self.contentMarginsDisabled()
+      } else {
+        return self
+      }
+    #else
+      return self
+    #endif
+  }
+  func disfavoredLocationsIfAvailable() -> some WidgetConfiguration {
+    if #available(iOS 17, *) {
+      return self.disfavoredLocations([.lockScreen, .standBy], for: [.systemSmall])
     } else {
       return self
     }
   }
-}
+} */
 
 struct RateWidget: Widget {
   let kind: String = "RateWidget"
@@ -303,6 +326,7 @@ struct RateWidget: Widget {
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
     .supportedFamilies(supportedFamilies)
     // .contentMarginsDisabledIfAvailable()
+    // .disfavoredLocationsIfAvailable()
   }
 }
 
@@ -376,6 +400,7 @@ struct ListRatesWidgetEntryView : View {
           maxHeight: .infinity,
           alignment: .topLeading
         )
+        .contentPadding()
         .widgetURL(getWidgetUrl())
       } else {
         VStack {
@@ -388,6 +413,7 @@ struct ListRatesWidgetEntryView : View {
           maxWidth: .infinity,
           maxHeight: .infinity
         )
+        .contentPadding()
         .widgetURL(getWidgetUrl())
       }
     }
@@ -409,6 +435,7 @@ struct ListRatesWidget: Widget {
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
     .supportedFamilies(supportedFamilies)
     // .contentMarginsDisabledIfAvailable()
+    // .disfavoredLocationsIfAvailable()
   }
 }
 
