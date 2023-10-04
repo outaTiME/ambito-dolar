@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.8.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.8.0...@ambito-dolar/client@6.8.1) (2023-10-04)
+
+### Bug Fixes
+
+- disable app performance on sentry ([78a88e0](https://github.com/outaTiME/ambito-dolar/commit/78a88e078018978156ff78a1cebf63044b47bdf1))
+- invalid padding on widgets ([95d0497](https://github.com/outaTiME/ambito-dolar/commit/95d0497dacf394e75b0b3418dc38c8988a70ce37))
+
 # [6.8.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.7.1...@ambito-dolar/client@6.8.0) (2023-10-01)
 
 ### Features
