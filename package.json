@@ -42,6 +42,7 @@
   },
   "packageManager": "yarn@3.6.4",
   "resolutions": {
-    "babel-plugin-lodash/@babel/types": "~7.20.0"
+    "babel-plugin-lodash/@babel/types": "~7.20.0",
+    "react-native@0.72.5": "patch:react-native@npm%3A0.72.5#./.yarn/patches/react-native-npm-0.72.5-739052aab2.patch"
   }
 }

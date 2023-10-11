@@ -1,0 +1,15 @@
+diff --git a/Libraries/Components/Pressable/useAndroidRippleForView.js b/Libraries/Components/Pressable/useAndroidRippleForView.js
+index 6c4cb1e2baa63166b5e2e308f284fc80e4e567c8..f02d8c26d23aa0f308137ed8bab8d592c5338e70 100644
+--- a/Libraries/Components/Pressable/useAndroidRippleForView.js
++++ b/Libraries/Components/Pressable/useAndroidRippleForView.js
+@@ -70,8 +70,9 @@ export default function useAndroidRippleForView(
+       };
+ 
+       return {
++        // https://github.com/facebook/react-native/pull/37901/files#diff-19e5e2efdf4c6fca24caaa710d3ae1baafc7364d288343bb17569b3ba5d03649
+         viewProps:
+-          foreground === true
++          foreground === true && Platform.Version >= 23
+             ? {nativeForegroundAndroid: nativeRippleValue}
+             : {nativeBackgroundAndroid: nativeRippleValue},
+         onPressIn(event: PressEvent): void {
