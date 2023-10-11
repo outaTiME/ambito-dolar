@@ -57,6 +57,14 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         }}
       />
       <FontAwesome5
+        name="square"
+        size={size}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: Settings.PADDING,
+        }}
+      />
+      <FontAwesome5
         name="github"
         size={size}
         color={Settings.getGrayColor(theme)}

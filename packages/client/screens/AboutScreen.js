@@ -34,6 +34,7 @@ const MASTODON_URI = 'mastodon.social/@AmbitoDolar';
 // https://github.com/mastodon/mastodon-ios/blob/develop/Mastodon/Info.plist#L28
 const MASTODON_DEEP_LINK = `mastodon://${MASTODON_URI}`;
 const MASTODON_WEB_URL = `https://${MASTODON_URI}`;
+const BLUESKY_WEB_URL = `https://bsky.app/profile/ambitodolar.bsky.social`;
 const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
 const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
 const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
@@ -128,6 +129,9 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       )
       .catch(console.warn);
   }, []);
+  const onPressBluesky = React.useCallback(() => {
+    Linking.openURL(BLUESKY_WEB_URL).catch(console.warn);
+  }, []);
   const onPressGithub = React.useCallback(() => {
     Linking.canOpenURL(GITHUB_DEEP_LINK)
       .then((supported) =>
@@ -215,6 +219,11 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
             title="Mastodon"
             iconName="mastodon"
             onAction={onPressMastodon}
+          />
+          <IconCardItemView
+            title="Bluesky"
+            iconName="square"
+            onAction={onPressBluesky}
           />
           <IconCardItemView
             title="GitHub"

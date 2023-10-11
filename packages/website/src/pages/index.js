@@ -7,6 +7,8 @@ import {
   FaFacebook as Facebook,
   FaRedditAlien as Reddit,
   FaMastodon as Mastodon,
+  FaSquare as Bluesky,
+  // FaRegSquare as Bluesky,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa';
@@ -109,6 +111,14 @@ const IndexPage = () => {
                         rel="noopener noreferrer me"
                       >
                         <Mastodon />
+                      </a>
+                      <a
+                        className="icon"
+                        href="https://bsky.app/profile/ambitodolar.bsky.social"
+                        target="_blank"
+                        rel="noopener noreferrer me"
+                      >
+                        <Bluesky />
                       </a>
                       <a
                         className="icon"
