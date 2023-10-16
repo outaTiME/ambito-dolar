@@ -1,7 +1,8 @@
 import 'dotenv/config';
 
-const version = '6.8.1';
-const buildNumber = 102;
+const version = '6.8.2';
+const buildNumber = 103;
+const hasSentryToken = !!process.env.SENTRY_AUTH_TOKEN;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -81,7 +82,7 @@ export default {
   assetBundlePatterns: ['**/*'],
   plugins: [
     'expo-localization',
-    'sentry-expo',
+    hasSentryToken && 'sentry-expo',
     [
       '@config-plugins/react-native-quick-actions',
       [
@@ -95,7 +96,7 @@ export default {
     ],
     // https://www.aronberezkin.com/posts/a-step-by-step-guide-to-writing-your-first-expo-config-plugin
     './plugins/withAndroidSplashScreen.js',
-  ],
+  ].filter(Boolean),
   splash: LIGHT_SPLASH,
   ios: {
     bundleIdentifier: 'im.outa.AmbitoDolar',
@@ -151,19 +152,17 @@ export default {
     allowBackup: false,
     softwareKeyboardLayoutMode: 'pan',
   },
-  ...(process.env.SENTRY_AUTH_TOKEN && {
-    hooks: {
-      postPublish: [
-        {
-          file: 'sentry-expo/upload-sourcemaps',
-          config: {
-            organization: 'ambito-dolar',
-            project: 'expo',
-            // https://github.com/expo/sentry-expo/issues/256#issuecomment-1164017755
-            // authToken: false,
-          },
+  hooks: {
+    postPublish: [
+      {
+        file: 'sentry-expo/upload-sourcemaps',
+        config: {
+          organization: 'ambito-dolar',
+          project: 'expo',
+          // https://github.com/expo/sentry-expo/issues/256#issuecomment-1164017755
+          // authToken: false,
         },
-      ],
-    },
-  }),
+      },
+    ],
+  },
 };
