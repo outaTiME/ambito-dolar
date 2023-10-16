@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.8.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.8.1...@ambito-dolar/client@6.8.2) (2023-10-16)
+
+### Features
+
+- add bluesky social ([171b749](https://github.com/outaTiME/ambito-dolar/commit/171b7497fb87317c2c9a467c299f23e92195c637))
+
+### Reverts
+
+- add bluesky social ([4c99195](https://github.com/outaTiME/ambito-dolar/commit/4c991958c3f7ebb9ddc2ac6903da7d0e1693b1b8))
+
 ## [6.8.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.8.0...@ambito-dolar/client@6.8.1) (2023-10-04)
 
 ### Bug Fixes
