@@ -1,4 +1,4 @@
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 
 import Settings from '../config/settings';
@@ -56,14 +56,16 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
           marginRight: Settings.PADDING,
         }}
       />
-      <FontAwesome5
-        name="square"
-        size={size}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          marginRight: Settings.PADDING,
-        }}
-      />
+      {false && (
+        <MaterialCommunityIcons
+          name="square-rounded"
+          size={size}
+          color={Settings.getGrayColor(theme)}
+          style={{
+            marginRight: Settings.PADDING,
+          }}
+        />
+      )}
       <FontAwesome5
         name="github"
         size={size}

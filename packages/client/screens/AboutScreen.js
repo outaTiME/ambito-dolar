@@ -220,11 +220,14 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
             iconName="mastodon"
             onAction={onPressMastodon}
           />
-          <IconCardItemView
-            title="Bluesky"
-            iconName="square"
-            onAction={onPressBluesky}
-          />
+          {false && (
+            <IconCardItemView
+              title="Bluesky"
+              iconName="square-rounded"
+              onAction={onPressBluesky}
+              community
+            />
+          )}
           <IconCardItemView
             title="GitHub"
             iconName="github"

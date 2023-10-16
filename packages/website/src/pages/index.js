@@ -1,5 +1,7 @@
 import React from 'react';
 import { IconContext } from 'react-icons';
+// leave until available on @expo/vector-icons
+import { BiSolidSquareRounded as Bluesky } from 'react-icons/bi';
 import {
   FaTwitter as Twitter,
   FaTelegramPlane as Telegram,
@@ -7,8 +9,7 @@ import {
   FaFacebook as Facebook,
   FaRedditAlien as Reddit,
   FaMastodon as Mastodon,
-  FaSquare as Bluesky,
-  // FaRegSquare as Bluesky,
+  // FaSquare as Bluesky,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa';
@@ -112,14 +113,16 @@ const IndexPage = () => {
                       >
                         <Mastodon />
                       </a>
-                      <a
-                        className="icon"
-                        href="https://bsky.app/profile/ambitodolar.bsky.social"
-                        target="_blank"
-                        rel="noopener noreferrer me"
-                      >
-                        <Bluesky />
-                      </a>
+                      {false && (
+                        <a
+                          className="icon"
+                          href="https://bsky.app/profile/ambitodolar.bsky.social"
+                          target="_blank"
+                          rel="noopener noreferrer me"
+                        >
+                          <Bluesky />
+                        </a>
+                      )}
                       <a
                         className="icon"
                         href="https://github.com/outaTiME/ambito-dolar"
