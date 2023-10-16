@@ -22,7 +22,7 @@ PODS:
     - ExpoModulesCore
   - EXNotifications (0.20.1):
     - ExpoModulesCore
-  - Expo (49.0.13):
+  - Expo (49.0.14):
     - ExpoModulesCore
   - expo-dev-client (2.4.11):
     - EXManifests
@@ -117,7 +117,7 @@ PODS:
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - EXStructuredHeaders (3.3.0)
-  - EXUpdates (0.18.14):
+  - EXUpdates (0.18.16):
     - ASN1Decoder (~> 1.8)
     - EASClient
     - EXManifests
@@ -567,7 +567,7 @@ PODS:
     - React-Core
   - RNFlashList (1.6.1):
     - React-Core
-  - RNGestureHandler (2.13.1):
+  - RNGestureHandler (2.13.2):
     - React-Core
   - RNQuickAction (0.3.13):
     - React
@@ -897,7 +897,7 @@ SPEC CHECKSUMS:
   EXJSONUtils: 6802be4282d42b97c51682468ddc1026a06f8276
   EXManifests: cf66451b11b2c2f6464917528d792759f7fd6ce0
   EXNotifications: 09394cbd7165f9a4a00a53328aa09bf874bae717
-  Expo: e7d2116b947e2e6fdeb09ee4f2754f819426d1b6
+  Expo: 3ec7208506175606eca0ee74cfd0941e4bb7a75f
   expo-dev-client: a97a68508a6104ad99f4b2613fd808cda7a4186c
   expo-dev-launcher: 7336e6dc8ed51b87225f8a96d787add81a99748c
   expo-dev-menu: 9542570483a647626570cb4333c80add4cea1254
@@ -917,7 +917,7 @@ SPEC CHECKSUMS:
   ExpoSystemUI: fa4854e3226e87f86d3383570264c6e4e90bc782
   EXSplashScreen: c0e7f2d4a640f3b875808ed0b88575538daf6d82
   EXStructuredHeaders: 324cc3130571d2696357fafd8be7fd9a0b5fdf6e
-  EXUpdates: 7ec199e551666daa808914cda07566a9661f6985
+  EXUpdates: f4cb5c6782ad1635fa853cb5251677040a9ed584
   EXUpdatesInterface: 82ed48d417cdcd376c12ca1c2ce390d35500bed6
   FBLazyVector: 71803c074f6325f10b5ec891c443b6bbabef0ca7
   FBReactNativeSpec: 448e08a759d29a96e15725ae532445bf4343567c
@@ -965,7 +965,7 @@ SPEC CHECKSUMS:
   ReactNativeWidgetKit: d356de3387427cb3e92e556408460abfb3a207ed
   RNCAsyncStorage: c913ede1fa163a71cea118ed4670bbaaa4b511bb
   RNFlashList: 236646d48f224a034f35baa0242e1b77db063b1e
-  RNGestureHandler: 38aa38413896620338948fbb5c90579a7b1c3fde
+  RNGestureHandler: bb86e378287f7713baf3ca205423eb8109790022
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNReanimated: ab2e96c6d5591c3dfbb38a464f54c8d17fb34a87
   RNScreens: 85d3880b52d34db7b8eeebe2f1a0e807c05e69fa

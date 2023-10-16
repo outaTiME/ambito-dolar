@@ -5,10 +5,10 @@
   "dependencies": {
     "@ambito-dolar/core": "^3.5.0",
     "@atproto/api": "^0.6.20",
-    "@aws-sdk/client-dynamodb": "^3.423.0",
-    "@aws-sdk/client-s3": "^3.423.0",
-    "@aws-sdk/client-sns": "^3.423.0",
-    "@aws-sdk/lib-dynamodb": "^3.423.0",
+    "@aws-sdk/client-dynamodb": "^3.428.0",
+    "@aws-sdk/client-s3": "^3.428.0",
+    "@aws-sdk/client-sns": "^3.428.0",
+    "@aws-sdk/lib-dynamodb": "^3.428.0",
     "@sentry/integrations": "7.52.0",
     "@sentry/serverless": "7.52.0",
     "@shelf/dynamodb-parallel-scan": "^3.5.3",
@@ -18,7 +18,7 @@
     "expo-server-sdk": "^3.7.0",
     "google-auth-library": "^9.1.0",
     "instagram-private-api": "^1.45.3",
-    "joi": "^17.10.2",
+    "joi": "^17.11.0",
     "lodash": "^4.17.21",
     "masto": "^6.3.1",
     "object-hash": "^3.0.0",
@@ -26,6 +26,6 @@
     "reddit": "^1.2.1",
     "semver": "^7.5.4",
     "sharp": "^0.32.6",
-    "twitter-api-v2": "^1.15.1"
+    "twitter-api-v2": "^1.15.2"
   }
 }

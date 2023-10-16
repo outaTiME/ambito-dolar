@@ -11,23 +11,23 @@
   },
   "dependencies": {
     "@anatoliygatt/use-prefers-color-scheme": "^1.0.10",
-    "gatsby": "^5.12.5",
+    "gatsby": "^5.12.6",
     "gatsby-omni-font-loader": "^2.0.2",
-    "gatsby-plugin-google-gtag": "^5.12.0",
+    "gatsby-plugin-google-gtag": "^5.12.1",
     "gatsby-plugin-humans-txt": "^1.1.4",
-    "gatsby-plugin-image": "^3.12.0",
-    "gatsby-plugin-manifest": "^5.12.0",
+    "gatsby-plugin-image": "^3.12.1",
+    "gatsby-plugin-manifest": "^5.12.1",
     "gatsby-plugin-no-sourcemaps": "^5.12.0",
     "gatsby-plugin-robots-txt": "^1.8.0",
-    "gatsby-plugin-sass": "^6.12.0",
-    "gatsby-plugin-sharp": "^5.12.0",
-    "gatsby-plugin-sitemap": "^6.12.0",
+    "gatsby-plugin-sass": "^6.12.1",
+    "gatsby-plugin-sharp": "^5.12.1",
+    "gatsby-plugin-sitemap": "^6.12.1",
     "gatsby-source-filesystem": "^5.12.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-icons": "^4.11.0",
-    "sass": "^1.68.0"
+    "sass": "^1.69.3"
   }
 }
