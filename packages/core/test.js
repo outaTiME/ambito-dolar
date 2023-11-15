@@ -1,7 +1,24 @@
 /* eslint-disable no-sparse-arrays */
 const test = require('ava');
+const nock = require('nock');
 
 const AmbitoDolar = require('.');
+
+/* test.before(function (t) {
+  nock.disableNetConnect();
+  nock('https://httpbin.org')
+    .get('/delay/2')
+    .delayConnection(2 * 1000)
+    .reply(200)
+    .get('/status/500')
+    .times(2)
+    .reply(500);
+});
+
+test.after.always(function (t) {
+  nock.cleanAll();
+  nock.enableNetConnect();
+}); */
 
 test('Dates should use the default timezone', function (t) {
   const date_tz = AmbitoDolar.getTimezoneDate();
@@ -91,20 +108,29 @@ test('Rate should be of the current day', function (t) {
 });
 
 test('Fetch should timeout with abort signal', function (t) {
-  // return AmbitoDolar.fetch('https://httpstat.us/200', {
-  // return AmbitoDolar.fetch('https://mock.httpstatus.io/200', {
-  return AmbitoDolar.fetch('https://httpbin.org/status/200', {
-    timeout: Number.MIN_VALUE,
-  }).catch((err) => {
-    t.is(err.type, 'aborted');
-  });
+  const scope = nock('https://httpbin.org')
+    .get('/delay/2')
+    .delayConnection(2 * 1000)
+    .reply(200);
+  return AmbitoDolar.fetch('https://httpbin.org/delay/2', {
+    timeout: 1 * 1000,
+  })
+    .catch((err) => {
+      t.is(err.type, 'aborted');
+    })
+    .finally(() => {
+      // throws an error if the interceptor is not performed
+      scope.done();
+    });
 });
 
 test('Fetch should retry after a network error', function (t) {
+  const scope = nock('https://httpbin.org')
+    .get('/status/500')
+    .times(2)
+    .reply(500);
   const max_retries = 1;
   let retries = 0;
-  // return AmbitoDolar.fetch('https://httpstat.us/500', {
-  // return AmbitoDolar.fetch('https://mock.httpstatus.io/500', {
   return AmbitoDolar.fetch('https://httpbin.org/status/500', {
     retry: {
       retries: max_retries,
@@ -112,7 +138,12 @@ test('Fetch should retry after a network error', function (t) {
         ++retries;
       },
     },
-  }).catch(() => {
-    t.is(retries, max_retries);
-  });
+  })
+    .catch(() => {
+      t.is(retries, max_retries);
+    })
+    .finally(() => {
+      // throws an error if the interceptor is not performed
+      scope.done();
+    });
 });
