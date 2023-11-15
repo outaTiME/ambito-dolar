@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
-const version = '6.8.2';
-const buildNumber = 103;
+const version = '6.8.3';
+const buildNumber = 104;
 const hasSentryToken = !!process.env.SENTRY_AUTH_TOKEN;
 
 const LIGHT_SPLASH = {
