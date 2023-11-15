@@ -1,13 +1,13 @@
 import { compose } from '@reduxjs/toolkit';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { View, Text, Linking, Platform } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-// import { runOnJS } from 'react-native-reanimated';
 
-import AnimatedConfettiView from '../components/AnimatedConfettiView';
 import AppIconView from '../components/AppIconView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
+import FloatingEmojis from '../components/FloatingEmojis';
+import FloatingEmojisTapHandler from '../components/FloatingEmojisTapHandler';
 import IconCardItemView from '../components/IconCardItemView';
 import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
@@ -39,35 +39,11 @@ const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
 const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
 const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
 
-const CONFETTI_FALL_SPEED = 50;
-const CONFETTI_ITEM_WIDTH = 20;
-const CONFETTI_ITEM_HEIGHT = CONFETTI_ITEM_WIDTH / 2;
-
-// https://gist.github.com/imcrainjames/e86893a1d6f85328174d036a9b263dd0#file-confetti-js-L39
-const CONFETTI_ANIMATION_DURATION =
-  ((Settings.DEVICE_HEIGHT + CONFETTI_ITEM_HEIGHT) /
-    (CONFETTI_FALL_SPEED * 3 * 2)) *
-  // add max delay
-  3 *
-  1000;
-
 const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const { theme, fonts } = Helper.useTheme();
-  const [makeItRain, setMakeItRain] = React.useState(false);
-  const tap = Gesture.Tap()
-    .numberOfTaps(2)
-    .onStart(() => {
-      // FIXME: create new confetti component
-      // runOnJS(setMakeItRain)(true);
-    });
-  React.useEffect(() => {
-    if (makeItRain) {
-      const timer_id = setTimeout(() => {
-        setMakeItRain(false);
-      }, CONFETTI_ANIMATION_DURATION);
-      return () => clearTimeout(timer_id);
-    }
-  }, [makeItRain]);
+  const onPressAppIcon = React.useCallback(() => {
+    Haptics.notificationAsync();
+  }, []);
   const onPressWebsite = React.useCallback(() => {
     Linking.openURL(Settings.WEBSITE_URL).catch(console.warn);
   }, []);
@@ -158,9 +134,26 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
             paddingVertical: Settings.PADDING,
           }}
         >
-          <GestureDetector gesture={tap}>
-            <AppIconView />
-          </GestureDetector>
+          <FloatingEmojis
+            centerVertically
+            duration={750}
+            fadeOut={false}
+            scaleTo={0}
+            size={40}
+            wiggleFactor={0}
+          >
+            {({ onNewEmoji }) => (
+              <FloatingEmojisTapHandler
+                onNewEmoji={onNewEmoji}
+                onPress={onPressAppIcon}
+                // according to the emoji size (40)
+                xOffset={-20}
+                yOffset={-20}
+              >
+                <AppIconView />
+              </FloatingEmojisTapHandler>
+            )}
+          </FloatingEmojis>
           <View
             style={{
               marginLeft: Settings.PADDING,
@@ -239,23 +232,6 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
           text={`${Settings.APP_COPYRIGHT} ${Settings.DASH_SEPARATOR} Hecho con ♥ en Buenos Aires, Argentina.`}
         />
       </FixedScrollView>
-      {makeItRain === true && (
-        <AnimatedConfettiView
-          {...{
-            numItems: 100,
-            itemDimensions: {
-              width: CONFETTI_ITEM_WIDTH,
-              height: CONFETTI_ITEM_HEIGHT,
-            },
-            itemColors: ['#00E4B2', '#09AEC5', '#107ED5'],
-            itemTintStrength: 0.8,
-            fallSpeed: CONFETTI_FALL_SPEED,
-            flipSpeed: 3,
-            horizSpeed: 50,
-            continuous: false,
-          }}
-        />
-      )}
     </>
   );
 };
