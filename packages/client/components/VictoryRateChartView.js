@@ -1,5 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { useLayout } from '@react-native-community/hooks';
+import { compose } from '@reduxjs/toolkit';
 import { processFontFamily } from 'expo-font';
 import React from 'react';
 import { View, Text } from 'react-native';
@@ -115,13 +116,70 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
   );
 };
 
-const InteractiveRateChartView = ({
+const withAxisDimension = (Component) => (props) => {
+  const {
+    data,
+    domain: {
+      y: [, max_y],
+    },
+  } = props;
+  // force onLayout on every data update
+  const reloadKey = React.useMemo(() => Date.now(), [data]);
+  const [layoutData, setLayoutData] = React.useState();
+  const onLayout = ({
+    nativeEvent: {
+      layout: { width, height },
+    },
+  }) => {
+    const axis_y_width = Helper.roundToEven(width);
+    const axis_font_height = Helper.roundToEven(height);
+    // fire updates together to keep the data / render in sync
+    setLayoutData({
+      ...props,
+      // add aditional data
+      axis_y_width,
+      axis_font_height,
+    });
+  };
+  return (
+    <>
+      <Text
+        // font scaling is disabled on SVG
+        allowFontScaling={false}
+        onLayout={onLayout}
+        style={{
+          position: 'absolute',
+          fontSize: AXIS_FONT_SIZE,
+          opacity: 0,
+          // https://github.com/expo/expo/issues/1959#issuecomment-780198250
+          fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
+        }}
+        key={reloadKey}
+      >
+        {/* WARNING: same as tickFormat */}
+        {Helper.getCurrency(max_y)}
+      </Text>
+      {layoutData && (
+        <Component
+          {...{
+            ...layoutData,
+          }}
+        />
+      )}
+    </>
+  );
+};
+
+const InteractiveRateChartView = compose(withAxisDimension)(({
   width,
   height,
   stats,
   data,
   domain,
   selectionIndex,
+  // extras
+  axis_y_width: axis_y_width_rounded,
+  axis_font_height: axis_font_height_rounded,
 }) => {
   const { theme } = Helper.useTheme();
   const ticks_x = React.useMemo(() => {
@@ -132,14 +190,6 @@ const InteractiveRateChartView = ({
     const [min_y, max_y] = domain.y;
     return Helper.getTickValues(min_y, max_y, TICKS_Y);
   }, [domain]);
-  // layout
-  const {
-    onLayout,
-    width: axis_y_width,
-    height: axis_font_height,
-  } = useLayout();
-  const axis_y_width_rounded = Helper.roundToEven(axis_y_width);
-  const axis_font_height_rounded = Helper.roundToEven(axis_font_height);
   const victory_padding = React.useMemo(
     () => ({
       bottom: AXIS_OFFSET + axis_font_height_rounded,
@@ -247,26 +297,6 @@ const InteractiveRateChartView = ({
     }),
     [color],
   );
-  if (!axis_y_width_rounded && !axis_font_height_rounded) {
-    const fontSize = AXIS_FONT_SIZE;
-    return (
-      <Text
-        // font scaling is disabled on SVG
-        allowFontScaling={false}
-        onLayout={onLayout}
-        style={{
-          position: 'absolute',
-          fontSize,
-          opacity: 0,
-          // https://github.com/expo/expo/issues/1959#issuecomment-780198250
-          fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
-        }}
-      >
-        {/* WARNING: same as tickFormat */}
-        {Helper.getCurrency(domain.y[1])}
-      </Text>
-    );
-  }
   return (
     <>
       <View pointerEvents="none">
@@ -334,27 +364,25 @@ const InteractiveRateChartView = ({
           />
         </VictoryChart>
         {/* split is required for watermark */}
-        {true && (
-          <View style={{ position: 'absolute' }}>
-            <VictoryChart
-              width={width}
-              height={height}
-              singleQuadrantDomainPadding={false}
-              domainPadding={Settings.PADDING}
-              padding={victory_padding}
-              domain={domain}
-              animate={false}
-            >
-              <VictoryAxis style={transparent_axis_style} />
-              <VictoryAxis dependentAxis style={transparent_axis_style} />
-              <VictoryArea
-                data={data}
-                interpolation="monotoneX"
-                style={area_style}
-              />
-            </VictoryChart>
-          </View>
-        )}
+        <View style={{ position: 'absolute' }}>
+          <VictoryChart
+            width={width}
+            height={height}
+            singleQuadrantDomainPadding={false}
+            domainPadding={Settings.PADDING}
+            padding={victory_padding}
+            domain={domain}
+            animate={false}
+          >
+            <VictoryAxis style={transparent_axis_style} />
+            <VictoryAxis dependentAxis style={transparent_axis_style} />
+            <VictoryArea
+              data={data}
+              interpolation="monotoneX"
+              style={area_style}
+            />
+          </VictoryChart>
+        </View>
       </View>
       <View style={overlay_style}>
         <AnimatedChartView
@@ -370,7 +398,7 @@ const InteractiveRateChartView = ({
       </View>
     </>
   );
-};
+});
 
 export default ({ stats }) => {
   const data = React.useMemo(

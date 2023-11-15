@@ -30,7 +30,7 @@ const springDefaultConfig = {
   stiffness: 600,
 };
 
-const Cursor = ({ length, isLoading, point, width, color }) => {
+const Cursor = ({ length, point, width, color }) => {
   const isActive = useSharedValue(false);
   const onGestureEvent = useAnimatedGestureHandler({
     onActive: (event) => {
@@ -46,12 +46,17 @@ const Cursor = ({ length, isLoading, point, width, color }) => {
       isActive.value = false;
     },
   });
+  React.useEffect(() => {
+    if (isActive.value === false) {
+      // update only when no active selection
+      length.value = width;
+    }
+  }, [width]);
   const style = useAnimatedStyle(() => {
     const { coord } = point.value;
     const translateX = coord.x + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
     const translateY = coord.y + EXTRA_OFFSET - CURSOR_CONTAINER_SIZE / 2;
     return {
-      // opacity: isLoading.value ? 0 : withSpring(1),
       transform: [
         { translateX },
         { translateY },
@@ -107,16 +112,12 @@ export default ({ data, domain, color, selectionIndex, width, height }) => {
     [data, domain, range],
   );
   const length = useSharedValue(width);
-  const isLoading = useSharedValue(true);
-  const path = React.useMemo(() => {
-    // prevent cursor visualization gaps on parsing path
-    // isLoading.value = true;
-    return parsePath(d);
-  }, [d]);
+  const path = React.useMemo(() => parsePath(d), [d]);
   const point = useDerivedValue(() => {
     const x_value = length.value;
     const coord = {
       x: x_value,
+      // there "should" always be a value
       y: getYForX(path, x_value) || 0,
     };
     return {
@@ -127,8 +128,6 @@ export default ({ data, domain, color, selectionIndex, width, height }) => {
   useAnimatedReaction(
     () => point.value,
     ({ index }) => {
-      // done loading when point updated
-      // isLoading.value = false;
       // reset selection when last data point
       selectionIndex.value = index === data.length - 1 ? null : index;
     },
@@ -147,7 +146,7 @@ export default ({ data, domain, color, selectionIndex, width, height }) => {
           />
         </Svg>
       )}
-      <Cursor {...{ length, isLoading, point, width, color }} />
+      <Cursor {...{ length, point, width, color }} />
     </>
   );
 };
