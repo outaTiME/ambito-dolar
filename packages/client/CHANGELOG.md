@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.8.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.8.2...@ambito-dolar/client@6.8.3) (2023-11-15)
+
+### Bug Fixes
+
+- floating emojis as easter egg instead of confetti ([0f7777b](https://github.com/outaTiME/ambito-dolar/commit/0f7777b95b4fbf7605c0b924e3c42954abc7e261))
+- solve axis rendering issue on the chart ([36948a3](https://github.com/outaTiME/ambito-dolar/commit/36948a34daaa1c780a60c5d5b3af59e050e5a0d9))
+
 ## [6.8.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.8.1...@ambito-dolar/client@6.8.2) (2023-10-16)
 
 ### Features

@@ -1,6 +1,6 @@
 {
   "name": "@ambito-dolar/website",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "private": true,
   "scripts": {
     "develop": "gatsby develop",
