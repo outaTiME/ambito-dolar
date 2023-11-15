@@ -48,7 +48,7 @@ export default {
         NODE_OPTIONS: '--no-warnings',
         // NODE_NO_WARNINGS: 1,
       },
-      runtime: 'nodejs18.x',
+      // runtime: 'nodejs18.x',
       tracing: 'disabled',
       // https://docs.serverless-stack.com/constructs/Function#setting-additional-props
       logRetention: 'one_day',

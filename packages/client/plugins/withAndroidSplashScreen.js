@@ -13,7 +13,7 @@ const withAndroidSplashScreen = function (expoConfig) {
           },
         },
       ],
-      modConfig.modResults
+      modConfig.modResults,
     );
     return modConfig;
   });
