@@ -19,7 +19,12 @@ import Helper from '../utilities/Helper';
 
 const LAYOUT_RATE_COLUMNS = 2;
 
-const SocialPortraitView = ({ square, watermark = true, children }) => {
+const SocialPortraitView = ({
+  condensed,
+  square,
+  watermark = true,
+  children,
+}) => {
   const { theme } = Helper.useTheme();
   const isSquare = square === true;
   return (
@@ -27,7 +32,7 @@ const SocialPortraitView = ({ square, watermark = true, children }) => {
       <View
         style={[
           {
-            padding: Settings.CARD_PADDING,
+            padding: Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
             alignSelf: 'center',
             // fixed size required by social notifier
             width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
@@ -177,7 +182,6 @@ const FundingContainer = compose(withStats)(({
               fonts.title,
               {
                 marginTop: Settings.CARD_PADDING * 2,
-                // textTransform: 'uppercase',
               },
             ]}
             numberOfLines={1}
@@ -250,7 +254,6 @@ const FundingContainer = compose(withStats)(({
           {false && (
             <FundingView
               style={[
-                // fonts.title,
                 {
                   paddingTop: Settings.PADDING,
                 },
@@ -343,10 +346,10 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
     [rates, condensed],
   );
   return (
-    <SocialPortraitView>
+    <SocialPortraitView {...{ condensed }}>
       <View
         style={{
-          margin: Settings.CARD_PADDING,
+          margin: Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
           flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
@@ -355,7 +358,6 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
         <View
           style={{
             flex: 1,
-            // marginRight: Settings.CARD_PADDING * 2
           }}
         >
           <Text
@@ -402,7 +404,8 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
               <View
                 style={{
                   flex: 1,
-                  margin: Settings.CARD_PADDING,
+                  margin:
+                    Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
                 }}
               >
                 <View
@@ -433,7 +436,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
           style={{
             flexDirection: 'row',
             justifyContent: 'flex-end',
-            margin: Settings.CARD_PADDING,
+            margin: Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
             alignItems: 'center',
           }}
         >

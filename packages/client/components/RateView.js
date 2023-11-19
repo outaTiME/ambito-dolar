@@ -1,7 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 
 import CardView from '../components/CardView';
 import MiniRateChartView from '../components/VictoryMiniRateChartView';
@@ -80,8 +80,6 @@ const InlineRateDetailView = ({
               flexDirection: 'row',
               alignItems: 'center',
               marginTop: Settings.SMALL_PADDING * (condensed === true ? 1 : 2),
-              // borderColor: 'red',
-              // borderWidth: 1,
             },
           ]}
         >
@@ -113,9 +111,7 @@ const InlineRateDetailView = ({
         <View
           style={{
             flex: 1,
-            // marginTop: Settings.PADDING,
-            // marginTop: Settings.SMALL_PADDING,
-            // marginTop: Settings.SMALL_PADDING * 2,
+            marginTop: Settings.SMALL_PADDING,
             marginLeft: -Settings.PADDING,
             marginRight: -Settings.PADDING,
             marginBottom: -Settings.PADDING,
@@ -142,7 +138,6 @@ const InlineRateDetailView = ({
             color: Settings.getGrayColor(theme),
           },
         ]}
-        // adjustsFontSizeToFit
         numberOfLines={1}
       >
         {timestamp}
@@ -215,6 +210,9 @@ export default ({
         },
         highlight === false && {
           opacity: 0.3,
+        },
+        Platform.OS === 'web' && {
+          margin: Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
         },
       ]}
       {...(onSelected && { onPress })}

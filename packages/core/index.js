@@ -193,8 +193,8 @@ const getAvailableRateTypes = () => [
   OFFICIAL_TYPE,
   INFORMAL_TYPE,
   TOURIST_TYPE,
-  QATAR_TYPE,
-  SAVING_TYPE,
+  // QATAR_TYPE,
+  // SAVING_TYPE,
   // LUXURY_TYPE,
   // CULTURAL_TYPE,
   CCL_TYPE,
@@ -226,7 +226,6 @@ const getRateTitle = (type) => {
   } else if (type === TOURIST_TYPE) {
     return 'Tarjeta';
   } else if (type === QATAR_TYPE) {
-    // return 'Turista';
     return 'Qatar';
   } else if (type === SAVING_TYPE) {
     return 'Ahorro';

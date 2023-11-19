@@ -366,21 +366,28 @@ export const handler = Shared.wrapHandler(async (event) => {
     );
   } else {
     // uses getRates when NOTIFICATION_CLOSE_TYPE
-    const current_rates = rates || (await Shared.getRates());
+    const current_rates = _.omit(rates || (await Shared.getRates()), [
+      // rates to exclude
+      AmbitoDolar.QATAR_TYPE,
+      AmbitoDolar.SAVING_TYPE,
+    ]);
     // useful for holidays when NOTIFICATION_CLOSE_TYPE
     const has_rates_from_today = AmbitoDolar.hasRatesFromToday(current_rates);
     if (has_rates_from_today) {
       if (items) {
+        const notification_rates = _.omit(current_rates, [
+          // rates to exclude on notifications
+        ]);
         promises.push(
           sendPushNotifications(items, {
             type,
-            rates: current_rates,
+            rates: notification_rates,
           }),
         );
       }
       if (social && !installation_id && !process.env.IS_LOCAL) {
         const social_rates = _.omit(current_rates, [
-          // rates to exclude
+          // rates to exclude on socials
         ]);
         promises.push(
           Shared.triggerSocialNotifyEvent({

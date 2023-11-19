@@ -101,7 +101,8 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
   return rateTypes.map {
     if let type = $0.identifier {
       let name = $0.displayString
-      if rates != nil, let rate = rates![type] as? [Any] {
+      // check if the rate is available
+      if Helper.getRateTypes().contains(where: {$0.identifier == type }), rates != nil, let rate = rates![type] as? [Any] {
         let rateValue = rate[1]
         let value: Double
         let amount: Double
@@ -176,13 +177,14 @@ struct RateProvider: IntentTimelineProvider {
     completion(timeline)
   }
 }
+
 extension View {
   func contentPadding() -> some View {
     // TODO: enable when compile over XCode 15
     /* if #unavailable(iOSApplicationExtension 17.0) {
-     return self.padding(16)
-     }
-     return self */
+      return self.padding(16)
+    }
+    return self */
     return self.padding(16)
   }
 }
@@ -267,7 +269,7 @@ struct RateWidgetEntryView : View {
         .widgetURL(getWidgetUrl(id: rate.id))
       } else {
         VStack {
-          Text("Sin cotización disponible")
+          Text("Cotización no disponible")
             .font(.custom(fontName, size: 14))
             .foregroundColor(fgColor)
             .multilineTextAlignment(.center)
@@ -392,6 +394,25 @@ struct ListRatesWidgetEntryView : View {
             }
             if rate != rates?.last {
               Spacer()
+              // Divider().padding(.trailing, -16)
+              // Spacer()
+            } else {
+              if (rates!.count < 3) {
+                // complete the remaining slots
+                ForEach(0..<3-rates!.count, id: \.self) { _ in
+                  Spacer()
+                  // Divider().padding(.trailing, -16)
+                  // Spacer()
+                  Text("")
+                    .font(.custom(fontName, size: 14))
+                    .foregroundColor(fgColor)
+                    .lineLimit(1)
+                  Text("")
+                    .font(.custom(fontName, size: 10))
+                    .foregroundColor(fgSecondaryColor)
+                    .lineLimit(1)
+                }
+              }
             }
           }
         }
@@ -404,7 +425,7 @@ struct ListRatesWidgetEntryView : View {
         .widgetURL(getWidgetUrl())
       } else {
         VStack {
-          Text("Sin cotizaciones disponibles")
+          Text("Cotizaciones no disponibles")
             .font(.custom(fontName, size: 14))
             .foregroundColor(fgColor)
             .multilineTextAlignment(.center)

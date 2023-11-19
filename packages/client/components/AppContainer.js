@@ -401,6 +401,7 @@ Settings.IS_PRODUCTION &&
 const RootStack = createNativeStackNavigator();
 const AppContainer = ({
   rates,
+  rateTypes,
   loadingError,
   stillLoading,
   fetchRates,
@@ -479,7 +480,10 @@ const AppContainer = ({
       }
       if (/^rates?$/i.test(route)) {
         navigationRef.navigate('RatesTab', {
-          screen: !params.type ? Settings.INITIAL_ROUTE_NAME : 'RateDetail',
+          screen:
+            !params.type || !rateTypes.includes(params.type)
+              ? Settings.INITIAL_ROUTE_NAME
+              : 'RateDetail',
           params,
           // https://reactnavigation.org/docs/nesting-navigators/#rendering-initial-route-defined-in-the-navigator
           initial: false,
