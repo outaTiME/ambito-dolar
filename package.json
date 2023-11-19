@@ -12,11 +12,11 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^18.4.1",
-    "@commitlint/config-conventional": "^18.4.0",
+    "@commitlint/cli": "^18.4.2",
+    "@commitlint/config-conventional": "^18.4.2",
     "aws-cdk-lib": "2.101.1",
     "constructs": "10.2.69",
-    "eslint": "^8.53.0",
+    "eslint": "^8.54.0",
     "eslint-config-universe": "^12.0.0",
     "husky": "^8.0.3",
     "lerna": "^7.4.2",
@@ -42,6 +42,7 @@
   },
   "packageManager": "yarn@3.6.4",
   "resolutions": {
+    "babel-plugin-lodash/@babel/types": "~7.20.0",
     "react-native@0.72.6": "patch:react-native@npm%3A0.72.6#./.yarn/patches/react-native-npm-0.72.6-9d6fdd645f.patch"
   }
 }
