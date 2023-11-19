@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.10.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.9.4...@ambito-dolar/api@3.10.0) (2023-11-19)
+
+### Features
+
+- unify tarjeta, Qatar and ahorro rates ([28a4e03](https://github.com/outaTiME/ambito-dolar/commit/28a4e03a082b3cffa3beeaa7e74b3e9ec67330b8))
+- update cripto provider ([5d21ef1](https://github.com/outaTiME/ambito-dolar/commit/5d21ef1ab3f297fcc420bf43c7a8ef7e8be1a04a))
+
 ## [3.9.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.9.3...@ambito-dolar/api@3.9.4) (2023-11-15)
 
 **Note:** Version bump only for package @ambito-dolar/api

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.9.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.8.3...@ambito-dolar/client@6.9.0) (2023-11-19)
+
+### Features
+
+- unify tarjeta, Qatar and ahorro rates ([28a4e03](https://github.com/outaTiME/ambito-dolar/commit/28a4e03a082b3cffa3beeaa7e74b3e9ec67330b8))
+
 ## [6.8.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.8.2...@ambito-dolar/client@6.8.3) (2023-11-15)
 
 ### Bug Fixes
