@@ -220,11 +220,12 @@ const getBusinessDayRates = (rates, realtime) => {
     promises.push(
       getRate(AmbitoDolar.CCL_TYPE),
       getRate(AmbitoDolar.MEP_TYPE),
-      getCryptoRates([
+      getRate(AmbitoDolar.CCB_TYPE),
+      /* getCryptoRates([
         // ['cclgd30', AmbitoDolar.CCL_TYPE],
         // ['mepgd30', AmbitoDolar.MEP_TYPE],
         AmbitoDolar.CCB_TYPE,
-      ]),
+      ]), */
     );
   }
   return Promise.all(promises)

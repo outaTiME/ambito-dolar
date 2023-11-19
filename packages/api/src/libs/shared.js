@@ -412,13 +412,13 @@ const storeRatesJsonObject = async (rates, is_updated) => {
 };
 
 const getDataProviderForRate = (type) => {
-  if (
+  /* if (
     // type === AmbitoDolar.CCL_TYPE ||
     // type === AmbitoDolar.MEP_TYPE ||
     type === AmbitoDolar.CCB_TYPE
   ) {
     return 'CriptoYa';
-  }
+  } */
   return 'Ámbito Financiero';
 };
 
@@ -437,8 +437,8 @@ const getPathForRate = (type) => {
     return 'dolardelujo';
   } else if (type === AmbitoDolar.CULTURAL_TYPE) {
     return 'dolarcoldplay';
-    /* } else if (type === AmbitoDolar.CCB_TYPE) {
-    return 'dolarcripto'; */
+  } else if (type === AmbitoDolar.CCB_TYPE) {
+    return 'dolarcripto';
   }
   return `dolar/${type}`;
 };
