@@ -73,12 +73,12 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
               rangeIndex === 1
                 ? moment_to.clone().subtract(1, 'month')
                 : rangeIndex === 2
-                ? moment_to.clone().subtract(3, 'months')
-                : rangeIndex === 3
-                ? moment_to.clone().subtract(6, 'months')
-                : rangeIndex === 4
-                ? moment_to.clone().startOf('year')
-                : DateUtils.get(stats[0][0]);
+                  ? moment_to.clone().subtract(3, 'months')
+                  : rangeIndex === 3
+                    ? moment_to.clone().subtract(6, 'months')
+                    : rangeIndex === 4
+                      ? moment_to.clone().startOf('year')
+                      : DateUtils.get(stats[0][0]);
             setChartStats(
               stats.filter(([timestamp]) =>
                 DateUtils.get(timestamp).isBetween(

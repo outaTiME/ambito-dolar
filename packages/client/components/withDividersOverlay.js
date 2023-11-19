@@ -16,10 +16,11 @@ export default (Component) => (props) => {
   const tabBarheight = !isModal
     ? useBottomTabBarHeight()
     : Platform.OS === 'ios'
-    ? Settings.IS_TABLET || (Settings.IS_HANDSET && safeAreaInsets.bottom === 0)
-      ? 0
-      : safeAreaInsets.bottom + 15
-    : safeAreaInsets.bottom;
+      ? Settings.IS_TABLET ||
+        (Settings.IS_HANDSET && safeAreaInsets.bottom === 0)
+        ? 0
+        : safeAreaInsets.bottom + 15
+      : safeAreaInsets.bottom;
   const dividerHeight = StyleSheet.hairlineWidth;
   return (
     <>
