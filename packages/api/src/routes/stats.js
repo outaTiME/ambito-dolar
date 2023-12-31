@@ -1,9 +1,11 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { boolean } from 'boolean';
 import * as _ from 'lodash';
 
 import Shared from '../libs/shared';
 
-export const handler = Shared.wrapHandler(async () => {
+export const handler = Shared.wrapHandler(async (event) => {
+  const { earlier = false } = event.queryStringParameters || {};
   try {
     const credentials = Buffer.from(
       [process.env.AMPLITUDE_API_KEY, process.env.AMPLITUDE_SECRET_KEY].join(
@@ -18,14 +20,20 @@ export const handler = Shared.wrapHandler(async () => {
         },
       },
     ).then(async (response) => {
-      const { data } = await response.json();
-      const [users, events, conversions] = _.chain(data?.values)
+      const { data: { labels = [], values = [] } = {} } = await response.json();
+      // remove current stats when earlier flag
+      if (boolean(earlier) === true) {
+        values.pop();
+      }
+      const date = labels[values.length - 1]?.[0];
+      const [users, events, conversions] = _.chain(values)
         .last()
         .chunk(3)
         .filter((stats) => stats.length === 3)
         .value();
-      if (users && events && conversions) {
+      if (date && users && events && conversions) {
         return {
+          date,
           users,
           events,
           conversions,

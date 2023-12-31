@@ -192,7 +192,14 @@ export default {
         return reject(new Error('No historical rates available'));
       });
     }),
-  getStats: () => getJson(Settings.API_URL + '/stats'),
+  getStats: (earlier) => {
+    let url = Settings.API_URL + '/stats';
+    // TODO: add parameters to url like getSocialScreenshotUrl ???
+    if (earlier) {
+      url += `?earlier=${earlier}`;
+    }
+    return getJson(url);
+  },
   cleanVersion(version) {
     return semverValid(semverCoerce(version));
   },

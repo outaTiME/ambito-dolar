@@ -2,16 +2,20 @@ import { generateScreenshot } from '../libs/chrome';
 import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
-  const { generate_only, targets } = JSON.parse(event.Records[0].Sns.Message);
+  const { generate_only, targets, earlier } = JSON.parse(
+    event.Records[0].Sns.Message,
+  );
   console.info(
     'Message received',
     JSON.stringify({
       generate_only,
       targets,
+      earlier,
     }),
   );
   const screenshot_url = Shared.getSocialScreenshotUrl({
     type: 'funding',
+    earlier,
   });
   const caption = [
     'Recordá que tu contribución es de suma importancia para el desarrollo y mantenimiento de esta aplicación.',

@@ -55,45 +55,45 @@ const SocialPortraitView = ({
   );
 };
 
-const withStats = (Component) => (props) => {
-  const { theme } = Helper.useTheme();
-  const [stats, setStats] = React.useState();
-  React.useEffect(() => {
-    Helper.getStats()
-      .then((data) => {
-        setStats(data);
-      })
-      .catch((error) => {
-        console.warn('Unable to get stats from remote', error);
-        setStats({
-          // display error message
+const withStats =
+  (Component) =>
+  ({ earlier, ...props }) => {
+    const { theme } = Helper.useTheme();
+    const [stats, setStats] = React.useState();
+    React.useEffect(() => {
+      Helper.getStats(earlier)
+        .then(setStats)
+        .catch((error) => {
+          console.warn('Unable to get stats from remote', error);
+          setStats({
+            // display error message
+          });
         });
-      });
-  }, []);
-  const hasStats = React.useMemo(() => Helper.isValid(stats), [stats]);
-  return (
-    <>
-      {stats ? (
-        hasStats ? (
-          <Component
-            {...{
-              ...stats,
-              ...props,
-            }}
-          />
+    }, []);
+    const hasStats = React.useMemo(() => Helper.isValid(stats), [stats]);
+    return (
+      <>
+        {stats ? (
+          hasStats ? (
+            <Component
+              {...{
+                ...props,
+                ...stats,
+              }}
+            />
+          ) : (
+            <MessageView message={I18n.t('no_available_stats')} />
+          )
         ) : (
-          <MessageView message={I18n.t('no_available_stats')} />
-        )
-      ) : (
-        <ActivityIndicator
-          animating
-          color={Settings.getForegroundColor(theme)}
-          size="small"
-        />
-      )}
-    </>
-  );
-};
+          <ActivityIndicator
+            animating
+            color={Settings.getForegroundColor(theme)}
+            size="small"
+          />
+        )}
+      </>
+    );
+  };
 
 const StatView = ({ title, current, change }) => {
   const { theme, fonts } = Helper.useTheme();
@@ -152,12 +152,14 @@ const StatView = ({ title, current, change }) => {
 
 const FundingContainer = compose(withStats)(({
   title,
+  // from stats
+  date,
   users,
   events,
   conversions,
 }) => {
   const { theme, fonts } = Helper.useTheme();
-  const currentMonth = DateUtils.get().format('MMMM YYYY');
+  const currentMonth = DateUtils.get(date).format('MMMM YYYY');
   return (
     <SocialPortraitView square watermark>
       <View

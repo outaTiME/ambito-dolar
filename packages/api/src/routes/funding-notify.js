@@ -3,10 +3,11 @@ import { boolean } from 'boolean';
 import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
-  const { generate_only, targets } = event.queryStringParameters || {};
+  const { generate_only, targets, earlier } = event.queryStringParameters || {};
   try {
     const message_id = await Shared.triggerFundingNotifyEvent({
       generate_only: boolean(generate_only),
+      earlier: boolean(earlier),
       ...(targets && { targets: targets.split(',') }),
     });
     return Shared.serviceResponse(null, 200, {
