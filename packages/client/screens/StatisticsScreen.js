@@ -1,5 +1,6 @@
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
+import Purchases from 'react-native-purchases';
 import { useSelector, shallowEqual } from 'react-redux';
 
 import CardItemView from '../components/CardItemView';
@@ -46,7 +47,18 @@ const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
     }),
     shallowEqual,
   );
-
+  const [Loading, setLoading] = React.useState(true);
+  const [donations, setDonations] = React.useState('N/D');
+  React.useEffect(() => {
+    Helper.timeout(Purchases.getCustomerInfo())
+      .then((customerInfo) => {
+        setDonations(
+          customerInfo.nonSubscriptionTransactions.length.toString(),
+        );
+      })
+      .catch(console.warn)
+      .finally(() => setLoading(false));
+  }, []);
   return (
     <FixedScrollView
       {...{
@@ -81,6 +93,12 @@ const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
           title={I18n.t('app_shared_rates')}
           useSwitch={false}
           value={Helper.formatIntegerNumber(sharedRates)}
+        />
+        <CardItemView
+          title={I18n.t('app_donations')}
+          useSwitch={false}
+          value={donations}
+          loading={Loading}
         />
         {lastReview && (
           <CardItemView

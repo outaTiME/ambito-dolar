@@ -117,6 +117,9 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       )
       .catch(console.warn);
   }, []);
+  const onPressCafecito = React.useCallback(() => {
+    Linking.openURL(Settings.CAFECITO_URL).catch(console.warn);
+  }, []);
   return (
     <>
       <FixedScrollView
@@ -226,6 +229,13 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
             title="GitHub"
             iconName="github"
             onAction={onPressGithub}
+          />
+        </CardView>
+        <CardView plain>
+          <IconCardItemView
+            title="Cafecito"
+            iconName="mug-hot"
+            onAction={onPressCafecito}
           />
         </CardView>
         <TextCardView

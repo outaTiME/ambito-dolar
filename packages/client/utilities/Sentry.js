@@ -20,14 +20,25 @@ const setUserContext = (ctx) => {
   });
 };
 
-const captureMessage = (msg, opts) => {
-  opts = opts || {};
+const withScope = (opts, cb) => {
+  const { extras, tags, level = 'error' } = opts ?? {};
   Sentry.Native.withScope((scope) => {
-    if (opts.extra) {
-      scope.setExtra(opts.extra);
-    }
-    scope.setLevel(opts.level || 'error');
+    extras && scope.setExtras(extras);
+    tags && scope.setTags(tags);
+    scope.setLevel(level);
+    cb?.();
+  });
+};
+
+const captureMessage = (msg, opts) => {
+  withScope(opts, () => {
     Sentry.Native.captureMessage(msg);
+  });
+};
+
+const captureException = (e, opts) => {
+  withScope(opts, () => {
+    Sentry.Native.captureException(e);
   });
 };
 
@@ -49,6 +60,7 @@ const nativeCrash = Sentry?.Native?.nativeCrash;
 export default {
   setUserContext,
   captureMessage,
+  captureException,
   addBreadcrumb,
   nativeCrash,
 };

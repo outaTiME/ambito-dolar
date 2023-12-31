@@ -20,6 +20,11 @@ const CheckActionView = () => {
   );
 };
 
+const LoadingActionView = () => {
+  const { theme } = Helper.useTheme();
+  return <ActionView loading color={Settings.getForegroundColor(theme)} />;
+};
+
 export default ({
   title,
   titleDetail,
@@ -35,10 +40,12 @@ export default ({
   isActive,
   disableSwitch = false,
   isModal,
+  loading = false,
   ...extra
 }) => {
   const { theme, fonts } = Helper.useTheme();
-  const CardContainer = useSwitch !== true && !!onAction ? RectButton : View;
+  const CardContainer =
+    useSwitch !== true && !!onAction && loading === false ? RectButton : View;
   return (
     <>
       <CardContainer
@@ -141,7 +148,8 @@ export default ({
                 )}
               </View>
             )}
-            {value &&
+            {!loading &&
+              value &&
               (React.isValidElement(value) ? (
                 value
               ) : (
@@ -163,14 +171,16 @@ export default ({
                 </Text>
               ))}
           </View>
-          {useSwitch && (
+          {loading && <LoadingActionView />}
+          {!loading && useSwitch && (
             <Switch
               value={value === true}
               onValueChange={onValueChange}
               disabled={disableSwitch}
             />
           )}
-          {!useSwitch &&
+          {!loading &&
+            !useSwitch &&
             onAction &&
             (chevron || check) &&
             (chevron ? (

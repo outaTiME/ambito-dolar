@@ -152,8 +152,7 @@ export default {
       }, ms);
     });
   },
-  // https://github.com/whatwg/fetch/issues/20#issuecomment-196113354
-  /* timeout(ms, p) {
+  timeout(p, ms = AmbitoDolar.FETCH_TIMEOUT) {
     return Promise.race([
       p,
       new Promise((_resolve, reject) => {
@@ -162,7 +161,7 @@ export default {
         }, ms);
       }),
     ]);
-  }, */
+  },
   registerDevice: (data = {}) =>
     getJson(Settings.API_URL + '/register-device', {
       method: 'POST',

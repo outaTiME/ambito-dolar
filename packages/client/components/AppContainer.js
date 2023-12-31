@@ -21,6 +21,7 @@ import {
   DeviceEventEmitter,
   Text,
 } from 'react-native';
+import Purchases from 'react-native-purchases';
 import QuickActions from 'react-native-quick-actions';
 import { useSelector, shallowEqual, useDispatch, batch } from 'react-redux';
 
@@ -923,11 +924,26 @@ const withUserActivity = (Component) => (props) => {
   return <Component {...props} />;
 };
 
+const withPurchases = (Component) => (props) => {
+  React.useEffect(() => {
+    const configure = async () => {
+      __DEV__ && (await Purchases.setLogLevel(Purchases.LOG_LEVEL.VERBOSE));
+      Purchases.configure({ apiKey: Settings.REVENUECAT_API_KEY });
+      if (__DEV__) {
+        console.log('🤑 Purchases configured');
+      }
+    };
+    configure();
+  }, []);
+  return <Component {...props} />;
+};
+
 export default compose(
   withRates(),
   withRealtime,
   withAppUpdateCheck,
   withAppStatistics,
   withUserActivity,
+  withPurchases,
   withContainer(true),
 )(AppContainer);

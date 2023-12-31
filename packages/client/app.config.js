@@ -54,6 +54,10 @@ export default {
     firebaseConfigJson: process.env.FIREBASE_CONFIG_JSON,
     isProduction: process.env.IS_PRODUCTION === 'true',
     apiUrl: process.env.SST_API_URL ?? process.env.API_URL,
+    revenueCat: {
+      ios: process.env.REVENUECAT_IOS_API_KEY,
+      android: process.env.REVENUECAT_ANDROID_API_KEY,
+    },
     eas: {
       projectId: '88dc0a10-eec5-11e8-bdb0-e9d94f6dfa7d',
       build: {

@@ -91,6 +91,7 @@ const i18n = new I18n({
     app_days_used: 'Días de uso',
     app_conversions: 'Conversiones',
     app_shared_rates: 'Capturas',
+    app_donations: 'Donaciones',
     app_downloaded_rates: 'Actualizaciones',
     app_downloaded_historical_rates: 'Históricos',
     app_detailed_rates: 'Detalles',
@@ -117,6 +118,10 @@ const i18n = new I18n({
     select_rates: 'Seleccionar',
     // no_selected_rates: 'Agregá las cotizaciones que deseas visualizar.',
     no_selected_rates: 'No se han seleccionado cotizaciones a visualizar.',
+    purchase_error: 'Imposible completar la operación seleccionada.',
+    purchase_success: '¡Gracias por tu donación!',
+    purchase_success_message:
+      'Tu apoyo impulsa el desarrollo y mantenimiento continuo de la aplicación.',
   },
 });
 

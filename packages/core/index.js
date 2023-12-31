@@ -357,6 +357,7 @@ module.exports = {
   SOCIAL_IMAGE_HEIGHT,
   VIEWPORT_PORTRAIT_STORY_HEIGHT,
   SOCIAL_STORY_IMAGE_HEIGHT,
+  FETCH_TIMEOUT,
   getCapitalized,
   getDate,
   getTimezoneDate,

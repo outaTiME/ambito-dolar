@@ -59,6 +59,10 @@ const {
       firebaseConfigJson: FIREBASE_CONFIG_JSON,
       isProduction: IS_PRODUCTION,
       apiUrl: API_URL,
+      revenueCat: {
+        ios: REVENUECAT_IOS_API_KEY,
+        android: REVENUECAT_ANDROID_API_KEY,
+      },
     },
   },
   installationId: INSTALLATION_ID,
@@ -112,6 +116,10 @@ export default {
   FIREBASE_CONFIG_JSON,
   IS_PRODUCTION: Platform.OS === 'web' ? IS_PRODUCTION : !__DEV__,
   API_URL,
+  REVENUECAT_API_KEY: Platform.select({
+    ios: REVENUECAT_IOS_API_KEY,
+    android: REVENUECAT_ANDROID_API_KEY,
+  }),
   FETCH_REFRESH_INTERVAL,
   BULLET_SEPARATOR,
   SPACE_SEPARATOR,
