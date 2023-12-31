@@ -2,10 +2,9 @@ import * as d3Shape from 'd3-shape';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { LongPressGestureHandler } from 'react-native-gesture-handler';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
-  useAnimatedGestureHandler,
-  Extrapolate,
+  Extrapolation,
   interpolate,
   useAnimatedStyle,
   useSharedValue,
@@ -32,20 +31,6 @@ const springDefaultConfig = {
 
 const Cursor = ({ length, point, width, color }) => {
   const isActive = useSharedValue(false);
-  const onGestureEvent = useAnimatedGestureHandler({
-    onActive: (event) => {
-      if (!isActive.value) {
-        Settings.HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
-      }
-      isActive.value = true;
-      length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
-    },
-    onEnd: () => {
-      length.value = width;
-      Settings.HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
-      isActive.value = false;
-    },
-  });
   React.useEffect(() => {
     if (isActive.value === false) {
       // update only when no active selection
@@ -66,14 +51,31 @@ const Cursor = ({ length, point, width, color }) => {
       ],
     };
   });
+  const dragOnLongPressGesture = React.useMemo(
+    () =>
+      Gesture.Pan()
+        .activateAfterLongPress(Settings.INTERACTION_DELAY)
+        .shouldCancelWhenOutside(false)
+        .averageTouches(true)
+        .onStart((event) => {
+          if (!isActive.value) {
+            Settings.HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
+          }
+          isActive.value = true;
+          length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
+        })
+        .onUpdate((event) => {
+          length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
+        })
+        .onEnd(() => {
+          length.value = width;
+          Settings.HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
+          isActive.value = false;
+        }),
+    [width],
+  );
   return (
-    <LongPressGestureHandler
-      onGestureEvent={onGestureEvent}
-      minDurationMs={Settings.INTERACTION_DELAY}
-      maxDist={Number.MAX_SAFE_INTEGER}
-      shouldCancelWhenOutside={false}
-      // hitSlop={Settings.PADDING}
-    >
+    <GestureDetector gesture={dragOnLongPressGesture}>
       <Animated.View
         style={[StyleSheet.absoluteFill, { margin: -EXTRA_OFFSET }]}
       >
@@ -81,17 +83,17 @@ const Cursor = ({ length, point, width, color }) => {
           <View style={[styles.cursor, { backgroundColor: color }]} />
         </Animated.View>
       </Animated.View>
-    </LongPressGestureHandler>
+    </GestureDetector>
   );
 };
 
 const scale = (v, d, r) => {
   'worklet';
-  return interpolate(v, d, r, Extrapolate.CLAMP);
+  return interpolate(v, d, r, Extrapolation.CLAMP);
 };
 const scaleInvert = (y, d, r) => {
   'worklet';
-  return interpolate(y, r, d, Extrapolate.CLAMP);
+  return interpolate(y, r, d, Extrapolation.CLAMP);
 };
 
 export default ({ data, domain, color, selectionIndex, width, height }) => {
