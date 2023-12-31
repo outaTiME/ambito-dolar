@@ -18,7 +18,7 @@ const attributes = [
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
-const pruneDevice = async (installation_id) => {
+const pruneDevice = (installation_id) => {
   const params = {
     TableName: process.env.DEVICES_TABLE_NAME,
     Key: {

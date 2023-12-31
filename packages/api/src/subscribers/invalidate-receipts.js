@@ -7,7 +7,7 @@ import Shared from '../libs/shared';
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
-const invalidateDevice = async (installation_id) => {
+const invalidateDevice = (installation_id) => {
   const params = {
     TableName: process.env.DEVICES_TABLE_NAME,
     Key: {

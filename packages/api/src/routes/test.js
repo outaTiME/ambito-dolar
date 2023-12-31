@@ -1,6 +1,6 @@
 import Shared from '../libs/shared';
 
-export const handler = Shared.wrapHandler(async () => {
+export const handler = Shared.wrapHandler(() => {
   try {
     console.warn('No data available');
     throw new Error('No data available');

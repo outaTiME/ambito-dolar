@@ -68,7 +68,7 @@ const getMessage = (extras = {}) => ({
   ...extras,
 });
 
-const getMessagesFromCurrentRate = async (items, type, rates) => {
+const getMessagesFromCurrentRate = (items, type, rates) => {
   try {
     const title = AmbitoDolar.getNotificationTitle(type);
     const messages = items.map(

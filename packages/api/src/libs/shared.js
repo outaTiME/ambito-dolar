@@ -60,7 +60,7 @@ const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
 const QUOTES_OBJECT_KEY = process.env.QUOTES_OBJECT_KEY;
 const HISTORICAL_QUOTES_OBJECT_KEY = 'historical-' + QUOTES_OBJECT_KEY;
 
-const getFirebaseAccessToken = async () => {
+const getFirebaseAccessToken = () => {
   // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
   const scopes = [
     'https://www.googleapis.com/auth/userinfo.email',
@@ -91,7 +91,7 @@ const fetchFirebaseData = async (uri, opts) => {
   return AmbitoDolar.fetch(url.href, opts).then((response) => response.json());
 };
 
-const updateFirebaseData = async (uri, payload = {}) =>
+const updateFirebaseData = (uri, payload = {}) =>
   fetchFirebaseData(uri, {
     method: 'PATCH',
     body: JSON.stringify(payload),
@@ -125,7 +125,7 @@ const getDynamoDBClient = () => ddbClient;
     : [...allData, ...data['Items']];
 }; */
 
-const getAllDataFromDynamoDB = async (params) =>
+const getAllDataFromDynamoDB = (params) =>
   parallelScan(params, { concurrency: 500 }); // ~4000 items per scan (1 MB of data)
 
 const isSemverLt = (v1, v2) => semverLt(v1, v2);
@@ -165,7 +165,7 @@ new Promise((resolve, reject) => {
 }); */
 
 // https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/s3-example-creating-buckets.html#s3-example-creating-buckets-get-object
-const getJsonObject = async (key, bucket = S3_BUCKET) => {
+const getJsonObject = (key, bucket = S3_BUCKET) => {
   const bucketParams = {
     Bucket: bucket,
     Key: `${key}.json`,
@@ -191,10 +191,10 @@ const getJsonObject = async (key, bucket = S3_BUCKET) => {
   } */
 };
 
-const getTickets = async (date, type) =>
+const getTickets = (date, type) =>
   getJsonObject(`notifications/${date}-${type}`);
 
-const getRatesJsonObject = async () => getJsonObject(QUOTES_OBJECT_KEY);
+const getRatesJsonObject = () => getJsonObject(QUOTES_OBJECT_KEY);
 
 const getRates = async (base_rates) => {
   // took only available rates
@@ -215,12 +215,7 @@ const getRates = async (base_rates) => {
 };
 
 // https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/s3-example-creating-buckets.html#s3-example-creating-buckets-upload-file
-const storeJsonObject = async (
-  key,
-  json,
-  bucket = S3_BUCKET,
-  is_public = false,
-) => {
+const storeJsonObject = (key, json, bucket = S3_BUCKET, is_public = false) => {
   // try {
   // https://blog.jonathandion.com/posts/json-gzip-s3/
   const buffer = new Buffer.from(JSON.stringify(json));
@@ -246,13 +241,13 @@ const storeJsonObject = async (
   } */
 };
 
-const storeTickets = async (date, type, json) =>
+const storeTickets = (date, type, json) =>
   storeJsonObject(`notifications/${date}-${type}`, json);
 
-const storePublicJsonObject = async (key, json, bucket) =>
+const storePublicJsonObject = (key, json, bucket) =>
   storeJsonObject(key, json, bucket, true);
 
-const storeRateStats = async (rates) => {
+const storeRateStats = (rates) => {
   const base_rates = Object.entries(rates || {}).reduce(
     (obj, [type, { stats }]) => {
       // ignore
@@ -367,7 +362,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
   ]);
 };
 
-const storeRatesJsonObject = async (rates, is_updated) => {
+const storeRatesJsonObject = (rates, is_updated) => {
   const legacy_rates = Object.entries(rates.rates || {}).reduce(
     (obj, [type, rate]) => {
       // ignore
@@ -472,7 +467,7 @@ const getExpoClient = () =>
 
 // SNS
 
-const publishMessageToTopic = async (event, payload = {}) => {
+const publishMessageToTopic = (event, payload = {}) => {
   const start_time = Date.now();
   console.info(
     'Publising message to sns topic',
@@ -515,24 +510,24 @@ const publishMessageToTopic = async (event, payload = {}) => {
     });
 };
 
-const triggerProcessEvent = async (payload) =>
+const triggerProcessEvent = (payload) =>
   publishMessageToTopic('process', payload);
 
-const triggerInvalidateReceiptsEvent = async (payload) =>
+const triggerInvalidateReceiptsEvent = (payload) =>
   publishMessageToTopic('invalidate-receipts', payload);
 
-const triggerNotifyEvent = async (payload) =>
+const triggerNotifyEvent = (payload) =>
   publishMessageToTopic('notify', payload);
 
-const triggerSocialNotifyEvent = async (payload) =>
+const triggerSocialNotifyEvent = (payload) =>
   publishMessageToTopic('social-notify', payload);
 
-const triggerFundingNotifyEvent = async (payload) =>
+const triggerFundingNotifyEvent = (payload) =>
   publishMessageToTopic('funding-notify', payload);
 
 // IFTTT
 
-const triggerEvent = async (event, payload) => {
+const triggerEvent = (event, payload) => {
   const start_time = Date.now();
   console.info(
     'Triggering event',
@@ -574,13 +569,13 @@ const triggerEvent = async (event, payload) => {
     });
 };
 
-const triggerSendSocialNotificationsEvent = async (caption, image_url) =>
+const triggerSendSocialNotificationsEvent = (caption, image_url) =>
   triggerEvent('ambito-dolar-social-notifications', {
     value1: caption,
     ...(image_url && { value2: image_url }),
   });
 
-const triggerSocials = async (targets, caption, url, file, story_file) => {
+const triggerSocials = (targets, caption, url, file, story_file) => {
   const promises = _.chain(
     targets ?? [
       'ifttt',
@@ -639,7 +634,7 @@ const triggerSocials = async (targets, caption, url, file, story_file) => {
   return Promise.all(promises).then(_.compact);
 };
 
-const storeImgurFile = async (image) =>
+const storeImgurFile = (image) =>
   // AmbitoDolar.fetch('https://api.imgur.com/3/image', {
   AmbitoDolar.fetch('https://api.imgur.com/3/upload', {
     method: 'POST',
@@ -656,7 +651,7 @@ const storeImgurFile = async (image) =>
     return data.link;
   });
 
-const fetchImage = async (url) =>
+const fetchImage = (url) =>
   AmbitoDolar.fetch(url).then(async (response) =>
     Buffer.from(await response.arrayBuffer()),
   );
