@@ -87,6 +87,10 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           style={[
             fonts.title,
             {
+              // prevents data cut-off when the cursor moves quickly
+              flex: 1,
+            },
+            {
               // borderWidth: 1,
               // borderColor: 'blue',
             },
@@ -98,9 +102,9 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           style={[
             fonts.body,
             {
-              // prevent flickering when moving the cursor
-              flex: 1,
               textAlign: 'right',
+              // prevents flickering when the cursor moves quickly
+              width: '25%',
             },
             {
               // borderWidth: 1,
