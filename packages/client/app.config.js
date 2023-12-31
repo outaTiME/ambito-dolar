@@ -1,8 +1,5 @@
-import 'dotenv/config';
-
-const version = '6.9.0';
-const buildNumber = 107;
-const hasSentryToken = !!process.env.SENTRY_AUTH_TOKEN;
+const version = '6.10.0';
+const buildNumber = 110;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -85,7 +82,7 @@ export default {
   assetBundlePatterns: ['**/*'],
   plugins: [
     'expo-localization',
-    hasSentryToken && 'sentry-expo',
+    Boolean(process.env.SENTRY_AUTH_TOKEN) && 'sentry-expo',
     [
       '@config-plugins/react-native-quick-actions',
       [
