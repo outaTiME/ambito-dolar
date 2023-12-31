@@ -27,17 +27,144 @@ export function MainStack({ stack }) {
     'ApiCertificate',
     process.env.DOMAIN_CERTIFICATE_ARN,
   );
+  const topic = new Topic(stack, 'Topic');
+  topic.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
+  // eslint-disable-next-line no-new
+  new Cron(stack, 'Process', {
+    job: {
+      function: {
+        handler: 'packages/api/src/jobs/process.handler',
+        environment: {
+          SNS_TOPIC: topic.topicArn,
+        },
+        permissions: [topic],
+      },
+    },
+    // 10hs to 17:55hs
+    schedule: 'cron(0/5 13-20 ? * MON-FRI *)',
+    enabled: IS_PRODUCTION,
+  });
+  // eslint-disable-next-line no-new
+  new Cron(stack, 'ProcessClose', {
+    job: {
+      function: {
+        handler: 'packages/api/src/jobs/process-close.handler',
+        environment: {
+          SNS_TOPIC: topic.topicArn,
+        },
+        permissions: [topic],
+      },
+    },
+    // 18hs
+    schedule: 'cron(0 21 ? * MON-FRI *)',
+    enabled: IS_PRODUCTION,
+  });
+  // eslint-disable-next-line no-new
+  new Cron(stack, 'InvalidateReceipts', {
+    job: {
+      function: {
+        handler: 'packages/api/src/jobs/invalidate-receipts.handler',
+        environment: {
+          SNS_TOPIC: topic.topicArn,
+        },
+        permissions: [topic],
+      },
+    },
+    // 19hs
+    schedule: 'cron(0 22 ? * MON-FRI *)',
+    enabled: IS_PRODUCTION,
+  });
+  // eslint-disable-next-line no-new
+  new Cron(stack, 'FundingNotify', {
+    job: {
+      function: {
+        handler: 'packages/api/src/jobs/funding-notify.handler',
+        environment: {
+          SNS_TOPIC: topic.topicArn,
+        },
+        permissions: [topic],
+      },
+    },
+    // last day of month (23:59hs) (for full month stats)
+    schedule: 'cron(59 2 1 * ? *)',
+    enabled: IS_PRODUCTION,
+  });
+  const api = new Api(stack, 'Api', {
+    accessLog: false,
+    authorizers: {
+      basicAuthorizer: {
+        function: new Function(stack, 'Authorizer', {
+          handler: 'packages/api/src/authorizers/basic.handler',
+        }),
+        responseTypes: ['simple'],
+        resultsCacheTtl: '30 seconds',
+        type: 'lambda',
+      },
+    },
+    ...(IS_PRODUCTION && {
+      customDomain: {
+        isExternalDomain: true,
+        domainName: 'api.ambito-dolar.app',
+        cdk: {
+          certificate,
+        },
+      },
+    }),
+    defaults: {
+      // authorizer: 'none',
+      authorizer: 'basicAuthorizer',
+      function: {
+        environment: {
+          SNS_TOPIC: topic.topicArn,
+        },
+        // ~20s
+        timeout: '40 seconds',
+      },
+    },
+    routes: {
+      // private
+      'GET /process': 'packages/api/src/routes/process.handler',
+      'GET /active-devices': 'packages/api/src/routes/active-devices.handler',
+      'GET /prune-devices': 'packages/api/src/routes/prune-devices.handler',
+      'GET /notify': 'packages/api/src/routes/notify.handler',
+      'GET /invalidate-receipts':
+        'packages/api/src/routes/invalidate-receipts.handler',
+      'GET /social-notify': 'packages/api/src/routes/social-notify.handler',
+      'GET /funding-notify': 'packages/api/src/routes/funding-notify.handler',
+      'POST /update-rates': 'packages/api/src/routes/update-rates.handler',
+      'POST /update-historical-rates':
+        'packages/api/src/routes/update-historical-rates.handler',
+      // public
+      'GET /test': {
+        authorizer: 'none',
+        function: 'packages/api/src/routes/test.handler',
+      },
+      'GET /fetch': {
+        authorizer: 'none',
+        function: 'packages/api/src/routes/fetch.handler',
+      },
+      'POST /register-device': {
+        authorizer: 'none',
+        function: 'packages/api/src/routes/register-device.handler',
+      },
+      'GET /stats': {
+        authorizer: 'none',
+        function: 'packages/api/src/routes/stats.handler',
+      },
+    },
+  });
+  api.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
   // expo web build
   const screenshotSite = new StaticSite(stack, 'ScreenshotSite', {
     buildCommand: 'yarn expo export:web',
     buildOutput: 'web-build',
     environment: {
       IS_PRODUCTION: IS_PRODUCTION.toString(),
+      // should use API_URL but expo web overwrites it
+      SST_API_URL: api.url,
     },
     path: 'packages/client',
   });
-  // sns
-  const topic = new Topic(stack, 'Topic');
   topic.addSubscribers(stack, {
     process: {
       function: {
@@ -144,134 +271,6 @@ export function MainStack({ stack }) {
       },
     },
   });
-  topic.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
-  // jobs
-  // eslint-disable-next-line no-new
-  new Cron(stack, 'Process', {
-    job: {
-      function: {
-        handler: 'packages/api/src/jobs/process.handler',
-        environment: {
-          SNS_TOPIC: topic.topicArn,
-        },
-        permissions: [topic],
-      },
-    },
-    // 10hs to 17:55hs
-    schedule: 'cron(0/5 13-20 ? * MON-FRI *)',
-    enabled: IS_PRODUCTION,
-  });
-  // eslint-disable-next-line no-new
-  new Cron(stack, 'ProcessClose', {
-    job: {
-      function: {
-        handler: 'packages/api/src/jobs/process-close.handler',
-        environment: {
-          SNS_TOPIC: topic.topicArn,
-        },
-        permissions: [topic],
-      },
-    },
-    // 18hs
-    schedule: 'cron(0 21 ? * MON-FRI *)',
-    enabled: IS_PRODUCTION,
-  });
-  // eslint-disable-next-line no-new
-  new Cron(stack, 'InvalidateReceipts', {
-    job: {
-      function: {
-        handler: 'packages/api/src/jobs/invalidate-receipts.handler',
-        environment: {
-          SNS_TOPIC: topic.topicArn,
-        },
-        permissions: [topic],
-      },
-    },
-    // 19hs
-    schedule: 'cron(0 22 ? * MON-FRI *)',
-    enabled: IS_PRODUCTION,
-  });
-  // eslint-disable-next-line no-new
-  new Cron(stack, 'FundingNotify', {
-    job: {
-      function: {
-        handler: 'packages/api/src/jobs/funding-notify.handler',
-        environment: {
-          SNS_TOPIC: topic.topicArn,
-        },
-        permissions: [topic],
-      },
-    },
-    // last day of month (23:59hs) (for full month stats)
-    schedule: 'cron(59 2 1 * ? *)',
-    enabled: IS_PRODUCTION,
-  });
-  // api endpoints
-  const api = new Api(stack, 'Api', {
-    accessLog: false,
-    authorizers: {
-      basicAuthorizer: {
-        function: new Function(stack, 'Authorizer', {
-          handler: 'packages/api/src/authorizers/basic.handler',
-        }),
-        responseTypes: ['simple'],
-        resultsCacheTtl: '30 seconds',
-        type: 'lambda',
-      },
-    },
-    ...(IS_PRODUCTION && {
-      customDomain: {
-        isExternalDomain: true,
-        domainName: 'api.ambito-dolar.app',
-        cdk: {
-          certificate,
-        },
-      },
-    }),
-    defaults: {
-      // authorizer: 'none',
-      authorizer: 'basicAuthorizer',
-      function: {
-        environment: {
-          SNS_TOPIC: topic.topicArn,
-        },
-        // ~20s
-        timeout: '40 seconds',
-      },
-    },
-    routes: {
-      // private
-      'GET /process': 'packages/api/src/routes/process.handler',
-      'GET /active-devices': 'packages/api/src/routes/active-devices.handler',
-      'GET /prune-devices': 'packages/api/src/routes/prune-devices.handler',
-      'GET /notify': 'packages/api/src/routes/notify.handler',
-      'GET /invalidate-receipts':
-        'packages/api/src/routes/invalidate-receipts.handler',
-      'GET /social-notify': 'packages/api/src/routes/social-notify.handler',
-      'GET /funding-notify': 'packages/api/src/routes/funding-notify.handler',
-      'POST /update-rates': 'packages/api/src/routes/update-rates.handler',
-      'POST /update-historical-rates':
-        'packages/api/src/routes/update-historical-rates.handler',
-      // public
-      'GET /test': {
-        authorizer: 'none',
-        function: 'packages/api/src/routes/test.handler',
-      },
-      'GET /fetch': {
-        authorizer: 'none',
-        function: 'packages/api/src/routes/fetch.handler',
-      },
-      'POST /register-device': {
-        authorizer: 'none',
-        function: 'packages/api/src/routes/register-device.handler',
-      },
-      'GET /stats': {
-        authorizer: 'none',
-        function: 'packages/api/src/routes/stats.handler',
-      },
-    },
-  });
-  api.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
   // landing page with accesss to legacy api
   const landingSite = new StaticSite(stack, 'LandingSite', {
     buildCommand: 'yarn build',

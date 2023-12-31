@@ -47,14 +47,13 @@ export default {
   },
   scheme: 'ambito-dolar',
   extra: {
-    registerDeviceUri: process.env.REGISTER_DEVICE_URI,
     ratesUri: process.env.RATES_URI,
     historicalRatesUri: process.env.HISTORICAL_RATES_URI,
     sentryDsn: process.env.SENTRY_DSN,
     amplitudeKey: process.env.AMPLITUDE_KEY,
     firebaseConfigJson: process.env.FIREBASE_CONFIG_JSON,
     isProduction: process.env.IS_PRODUCTION === 'true',
-    statsUri: process.env.STATS_URI,
+    apiUrl: process.env.SST_API_URL ?? process.env.API_URL,
     eas: {
       projectId: '88dc0a10-eec5-11e8-bdb0-e9d94f6dfa7d',
       build: {

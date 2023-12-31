@@ -164,7 +164,7 @@ export default {
     ]);
   }, */
   registerDevice: (data = {}) =>
-    getJson(Settings.REGISTER_DEVICE_URI, {
+    getJson(Settings.API_URL + '/register-device', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
@@ -192,7 +192,7 @@ export default {
         return reject(new Error('No historical rates available'));
       });
     }),
-  getStats: () => getJson(Settings.STATS_URI),
+  getStats: () => getJson(Settings.API_URL + '/stats'),
   cleanVersion(version) {
     return semverValid(semverCoerce(version));
   },
