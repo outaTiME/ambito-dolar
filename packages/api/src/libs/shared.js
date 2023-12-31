@@ -125,8 +125,14 @@ const getDynamoDBClient = () => ddbClient;
     : [...allData, ...data['Items']];
 }; */
 
-const getAllDataFromDynamoDB = (params) =>
-  parallelScan(params, { concurrency: 500 }); // ~4000 items per scan (1 MB of data)
+const getAllDataFromDynamoDB = (params) => {
+  const client = getDynamoDBClient();
+  return parallelScan(params, {
+    // ~4000 items per scan (1 MB of data)
+    concurrency: 500,
+    client,
+  });
+};
 
 const isSemverLt = (v1, v2) => semverLt(v1, v2);
 
