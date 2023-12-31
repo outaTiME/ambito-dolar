@@ -72,7 +72,7 @@ const getRate = (type) => {
     });
 };
 
-const getCryptoRates = (rates) => {
+/* const getCryptoRates = (rates) => {
   const start_time = Date.now();
   // normalize data
   rates = [].concat(rates).reduce((obj, rate) => {
@@ -125,7 +125,7 @@ const getCryptoRates = (rates) => {
         JSON.stringify({ rates, error: error.message }),
       );
     });
-};
+}; */
 
 const getHistoricalRate = (type, rate, { max = 0, max_date }) => {
   // in-memory calculation
