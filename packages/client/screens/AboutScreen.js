@@ -4,10 +4,10 @@ import React from 'react';
 import { View, Text, Linking, Platform } from 'react-native';
 
 import AppIconView from '../components/AppIconView';
+import Bounceable from '../components/Bounceable';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import FloatingEmojis from '../components/FloatingEmojis';
-import FloatingEmojisTapHandler from '../components/FloatingEmojisTapHandler';
 import IconCardItemView from '../components/IconCardItemView';
 import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
@@ -143,15 +143,16 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
             wiggleFactor={0}
           >
             {({ onNewEmoji }) => (
-              <FloatingEmojisTapHandler
-                onNewEmoji={onNewEmoji}
-                onPress={onPressAppIcon}
-                // according to the emoji size (40)
-                xOffset={-20}
-                yOffset={-20}
+              <Bounceable
+                // activeScale={0.86}
+                onPress={(x, y) => {
+                  // according to the emoji size (40)
+                  onNewEmoji(x - 20, y - 20);
+                  onPressAppIcon();
+                }}
               >
                 <AppIconView />
-              </FloatingEmojisTapHandler>
+              </Bounceable>
             )}
           </FloatingEmojis>
           <View
