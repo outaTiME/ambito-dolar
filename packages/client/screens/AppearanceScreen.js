@@ -15,6 +15,7 @@ const AppearanceScreen = ({ headerHeight, tabBarheight }) => {
   const selectedAppearance = useSelector(
     (state) => state.application.appearance,
   );
+  const availableAppearances = Helper.getAvailableAppearances();
   const dispatch = useDispatch();
   return (
     <FixedScrollView
@@ -24,21 +25,19 @@ const AppearanceScreen = ({ headerHeight, tabBarheight }) => {
       }}
     >
       <CardView title={I18n.t('opts_appearance')} plain>
-        {['system', 'light', 'dark'].map((appearance) => (
+        {availableAppearances.map((appearance, index) => (
           <CardItemView
             key={appearance}
             title={Helper.getAppearanceString(appearance)}
             useSwitch={false}
             chevron={false}
             check={
-              (!selectedAppearance && appearance === 'system') ||
+              (!selectedAppearance && index === 0) ||
               selectedAppearance === appearance
             }
             onAction={() => {
               dispatch(
-                actions.changeAppearance(
-                  appearance === 'system' ? null : appearance,
-                ),
+                actions.changeAppearance(index === 0 ? null : appearance),
               );
             }}
           />

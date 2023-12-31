@@ -359,8 +359,21 @@ export default {
   roundToEven(num) {
     return Math.floor(num - (num % 2));
   },
+  getAvailableAppearances() {
+    const appearances = ['system', 'light', 'dark'];
+    const version = parseInt(Platform.Version, 10);
+    // remove system option when unavailable
+    if (
+      (Platform.OS === 'ios' && version < 13) ||
+      (Platform.OS === 'android' && version < 29)
+    ) {
+      appearances.shift();
+    }
+    return appearances;
+  },
   getAppearanceString(colorScheme) {
-    return I18n.t((colorScheme ?? 'system') + '_appearance');
+    const availableAppearances = this.getAvailableAppearances();
+    return I18n.t((colorScheme ?? availableAppearances[0]) + '_appearance');
   },
   getRateOrderString(order) {
     return I18n.t((order ?? 'default') + '_rate_order');
