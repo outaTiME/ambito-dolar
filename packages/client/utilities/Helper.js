@@ -170,27 +170,21 @@ export default {
     }),
   getRates: () =>
     new Promise((resolve) => {
-      // required by navigator redraw
-      setTimeout(() => {
-        if (Settings.RATES_URI) {
-          return resolve(getJson(Settings.RATES_URI));
-        }
-        if (__DEV__) {
-          console.log('Using local rates file');
-        }
-        return resolve(rates);
-      });
+      if (Settings.RATES_URI) {
+        return resolve(getJson(Settings.RATES_URI));
+      }
+      if (__DEV__) {
+        console.log('Using local rates file');
+      }
+      return resolve(rates);
     }),
   getHistoricalRates: () =>
     new Promise((resolve, reject) => {
-      // required by navigator redraw
-      setTimeout(() => {
-        if (Settings.HISTORICAL_RATES_URI) {
-          return resolve(getJson(Settings.HISTORICAL_RATES_URI));
-          // return resolve(getJson('https://httpstat.us/200?sleep=30000'));
-        }
-        return reject(new Error('No historical rates available'));
-      });
+      if (Settings.HISTORICAL_RATES_URI) {
+        return resolve(getJson(Settings.HISTORICAL_RATES_URI));
+        // return resolve(getJson('https://httpstat.us/200?sleep=30000'));
+      }
+      return reject(new Error('No historical rates available'));
     }),
   getStats: (earlier) => {
     let url = Settings.API_URL + '/stats';

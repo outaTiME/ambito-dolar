@@ -44,7 +44,6 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
     }),
     shallowEqual,
   );
-  const prev_historical_rates = Helper.usePrevious(historical_rates);
   const updateHistoricalRates = React.useCallback(() => {
     if (__DEV__) {
       console.log('💫 Fetching historical rates');
@@ -62,37 +61,38 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
     if (prev_rangeIndex !== undefined) {
       // debounce data updates
       const timer_id = setTimeout(() => {
-        // prevent back and forth on chart when revalidation
-        const current_historical_rates =
-          historical_rates || prev_historical_rates;
-        if (current_historical_rates && rangeIndex > 0) {
-          const stats = current_historical_rates[type] || [];
-          if (stats.length > 0) {
-            const moment_to = DateUtils.get(stats[stats.length - 1][0]);
-            const moment_from =
-              rangeIndex === 1
-                ? moment_to.clone().subtract(1, 'month')
-                : rangeIndex === 2
-                  ? moment_to.clone().subtract(3, 'months')
-                  : rangeIndex === 3
-                    ? moment_to.clone().subtract(6, 'months')
-                    : rangeIndex === 4
-                      ? moment_to.clone().startOf('year')
-                      : DateUtils.get(stats[0][0]);
-            setChartStats(
-              stats.filter(([timestamp]) =>
-                DateUtils.get(timestamp).isBetween(
-                  moment_from,
-                  moment_to,
-                  'day',
-                  '[]',
+        if (rangeIndex > 0) {
+          if (historical_rates) {
+            const stats = historical_rates[type] || [];
+            if (stats.length > 0) {
+              const moment_to = DateUtils.get(stats[stats.length - 1][0]);
+              const moment_from =
+                rangeIndex === 1
+                  ? moment_to.clone().subtract(1, 'month')
+                  : rangeIndex === 2
+                    ? moment_to.clone().subtract(3, 'months')
+                    : rangeIndex === 3
+                      ? moment_to.clone().subtract(6, 'months')
+                      : rangeIndex === 4
+                        ? moment_to.clone().startOf('year')
+                        : DateUtils.get(stats[0][0]);
+              setChartStats(
+                stats.filter(([timestamp]) =>
+                  DateUtils.get(timestamp).isBetween(
+                    moment_from,
+                    moment_to,
+                    'day',
+                    '[]',
+                  ),
                 ),
-              ),
-            );
-          } else {
-            if (__DEV__) {
-              console.warn(`No historical stats for ${type} rate`);
+              );
+            } else {
+              if (__DEV__) {
+                console.warn(`No historical stats for ${type} rate`);
+              }
             }
+          } else {
+            // leave the chart with the previous data until the update
           }
         } else {
           setChartStats(base_stats);
