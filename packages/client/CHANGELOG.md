@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.10.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.9.0...@ambito-dolar/client@6.10.0) (2023-12-31)
+
+### Bug Fixes
+
+- prevents flickering when the cursor moves quickly ([f749c58](https://github.com/outaTiME/ambito-dolar/commit/f749c580ec551bf8946a846ea1816e7e86ffa6c4))
+
+### Features
+
+- add bouncing effect as part of the easter egg ([38bb1fd](https://github.com/outaTiME/ambito-dolar/commit/38bb1fddd3a6207447074d0a2605573a05e0d5c0))
+- new parameter to retrieve the previous month's funding ([01d2fc0](https://github.com/outaTiME/ambito-dolar/commit/01d2fc0c68248af893f33cecf8ac4c1d84fbefe6))
+- show "system" in appearance only for supported devices ([2cdf440](https://github.com/outaTiME/ambito-dolar/commit/2cdf440cf5446a7bc0dc2f70b19c8fa287ab03e2))
+- support in-application donations ([c64f5f2](https://github.com/outaTiME/ambito-dolar/commit/c64f5f2f1ebfa4ada320051db7e91e8ef6978787))
+- update to new gesture detection api ([c1afc73](https://github.com/outaTiME/ambito-dolar/commit/c1afc73baa2946ff521aa7dce6d1b9625aa111b4))
+- use api url from SST to use on expo web build ([a75e5ae](https://github.com/outaTiME/ambito-dolar/commit/a75e5ae9d3db5be9a6c1dd070a980e7c28788b8f))
+
+### Performance Improvements
+
+- improvements on historical redraws in case of data updates ([e6ca6d1](https://github.com/outaTiME/ambito-dolar/commit/e6ca6d1779b5a9f40cfd0c6b1adec4cc4bcde4a8))
+
 # [6.9.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.8.3...@ambito-dolar/client@6.9.0) (2023-11-19)
 
 ### Features

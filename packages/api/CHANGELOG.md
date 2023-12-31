@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.11.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.10.0...@ambito-dolar/api@3.11.0) (2023-12-31)
+
+### Features
+
+- new parameter to retrieve the previous month's funding ([01d2fc0](https://github.com/outaTiME/ambito-dolar/commit/01d2fc0c68248af893f33cecf8ac4c1d84fbefe6))
+- use client instance on parallelScan ([e085f33](https://github.com/outaTiME/ambito-dolar/commit/e085f33b13d99224d434c135121bb0625e5b5f23))
+
 # [3.10.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.9.4...@ambito-dolar/api@3.10.0) (2023-11-19)
 
 ### Features

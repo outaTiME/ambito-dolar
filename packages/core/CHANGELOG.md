@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.6.0...@ambito-dolar/core@3.7.0) (2023-12-31)
+
+### Features
+
+- support in-application donations ([c64f5f2](https://github.com/outaTiME/ambito-dolar/commit/c64f5f2f1ebfa4ada320051db7e91e8ef6978787))
+
 # [3.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.5.1...@ambito-dolar/core@3.6.0) (2023-11-19)
 
 ### Features
