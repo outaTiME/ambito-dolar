@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.11.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.11.0...@ambito-dolar/api@3.11.1) (2024-01-02)
+
+### Bug Fixes
+
+- remove tourist rate from opening ([333449a](https://github.com/outaTiME/ambito-dolar/commit/333449ac6c827c98d406759226c6c2752c6a814c))
+
 # [3.11.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.10.0...@ambito-dolar/api@3.11.0) (2023-12-31)
 
 ### Features
