@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.10.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.10.0...@ambito-dolar/client@6.10.1) (2024-01-08)
+
+### Bug Fixes
+
+- improve visualization and management of IAPs ([ce7141e](https://github.com/outaTiME/ambito-dolar/commit/ce7141e170fe16ba81f647e26df52b3a5e9e08b8))
+
 # [6.10.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.9.0...@ambito-dolar/client@6.10.0) (2023-12-31)
 
 ### Bug Fixes

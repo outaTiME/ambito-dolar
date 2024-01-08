@@ -1,7 +1,7 @@
 {
   "name": "@ambito-dolar/api",
   "private": true,
-  "version": "3.11.1",
+  "version": "3.11.2",
   "dependencies": {
     "@ambito-dolar/core": "^3.7.0",
     "@atproto/api": "^0.8.0",
