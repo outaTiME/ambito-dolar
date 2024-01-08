@@ -46,6 +46,7 @@ export default ({
   const { theme, fonts } = Helper.useTheme();
   const CardContainer =
     useSwitch !== true && !!onAction && loading === false ? RectButton : View;
+  const addSpacer = (onAction && (chevron || check)) || useSwitch || !!value;
   return (
     <>
       <CardContainer
@@ -109,6 +110,7 @@ export default ({
                 flexDirection: 'row',
                 alignItems: 'center',
                 paddingVertical: Settings.PADDING,
+                // gap: Settings.PADDING,
               },
               drag && {
                 marginLeft: Settings.PADDING,
@@ -121,8 +123,11 @@ export default ({
             ) : (
               <View
                 style={[
-                  {
+                  addSpacer && {
                     marginRight: Settings.PADDING,
+                  },
+                  {
+                    // flex: 1,
                     flexShrink: 0,
                     flexGrow: 1,
                   },

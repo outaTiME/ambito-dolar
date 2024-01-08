@@ -59,6 +59,7 @@ const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
       .catch(console.warn)
       .finally(() => setLoading(false));
   }, []);
+  const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
   return (
     <FixedScrollView
       {...{
@@ -94,12 +95,14 @@ const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
           useSwitch={false}
           value={Helper.formatIntegerNumber(sharedRates)}
         />
-        <CardItemView
-          title={I18n.t('app_donations')}
-          useSwitch={false}
-          value={donations}
-          loading={Loading}
-        />
+        {purchasesConfigured && (
+          <CardItemView
+            title={I18n.t('app_donations')}
+            useSwitch={false}
+            value={donations}
+            loading={Loading}
+          />
+        )}
         {lastReview && (
           <CardItemView
             title={I18n.t('app_last_review')}

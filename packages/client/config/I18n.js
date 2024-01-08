@@ -22,6 +22,7 @@ const i18n = new I18n({
     retry: 'Reintentar',
     developer: 'Desarrollador',
     text_copied: 'Texto copiado al portapapeles',
+    generic_error: 'Imposible completar la operación seleccionada.',
     // rate detail
     detail: 'Detalle',
     one_week: '1S',
@@ -58,6 +59,9 @@ const i18n = new I18n({
     device_identifier: 'Identificador',
     opts_statistics: 'Estadísticas',
     opts_support: 'Soporte y difusión',
+    opts_support_note:
+      // 'Con tu colaboración haces que la aplicación siga creciendo y mejorando.',
+      'Tu apoyo impulsa el desarrollo y mantenimiento continuo de la aplicación.',
     send_app_feedback: 'Enviar comentarios',
     leave_app_review: 'Dejar una reseña',
     share: 'Compartir',
@@ -118,10 +122,10 @@ const i18n = new I18n({
     select_rates: 'Seleccionar',
     // no_selected_rates: 'Agregá las cotizaciones que deseas visualizar.',
     no_selected_rates: 'No se han seleccionado cotizaciones a visualizar.',
-    purchase_error: 'Imposible completar la operación seleccionada.',
-    purchase_success: '¡Gracias por tu donación!',
+    // donate
+    /* purchase_success: '¡Gracias por tu donación!',
     purchase_success_message:
-      'Tu apoyo impulsa el desarrollo y mantenimiento continuo de la aplicación.',
+      'Tu apoyo impulsa el desarrollo y mantenimiento continuo de la aplicación.', */
   },
 });
 

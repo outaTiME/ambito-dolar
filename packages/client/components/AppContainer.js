@@ -925,15 +925,23 @@ const withUserActivity = (Component) => (props) => {
 };
 
 const withPurchases = (Component) => (props) => {
+  const [, setPurchasesConfigured] = Helper.useSharedState(
+    'purchasesConfigured',
+    false,
+  );
   React.useEffect(() => {
     const configure = async () => {
       __DEV__ && (await Purchases.setLogLevel(Purchases.LOG_LEVEL.VERBOSE));
       Purchases.configure({ apiKey: Settings.REVENUECAT_API_KEY });
-      if (__DEV__) {
-        console.log('🤑 Purchases configured');
-      }
     };
-    configure();
+    configure()
+      .then(() => {
+        if (__DEV__) {
+          console.log('🤑 Purchases configured');
+        }
+        setPurchasesConfigured(true);
+      })
+      .catch(console.warn);
   }, []);
   return <Component {...props} />;
 };

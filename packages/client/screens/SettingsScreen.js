@@ -1,8 +1,16 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { compose } from '@reduxjs/toolkit';
 import * as Device from 'expo-device';
 import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
-import { Linking, Share, Alert } from 'react-native';
+import {
+  Linking,
+  Share,
+  View,
+  Text,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import Purchases from 'react-native-purchases';
 import { useSelector, shallowEqual } from 'react-redux';
 
@@ -16,6 +24,52 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
+
+const PriceBadge = ({ price, currencyCode, loading }) => {
+  const { theme, fonts } = Helper.useTheme();
+  return (
+    <View
+      style={[
+        {
+          borderColor: Settings.getStrokeColor(theme, false),
+          borderWidth: 1,
+          borderRadius: Settings.BORDER_RADIUS / 2,
+          paddingVertical: 2,
+          paddingHorizontal: 6,
+          justifyContent: 'center',
+          marginVertical: -Settings.PADDING,
+        },
+        loading && {
+          borderColor: 'transparent',
+        },
+      ]}
+    >
+      <Text
+        style={[
+          fonts.body,
+          {
+            color: Settings.getGrayColor(theme),
+            textAlign: 'right',
+          },
+          loading && {
+            opacity: 0,
+          },
+        ]}
+        numberOfLines={1}
+      >
+        {currencyCode} {Helper.getCurrency(price)}
+      </Text>
+      {loading && (
+        <ActivityIndicator
+          animating
+          color={Settings.getForegroundColor(theme)}
+          size="small"
+          style={{ position: 'absolute', alignSelf: 'center' }}
+        />
+      )}
+    </View>
+  );
+};
 
 const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const { updatedAt, appearance } = useSelector(
@@ -45,62 +99,6 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const onPressReview = React.useCallback(() => {
     Linking.openURL(Settings.APP_REVIEW_URI).catch(console.warn);
   }, []);
-  const [donateLoading, setDonateLoading] = React.useState(false);
-  const onPressDonate = React.useCallback(() => {
-    setDonateLoading(true);
-    Purchases.getProducts(
-      ['small_contribution'],
-      Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
-    )
-      .then((products) => {
-        const product = products[0];
-        if (product) {
-          return Purchases.purchaseStoreProduct(product);
-        }
-        throw new Error('No products available');
-      })
-      .then((opts) => {
-        Alert.alert(
-          I18n.t('purchase_success'),
-          I18n.t('purchase_success_message'),
-          [
-            {
-              text: I18n.t('accept'),
-              onPress: () => {
-                // pass
-              },
-            },
-          ],
-          {
-            cancelable: false,
-          },
-        );
-      })
-      .catch((e) => {
-        // silent ignore on user cancellation
-        if (!e.userCancelled) {
-          Sentry.captureException(new Error('Purchase error', { cause: e }));
-          Alert.alert(
-            I18n.t('purchase_error'),
-            '',
-            [
-              {
-                text: I18n.t('accept'),
-                onPress: () => {
-                  // pass
-                },
-              },
-            ],
-            {
-              cancelable: false,
-            },
-          );
-        }
-      })
-      .finally(() => {
-        setDonateLoading(false);
-      });
-  }, []);
   const onPressShare = React.useCallback(() => {
     Share.share({
       message: I18n.t('share_message', {
@@ -123,6 +121,79 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
     [updatedAt],
   );
   Helper.useInterval(tickCallback);
+  // donate
+  const getPurchaseProduct = React.useCallback(
+    () =>
+      Helper.timeout(
+        Purchases.getProducts(
+          ['small_contribution'],
+          Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
+        ),
+      )
+        .then((products) => products?.[0])
+        .catch(console.warn),
+    [],
+  );
+  const [purchaseProduct, setPurchaseProduct] = React.useState();
+  React.useEffect(() => {
+    if (__DEV__ && purchaseProduct) {
+      console.log(
+        '🎟️ Product to donate updated',
+        JSON.stringify(purchaseProduct),
+      );
+    }
+  }, [purchaseProduct]);
+  useFocusEffect(
+    React.useCallback(() => {
+      // initial product fetch
+      if (!purchaseProduct) {
+        getPurchaseProduct().then((product) => {
+          if (product) {
+            setPurchaseProduct(product);
+          }
+        });
+      }
+    }, [purchaseProduct]),
+  );
+  const [donateLoading, setDonateLoading] = React.useState(false);
+  const onPressDonate = React.useCallback(() => {
+    setDonateLoading(true);
+    Promise.resolve(purchaseProduct)
+      .then((product) => product ?? getPurchaseProduct())
+      .then((product) => {
+        if (product) {
+          // force an update in case the product changes
+          setPurchaseProduct(product);
+          return Purchases.purchaseStoreProduct(product);
+        }
+        throw new Error('No products available');
+      })
+      .catch((e) => {
+        // silent ignore on user cancellation
+        if (!e.userCancelled) {
+          Sentry.captureException(new Error('Purchase error', { cause: e }));
+          Alert.alert(
+            I18n.t('generic_error'),
+            '',
+            [
+              {
+                text: I18n.t('accept'),
+                onPress: () => {
+                  // pass
+                },
+              },
+            ],
+            {
+              cancelable: false,
+            },
+          );
+        }
+      })
+      .finally(() => {
+        setDonateLoading(false);
+      });
+  }, [purchaseProduct]);
+  const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
   return (
     <FixedScrollView
       {...{
@@ -180,14 +251,37 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
           />
         )}
       </CardView>
-      <CardView title={I18n.t('opts_support')} plain>
-        <CardItemView
-          title={I18n.t('donate')}
-          useSwitch={false}
-          chevron={false}
-          onAction={onPressDonate}
-          loading={donateLoading}
-        />
+      <CardView
+        title={I18n.t('opts_support')}
+        plain
+        note={I18n.t('opts_support_note')}
+      >
+        {purchasesConfigured && (
+          <CardItemView
+            title={I18n.t('donate')}
+            useSwitch={false}
+            chevron={false}
+            onAction={onPressDonate}
+            loading={donateLoading}
+            {...(purchaseProduct && {
+              value: `${Helper.getCurrency(purchaseProduct.price, true, true)}`,
+            })}
+            // large opt
+            /* titleDetail={I18n.t('donate_detail')}
+            {...(!donateLoading && {
+              onAction: onPressDonate,
+            })}
+            {...(purchaseProduct && {
+              value: (
+                <PriceBadge
+                  price={purchaseProduct.price}
+                  currencyCode={purchaseProduct.currencyCode}
+                  loading={donateLoading}
+                />
+              ),
+            })} */
+          />
+        )}
         {contactAvailable && (
           <CardItemView
             title={I18n.t('send_app_feedback')}
