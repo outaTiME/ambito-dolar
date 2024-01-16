@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.7.0...@ambito-dolar/core@3.8.0) (2024-01-16)
+
+### Features
+
+- add bna rate type ([243b45d](https://github.com/outaTiME/ambito-dolar/commit/243b45d0125250f7e05e3ed00cad260a3bf7f46c))
+
 # [3.7.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.6.0...@ambito-dolar/core@3.7.0) (2023-12-31)
 
 ### Features

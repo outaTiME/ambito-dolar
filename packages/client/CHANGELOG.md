@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.11.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.10.1...@ambito-dolar/client@6.11.0) (2024-01-16)
+
+### Bug Fixes
+
+- add thousands separator to widgets ([11c5d16](https://github.com/outaTiME/ambito-dolar/commit/11c5d16da469b45d4c555bf2b88a3f755879572c))
+
+### Features
+
+- add bna rate type ([243b45d](https://github.com/outaTiME/ambito-dolar/commit/243b45d0125250f7e05e3ed00cad260a3bf7f46c))
+- add local expo module for widgets update ([4c760b7](https://github.com/outaTiME/ambito-dolar/commit/4c760b7672f98dc548246a92a0d41b31808a66ae))
+- handle user locale updates ([87e0431](https://github.com/outaTiME/ambito-dolar/commit/87e04314b0e0cafef81ebcac0711f5d50471fc66))
+
 ## [6.10.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.10.0...@ambito-dolar/client@6.10.1) (2024-01-08)
 
 ### Bug Fixes
