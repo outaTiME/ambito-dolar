@@ -22,7 +22,7 @@ PODS:
     - ExpoModulesCore
   - EXNotifications (0.20.1):
     - ExpoModulesCore
-  - Expo (49.0.21):
+  - Expo (49.0.22):
     - ExpoModulesCore
   - expo-dev-client (2.4.12):
     - EXManifests
@@ -96,7 +96,7 @@ PODS:
     - ExpoModulesCore
   - ExpoMailComposer (12.3.0):
     - ExpoModulesCore
-  - ExpoModulesCore (1.5.12):
+  - ExpoModulesCore (1.5.13):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-NativeModulesApple
@@ -111,6 +111,8 @@ PODS:
   - ExpoStoreReview (6.4.0):
     - ExpoModulesCore
   - ExpoSystemUI (2.4.0):
+    - ExpoModulesCore
+  - ExpoWidgetKit (1.0.0):
     - ExpoModulesCore
   - EXSplashScreen (0.20.5):
     - ExpoModulesCore
@@ -142,8 +144,9 @@ PODS:
     - hermes-engine/Pre-built (= 0.72.6)
   - hermes-engine/Pre-built (0.72.6)
   - libevent (2.1.12)
-  - PurchasesHybridCommon (8.2.1):
-    - RevenueCat (= 4.31.6)
+  - PurchasesHybridCommon (8.10.1):
+    - RevenueCat (= 4.31.9)
+    - RevenueCatUI (= 4.31.9)
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -563,18 +566,18 @@ PODS:
     - React-jsi (= 0.72.6)
     - React-logger (= 0.72.6)
     - React-perflogger (= 0.72.6)
-  - ReactNativeWidgetKit (0.2.0):
-    - ExpoModulesCore
-  - RevenueCat (4.31.6)
+  - RevenueCat (4.31.9)
+  - RevenueCatUI (4.31.9):
+    - RevenueCat (= 4.31.9)
   - RNCAsyncStorage (1.21.0):
     - React-Core
   - RNFlashList (1.6.3):
     - React-Core
-  - RNGestureHandler (2.14.0):
+  - RNGestureHandler (2.14.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - RNPurchases (7.6.0):
-    - PurchasesHybridCommon (= 8.2.1)
+  - RNPurchases (7.15.0):
+    - PurchasesHybridCommon (= 8.10.1)
     - React-Core
   - RNQuickAction (0.3.13):
     - React
@@ -627,6 +630,7 @@ DEPENDENCIES:
   - ExpoSharing (from `../node_modules/expo-sharing/ios`)
   - ExpoStoreReview (from `../node_modules/expo-store-review/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
+  - ExpoWidgetKit (from `../modules/widgetkit/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - EXStructuredHeaders (from `../node_modules/expo-structured-headers/ios`)
   - EXUpdates (from `../node_modules/expo-updates/ios`)
@@ -673,7 +677,6 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "ReactNativeWidgetKit (from `../node_modules/@calitb/react-native-widgetkit/ios`)"
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -693,6 +696,7 @@ SPEC REPOS:
     - PurchasesHybridCommon
     - ReachabilitySwift
     - RevenueCat
+    - RevenueCatUI
     - Sentry
     - SentryPrivate
     - SocketRocket
@@ -758,6 +762,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-store-review/ios"
   ExpoSystemUI:
     :path: "../node_modules/expo-system-ui/ios"
+  ExpoWidgetKit:
+    :path: "../modules/widgetkit/ios"
   EXSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   EXStructuredHeaders:
@@ -847,8 +853,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  ReactNativeWidgetKit:
-    :path: "../node_modules/@calitb/react-native-widgetkit/ios"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNFlashList:
@@ -884,7 +888,7 @@ SPEC CHECKSUMS:
   EXJSONUtils: 6802be4282d42b97c51682468ddc1026a06f8276
   EXManifests: cf66451b11b2c2f6464917528d792759f7fd6ce0
   EXNotifications: 09394cbd7165f9a4a00a53328aa09bf874bae717
-  Expo: 61a8e1aa94311557c137c0a4dfd4fe78281cfbb4
+  Expo: 9060b49fecf07bebf1dd967730d079aa5e750ebe
   expo-dev-client: 1e20e0d67534fd63da37604747a60e7d69fc46f5
   expo-dev-launcher: e9411e0c91abaa448682d0fa688957e7dbff356e
   expo-dev-menu: f7036f78c69f0f6ecb386f5543a06266dde64bf5
@@ -897,11 +901,12 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: be4cbd52d9b177cde0fd66daa1913afa3161fc1d
   ExpoLocalization: be37fdd0b5930c6a49cd307b4542f4b426d6134c
   ExpoMailComposer: feaebd62095efad901ede864b95406f02bf61681
-  ExpoModulesCore: c480fd4e3c7c8e81f0a6ba3a7c56869f25fe016d
+  ExpoModulesCore: cf14fc49a3d5df3ed3cf2a38fc758d073bfd1c13
   ExpoScreenOrientation: 3e3b9a3a8ec8498d51992a0a819deda9d82cbaac
   ExpoSharing: 825b2b3fc919a2656f75def0069f584bbd6e359a
   ExpoStoreReview: f154c9fdf3dbd877ca0115757f0b2b6f43dd9db4
   ExpoSystemUI: fa4854e3226e87f86d3383570264c6e4e90bc782
+  ExpoWidgetKit: 1afd0fcdd5619890c4eac794ff755f7b36efe41c
   EXSplashScreen: c0e7f2d4a640f3b875808ed0b88575538daf6d82
   EXStructuredHeaders: 324cc3130571d2696357fafd8be7fd9a0b5fdf6e
   EXUpdates: 59d641d0873236c76ef987917c32de8c210333ea
@@ -912,7 +917,7 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 8057e75cfc1437b178ac86c8654b24e7fead7f60
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  PurchasesHybridCommon: 9adfb3252d99e22142aae9b8456e0069f0cae72d
+  PurchasesHybridCommon: 170de77f83fd9cb570457157e92ea04c7aef8196
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: 28469809442eb4eb5528462705f7d852948c8a74
   RCTTypeSafety: e9c6c409fca2cc584e5b086862d562540cb38d29
@@ -950,12 +955,12 @@ SPEC CHECKSUMS:
   React-runtimescheduler: f23e337008403341177fc52ee4ca94e442c17ede
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
-  ReactNativeWidgetKit: d356de3387427cb3e92e556408460abfb3a207ed
-  RevenueCat: a853fc1d6eb058e8546d91fba9c9c5cd2e041949
+  RevenueCat: aa3e439fb6282e7768609774a73c06ab87c3d9c3
+  RevenueCatUI: ef3f12dddf49d333a66a13f1d32c73ef1075ae95
   RNCAsyncStorage: 618d03a5f52fbccb3d7010076bc54712844c18ef
   RNFlashList: 4b4b6b093afc0df60ae08f9cbf6ccd4c836c667a
-  RNGestureHandler: 32a01c29ecc9bb0b5bf7bc0a33547f61b4dc2741
-  RNPurchases: 5e84603b1f217fd078516353b5c0d39595178f1f
+  RNGestureHandler: fe2be3be5598dc74329b211c58c9f2d231461769
+  RNPurchases: 52efd3644accde6d35a0961905e9b8d1a5195a84
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNReanimated: fdbaa9c964bbab7fac50c90862b6cc5f041679b9
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
