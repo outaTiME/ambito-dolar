@@ -52,9 +52,8 @@ private func getRates() -> [String: Any]? {
 
 private func formatNumber(num: Double) -> String {
   let nf = NumberFormatter()
-  nf.usesGroupingSeparator = true
+  nf.numberStyle = .decimal
   nf.minimumFractionDigits = 2
-  // nf.maximumFractionDigits = 2
   nf.roundingMode = .down
   return nf.string(for: num)!
 }
@@ -187,6 +186,16 @@ extension View {
     return self */
     return self.padding(16)
   }
+  // https://nemecek.be/blog/192/hotfixing-widgets-for-ios-17-containerbackground-padding
+  /* func widgetBackground(backgroundView: some View) -> some View {
+    if #available(iOSApplicationExtension 17.0, *) {
+      return containerBackground(for: .widget) {
+        backgroundView
+      }
+    } else {
+      return background(backgroundView)
+    }
+  } */
 }
 
 struct RateWidgetEntryView : View {
@@ -267,6 +276,7 @@ struct RateWidgetEntryView : View {
         )
         .contentPadding()
         .widgetURL(getWidgetUrl(id: rate.id))
+        // .widgetBackground(backgroundView: Color.white)
       } else {
         VStack {
           Text("Cotización no disponible")
