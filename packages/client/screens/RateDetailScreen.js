@@ -2,7 +2,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Alert } from 'react-native';
-import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
 import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
@@ -49,10 +49,8 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
       console.log('💫 Fetching historical rates');
     }
     return Helper.getHistoricalRates().then((rates) => {
-      batch(() => {
-        dispatch(actions.updateHistoricalRates(rates));
-        dispatch(actions.registerApplicationDownloadHistoricalRates());
-      });
+      dispatch(actions.updateHistoricalRates(rates));
+      dispatch(actions.registerApplicationDownloadHistoricalRates());
     });
   }, [dispatch]);
   const [chartStats, setChartStats] = React.useState(base_stats);

@@ -23,7 +23,7 @@ import {
 } from 'react-native';
 import Purchases from 'react-native-purchases';
 import QuickActions from 'react-native-quick-actions';
-import { useSelector, shallowEqual, useDispatch, batch } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 import { MaterialHeaderButtons, Item } from './HeaderButtons';
 import withContainer from './withContainer';
@@ -507,7 +507,7 @@ const AppContainer = ({
     // wait a while to avoid flickering
     Helper.delay(Settings.ANIMATION_DURATION).then(() => {
       if (__DEV__) {
-        console.log('👌 Application loading is done');
+        console.log('👌 Application loading is completed');
       }
       return SplashScreen.hideAsync().catch(console.warn);
     });
@@ -641,6 +641,8 @@ const withRealtime = (Component) => (props) => {
       }, Settings.STILL_LOADING_TIMEOUT);
       return Helper.getRates(initial)
         .then((data) => {
+          dispatch(actions.addRates(data));
+          dispatch(actions.registerApplicationDownloadRates());
           // force reload of widgets
           WidgetKit.reloadAllTimelines();
         })
