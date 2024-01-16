@@ -12,7 +12,6 @@
   "dependencies": {
     "@ambito-dolar/core": "^3.7.0",
     "@amplitude/analytics-react-native": "^1.4.7",
-    "@calitb/react-native-widgetkit": "^0.2.0",
     "@config-plugins/react-native-quick-actions": "^6.0.0",
     "@expo/react-native-action-sheet": "^4.0.1",
     "@expo/vector-icons": "^13.0.0",

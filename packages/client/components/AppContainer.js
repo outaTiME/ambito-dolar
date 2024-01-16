@@ -1,5 +1,4 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import WidgetKit from '@calitb/react-native-widgetkit';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, useTheme } from '@react-navigation/native';
@@ -33,6 +32,7 @@ import * as actions from '../actions';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import useAppState from '../hooks/useAppState';
+import * as WidgetKit from '../modules/widgetkit';
 import AboutScreen from '../screens/AboutScreen';
 import AdvancedNotificationsScreen from '../screens/AdvancedNotificationsScreen';
 import AppearanceScreen from '../screens/AppearanceScreen';
@@ -641,11 +641,8 @@ const withRealtime = (Component) => (props) => {
       }, Settings.STILL_LOADING_TIMEOUT);
       return Helper.getRates(initial)
         .then((data) => {
-          batch(() => {
-            dispatch(actions.addRates(data));
-            dispatch(actions.registerApplicationDownloadRates());
-          });
-          return WidgetKit.standard.reloadAllTimelines();
+          // force reload of widgets
+          WidgetKit.reloadAllTimelines();
         })
         .catch(() => {
           setError(true);
