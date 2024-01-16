@@ -32,6 +32,7 @@ const WHOLESALER_TYPE = 'mayorista';
 const QATAR_TYPE = 'qatar';
 const LUXURY_TYPE = 'lujo';
 const CULTURAL_TYPE = 'cultural';
+const BNA_TYPE = 'bna';
 
 const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
@@ -191,6 +192,7 @@ const hasRatesFromToday = (rates = {}) =>
 
 const getAvailableRateTypes = () => [
   OFFICIAL_TYPE,
+  BNA_TYPE,
   INFORMAL_TYPE,
   TOURIST_TYPE,
   // QATAR_TYPE,
@@ -221,6 +223,8 @@ const getAvailableRates = (rates, check = false) => {
 const getRateTitle = (type) => {
   if (type === OFFICIAL_TYPE) {
     return 'Oficial';
+  } else if (type === BNA_TYPE) {
+    return 'BNA';
   } else if (type === INFORMAL_TYPE) {
     return 'Blue';
   } else if (type === TOURIST_TYPE) {
@@ -348,6 +352,7 @@ module.exports = {
   QATAR_TYPE,
   LUXURY_TYPE,
   CULTURAL_TYPE,
+  BNA_TYPE,
   NOTIFICATION_OPEN_TYPE,
   NOTIFICATION_CLOSE_TYPE,
   NOTIFICATION_VARIATION_TYPE,

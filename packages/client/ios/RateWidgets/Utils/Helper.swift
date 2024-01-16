@@ -11,6 +11,7 @@ struct Helper {
   static func getRateTypes() -> [RateType] {
     [
       RateType(identifier: "oficial", display: "Oficial"),
+      RateType(identifier: "bna", display: "BNA"),
       RateType(identifier: "informal", display: "Blue"),
       RateType(identifier: "turista", display: "Tarjeta"),
       // RateType(identifier: "qatar", display: "Qatar"),

@@ -333,6 +333,8 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
     [rateTypes],
   );
   const condensed = rows.length > 4;
+  const showFooter = rateTypes.length % LAYOUT_RATE_COLUMNS === 0;
+  const smallPadding = showFooter;
   const getItemView = React.useCallback(
     (type) => (
       <RateView
@@ -342,16 +344,19 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
           stats: rates[type].stats,
           large: true,
           condensed,
+          smallPadding,
         }}
       />
     ),
-    [rates, condensed],
+    [rates, condensed, smallPadding],
   );
   return (
     <SocialPortraitView {...{ condensed }}>
       <View
         style={{
-          margin: Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
+          marginVertical: Settings.CARD_PADDING,
+          marginHorizontal:
+            Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
           flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
@@ -379,7 +384,8 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
               {
                 color: Settings.getGrayColor(theme),
                 marginTop:
-                  Settings.SMALL_PADDING * (condensed === true ? 1 : 2),
+                  Settings.SMALL_PADDING *
+                  (condensed === true || smallPadding === true ? 1 : 2),
               },
             ]}
             numberOfLines={1}
@@ -433,12 +439,14 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
           </View>
         );
       })}
-      {rateTypes.length % LAYOUT_RATE_COLUMNS === 0 && (
+      {showFooter && (
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'flex-end',
-            margin: Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
+            marginVertical: Settings.CARD_PADDING,
+            marginHorizontal:
+              Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
             alignItems: 'center',
           }}
         >

@@ -253,7 +253,11 @@ export default {
       }, orderDirection);
     } else if (order === 'custom') {
       chain = chain.orderBy(([type]) => {
-        const index = rateTypes.indexOf(type);
+        // when not rateTypes leave to last (usually when a new rate is added)
+        const index =
+          rateTypes.indexOf(type) > -1
+            ? rateTypes.indexOf(type)
+            : rateTypes.length;
         return index;
       }, orderDirection);
     }

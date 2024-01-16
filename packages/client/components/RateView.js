@@ -69,6 +69,7 @@ const InlineRateDetailView = ({
   color,
   large,
   condensed,
+  smallPadding,
 }) => {
   const { theme, fonts } = Helper.useTheme();
   if (large) {
@@ -79,7 +80,9 @@ const InlineRateDetailView = ({
             {
               flexDirection: 'row',
               alignItems: 'center',
-              marginTop: Settings.SMALL_PADDING * (condensed === true ? 1 : 2),
+              marginTop:
+                Settings.SMALL_PADDING *
+                (condensed === true || smallPadding ? 1 : 2),
             },
           ]}
         >
@@ -114,7 +117,7 @@ const InlineRateDetailView = ({
             marginTop: Settings.SMALL_PADDING,
             marginLeft: -Settings.PADDING,
             marginRight: -Settings.PADDING,
-            marginBottom: -Settings.PADDING,
+            marginBottom: -(Settings.PADDING - Settings.SMALL_PADDING),
           }}
         >
           <MiniRateChartView {...{ stats, color, borderless: true }} />
@@ -178,6 +181,7 @@ export default ({
   highlight = true,
   condensed = false,
   shoudStretch = true,
+  smallPadding = false,
 }) => {
   const { theme } = Helper.useTheme();
   const [timestamp, value, change] = React.useMemo(
@@ -233,6 +237,7 @@ export default ({
             color,
             large,
             condensed,
+            smallPadding,
           }}
         />
       </>

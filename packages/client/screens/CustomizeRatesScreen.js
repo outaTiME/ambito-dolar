@@ -39,10 +39,15 @@ const CustomizeRatesScreen = ({
   const dispatch = useDispatch();
   const rateTypes = React.useMemo(
     () =>
-      _.intersection(
-        // use rates when nullish rate_types
-        rate_types ?? Object.keys(rates),
-        Object.keys(rates),
+      Object.keys(
+        // use the same rendering logic of the main screen
+        Helper.getSortedRates(
+          rates,
+          'custom',
+          undefined,
+          undefined,
+          rate_types,
+        ),
       ),
     [rates, rate_types],
   );

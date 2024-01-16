@@ -212,13 +212,20 @@ const getRates = (rates) =>
 const getBusinessDayRates = (rates, realtime) => {
   const promises = [
     // (for now) the following rates are updated on holidays or after closing time
+    getRate(AmbitoDolar.BNA_TYPE),
     // getRate(AmbitoDolar.INFORMAL_TYPE),
     getRate(AmbitoDolar.TOURIST_TYPE),
-    // getRate(AmbitoDolar.CCL_TYPE),
-    // getRate(AmbitoDolar.MEP_TYPE),
+    getRate(AmbitoDolar.CCL_TYPE),
+    getRate(AmbitoDolar.MEP_TYPE),
+    getRate(AmbitoDolar.CCB_TYPE),
   ];
+  // REVIEW: disabled (for now) for more frequent updates
+  realtime = false;
   if (realtime) {
+    // the following rates are frequently updated
     promises.push(
+      getRate(AmbitoDolar.BNA_TYPE),
+      getRate(AmbitoDolar.TOURIST_TYPE),
       getRate(AmbitoDolar.CCL_TYPE),
       getRate(AmbitoDolar.MEP_TYPE),
       getRate(AmbitoDolar.CCB_TYPE),
@@ -334,7 +341,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       close_day,
     }),
   );
-  // avoid fetch delays
+  // at this point to avoid fetch delays
   const in_time =
     AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
     0;
