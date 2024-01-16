@@ -3,7 +3,6 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import * as d3Array from 'd3-array';
 import * as Application from 'expo-application';
-import * as Localization from 'expo-localization';
 import * as MailComposer from 'expo-mail-composer';
 import * as Sharing from 'expo-sharing';
 import * as _ from 'lodash';
@@ -61,14 +60,6 @@ const getJson = (url, opts = {}) => {
       return data;
     }) */
 };
-
-// default delimiters are used for the web because the way to get them is not consistent
-if (Platform.OS !== 'web') {
-  AmbitoDolar.setDelimiters({
-    thousands: Localization.digitGroupingSeparator,
-    decimal: Localization.decimalSeparator,
-  });
-}
 
 const { decimal: DECIMAL_SEPARATOR } = AmbitoDolar.getDelimiters();
 

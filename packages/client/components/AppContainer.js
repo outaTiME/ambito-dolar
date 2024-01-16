@@ -8,6 +8,7 @@ import { compose } from '@reduxjs/toolkit';
 import { BlurView } from 'expo-blur';
 import * as Device from 'expo-device';
 import * as Linking from 'expo-linking';
+import * as Localization from 'expo-localization';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import * as StoreReview from 'expo-store-review';
@@ -946,6 +947,25 @@ const withPurchases = (Component) => (props) => {
   return <Component {...props} />;
 };
 
+const withLocalization = (Component) => (props) => {
+  const [{ digitGroupingSeparator, decimalSeparator }] =
+    Localization.useLocales();
+  const [reloadKey, setReloadKey] = React.useState();
+  React.useEffect(() => {
+    AmbitoDolar.setDelimiters({
+      thousands: digitGroupingSeparator,
+      decimal: decimalSeparator,
+    });
+    if (__DEV__) {
+      console.log('💫 Locale updated', AmbitoDolar.getDelimiters());
+    }
+    setReloadKey(Date.now());
+  }, [digitGroupingSeparator, decimalSeparator]);
+  if (reloadKey) {
+    return <Component key={reloadKey} {...props} />;
+  }
+};
+
 export default compose(
   withRates(),
   withRealtime,
@@ -953,5 +973,6 @@ export default compose(
   withAppStatistics,
   withUserActivity,
   withPurchases,
+  withLocalization,
   withContainer(true),
 )(AppContainer);
