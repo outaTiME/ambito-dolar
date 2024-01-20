@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.11.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.11.0...@ambito-dolar/client@6.11.1) (2024-01-20)
+
+### Bug Fixes
+
+- formatting issues with the decimal separator of the user locale ([e21eb99](https://github.com/outaTiME/ambito-dolar/commit/e21eb998136c74ac7ce260f3bce54e0b3438af5a))
+
 # [6.11.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.10.1...@ambito-dolar/client@6.11.0) (2024-01-16)
 
 ### Bug Fixes
