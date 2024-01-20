@@ -947,19 +947,24 @@ const withPurchases = (Component) => (props) => {
 };
 
 const withLocalization = (Component) => (props) => {
-  const [{ digitGroupingSeparator, decimalSeparator }] =
-    Localization.useLocales();
+  const [locale] = Localization.useLocales();
   const [reloadKey, setReloadKey] = React.useState();
   React.useEffect(() => {
-    AmbitoDolar.setDelimiters({
-      thousands: digitGroupingSeparator,
-      decimal: decimalSeparator,
-    });
-    if (__DEV__) {
-      console.log('💫 Locale updated', AmbitoDolar.getDelimiters());
+    if (locale) {
+      AmbitoDolar.setDelimiters({
+        thousands: locale.digitGroupingSeparator,
+        decimal: locale.decimalSeparator,
+      });
+      if (__DEV__) {
+        console.log('💫 User locale updated', AmbitoDolar.getDelimiters());
+      }
+      setReloadKey(Date.now());
+    } else {
+      if (__DEV__) {
+        console.warn('User locale not available');
+      }
     }
-    setReloadKey(Date.now());
-  }, [digitGroupingSeparator, decimalSeparator]);
+  }, [locale]);
   if (reloadKey) {
     return <Component key={reloadKey} {...props} />;
   }

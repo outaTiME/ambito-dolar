@@ -61,8 +61,6 @@ const getJson = (url, opts = {}) => {
     }) */
 };
 
-const { decimal: DECIMAL_SEPARATOR } = AmbitoDolar.getDelimiters();
-
 const FRACTION_DIGITS = AmbitoDolar.FRACTION_DIGITS;
 
 const formatNumber = AmbitoDolar.formatNumber;
@@ -75,18 +73,17 @@ const formatCurrency = AmbitoDolar.formatCurrency;
 
 // https://github.com/realadvisor/rifm/blob/master/pages/number-format/index.js#L39
 
-const numberAccept = new RegExp(`[\\d${DECIMAL_SEPARATOR}]+`, 'g');
-
-const parseNumber = (string) => (string.match(numberAccept) || []).join('');
-
 const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
   if (typeof value === 'number') {
     return formatNumber(value, maxDigits, false);
   }
-  const parsed = parseNumber(value);
-  let [head, tail] = parsed.split(DECIMAL_SEPARATOR);
-  // add 0 on head when value starts with DECIMAL_SEPARATOR
-  if (parsed.indexOf(DECIMAL_SEPARATOR) === 0) {
+  // handles delimiter updates due to system settings or initial boot
+  const { decimal: decimalSeparator } = AmbitoDolar.getDelimiters();
+  const numberAccept = new RegExp(`[\\d${decimalSeparator}]+`, 'g');
+  const parsed = (value.match(numberAccept) || []).join('');
+  let [head, tail] = parsed.split(decimalSeparator);
+  // add 0 on head when value starts with decimalSeparator
+  if (parsed.indexOf(decimalSeparator) === 0) {
     head = 0;
   }
   // avoid rounding errors at toLocaleString as when user enters 1.239 and maxDigits=2 we
@@ -97,8 +94,8 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
     return '';
   }
   const formatted = formatNumber(number, maxDigits, false);
-  if (parsed.includes(DECIMAL_SEPARATOR)) {
-    const [formattedHead] = formatted.split(DECIMAL_SEPARATOR);
+  if (parsed.includes(decimalSeparator)) {
+    const [formattedHead] = formatted.split(decimalSeparator);
     // skip zero at digits position for non fixed floats
     // as at digits 2 for non fixed floats numbers like 1.50 has no sense, just 1.5 allowed
     // but 1.0 has sense as otherwise you will not be able to enter 1.05 for example
@@ -106,7 +103,7 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
       scaledTail !== '' && scaledTail[maxDigits - 1] === '0'
         ? scaledTail.slice(0, -1)
         : scaledTail;
-    return `${formattedHead}${DECIMAL_SEPARATOR}${formattedTail}`;
+    return `${formattedHead}${decimalSeparator}${formattedTail}`;
   }
   return formatted;
 };
