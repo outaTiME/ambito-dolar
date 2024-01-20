@@ -1,5 +1,5 @@
-const version = '6.11.0';
-const buildNumber = 114;
+const version = '6.11.1';
+const buildNumber = 115;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -108,6 +108,7 @@ export default {
     supportsTablet: true,
     requireFullScreen: true,
     infoPlist: {
+      // CFBundleLocalizations: ['es-419'],
       CFBundleDevelopmentRegion: 'es-419',
       // https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html#//apple_ref/doc/uid/TP40009254-SW9
       'UISupportedInterfaceOrientations~iphone': [
