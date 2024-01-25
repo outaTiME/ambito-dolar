@@ -488,7 +488,7 @@ const AppContainer = ({
   }, []);
   // https://github.com/expo/expo/blob/main/packages/expo-linking/src/Linking.ts#L365
   React.useEffect(() => {
-    Linking.getInitialURL().then(onDeepLink);
+    Linking.getInitialURL().then(onDeepLink).catch(console.warn);
     const subscription = Linking.addEventListener('url', ({ url }) =>
       onDeepLink(url),
     );
