@@ -253,24 +253,17 @@ export default {
   },
   getAvailableRates(rates) {
     if (rates) {
-      return (
-        _.chain(rates)
+      return _.chain(rates)
+        .omit([
           // rates to exclude
-          /* .omit([
-          // AmbitoDolar.OFFICIAL_TYPE,
-          // AmbitoDolar.INFORMAL_TYPE,
-          // AmbitoDolar.TOURIST_TYPE,
-          AmbitoDolar.QATAR_TYPE,
-          AmbitoDolar.CCL_TYPE,
-          AmbitoDolar.MEP_TYPE,
-          AmbitoDolar.CCB_TYPE,
-          // AmbitoDolar.WHOLESALER_TYPE,
-        ]) */
-          .thru((rates) => AmbitoDolar.getAvailableRates(rates))
-          .pickBy(({ stats }) => stats?.length > 1)
-          // .thru((rates) => this.getSortedRates(rates, order, orderDirection))
-          .value()
-      );
+        ])
+        .thru((rates) => AmbitoDolar.getAvailableRates(rates))
+        .pickBy(({ stats }) => stats?.length > 1)
+        .mapValues(({ stats, ...rate }) => ({
+          ...rate,
+          stats: _.takeRight(stats, Settings.MAX_NUMBER_OF_STATS),
+        }))
+        .value();
     }
   },
   useRates(customized = false) {
