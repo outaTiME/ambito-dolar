@@ -1,4 +1,4 @@
-import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome6 } from '@expo/vector-icons';
 import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -26,7 +26,7 @@ export default function App() {
   const [assets] = useAssets([require('./assets/about-icon-borderless.png')]);
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
-    ...FontAwesome5.font,
+    ...FontAwesome6.font,
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
   });
   const constantsLoaded = Helper.useApplicationConstants(assets);

@@ -1,4 +1,4 @@
-import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 
 import Settings from '../config/settings';
@@ -8,23 +8,23 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
   const { theme } = Helper.useTheme();
   return (
     <>
-      <FontAwesome5
-        name="twitter"
+      <FontAwesome6
+        name="x-twitter"
         size={size}
         color={Settings.getGrayColor(theme)}
         style={{
           marginRight: Settings.PADDING,
         }}
       />
-      <FontAwesome5
-        name="telegram-plane"
+      <FontAwesome6
+        name="telegram"
         size={size}
         color={Settings.getGrayColor(theme)}
         style={{
           marginRight: Settings.PADDING,
         }}
       />
-      <FontAwesome5
+      <FontAwesome6
         name="instagram"
         size={size}
         color={Settings.getGrayColor(theme)}
@@ -32,7 +32,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
           marginRight: Settings.PADDING,
         }}
       />
-      <FontAwesome5
+      <FontAwesome6
         name="facebook"
         size={size}
         color={Settings.getGrayColor(theme)}
@@ -40,7 +40,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
           marginRight: Settings.PADDING,
         }}
       />
-      <FontAwesome5
+      <FontAwesome6
         name="reddit-alien"
         size={size}
         color={Settings.getGrayColor(theme)}
@@ -48,7 +48,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
           marginRight: Settings.PADDING,
         }}
       />
-      <FontAwesome5
+      <FontAwesome6
         name="mastodon"
         size={size}
         color={Settings.getGrayColor(theme)}
@@ -66,7 +66,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
           }}
         />
       )}
-      <FontAwesome5
+      <FontAwesome6
         name="github"
         size={size}
         color={Settings.getGrayColor(theme)}

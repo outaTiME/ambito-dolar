@@ -1,4 +1,4 @@
-import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { View, Text } from 'react-native';
 
@@ -8,7 +8,7 @@ import Helper from '../utilities/Helper';
 
 export default ({ title, iconName, iconColor, onAction, community }) => {
   const { theme, fonts } = Helper.useTheme();
-  const Icon = community === true ? MaterialCommunityIcons : FontAwesome5;
+  const Icon = community === true ? MaterialCommunityIcons : FontAwesome6;
   return (
     <CardItemView
       title={

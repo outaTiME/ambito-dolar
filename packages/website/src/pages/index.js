@@ -1,18 +1,16 @@
 import React from 'react';
 import { IconContext } from 'react-icons';
-// leave until available on @expo/vector-icons
-import { BiSolidSquareRounded as Bluesky } from 'react-icons/bi';
 import {
-  FaTwitter as Twitter,
-  FaTelegramPlane as Telegram,
+  FaXTwitter as Twitter,
+  FaTelegram as Telegram,
   FaInstagram as Insta,
   FaFacebook as Facebook,
   FaRedditAlien as Reddit,
   FaMastodon as Mastodon,
-  // FaSquare as Bluesky,
+  FaSquare as Bluesky,
   FaGithub as Github,
   FaEnvelope as Mail,
-} from 'react-icons/fa';
+} from 'react-icons/fa6';
 
 import AppStore from '../components/app-store';
 import Icon from '../components/icon';

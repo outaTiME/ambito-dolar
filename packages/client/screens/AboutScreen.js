@@ -189,12 +189,12 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
         <CardView plain>
           <IconCardItemView
             title="Twitter"
-            iconName="twitter"
+            iconName="x-twitter"
             onAction={onPressTwitter}
           />
           <IconCardItemView
             title="Telegram"
-            iconName="telegram-plane"
+            iconName="telegram"
             onAction={onPressTelegram}
           />
           <IconCardItemView

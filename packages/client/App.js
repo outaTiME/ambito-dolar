@@ -5,7 +5,7 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
   MaterialIcons,
   MaterialCommunityIcons,
-  FontAwesome5,
+  FontAwesome6,
 } from '@expo/vector-icons';
 import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
@@ -72,7 +72,7 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
     ...MaterialCommunityIcons.font,
-    ...FontAwesome5.font,
+    ...FontAwesome6.font,
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
     // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
