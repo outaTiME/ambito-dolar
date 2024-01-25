@@ -52,7 +52,7 @@ const i18n = new I18n({
     installation: 'Instalación',
     app_version: 'Versión',
     device: 'Dispositivo',
-    share_message: `Te recomiendo descargar %{appName}, es mi aplicación preferida para conocer las distintas cotizaciones del dólar en la Argentina. %{websiteUrl}`,
+    share_message: `Te recomiendo descargar %{appName}, es mi aplicación preferida para seguir de manera simple, elegante y efectiva el mercado cambiario en la Argentina. %{websiteUrl}`,
     opts_general: 'General',
     opts_general_note:
       'Las cotizaciones se actualizarán automáticamente durante la jornada cambiaria. Última actualización: %{lastUpdate}',
