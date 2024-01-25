@@ -12,8 +12,8 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^18.4.4",
-    "@commitlint/config-conventional": "^18.4.4",
+    "@commitlint/cli": "^18.5.0",
+    "@commitlint/config-conventional": "^18.5.0",
     "aws-cdk-lib": "2.110.1",
     "constructs": "10.3.0",
     "eslint": "^8.56.0",
@@ -21,7 +21,7 @@
     "husky": "^8.0.3",
     "lerna": "^8.0.2",
     "prettier": "^3.2.4",
-    "sst": "2.39.7"
+    "sst": "2.39.9"
   },
   "scripts": {
     "test": "lerna run test",
@@ -40,7 +40,7 @@
     "depcheck": "yarn workspaces foreach --verbose exec npx depcheck",
     "postinstall": "husky install"
   },
-  "packageManager": "yarn@3.6.4",
+  "packageManager": "yarn@4.0.2",
   "resolutions": {
     "babel-plugin-lodash/@babel/types": "~7.20.0",
     "react-native@0.72.6": "patch:react-native@npm%3A0.72.6#./.yarn/patches/react-native-npm-0.72.6-9d6fdd645f.patch"

@@ -144,9 +144,8 @@ PODS:
     - hermes-engine/Pre-built (= 0.72.6)
   - hermes-engine/Pre-built (0.72.6)
   - libevent (2.1.12)
-  - PurchasesHybridCommon (8.11.1):
-    - RevenueCat (= 4.32.0)
-    - RevenueCatUI (= 4.32.0)
+  - PurchasesHybridCommon (9.0.0):
+    - RevenueCat (= 4.32.1)
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -566,9 +565,7 @@ PODS:
     - React-jsi (= 0.72.6)
     - React-logger (= 0.72.6)
     - React-perflogger (= 0.72.6)
-  - RevenueCat (4.32.0)
-  - RevenueCatUI (4.32.0):
-    - RevenueCat (= 4.32.0)
+  - RevenueCat (4.32.1)
   - RNCAsyncStorage (1.21.0):
     - React-Core
   - RNFlashList (1.6.3):
@@ -576,8 +573,8 @@ PODS:
   - RNGestureHandler (2.14.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - RNPurchases (7.16.0):
-    - PurchasesHybridCommon (= 8.11.1)
+  - RNPurchases (7.17.0):
+    - PurchasesHybridCommon (= 9.0.0)
     - React-Core
   - RNQuickAction (0.3.13):
     - React
@@ -696,7 +693,6 @@ SPEC REPOS:
     - PurchasesHybridCommon
     - ReachabilitySwift
     - RevenueCat
-    - RevenueCatUI
     - Sentry
     - SentryPrivate
     - SocketRocket
@@ -917,7 +913,7 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 8057e75cfc1437b178ac86c8654b24e7fead7f60
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  PurchasesHybridCommon: db0f4063a1e77fd255318c4a2f05d26eff6f150a
+  PurchasesHybridCommon: 44769c31bccfba781672aedb5c6d5130fb1dac10
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: 28469809442eb4eb5528462705f7d852948c8a74
   RCTTypeSafety: e9c6c409fca2cc584e5b086862d562540cb38d29
@@ -955,12 +951,11 @@ SPEC CHECKSUMS:
   React-runtimescheduler: f23e337008403341177fc52ee4ca94e442c17ede
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
-  RevenueCat: 2d99a5ebabd33955c3a38dfdfa9d3efe77c5db0c
-  RevenueCatUI: fa6b619083afb967facc20ecdc7ae53a4c512d10
+  RevenueCat: 435a7e59f541d07bc904a5d9802bcdbc0978140d
   RNCAsyncStorage: 618d03a5f52fbccb3d7010076bc54712844c18ef
   RNFlashList: 4b4b6b093afc0df60ae08f9cbf6ccd4c836c667a
   RNGestureHandler: fe2be3be5598dc74329b211c58c9f2d231461769
-  RNPurchases: 1730c1765c65e32d4c33cd3262019a7fd1779cd0
+  RNPurchases: 851795fc4a14dfc2497ec4c76b02d1a054daf06d
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNReanimated: fdbaa9c964bbab7fac50c90862b6cc5f041679b9
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
