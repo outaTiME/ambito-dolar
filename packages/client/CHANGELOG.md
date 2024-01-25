@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.12.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.11.1...@ambito-dolar/client@6.12.0) (2024-01-25)
+
+### Bug Fixes
+
+- handle empty locale on certain iOS devices ([6b2667b](https://github.com/outaTiME/ambito-dolar/commit/6b2667b57883d5a6c2da1731e5e2f4db588072ce))
+- handle errors on the initial linking url ([25877e1](https://github.com/outaTiME/ambito-dolar/commit/25877e1eec73d6b68236c4b2755a02fac112273c))
+- header render issue on navigator ([cf50da8](https://github.com/outaTiME/ambito-dolar/commit/cf50da81ede99801c85308312706fb8be62fd9da))
+- limit the maximum number of stats to display ([3847ae0](https://github.com/outaTiME/ambito-dolar/commit/3847ae01a48dd95f552cf96ce566f323daf4c740))
+
+### Features
+
+- add new fa6 icon support ([dcdd9ce](https://github.com/outaTiME/ambito-dolar/commit/dcdd9ce933234f40addd6546553552ecea0d8556))
+
 ## [6.11.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.11.0...@ambito-dolar/client@6.11.1) (2024-01-20)
 
 ### Bug Fixes
