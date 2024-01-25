@@ -14,13 +14,7 @@ import * as StoreReview from 'expo-store-review';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import React from 'react';
-import {
-  StyleSheet,
-  Platform,
-  View,
-  DeviceEventEmitter,
-  Text,
-} from 'react-native';
+import { StyleSheet, Platform, View, DeviceEventEmitter } from 'react-native';
 import Purchases from 'react-native-purchases';
 import QuickActions from 'react-native-quick-actions';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
@@ -118,8 +112,7 @@ const useNavigatorScreenOptions = (modal = false) => {
     headerBackVisible: false,
     headerShadowVisible: false,
     headerTitleAlign: 'center',
-    // solve vertical center issues on iOS
-    headerTitle: ({ children }) => <Text style={fonts.title}>{children}</Text>,
+    headerTitleStyle: fonts.title,
     ...Platform.select({
       ios: {
         ...(!BLUR_EFFECT_ON_NAVIGATION_BARS
