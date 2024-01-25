@@ -940,7 +940,9 @@ const withPurchases = (Component) => (props) => {
 };
 
 const withLocalization = (Component) => (props) => {
-  const [locale] = Localization.useLocales();
+  const locales = Localization.useLocales();
+  // required for certain iOS devices where the locales are null
+  const locale = (locales ?? [])[0];
   const [reloadKey, setReloadKey] = React.useState();
   React.useEffect(() => {
     if (locale) {
