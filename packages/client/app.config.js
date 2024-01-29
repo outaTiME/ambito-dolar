@@ -146,6 +146,7 @@ export default {
     playStoreUrl:
       'https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar',
     permissions: [],
+    // permissions: ['com.google.android.gms.permission.AD_ID'],
     ...(process.env.GOOGLE_SERVICES_FILE && {
       googleServicesFile: process.env.GOOGLE_SERVICES_FILE,
     }),
