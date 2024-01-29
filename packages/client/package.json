@@ -88,7 +88,7 @@
     "victory-native": "36.8.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.7",
+    "@babel/core": "^7.23.9",
     "@expo/webpack-config": "^19.0.1"
   },
   "version": "6.12.0",
