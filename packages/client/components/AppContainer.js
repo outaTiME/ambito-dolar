@@ -781,7 +781,6 @@ Notifications.setNotificationHandler({
 
 const hasNotificationPermissions = (settings) => settings.granted === true;
 
-/// TODO: use https://github.com/cassiozen/useStateMachine for orchestration ???
 const withUserActivity = (Component) => (props) => {
   const {
     pushToken,
@@ -925,7 +924,10 @@ const withPurchases = (Component) => (props) => {
   React.useEffect(() => {
     const configure = async () => {
       __DEV__ && (await Purchases.setLogLevel(Purchases.LOG_LEVEL.VERBOSE));
-      Purchases.configure({ apiKey: Settings.REVENUECAT_API_KEY });
+      Purchases.configure({
+        apiKey: Settings.REVENUECAT_API_KEY,
+        appUserID: Settings.INSTALLATION_ID,
+      });
     };
     configure()
       .then(() => {
