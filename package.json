@@ -21,7 +21,7 @@
     "husky": "^9.0.7",
     "lerna": "^8.0.2",
     "prettier": "^3.2.4",
-    "sst": "2.40.0"
+    "sst": "2.40.1"
   },
   "scripts": {
     "test": "lerna run test",
@@ -40,7 +40,7 @@
     "depcheck": "yarn workspaces foreach --verbose exec npx depcheck",
     "postinstall": "husky"
   },
-  "packageManager": "yarn@4.0.2",
+  "packageManager": "yarn@4.1.0",
   "resolutions": {
     "babel-plugin-lodash/@babel/types": "~7.20.0",
     "react-native@0.72.6": "patch:react-native@npm%3A0.72.6#./.yarn/patches/react-native-npm-0.72.6-9d6fdd645f.patch"
