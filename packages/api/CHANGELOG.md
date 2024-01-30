@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.12.5](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.12.4...@ambito-dolar/api@3.12.5) (2024-01-30)
+
+### Bug Fixes
+
+- bump the threshold for rates variation notification ([18212b1](https://github.com/outaTiME/ambito-dolar/commit/18212b1af5097b18cecec3bb5b352102bea272a5))
+
 ## [3.12.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.12.3...@ambito-dolar/api@3.12.4) (2024-01-30)
 
 **Note:** Version bump only for package @ambito-dolar/api
