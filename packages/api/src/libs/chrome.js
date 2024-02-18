@@ -1,5 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import chromium from '@sparticuz/chromium';
+import prettyMilliseconds from 'pretty-ms';
 import puppeteer from 'puppeteer-core';
 import sharp from 'sharp';
 
@@ -78,13 +79,13 @@ export const generateScreenshot = async (url, opts) => {
       })
       .toBuffer(),
   ]);
-  const duration = (Date.now() - start_time) / 1000;
+  const duration = Date.now() - start_time;
   console.info(
     'Screenshot completed',
     JSON.stringify({
       url,
       target_url,
-      duration,
+      duration: prettyMilliseconds(duration),
     }),
   );
   return {

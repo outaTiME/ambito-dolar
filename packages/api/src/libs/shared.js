@@ -13,6 +13,7 @@ import { parallelScan } from '@shelf/dynamodb-parallel-scan';
 import { Expo } from 'expo-server-sdk';
 import { JWT } from 'google-auth-library';
 import * as _ from 'lodash';
+import prettyMilliseconds from 'pretty-ms';
 import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import zlib from 'zlib';
@@ -61,6 +62,7 @@ const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
 // 6.x
 const QUOTES_OBJECT_KEY = process.env.QUOTES_OBJECT_KEY;
 const HISTORICAL_QUOTES_OBJECT_KEY = 'historical-' + QUOTES_OBJECT_KEY;
+// const FULL_HISTORICAL_QUOTES_OBJECT_KEY = 'full-historical-' + QUOTES_OBJECT_KEY;
 
 const getFirebaseAccessToken = () => {
   // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
@@ -142,6 +144,7 @@ const isSemverLt = (v1, v2) => semverLt(v1, v2);
 
 const isSemverGte = (v1, v2) => semverGte(v1, v2);
 
+// FIXME: save the last notified rate and compare its variation
 const getVariationThreshold = (type, prev_rate, rate) => {
   const realtime_types = [
     AmbitoDolar.CCL_TYPE,
@@ -149,8 +152,8 @@ const getVariationThreshold = (type, prev_rate, rate) => {
     AmbitoDolar.CCB_TYPE,
   ];
   if (realtime_types.includes(type)) {
-    // flexible variation of 1.5% between updates
-    return ((prev_rate + rate) / 2) * 0.015;
+    // flexible variation of 1.25% between updates
+    return ((prev_rate + rate) / 2) * 0.0125;
     // return 2.75;
   }
   return 0.05;
@@ -335,6 +338,37 @@ const storeHistoricalRatesJsonObject = async (rates) => {
         // leave new rate without rate open and hash
         .concat(stats.map((stat) => _.take(stat, 3)));
     });
+    // full
+    /* const full_base_rates = await getJsonObject(
+      FULL_HISTORICAL_QUOTES_OBJECT_KEY,
+    ).catch((error) => {
+      if (error.code === 'NoSuchKey') {
+        return {};
+      }
+      // unhandled error
+      throw error;
+    });
+    Object.entries(base_rates || {}).forEach(([type, { stats }]) => {
+      const moment_from = AmbitoDolar.getTimezoneDate(
+        _.last(stats)[0],
+      );
+      const moment_to = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
+      // limit base_rates excluding stats
+      full_base_rates[type] = (full_base_rates[type] || [])
+        .filter(([timestamp]) => {
+          const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
+          const include = moment_timestamp.isBetween(
+            moment_from,
+            moment_to,
+            'day',
+            // moment_to exclusion
+            '[)',
+          );
+          return include;
+        })
+        // leave new rate without rate open and hash
+        .concat(stats.map((stat) => _.take(stat, 3)));
+    }); */
   }
   const legacy_rates = Object.entries(base_rates || {}).reduce(
     (obj, [type, rate]) => {
@@ -508,13 +542,13 @@ const publishMessageToTopic = (event, payload = {}) => {
   return snsClient
     .send(new PublishCommand(params))
     .then(({ MessageId: id }) => {
-      const duration = (Date.now() - start_time) / 1000;
+      const duration = Date.now() - start_time;
       console.info(
         'Message published to sns topic',
         JSON.stringify({
           id,
           event,
-          duration,
+          duration: prettyMilliseconds(duration),
         }),
       );
       return id;
@@ -545,14 +579,14 @@ const triggerFundingNotifyEvent = (payload) =>
 // IFTTT
 
 const triggerEvent = (event, payload) => {
-  const start_time = Date.now();
-  console.info(
+  // const start_time = Date.now();
+  /* console.info(
     'Triggering event',
     JSON.stringify({
       event,
       payload,
     }),
-  );
+  ); */
   return AmbitoDolar.fetch(
     `https://maker.ifttt.com/trigger/${event}/with/key/${process.env.IFTTT_KEY}`,
     {
@@ -564,17 +598,17 @@ const triggerEvent = (event, payload) => {
     },
   )
     .then(() => {
-      const duration = (Date.now() - start_time) / 1000;
-      console.info(
+      // const duration = Date.now() - start_time;
+      /* console.info(
         'Event triggered',
         JSON.stringify({
           event,
           duration,
         }),
-      );
+      ); */
       return {
         event,
-        duration,
+        // duration: prettyMilliseconds(duration),
       };
     })
     .catch((error) => {
@@ -639,17 +673,32 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
     })
     // remove falsey
     .compact()
-    .map(([target, promise]) =>
-      // ignore error and trace
-      promise.catch((error) => {
-        console.warn(
-          'Unable to trigger social',
-          JSON.stringify({
-            target,
-            error: error.message,
-          }),
-        );
-      }),
+    .map(
+      ([target, promise]) =>
+        new Promise((resolve) => {
+          const start_time = Date.now();
+          resolve(
+            promise
+              .then((/* response */) => {
+                const duration = Date.now() - start_time;
+                return {
+                  target,
+                  duration: prettyMilliseconds(duration),
+                  // response,
+                };
+              })
+              // ignore error and trace
+              .catch((error) => {
+                console.warn(
+                  'Unable to trigger social',
+                  JSON.stringify({
+                    target,
+                    error: error.message,
+                  }),
+                );
+              }),
+          );
+        }),
     )
     .value();
   // remove errors

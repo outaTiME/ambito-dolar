@@ -2,6 +2,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 import Joi from 'joi';
 import * as _ from 'lodash';
 import hash from 'object-hash';
+import prettyMilliseconds from 'pretty-ms';
 
 import Shared, { MAX_NUMBER_OF_STATS } from '../libs/shared';
 
@@ -52,12 +53,12 @@ const getRate = (type) => {
           type,
           rate: [identity, rate_last],
         };
-        const duration = (Date.now() - start_time) / 1000;
+        const duration = Date.now() - start_time;
         console.info(
           'Fetch rate completed',
           JSON.stringify({
             type,
-            duration,
+            duration: prettyMilliseconds(duration),
           }),
         );
         return result;
@@ -107,12 +108,12 @@ const getRate = (type) => {
           type: target_type,
           rate: [identity, value[type]],
         }));
-        const duration = (Date.now() - start_time) / 1000;
+        const duration = Date.now() - start_time;
         console.info(
           'Fetch crypto rates completed',
           JSON.stringify({
             rates,
-            duration,
+            duration: prettyMilliseconds(duration),
           }),
         );
         return result;

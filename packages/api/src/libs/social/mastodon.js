@@ -4,7 +4,7 @@ import { Blob } from 'node:buffer';
 // https://github.com/neet/masto.js/blob/main/examples/create-new-status-with-image.ts
 export const publish = async (caption, file) => {
   try {
-    const start_time = Date.now();
+    // const start_time = Date.now();
     const masto = await createRestAPIClient({
       url: process.env.MASTODON_URL,
       accessToken: process.env.MASTODON_ACCESS_TOKEN,
@@ -25,13 +25,13 @@ export const publish = async (caption, file) => {
         mediaIds: [attachment.id],
       }),
     });
-    const duration = (Date.now() - start_time) / 1000;
+    // const duration = Date.now() - start_time;
     return {
       status_id,
       ...(attachment && {
         media_id: attachment.id,
       }),
-      duration,
+      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(

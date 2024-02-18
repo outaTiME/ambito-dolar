@@ -2,7 +2,7 @@ import Reddit from 'reddit';
 
 export const publish = async (caption, image_url) => {
   try {
-    const start_time = Date.now();
+    // const start_time = Date.now();
     const reddit = new Reddit({
       username: process.env.REDDIT_USERNAME,
       password: process.env.REDDIT_PASSWORD,
@@ -22,11 +22,11 @@ export const publish = async (caption, image_url) => {
         url: image_url,
       }),
     });
-    const duration = (Date.now() - start_time) / 1000;
+    // const duration = Date.now() - start_time;
     return {
       id,
       url,
-      duration,
+      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(

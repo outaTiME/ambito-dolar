@@ -2,7 +2,7 @@ import { TwitterApi, EUploadMimeType } from 'twitter-api-v2';
 
 export const publish = async (caption, file) => {
   try {
-    const start_time = Date.now();
+    // const start_time = Date.now();
     const client = new TwitterApi({
       appKey: process.env.TWITTER_APP_KEY,
       appSecret: process.env.TWITTER_APP_SECRET,
@@ -30,13 +30,13 @@ export const publish = async (caption, file) => {
         },
       }),
     });
-    const duration = (Date.now() - start_time) / 1000;
+    // const duration = Date.now() - start_time;
     return {
       id,
       ...(media_id && {
         media_id,
       }),
-      duration,
+      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(

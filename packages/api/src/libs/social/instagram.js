@@ -30,7 +30,7 @@ export const publish = async (file, caption, story_file) => {
     const IG_SESSION_KEY = 'instagram-session';
     const IG_USERNAME = process.env.IG_USERNAME;
     const IG_PASSWORD = process.env.IG_PASSWORD;
-    const start_time = Date.now();
+    // const start_time = Date.now();
     const ig = new IgApiClient();
     ig.state.generateDevice(IG_USERNAME);
     const serialized_session = await Shared.getJsonObject(IG_SESSION_KEY).catch(
@@ -74,12 +74,12 @@ export const publish = async (file, caption, story_file) => {
         // link: 'https://cafecito.app/ambitodolar',
       });
     }
-    const duration = (Date.now() - start_time) / 1000;
+    // const duration = Date.now() - start_time;
     return {
       status,
       upload_id,
       media_id,
-      duration,
+      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(

@@ -2,7 +2,7 @@ import { BskyAgent, RichText } from '@atproto/api';
 
 export const publish = async (caption, file) => {
   try {
-    const start_time = Date.now();
+    // const start_time = Date.now();
     const agent = new BskyAgent({ service: 'https://bsky.social' });
     await agent.login({
       identifier: process.env.BSKY_USERNAME,
@@ -34,10 +34,10 @@ export const publish = async (caption, file) => {
       }),
     };
     const result = await agent.post(postRecord);
-    const duration = (Date.now() - start_time) / 1000;
+    // const duration = Date.now() - start_time;
     return {
       ...result,
-      duration,
+      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(
