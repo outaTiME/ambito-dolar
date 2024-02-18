@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.10.1...@ambito-dolar/website@1.11.0) (2024-02-18)
+
+### Features
+
+- add whatsapp social ([c80af25](https://github.com/outaTiME/ambito-dolar/commit/c80af259acde1e4147f019f3af0cb99ab3dd5655))
+
 ## [1.10.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.10.0...@ambito-dolar/website@1.10.1) (2024-01-29)
 
 **Note:** Version bump only for package @ambito-dolar/website
