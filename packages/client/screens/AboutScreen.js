@@ -35,6 +35,7 @@ const MASTODON_URI = 'mastodon.social/@AmbitoDolar';
 const MASTODON_DEEP_LINK = `mastodon://${MASTODON_URI}`;
 const MASTODON_WEB_URL = `https://${MASTODON_URI}`;
 const BLUESKY_WEB_URL = `https://bsky.app/profile/ambitodolar.bsky.social`;
+const WHATSAPP_WEB_URL = `https://whatsapp.com/channel/0029VaNvh4LGpLHUyd75cO1P`;
 const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
 const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
 const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
@@ -107,6 +108,9 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
   }, []);
   const onPressBluesky = React.useCallback(() => {
     Linking.openURL(BLUESKY_WEB_URL).catch(console.warn);
+  }, []);
+  const onPressWhatsapp = React.useCallback(() => {
+    Linking.openURL(WHATSAPP_WEB_URL).catch(console.warn);
   }, []);
   const onPressGithub = React.useCallback(() => {
     Linking.canOpenURL(GITHUB_DEEP_LINK)
@@ -225,6 +229,12 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
               community
             />
           )}
+          <IconCardItemView
+            title="WhatsApp"
+            iconName="whatsapp"
+            onAction={onPressWhatsapp}
+            community
+          />
           <IconCardItemView
             title="GitHub"
             iconName="github"

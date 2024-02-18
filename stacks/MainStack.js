@@ -4,8 +4,9 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { SubscriptionFilter } from 'aws-cdk-lib/aws-sns';
 import { Api, Function, StaticSite, Topic, Cron } from 'sst/constructs';
 
-export function MainStack({ stack }) {
+export function MainStack({ stack /*, app */ }) {
   const IS_PRODUCTION = stack.stage === 'prod';
+  // const IS_LOCAL = app.local === true;
   // existing resources
   const bucket = s3.Bucket.fromBucketName(
     stack,
@@ -33,10 +34,10 @@ export function MainStack({ stack }) {
   new Cron(stack, 'Process', {
     job: {
       function: {
-        handler: 'packages/api/src/jobs/process.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
+        handler: 'packages/api/src/jobs/process.handler',
         permissions: [topic],
       },
     },
@@ -48,10 +49,10 @@ export function MainStack({ stack }) {
   new Cron(stack, 'ProcessClose', {
     job: {
       function: {
-        handler: 'packages/api/src/jobs/process-close.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
+        handler: 'packages/api/src/jobs/process-close.handler',
         permissions: [topic],
       },
     },
@@ -63,10 +64,10 @@ export function MainStack({ stack }) {
   new Cron(stack, 'InvalidateReceipts', {
     job: {
       function: {
-        handler: 'packages/api/src/jobs/invalidate-receipts.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
+        handler: 'packages/api/src/jobs/invalidate-receipts.handler',
         permissions: [topic],
       },
     },
@@ -78,10 +79,10 @@ export function MainStack({ stack }) {
   new Cron(stack, 'FundingNotify', {
     job: {
       function: {
-        handler: 'packages/api/src/jobs/funding-notify.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
+        handler: 'packages/api/src/jobs/funding-notify.handler',
         permissions: [topic],
       },
     },
@@ -168,10 +169,10 @@ export function MainStack({ stack }) {
   topic.addSubscribers(stack, {
     process: {
       function: {
-        handler: 'packages/api/src/subscribers/process.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
+        handler: 'packages/api/src/subscribers/process.handler',
         // ~30s
         timeout: '1 minute',
       },
@@ -203,10 +204,10 @@ export function MainStack({ stack }) {
     },
     notify: {
       function: {
-        handler: 'packages/api/src/subscribers/notify.handler',
         environment: {
           SNS_TOPIC: topic.topicArn,
         },
+        handler: 'packages/api/src/subscribers/notify.handler',
         // ~2m
         timeout: '4 minutes',
       },
@@ -222,18 +223,26 @@ export function MainStack({ stack }) {
     },
     socialNotify: {
       function: {
-        handler: 'packages/api/src/subscribers/social-notify.handler',
-        nodejs: {
-          esbuild: {
-            external: ['@sparticuz/chromium', 'sharp'],
-          },
-        },
         environment: {
           SOCIAL_SCREENSHOT_URL: screenshotSite.url,
         },
-        layers: [process.env.CHROME_LAYER_ARN, process.env.SHARP_LAYER_ARN],
-        // ~60s
-        timeout: '2 minutes',
+        handler: 'packages/api/src/subscribers/social-notify.handler',
+        layers: [
+          process.env.CHROME_LAYER_ARN,
+          process.env.SHARP_LAYER_ARN,
+          // process.env.WWEBJS_LAYER_ARN,
+        ],
+        nodejs: {
+          esbuild: {
+            external: [
+              '@sparticuz/chromium',
+              'sharp',
+              // 'whatsapp-web.js'
+            ],
+          },
+        },
+        // ~2m
+        timeout: '4 minutes',
       },
       cdk: {
         subscription: {
@@ -247,16 +256,16 @@ export function MainStack({ stack }) {
     },
     fundingNotify: {
       function: {
+        environment: {
+          SOCIAL_SCREENSHOT_URL: screenshotSite.url,
+        },
         handler: 'packages/api/src/subscribers/funding-notify.handler',
+        layers: [process.env.CHROME_LAYER_ARN, process.env.SHARP_LAYER_ARN],
         nodejs: {
           esbuild: {
             external: ['@sparticuz/chromium', 'sharp'],
           },
         },
-        environment: {
-          SOCIAL_SCREENSHOT_URL: screenshotSite.url,
-        },
-        layers: [process.env.CHROME_LAYER_ARN, process.env.SHARP_LAYER_ARN],
         // ~60s
         timeout: '2 minutes',
       },
@@ -304,6 +313,21 @@ export function MainStack({ stack }) {
       }),
     },
   });
+  /* const createWhatsAppSessionFn =
+    IS_LOCAL &&
+    new Function(stack, 'CreateWhatsAppSession', {
+      handler: 'packages/api/src/libs/social/whatsapp.handler',
+      layers: [process.env.CHROME_LAYER_ARN, process.env.WWEBJS_LAYER_ARN],
+      nodejs: {
+        esbuild: {
+          external: ['@sparticuz/chromium', 'whatsapp-web.js'],
+        },
+      },
+      permissions: [bucket],
+      // ~2m
+      timeout: '4 minutes',
+      url: true,
+    }); */
   // trace stack
   stack.addOutputs({
     ApiUrl: api.url,
@@ -316,5 +340,8 @@ export function MainStack({ stack }) {
     ...(legacyApi.cdk.domainName && {
       LegacyApiRegionalDomainName: legacyApi.cdk.domainName.regionalDomainName,
     }),
+    /* ...(createWhatsAppSessionFn && {
+      CreateWhatsAppSession: createWhatsAppSessionFn.url,
+    }), */
   });
 }

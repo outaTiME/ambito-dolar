@@ -45,6 +45,7 @@ const FloatingEmojis = ({
   setOnNewEmoji,
   size,
   wiggleFactor,
+  // FIXME: disable when android < 24
   disableMoneyMouthFace,
   ...props
 }) => {

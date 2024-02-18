@@ -43,6 +43,6 @@
   "packageManager": "yarn@4.1.0",
   "resolutions": {
     "babel-plugin-lodash/@babel/types": "~7.20.0",
-    "react-native@0.72.6": "patch:react-native@npm%3A0.72.6#./.yarn/patches/react-native-npm-0.72.6-9d6fdd645f.patch"
+    "fluent-ffmpeg@npm:2.1.2": "patch:fluent-ffmpeg@npm%3A2.1.2#~/.yarn/patches/fluent-ffmpeg-npm-2.1.2-692c218f68.patch"
   }
 }

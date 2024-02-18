@@ -8,6 +8,7 @@ import {
   FaRedditAlien as Reddit,
   FaMastodon as Mastodon,
   FaSquare as Bluesky,
+  FaWhatsapp as Whatsapp,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa6';
@@ -121,6 +122,14 @@ const IndexPage = () => {
                           <Bluesky />
                         </a>
                       )}
+                      <a
+                        className="icon"
+                        href="https://whatsapp.com/channel/0029VaNvh4LGpLHUyd75cO1P"
+                        target="_blank"
+                        rel="noopener noreferrer me"
+                      >
+                        <Whatsapp />
+                      </a>
                       <a
                         className="icon"
                         href="https://github.com/outaTiME/ambito-dolar"

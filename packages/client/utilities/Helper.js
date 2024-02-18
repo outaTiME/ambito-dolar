@@ -466,6 +466,7 @@ export default {
         return 56;
       }
       // https://github.com/react-navigation/react-navigation/issues/11655#issuecomment-1781782125
+      // https://github.com/react-navigation/react-navigation/commit/4c521b5c865f2c46d58abb2e9e7fd1b0d2074215
       if (headerHeight === 98) {
         return headerHeight - 0.33;
       }

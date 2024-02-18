@@ -42,6 +42,11 @@ export default {
         TWITTER_ACCESS_SECRET: process.env.TWITTER_ACCESS_SECRET,
         BSKY_USERNAME: process.env.BSKY_USERNAME,
         BSKY_PASSWORD: process.env.BSKY_PASSWORD,
+        WHATSAPP_CHANNEL_ID: process.env.WHATSAPP_CHANNEL_ID,
+        WHAPI_TOKEN: process.env.WHAPI_TOKEN,
+        // https://pptr.dev/api/puppeteer.configuration
+        // PUPPETEER_SKIP_DOWNLOAD: 'true',
+        STORE_DEBUG: 'true',
         // https://aws.amazon.com/es/blogs/compute/node-js-18-x-runtime-now-available-in-aws-lambda/
         // NODE_OPTIONS: '--no-experimental-fetch',
         // prevents experimental warnings from buffer.File

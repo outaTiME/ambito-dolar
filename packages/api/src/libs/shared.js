@@ -22,6 +22,7 @@ import { publish as publishToInstagram } from './social/instagram';
 import { publish as publishToMastodon } from './social/mastodon';
 import { publish as publishToReddit } from './social/reddit';
 // import { publish as publishToTwitter } from './social/twitter';
+import { publish as publishToWhatsapp } from './social/whatsapp';
 
 // defaults
 
@@ -47,7 +48,7 @@ export const MIN_CLIENT_VERSION_FOR_SAVING = '6.1.0';
 export const MIN_CLIENT_VERSION_FOR_QATAR = '6.4.0';
 export const MIN_CLIENT_VERSION_FOR_BNA = '6.11.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
-const S3_BUCKET = process.env.S3_BUCKET;
+export const S3_BUCKET = process.env.S3_BUCKET;
 // 2.1.x
 const RATE_STATS_OBJECT_KEY = process.env.RATE_STATS_OBJECT_KEY;
 // 3.x
@@ -116,6 +117,8 @@ const serviceResponse = (res, code, json) => {
 
 const getDynamoDBClient = () => ddbClient;
 
+const getS3Client = () => s3Client;
+
 /* const getAllDataFromDynamoDB = async (params, allData = []) => {
   const data = await ddbClient.send(new ScanCommand(params));
   return data.LastEvaluatedKey
@@ -178,16 +181,15 @@ const getJsonObject = (key, bucket = S3_BUCKET) => {
     Key: `${key}.json`,
   };
   // try {
-  return s3Client
-    .send(new GetObjectCommand(bucketParams))
-    .then(async (data) => {
-      const bodyContents = await streamToBuffer(data.Body);
-      const uncompressed = zlib.gunzipSync(bodyContents);
-      return JSON.parse(uncompressed);
-      /* const buffer = new Buffer.from(data.Body.toString());
+  const client = getS3Client();
+  return client.send(new GetObjectCommand(bucketParams)).then(async (data) => {
+    const bodyContents = await streamToBuffer(data.Body);
+    const uncompressed = zlib.gunzipSync(bodyContents);
+    return JSON.parse(uncompressed);
+    /* const buffer = new Buffer.from(data.Body.toString());
         const uncompressed = zlib.gunzipSync(buffer);
         return JSON.parse(uncompressed); */
-    });
+  });
   /* } catch (error) {
     // error.code === 'NoSuchKey'
     console.warn(
@@ -238,7 +240,8 @@ const storeJsonObject = (key, json, bucket = S3_BUCKET, is_public = false) => {
     // ContentEncoding: 'br',
     ContentEncoding: 'gzip',
   };
-  return s3Client.send(new PutObjectCommand(bucketParams));
+  const client = getS3Client();
+  return client.send(new PutObjectCommand(bucketParams));
   /* } catch (error) {
     console.warn(
       'Unable to store object in bucket',
@@ -598,6 +601,7 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
       'reddit',
       // 'twitter',
       'bsky',
+      'whatsapp',
     ],
   )
     .map((target) => {
@@ -622,6 +626,10 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
           break; */
         case 'bsky':
           promise = publishToBsky(caption, file);
+          break;
+        case 'whatsapp':
+          // promise = publishToWhatsapp(caption, url);
+          promise = publishToWhatsapp(caption, file);
           break;
       }
       if (promise) {
@@ -692,6 +700,7 @@ export default {
   updateFirebaseData,
   serviceResponse,
   getDynamoDBClient,
+  getS3Client,
   getAllDataFromDynamoDB,
   isSemverLt,
   isSemverGte,

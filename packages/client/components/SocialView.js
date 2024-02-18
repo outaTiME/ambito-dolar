@@ -67,6 +67,14 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         />
       )}
       <FontAwesome6
+        name="whatsapp"
+        size={size}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: Settings.PADDING,
+        }}
+      />
+      <FontAwesome6
         name="github"
         size={size}
         color={Settings.getGrayColor(theme)}
