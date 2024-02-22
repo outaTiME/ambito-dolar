@@ -152,8 +152,8 @@ const getVariationThreshold = (type, prev_rate, rate) => {
     AmbitoDolar.CCB_TYPE,
   ];
   if (realtime_types.includes(type)) {
-    // flexible variation of 1.25% between updates
-    return ((prev_rate + rate) / 2) * 0.0125;
+    // flexible variation of 2% between notifications
+    return ((prev_rate + rate) / 2) * 0.02;
     // return 2.75;
   }
   return 0.05;

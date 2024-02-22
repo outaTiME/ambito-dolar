@@ -166,20 +166,48 @@ const getNewRates = (rates, new_rates) =>
       // eslint-disable-next-line no-sparse-arrays
       const rate_last_max = AmbitoDolar.getRateValue([, rate_last]);
       // get close rate when first rate of day (open)
-      const rate_open = rate
+      const rate_close = rate
         ? AmbitoDolar.isRateFromToday(rate)
           ? rate[3]
           : AmbitoDolar.getRateValue(rate)
         : rate_last_max;
       // calculate from open / close rate and truncate
       const rate_change_percent = AmbitoDolar.getNumber(
-        (rate_last_max / rate_open - 1) * 100,
+        (rate_last_max / rate_close - 1) * 100,
       );
+      // always use last notified value
+      let notification_rate = rate?.[4] ?? rate_last_max;
+      // truncate decimals
+      const value_diff = AmbitoDolar.getNumber(
+        Math.abs(notification_rate - rate_last_max),
+      );
+      const rate_threshold = Shared.getVariationThreshold(
+        type,
+        notification_rate,
+        rate_last_max,
+      );
+      const should_notify = value_diff !== 0 && value_diff > rate_threshold;
+      console.info(
+        'Look for rate variation to notify',
+        JSON.stringify({
+          type,
+          prev: notification_rate,
+          curr: rate_last_max,
+          diff: value_diff,
+          threshold: rate_threshold,
+          should_notify,
+        }),
+      );
+      if (should_notify) {
+        // variation found
+        notification_rate = rate_last_max;
+      }
       const new_rate = [
         AmbitoDolar.getTimezoneDate().format(),
         rate_last,
         rate_change_percent,
-        rate_open,
+        rate_close,
+        notification_rate,
         rate_hash,
       ];
       obj[type] = new_rate;
@@ -278,32 +306,21 @@ const notify = (
       const variation_rates = Object.entries(new_rates).reduce(
         (obj, [type, rate]) => {
           const prev_rate = rates[type];
-          if (prev_rate) {
-            const prev_rate_last = AmbitoDolar.getRateValue(prev_rate);
-            const rate_last = AmbitoDolar.getRateValue(rate);
-            // truncate decimals
-            const value_diff = AmbitoDolar.getNumber(
-              Math.abs(prev_rate_last - rate_last),
-            );
-            const rate_threshold = Shared.getVariationThreshold(
+          // variation logic handled on getNewRates
+          const prev_notification_rate = prev_rate?.[4];
+          const notification_rate = rate[4];
+          const notify = prev_notification_rate !== notification_rate;
+          console.info(
+            'Notify variation on rate',
+            JSON.stringify({
               type,
-              prev_rate_last,
-              rate_last,
-            );
-            console.info(
-              'Looking for rate variation to notify',
-              JSON.stringify({
-                type,
-                diff: value_diff,
-                threshold: rate_threshold,
-              }),
-            );
-            if (value_diff !== 0 && value_diff > rate_threshold) {
-              // variation found
-              obj[type] = rate;
-            }
-          } else {
-            // ignore
+              prev: prev_notification_rate,
+              curr: notification_rate,
+              notify,
+            }),
+          );
+          if (notify) {
+            obj[type] = rate;
           }
           return obj;
         },
