@@ -4,9 +4,8 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { SubscriptionFilter } from 'aws-cdk-lib/aws-sns';
 import { Api, Function, StaticSite, Topic, Cron } from 'sst/constructs';
 
-export function MainStack({ stack /*, app */ }) {
+export function MainStack({ stack }) {
   const IS_PRODUCTION = stack.stage === 'prod';
-  // const IS_LOCAL = app.local === true;
   // existing resources
   const bucket = s3.Bucket.fromBucketName(
     stack,
@@ -227,22 +226,14 @@ export function MainStack({ stack /*, app */ }) {
           SOCIAL_SCREENSHOT_URL: screenshotSite.url,
         },
         handler: 'packages/api/src/subscribers/social-notify.handler',
-        layers: [
-          process.env.CHROME_LAYER_ARN,
-          process.env.SHARP_LAYER_ARN,
-          // process.env.WWEBJS_LAYER_ARN,
-        ],
+        layers: [process.env.CHROME_LAYER_ARN, process.env.SHARP_LAYER_ARN],
         nodejs: {
           esbuild: {
-            external: [
-              '@sparticuz/chromium',
-              'sharp',
-              // 'whatsapp-web.js'
-            ],
+            external: ['@sparticuz/chromium', 'sharp'],
           },
         },
-        // ~2m
-        timeout: '4 minutes',
+        // ~60s
+        timeout: '2 minutes',
       },
       cdk: {
         subscription: {
@@ -313,21 +304,6 @@ export function MainStack({ stack /*, app */ }) {
       }),
     },
   });
-  /* const createWhatsAppSessionFn =
-    IS_LOCAL &&
-    new Function(stack, 'CreateWhatsAppSession', {
-      handler: 'packages/api/src/libs/social/whatsapp.handler',
-      layers: [process.env.CHROME_LAYER_ARN, process.env.WWEBJS_LAYER_ARN],
-      nodejs: {
-        esbuild: {
-          external: ['@sparticuz/chromium', 'whatsapp-web.js'],
-        },
-      },
-      permissions: [bucket],
-      // ~2m
-      timeout: '4 minutes',
-      url: true,
-    }); */
   // trace stack
   stack.addOutputs({
     ApiUrl: api.url,
@@ -340,8 +316,5 @@ export function MainStack({ stack /*, app */ }) {
     ...(legacyApi.cdk.domainName && {
       LegacyApiRegionalDomainName: legacyApi.cdk.domainName.regionalDomainName,
     }),
-    /* ...(createWhatsAppSessionFn && {
-      CreateWhatsAppSession: createWhatsAppSessionFn.url,
-    }), */
   });
 }

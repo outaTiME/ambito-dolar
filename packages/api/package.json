@@ -24,12 +24,9 @@
     "object-hash": "^3.0.0",
     "pretty-ms": "^9.0.0",
     "puppeteer-core": "~21.9.0",
-    "qrcode-terminal": "^0.12.0",
     "reddit": "^1.2.1",
     "semver": "^7.6.0",
     "sharp": "^0.32.6",
-    "twitter-api-v2": "^1.16.0",
-    "whatsapp-web.js": "patch:whatsapp-web.js@https%3A//github.com/alechkos/whatsapp-web.js.git%23commit=bc250c7e99ec36f98865240413c5d50da8d512ae#~/.yarn/patches/whatsapp-web.js-https-a2405ef4ed.patch",
-    "wwebjs-aws-s3": "^1.0.2"
+    "twitter-api-v2": "^1.16.0"
   }
 }
