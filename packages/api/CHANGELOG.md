@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.14.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.13.0...@ambito-dolar/api@3.14.0) (2024-02-22)
+
+### Features
+
+- consitent delivery of notifications between rate changes ([711a135](https://github.com/outaTiME/ambito-dolar/commit/711a135907a4380787049b218185a934ddb1698c))
+
 # [3.13.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.12.5...@ambito-dolar/api@3.13.0) (2024-02-18)
 
 ### Features
