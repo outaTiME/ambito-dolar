@@ -175,7 +175,7 @@ const getNewRates = (rates, new_rates) =>
       const rate_change_percent = AmbitoDolar.getNumber(
         (rate_last_max / rate_close - 1) * 100,
       );
-      // always use last notified value
+      // handles variations between notifications regardless of the exchange rate day
       let notification_rate = rate?.[4] ?? rate_last_max;
       // truncate decimals
       const value_diff = AmbitoDolar.getNumber(

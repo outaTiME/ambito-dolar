@@ -144,7 +144,6 @@ const isSemverLt = (v1, v2) => semverLt(v1, v2);
 
 const isSemverGte = (v1, v2) => semverGte(v1, v2);
 
-// FIXME: save the last notified rate and compare its variation
 const getVariationThreshold = (type, prev_rate, rate) => {
   const realtime_types = [
     AmbitoDolar.CCL_TYPE,
@@ -154,7 +153,6 @@ const getVariationThreshold = (type, prev_rate, rate) => {
   if (realtime_types.includes(type)) {
     // flexible variation of 2% between notifications
     return ((prev_rate + rate) / 2) * 0.02;
-    // return 2.75;
   }
   return 0.05;
 };
