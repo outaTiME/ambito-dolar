@@ -1,6 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import * as _ from 'lodash';
+import prettyMilliseconds from 'pretty-ms';
 
 import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,
@@ -262,7 +263,7 @@ const sendPushNotifications = async (
           ),
         ).then((ticketChunks) => _.compact(ticketChunks.flat()))),
       );
-      const sending_duration = (Date.now() - expo_start_time) / 1000;
+      const duration = prettyMilliseconds(Date.now() - expo_start_time);
       console.info(
         'Messages sent',
         JSON.stringify({
@@ -271,7 +272,7 @@ const sendPushNotifications = async (
             failed: `${failedChunks.flat().length} (${failedChunks.length})`,
           }),
           tickets: tickets.length,
-          duration: sending_duration,
+          duration,
         }),
       );
       // save tickets to aws
@@ -285,7 +286,7 @@ const sendPushNotifications = async (
             type,
             rates,
             tickets: tickets.length,
-            duration: sending_duration,
+            duration,
           },
           _.isNil,
         ),
