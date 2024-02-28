@@ -1,6 +1,8 @@
 import * as Localization from 'expo-localization';
 import { I18n } from 'i18n-js';
 
+import Settings from './settings';
+
 const i18n = new I18n({
   es: {
     // general
@@ -25,7 +27,7 @@ const i18n = new I18n({
     generic_error: 'Imposible completar la operación seleccionada.',
     // rate detail
     detail: 'Detalle',
-    one_week: '1S',
+    one_week: `${Settings.MAX_NUMBER_OF_STATS}D`,
     one_month: '1M',
     three_months: '3M',
     six_months: '6M',

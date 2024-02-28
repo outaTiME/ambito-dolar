@@ -35,7 +35,7 @@ const DASH_SEPARATOR = '‒';
 const EM_DASH_SEPARATOR = '—';
 const MAX_DAYS_FOR_REVIEW = 5;
 // TODO: leave 6 days like "Ámbito Financiero" website?
-const MAX_NUMBER_OF_STATS = 7; // 1 week
+const MAX_NUMBER_OF_STATS = 6; // 1 week
 const STILL_LOADING_TIMEOUT = 10 * 1000; // 10 secs
 const ANIMATION_DURATION = 250;
 // half from longPress default
