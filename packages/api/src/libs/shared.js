@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 // import { StandardRetryStrategy } from '@aws-sdk/util-retry';
-import { CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations';
+import { captureConsoleIntegration } from '@sentry/integrations';
 import * as Sentry from '@sentry/serverless';
 import { parallelScan } from '@shelf/dynamodb-parallel-scan';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
@@ -743,7 +743,7 @@ const wrapHandler = (handler) => {
       // disable performance monitoring
       // tracesSampleRate: 1.0,
       integrations: [
-        new CaptureConsoleIntegration({
+        captureConsoleIntegration({
           levels: ['warn', 'error'],
         }),
       ],

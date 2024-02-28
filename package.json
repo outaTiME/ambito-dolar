@@ -12,8 +12,8 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^18.6.1",
-    "@commitlint/config-conventional": "^18.6.2",
+    "@commitlint/cli": "^19.0.3",
+    "@commitlint/config-conventional": "^19.0.3",
     "aws-cdk-lib": "2.124.0",
     "constructs": "10.3.0",
     "eslint": "^8.57.0",
@@ -40,8 +40,5 @@
     "depcheck": "yarn workspaces foreach --verbose exec npx depcheck",
     "postinstall": "husky"
   },
-  "packageManager": "yarn@4.1.0",
-  "resolutions": {
-    "babel-plugin-lodash/@babel/types": "~7.20.0"
-  }
+  "packageManager": "yarn@4.1.0"
 }
