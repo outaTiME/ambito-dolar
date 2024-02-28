@@ -1,4 +1,3 @@
-import { processFontFamily } from 'expo-font';
 import React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import Svg, { Defs, Pattern, Rect, Text as SvgText } from 'react-native-svg';
@@ -27,7 +26,7 @@ export default () => {
             // use height without font size
             y="80"
             // https://github.com/expo/expo/issues/1959#issuecomment-780198250
-            fontFamily={processFontFamily(Settings.getFontObject().fontFamily)}
+            fontFamily={Settings.getFontObject().fontFamily}
             // same as fonts.title
             fontSize="20"
             opacity="0.1"

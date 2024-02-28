@@ -97,17 +97,8 @@ export default ({
             ...(transparent !== true && {
               backgroundColor: Settings.getContentColor(theme, false, isModal),
             }),
-            // flexGrow: 1,
-            // TODO: flexGrow required when customization on CardItemView
-            ...Platform.select({
-              native: {
-                flexGrow: 1,
-              },
-              default: {
-                // required on web
-                flex: 1,
-              },
-            }),
+            // flexGrow required when customization on CardItemView
+            [Platform.OS === 'web' ? 'flex' : 'flexGrow']: 1,
             overflow: 'hidden',
           },
         ]}

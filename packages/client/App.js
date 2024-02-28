@@ -27,6 +27,7 @@ import Settings from './config/settings';
 import useColorScheme from './hooks/useColorScheme';
 import { store, persistor } from './store';
 import Helper from './utilities/Helper';
+import Sentry from './utilities/Sentry';
 
 Text.defaultProps = Text.defaultProps || {};
 // Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
@@ -67,7 +68,7 @@ const ThemedApp = () => {
   );
 };
 
-export default function App() {
+const App = () => {
   const [assets] = useAssets([require('./assets/about-icon-borderless.png')]);
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
@@ -105,4 +106,6 @@ export default function App() {
       </PersistGate>
     </Provider>
   );
-}
+};
+
+export default Sentry.wrap(App);

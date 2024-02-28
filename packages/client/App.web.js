@@ -9,6 +9,7 @@ import { ThemeProvider } from 'styled-components';
 
 import AppContainer from './components/AppContainer';
 import Helper from './utilities/Helper';
+import Sentry from './utilities/Sentry';
 
 SplashScreen.preventAutoHideAsync().catch(console.warn);
 
@@ -22,7 +23,7 @@ const ThemedApp = () => {
   );
 };
 
-export default function App() {
+const App = () => {
   const [assets] = useAssets([require('./assets/about-icon-borderless.png')]);
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
@@ -58,4 +59,6 @@ export default function App() {
       <ThemedApp />
     </GestureHandlerRootView>
   );
-}
+};
+
+export default Sentry.wrap(App);

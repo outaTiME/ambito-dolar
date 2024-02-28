@@ -7,5 +7,9 @@ module.exports = async function (env, argv) {
     ...config.resolve.alias,
     'victory-native': 'victory',
   };
+  config.resolve.fallback = {
+    ...config.resolve.fallback,
+    crypto: false,
+  };
   return config;
 };

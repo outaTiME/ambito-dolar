@@ -82,7 +82,15 @@ export default {
   assetBundlePatterns: ['**/*'],
   plugins: [
     'expo-localization',
-    Boolean(process.env.SENTRY_AUTH_TOKEN) && 'sentry-expo',
+    'expo-build-properties',
+    'expo-font',
+    Boolean(process.env.SENTRY_AUTH_TOKEN) && [
+      '@sentry/react-native/expo',
+      {
+        organization: 'ambito-dolar',
+        project: 'expo',
+      },
+    ],
     [
       '@config-plugins/react-native-quick-actions',
       [
@@ -153,18 +161,5 @@ export default {
     ...SHARED_SPLASH,
     allowBackup: false,
     softwareKeyboardLayoutMode: 'pan',
-  },
-  hooks: {
-    postPublish: [
-      {
-        file: 'sentry-expo/upload-sourcemaps',
-        config: {
-          organization: 'ambito-dolar',
-          project: 'expo',
-          // https://github.com/expo/sentry-expo/issues/256#issuecomment-1164017755
-          // authToken: false,
-        },
-      },
-    ],
   },
 };

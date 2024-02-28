@@ -1,7 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { useLayout } from '@react-native-community/hooks';
 import { compose } from '@reduxjs/toolkit';
-import { processFontFamily } from 'expo-font';
 import React from 'react';
 import { View, Text } from 'react-native';
 import AnimateableText from 'react-native-animateable-text';
@@ -156,7 +155,7 @@ const withAxisDimension = (Component) => (props) => {
           fontSize: AXIS_FONT_SIZE,
           opacity: 0,
           // https://github.com/expo/expo/issues/1959#issuecomment-780198250
-          fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
+          fontFamily: Settings.getFontObject().fontFamily,
         }}
         key={reloadKey}
       >
@@ -242,7 +241,7 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
         padding: 0,
         fill: Settings.getGrayColor(theme),
         // https://github.com/expo/expo/issues/1959#issuecomment-780198250
-        fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
+        fontFamily: Settings.getFontObject().fontFamily,
       },
     }),
     [theme],
@@ -272,7 +271,7 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
         padding: 0,
         fill: Settings.getGrayColor(theme),
         // https://github.com/expo/expo/issues/1959#issuecomment-780198250
-        fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
+        fontFamily: Settings.getFontObject().fontFamily,
       },
     }),
     [theme],
@@ -361,9 +360,7 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
               // fill: Settings.getStrokeColor(theme, true),
               fill: Settings.getStrokeColor(theme),
               // https://github.com/expo/expo/issues/1959#issuecomment-780198250
-              fontFamily: processFontFamily(
-                Settings.getFontObject().fontFamily,
-              ),
+              fontFamily: Settings.getFontObject().fontFamily,
             }}
           />
         </VictoryChart>

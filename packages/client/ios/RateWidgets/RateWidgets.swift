@@ -178,16 +178,7 @@ struct RateProvider: IntentTimelineProvider {
 }
 
 extension View {
-  func contentPadding() -> some View {
-    // TODO: enable when compile over XCode 15
-    /* if #unavailable(iOSApplicationExtension 17.0) {
-      return self.padding(16)
-    }
-    return self */
-    return self.padding(16)
-  }
-  // https://nemecek.be/blog/192/hotfixing-widgets-for-ios-17-containerbackground-padding
-  /* func widgetBackground(backgroundView: some View) -> some View {
+  func widgetBackground(backgroundView: some View = EmptyView()) -> some View {
     if #available(iOSApplicationExtension 17.0, *) {
       return containerBackground(for: .widget) {
         backgroundView
@@ -195,7 +186,7 @@ extension View {
     } else {
       return background(backgroundView)
     }
-  } */
+  }
 }
 
 struct RateWidgetEntryView : View {
@@ -231,6 +222,7 @@ struct RateWidgetEntryView : View {
             .padding(8)
           }
           .widgetURL(getWidgetUrl(id: rate.id))
+          .widgetBackground()
         } else {
           ZStack {
             AccessoryWidgetBackground()
@@ -243,6 +235,7 @@ struct RateWidgetEntryView : View {
             .padding(8)
           }
           .widgetURL(getWidgetUrl())
+          .widgetBackground()
         }
       }
     default:
@@ -274,9 +267,9 @@ struct RateWidgetEntryView : View {
           maxHeight: .infinity,
           alignment: .topLeading
         )
-        .contentPadding()
+        .padding(16)
         .widgetURL(getWidgetUrl(id: rate.id))
-        // .widgetBackground(backgroundView: Color.white)
+        .widgetBackground()
       } else {
         VStack {
           Text("Cotización no disponible")
@@ -288,24 +281,21 @@ struct RateWidgetEntryView : View {
           maxWidth: .infinity,
           maxHeight: .infinity
         )
-        .contentPadding()
+        .padding(16)
         .widgetURL(getWidgetUrl())
+        .widgetBackground()
       }
     }
   }
 }
 
-/* extension WidgetConfiguration {
+extension WidgetConfiguration {
   func contentMarginsDisabledIfAvailable() -> some WidgetConfiguration {
-    #if compiler(>=5.9) // Xcode 15
       if #available(iOSApplicationExtension 17.0, *) {
         return self.contentMarginsDisabled()
       } else {
         return self
       }
-    #else
-      return self
-    #endif
   }
   func disfavoredLocationsIfAvailable() -> some WidgetConfiguration {
     if #available(iOS 17, *) {
@@ -314,7 +304,7 @@ struct RateWidgetEntryView : View {
       return self
     }
   }
-} */
+}
 
 struct RateWidget: Widget {
   let kind: String = "RateWidget"
@@ -337,7 +327,7 @@ struct RateWidget: Widget {
     .configurationDisplayName("Cotizaciones")
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
     .supportedFamilies(supportedFamilies)
-    // .contentMarginsDisabledIfAvailable()
+    .contentMarginsDisabledIfAvailable()
     // .disfavoredLocationsIfAvailable()
   }
 }
@@ -431,8 +421,9 @@ struct ListRatesWidgetEntryView : View {
           maxHeight: .infinity,
           alignment: .topLeading
         )
-        .contentPadding()
+        .padding(16)
         .widgetURL(getWidgetUrl())
+        .widgetBackground()
       } else {
         VStack {
           Text("Cotizaciones no disponibles")
@@ -444,8 +435,9 @@ struct ListRatesWidgetEntryView : View {
           maxWidth: .infinity,
           maxHeight: .infinity
         )
-        .contentPadding()
+        .padding(16)
         .widgetURL(getWidgetUrl())
+        .widgetBackground()
       }
     }
   }
@@ -465,7 +457,7 @@ struct ListRatesWidget: Widget {
     .configurationDisplayName("Lista de cotizaciones")
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
     .supportedFamilies(supportedFamilies)
-    // .contentMarginsDisabledIfAvailable()
+    .contentMarginsDisabledIfAvailable()
     // .disfavoredLocationsIfAvailable()
   }
 }

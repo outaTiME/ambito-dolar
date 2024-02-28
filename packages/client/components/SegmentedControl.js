@@ -1,5 +1,4 @@
 import NativeSegmentedControl from '@react-native-segmented-control/segmented-control';
-import { processFontFamily } from 'expo-font';
 import React from 'react';
 import { View } from 'react-native';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
@@ -27,11 +26,11 @@ const DefaultSegmentedControl = ({
           enabled,
           appearance: theme,
           fontStyle: {
-            fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
+            fontFamily: Settings.getFontObject().fontFamily,
             fontSize: 15,
           },
           activeFontStyle: {
-            fontFamily: processFontFamily(Settings.getFontObject().fontFamily),
+            fontFamily: Settings.getFontObject().fontFamily,
             fontSize: 15,
           },
         }}
