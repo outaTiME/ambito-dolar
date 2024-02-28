@@ -6,7 +6,7 @@ import React, {
   useState,
   useRef,
 } from 'react';
-import { Animated, View, StyleSheet } from 'react-native';
+import { Animated, View, StyleSheet, Platform } from 'react-native';
 
 import FloatingEmoji from './FloatingEmoji';
 
@@ -56,6 +56,11 @@ const FloatingEmojis = ({
   const [floatingEmojis, setEmojis] = useState(EMPTY_ARRAY);
   const [startTimeout, stopTimeout] = useTimeout();
   const clearEmojis = useCallback(() => setEmojis(EMPTY_ARRAY), []);
+
+  // emoji not available on older android versions
+  if (Platform.OS === 'android' && Platform.Version < 24) {
+    disableMoneyMouthFace = true;
+  }
 
   // 🚧️ TODO: 🚧️
   // Clear emojis if page navigatorPosition falls below 0.93 (which we should call like `pageTransitionThreshold` or something)
