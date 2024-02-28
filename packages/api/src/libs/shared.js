@@ -10,8 +10,10 @@ import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations';
 import * as Sentry from '@sentry/serverless';
 import { parallelScan } from '@shelf/dynamodb-parallel-scan';
+import { NodeHttpHandler } from '@smithy/node-http-handler';
 import { Expo } from 'expo-server-sdk';
 import { JWT } from 'google-auth-library';
+import https from 'https';
 import * as _ from 'lodash';
 import prettyMilliseconds from 'pretty-ms';
 import semverGte from 'semver/functions/gte';
@@ -30,6 +32,15 @@ import { publish as publishToWhatsapp } from './social/whatsapp';
 const ddbClient = new DynamoDBClient({
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_util_retry.html#maxattempts
   // retryStrategy: new StandardRetryStrategy(5),
+  requestHandler: new NodeHttpHandler({
+    httpsAgent: new https.Agent({
+      // prevent warnings on parallelScan (half of the concurrency value)
+      maxSockets: 250,
+      // keepAlive: false,
+    }),
+    // connectionTimeout: 1000,
+    // socketTimeout: 2000,
+  }),
 });
 
 const s3Client = new S3Client({
