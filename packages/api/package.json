@@ -21,7 +21,7 @@
     "instagram-private-api": "^1.45.3",
     "joi": "^17.12.2",
     "lodash": "^4.17.21",
-    "masto": "^6.6.1",
+    "masto": "^6.6.2",
     "object-hash": "^3.0.0",
     "pretty-ms": "^9.0.0",
     "puppeteer-core": "~22.2.0",
