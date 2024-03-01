@@ -4,21 +4,23 @@ import { ScrollView } from 'react-native';
 
 import Helper from '../utilities/Helper';
 
-export default ({ children, ...props }) => {
+export default ({ children, handleContentChangeSize = false, ...props }) => {
   const indicatorStyle = Helper.useIndicatorStyle();
   const ref = React.useRef(null);
   useScrollToTop(ref);
   return (
     <ScrollView
-      indicatorStyle={indicatorStyle}
       ref={ref}
-      onContentSizeChange={() => {
-        // scroll to the top when the rate list change size
-        ref.current?.scrollTo({
-          y: 0,
-          animated: true,
-        });
-      }}
+      // scroll to the top when the rate list change size
+      {...(handleContentChangeSize === true && {
+        onContentSizeChange: () => {
+          ref.current?.scrollTo({
+            y: 0,
+            animated: true,
+          });
+        },
+      })}
+      indicatorStyle={indicatorStyle}
       {...props}
     >
       {children}

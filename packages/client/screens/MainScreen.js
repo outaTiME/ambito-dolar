@@ -128,6 +128,8 @@ export default compose(
   withContainer(),
   withDividersOverlay,
   withRates(true),
-  // withScreenshotShareSheet('Compartir cotizaciones')
-  withScreenshotShareSheet([I18n.t('edit')]),
+  withScreenshotShareSheet({
+    actions: [I18n.t('edit')],
+    handleContentChangeSize: true,
+  }),
 )(MainScreen);

@@ -232,6 +232,7 @@ const ConversionScreen = ({
         }}
         // contentInsetAdjustmentBehavior="automatic"
         onScrollBeginDrag={dismissKeyboard}
+        handleContentChangeSize
       >
         <ContentView
           style={{ flex: 1 }}

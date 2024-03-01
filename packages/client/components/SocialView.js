@@ -4,7 +4,11 @@ import React from 'react';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
+export default ({
+  // same size as "fonts.body" of FundingView
+  size = Settings.SOCIAL_ICON_SIZE,
+  extraSpace = false,
+}) => {
   const { theme } = Helper.useTheme();
   return (
     <>
@@ -13,7 +17,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         size={size}
         color={Settings.getGrayColor(theme)}
         style={{
-          marginRight: Settings.PADDING,
+          marginRight: size,
         }}
       />
       <FontAwesome6
@@ -21,7 +25,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         size={size}
         color={Settings.getGrayColor(theme)}
         style={{
-          marginRight: Settings.PADDING,
+          marginRight: size,
         }}
       />
       <FontAwesome6
@@ -29,7 +33,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         size={size}
         color={Settings.getGrayColor(theme)}
         style={{
-          marginRight: Settings.PADDING,
+          marginRight: size,
         }}
       />
       <FontAwesome6
@@ -37,7 +41,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         size={size}
         color={Settings.getGrayColor(theme)}
         style={{
-          marginRight: Settings.PADDING,
+          marginRight: size,
         }}
       />
       <FontAwesome6
@@ -45,7 +49,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         size={size}
         color={Settings.getGrayColor(theme)}
         style={{
-          marginRight: Settings.PADDING,
+          marginRight: size,
         }}
       />
       <FontAwesome6
@@ -53,7 +57,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         size={size}
         color={Settings.getGrayColor(theme)}
         style={{
-          marginRight: Settings.PADDING,
+          marginRight: size,
         }}
       />
       {false && (
@@ -62,7 +66,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
           size={size}
           color={Settings.getGrayColor(theme)}
           style={{
-            marginRight: Settings.PADDING,
+            marginRight: size,
           }}
         />
       )}
@@ -71,7 +75,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         size={size}
         color={Settings.getGrayColor(theme)}
         style={{
-          marginRight: Settings.PADDING,
+          marginRight: size,
         }}
       />
       <FontAwesome6
@@ -80,7 +84,7 @@ export default ({ size = Settings.SOCIAL_ICON_SIZE, extraSpace = false }) => {
         color={Settings.getGrayColor(theme)}
         style={{
           ...(extraSpace === true && {
-            marginRight: Settings.PADDING,
+            marginRight: size,
           }),
         }}
       />

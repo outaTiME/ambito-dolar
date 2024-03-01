@@ -242,6 +242,5 @@ export default compose(
   withContainer(),
   withDividersOverlay,
   withRates(),
-  // withScreenshotShareSheet('Compartir cotización')
   withScreenshotShareSheet(),
 )(RateDetailScreen);
