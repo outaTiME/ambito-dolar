@@ -159,8 +159,8 @@ PODS:
     - hermes-engine/Pre-built (= 0.73.4)
   - hermes-engine/Pre-built (0.73.4)
   - libevent (2.1.12)
-  - PurchasesHybridCommon (9.7.2):
-    - RevenueCat (= 4.36.3)
+  - PurchasesHybridCommon (9.8.0):
+    - RevenueCat (= 4.37.0)
   - RCT-Folly (2022.05.16.00):
     - boost
     - DoubleConversion
@@ -1208,8 +1208,8 @@ PODS:
     - React-jsi (= 0.73.4)
     - React-logger (= 0.73.4)
     - React-perflogger (= 0.73.4)
-  - RevenueCat (4.36.3)
-  - RNCAsyncStorage (1.22.2):
+  - RevenueCat (4.37.0)
+  - RNCAsyncStorage (1.22.3):
     - React-Core
   - RNFlashList (1.6.3):
     - React-Core
@@ -1217,8 +1217,8 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNPurchases (7.21.1):
-    - PurchasesHybridCommon (= 9.7.2)
+  - RNPurchases (7.22.0):
+    - PurchasesHybridCommon (= 9.8.0)
     - React-Core
   - RNQuickAction (0.3.13):
     - React
@@ -1591,7 +1591,7 @@ SPEC CHECKSUMS:
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
   hermes-engine: b2669ce35fc4ac14f523b307aff8896799829fe2
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  PurchasesHybridCommon: 9250db8073ad8ad7e84e4544c1f7b8ef6cd969af
+  PurchasesHybridCommon: 42fe7946cc2828b1d54b1c80068d6042e4d3d5d1
   RCT-Folly: 7169b2b1c44399c76a47b5deaaba715eeeb476c0
   RCTRequired: ab7f915c15569f04a49669e573e6e319a53f9faa
   RCTTypeSafety: 63b97ced7b766865057e7154db0e81ce4ee6cf1e
@@ -1638,11 +1638,11 @@ SPEC CHECKSUMS:
   React-runtimescheduler: ed48e5faac6751e66ee1261c4bd01643b436f112
   React-utils: 6e5ad394416482ae21831050928ae27348f83487
   ReactCommon: 840a955d37b7f3358554d819446bffcf624b2522
-  RevenueCat: 7be0d7bde9efb2fc1ebd1888522c55bb4f9feb18
-  RNCAsyncStorage: 014a78b2cc8cc107c9e92ee428dc0c1ac3223416
+  RevenueCat: b4fb058d7ced6a37327f6bc9636752dbc4a7235b
+  RNCAsyncStorage: 10591b9e0a91eaffee14e69b3721009759235125
   RNFlashList: 4b4b6b093afc0df60ae08f9cbf6ccd4c836c667a
   RNGestureHandler: deda62b8339496ba721a45e0f3e2d7a319932cee
-  RNPurchases: 06957eb2f35bd7bb336d32fccf3534d45a3fda8a
+  RNPurchases: 4b84474dff0b41e0a212003576627928b2b948ef
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNReanimated: beb07f7f900543928467da8107c175d1e57a1049
   RNScreens: b582cb834dc4133307562e930e8fa914b8c04ef2
