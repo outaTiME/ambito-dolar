@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.14.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.14.1...@ambito-dolar/api@3.14.2) (2024-03-01)
+
+### Bug Fixes
+
+- avoid dynamodb parallel scan warnings ([32f1471](https://github.com/outaTiME/ambito-dolar/commit/32f147118aea3ad68ce500b57d6e5f0909d3591c))
+
 ## [3.14.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.14.0...@ambito-dolar/api@3.14.1) (2024-02-25)
 
 **Note:** Version bump only for package @ambito-dolar/api

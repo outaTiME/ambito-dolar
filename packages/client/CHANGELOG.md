@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.13.0...@ambito-dolar/client@7.0.0) (2024-03-01)
+
+### Bug Fixes
+
+- better handling of scroll to the top when customize the rate list ([d7eb219](https://github.com/outaTiME/ambito-dolar/commit/d7eb21903a1e5b967979730885d9349e1d155ca0))
+- disable money mouth face emoji on android < 24 ([2f42565](https://github.com/outaTiME/ambito-dolar/commit/2f42565d972247aaa973393413c2e9abb5cc2ed6))
+- scroll to the top when the rate list change size ([3cda4d9](https://github.com/outaTiME/ambito-dolar/commit/3cda4d9f22aa590b8d38f0ec76fd11c8ae5c0bb1))
+
+- feat!: update to Expo 50 ([77abdf8](https://github.com/outaTiME/ambito-dolar/commit/77abdf8f863ef5de14345617448ec812f8498056))
+
+### Features
+
+- restrict rates to last 6 days ([31d089f](https://github.com/outaTiME/ambito-dolar/commit/31d089f88098ec3d35437a4a87312d380451e909))
+
+### BREAKING CHANGES
+
+- update to react-native version 0.73.x
+
 # [6.13.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.12.1...@ambito-dolar/client@6.13.0) (2024-02-18)
 
 ### Features
