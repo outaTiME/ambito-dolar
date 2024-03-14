@@ -104,6 +104,7 @@ export default {
     ],
     // https://www.aronberezkin.com/posts/a-step-by-step-guide-to-writing-your-first-expo-config-plugin
     './plugins/withAndroidSplashScreen.js',
+    './plugins/withAndroidManifest.js',
   ].filter(Boolean),
   splash: LIGHT_SPLASH,
   ios: {
