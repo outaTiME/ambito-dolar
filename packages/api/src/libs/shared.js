@@ -714,6 +714,7 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
   return Promise.all(promises).then(_.compact);
 };
 
+// be careful, telegram no longer previews these image urls
 const storeImgurFile = (image) =>
   // AmbitoDolar.fetch('https://api.imgur.com/3/image', {
   AmbitoDolar.fetch('https://api.imgur.com/3/upload', {
@@ -729,6 +730,24 @@ const storeImgurFile = (image) =>
   }).then(async (response) => {
     const { data } = await response.json();
     return data.link;
+  });
+
+const storeImgbbFile = (image) =>
+  AmbitoDolar.fetch('https://api.imgbb.com/1/upload', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+    },
+    body: new URLSearchParams({
+      key: process.env.IMGBB_KEY,
+      image,
+    }),
+  }).then(async (response) => {
+    if (response.ok) {
+      const { data } = await response.json();
+      return data.url;
+    }
+    throw Error(response.statusText);
   });
 
 const fetchImage = (url) =>
@@ -784,6 +803,7 @@ export default {
   triggerSendSocialNotificationsEvent,
   triggerSocials,
   storeImgurFile,
+  storeImgbbFile,
   fetchImage,
   wrapHandler,
 };

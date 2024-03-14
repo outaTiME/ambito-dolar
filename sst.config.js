@@ -19,6 +19,7 @@ export default {
         QUOTES_OBJECT_KEY: process.env.QUOTES_OBJECT_KEY,
         IFTTT_KEY: process.env.IFTTT_KEY,
         IMGUR_CLIENT_ID: process.env.IMGUR_CLIENT_ID,
+        IMGBB_KEY: process.env.IMGBB_KEY,
         IG_USERNAME: process.env.IG_USERNAME,
         IG_PASSWORD: process.env.IG_PASSWORD,
         RATE_URL: process.env.RATE_URL,
