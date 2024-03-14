@@ -1,5 +1,5 @@
-const version = '7.0.0';
-const buildNumber = 122;
+const version = '7.1.0';
+const buildNumber = 124;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
