@@ -111,10 +111,10 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
           // price = formatRateCurrency(num: rateValue as! Double)
         } else {
           /* var arr = [String]()
-           for item in rateValue as! NSArray {
-           arr.append(formatRateCurrency(num: item as! Double))
-           }
-           price = arr.joined(separator: "–") */
+          for item in rateValue as! NSArray {
+            arr.append(formatRateCurrency(num: item as! Double))
+          }
+          price = arr.joined(separator: "–") */
           var arr = [Double]()
           for item in rateValue as! NSArray {
             arr.append(item as! Double)
@@ -178,7 +178,10 @@ struct RateProvider: IntentTimelineProvider {
 }
 
 extension View {
-  func widgetBackground(backgroundView: some View = EmptyView()) -> some View {
+  // func widgetBackground(backgroundView: some View = EmptyView()) -> some View {
+  // func widgetBackground(backgroundView: some View = Color("WidgetBackground")) -> some View {
+  func widgetBackground(backgroundView: some View = Color.black) -> some View {
+  // func widgetBackground(backgroundView: some View = LinearGradient(gradient: Gradient(colors: [Color(red: 25/255, green: 25/255, blue: 25/255), Color(red: 13/255, green: 13/255, blue: 13/255)]), startPoint: .top, endPoint: .bottom)) -> some View {
     if #available(iOSApplicationExtension 17.0, *) {
       return containerBackground(for: .widget) {
         backgroundView
@@ -192,7 +195,8 @@ extension View {
 struct RateWidgetEntryView : View {
   @Environment(\.widgetFamily) var widgetFamily
   let entry: RateProvider.Entry
-  let fontName = "FiraGO"
+  // postscript name
+  let fontName = "FiraGO-Regular"
   // https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
   let fgColor = Color(UIColor.label)
   let fgSecondaryColor = Color(UIColor.secondaryLabel)
@@ -206,7 +210,7 @@ struct RateWidgetEntryView : View {
             AccessoryWidgetBackground()
             VStack {
               Text(rate.name)
-                .font(.custom(fontName, size: 10))
+                .font(.custom(fontName, size: 11))
                 .lineLimit(1)
               Text(rate.price)
                 .font(.custom(fontName, size: 20))
@@ -215,7 +219,7 @@ struct RateWidgetEntryView : View {
                 .widgetAccentable()
               if rate.plainChange != nil {
                 Text((rate.plainChange)!)
-                  .font(.custom(fontName, size: 10))
+                  .font(.custom(fontName, size: 11))
                   .lineLimit(1)
               }
             }
@@ -258,7 +262,7 @@ struct RateWidgetEntryView : View {
             .lineLimit(1)
           Spacer().frame(height: 8)
           Text(rate.date)
-            .font(.custom(fontName, size: 10))
+            .font(.custom(fontName, size: 11))
             .foregroundColor(fgSecondaryColor)
             .lineLimit(1)
         }
@@ -291,11 +295,11 @@ struct RateWidgetEntryView : View {
 
 extension WidgetConfiguration {
   func contentMarginsDisabledIfAvailable() -> some WidgetConfiguration {
-      if #available(iOSApplicationExtension 17.0, *) {
-        return self.contentMarginsDisabled()
-      } else {
-        return self
-      }
+    if #available(iOSApplicationExtension 17.0, *) {
+      return self.contentMarginsDisabled()
+    } else {
+      return self
+    }
   }
   func disfavoredLocationsIfAvailable() -> some WidgetConfiguration {
     if #available(iOS 17, *) {
@@ -323,6 +327,7 @@ struct RateWidget: Widget {
   var body: some WidgetConfiguration {
     IntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateProvider()) { entry in
       RateWidgetEntryView(entry: entry)
+        .environment(\.colorScheme, .dark)
     }
     .configurationDisplayName("Cotizaciones")
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
@@ -357,7 +362,8 @@ struct ListRatesProvider: IntentTimelineProvider {
 struct ListRatesWidgetEntryView : View {
   @Environment(\.widgetFamily) var widgetFamily
   let entry: ListRatesProvider.Entry
-  let fontName = "FiraGO"
+  // postscript name
+  let fontName = "FiraGO-Regular"
   // https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
   let fgColor = Color(UIColor.label)
   let fgSecondaryColor = Color(UIColor.secondaryLabel)
@@ -375,19 +381,19 @@ struct ListRatesWidgetEntryView : View {
                 .lineLimit(1)
               Spacer()
               Text(rate.price)
-                .font(.custom(fontName, size: 14))
+                .font(.custom(fontName, size: 16))
                 .foregroundColor(fgColor)
                 .lineLimit(1)
             }
             HStack {
               Text(rate.date)
-                .font(.custom(fontName, size: 10))
+                .font(.custom(fontName, size: 11))
                 .foregroundColor(fgSecondaryColor)
                 .lineLimit(1)
               Spacer()
               if rate.change != nil {
                 Text(rate.change!)
-                  .font(.custom(fontName, size: 10))
+                  .font(.custom(fontName, size: 11))
                   .foregroundColor(rate.changeColor)
                   .lineLimit(1)
               }
@@ -403,12 +409,12 @@ struct ListRatesWidgetEntryView : View {
                   Spacer()
                   // Divider().padding(.trailing, -16)
                   // Spacer()
-                  Text("")
-                    .font(.custom(fontName, size: 14))
+                  Text(" ")
+                    .font(.custom(fontName, size: 16))
                     .foregroundColor(fgColor)
                     .lineLimit(1)
-                  Text("")
-                    .font(.custom(fontName, size: 10))
+                  Text(" ")
+                    .font(.custom(fontName, size: 11))
                     .foregroundColor(fgSecondaryColor)
                     .lineLimit(1)
                 }
@@ -453,6 +459,7 @@ struct ListRatesWidget: Widget {
   var body: some WidgetConfiguration {
     IntentConfiguration(kind: kind, intent: SelectRateTypesIntent.self, provider: ListRatesProvider()) { entry in
       ListRatesWidgetEntryView(entry: entry)
+        .environment(\.colorScheme, .dark)
     }
     .configurationDisplayName("Lista de cotizaciones")
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
