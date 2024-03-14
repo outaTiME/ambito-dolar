@@ -59,6 +59,8 @@
     <key>NSAppTransportSecurity</key>
     <dict>
       <key>NSAllowsArbitraryLoads</key>
+      <false/>
+      <key>NSAllowsLocalNetworking</key>
       <true/>
       <key>NSExceptionDomains</key>
       <dict>
@@ -77,12 +79,12 @@
     <key>UIApplicationShortcutItems</key>
     <array>
       <dict>
-        <key>UIApplicationShortcutItemIconType</key>
-        <string>UIApplicationShortcutIconTypeCompose</string>
         <key>UIApplicationShortcutItemTitle</key>
         <string>Conversor</string>
         <key>UIApplicationShortcutItemType</key>
         <string>Conversion</string>
+        <key>UIApplicationShortcutItemIconType</key>
+        <string>UIApplicationShortcutIconTypeCompose</string>
       </dict>
     </array>
     <key>UILaunchStoryboardName</key>

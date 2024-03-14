@@ -1,21 +1,23 @@
-'use strict';
-exports.__esModule = true;
-const config_plugins_1 = require('@expo/config-plugins');
-const withAndroidSplashScreen = function (expoConfig) {
-  return config_plugins_1.withStringsXml(expoConfig, function (modConfig) {
-    modConfig.modResults = config_plugins_1.AndroidConfig.Strings.setStringItem(
-      [
-        {
-          _: 'true',
-          $: {
-            name: 'expo_splash_screen_status_bar_translucent',
-            translatable: 'false',
+const { withStringsXml, AndroidConfig } = require('@expo/config-plugins');
+
+module.exports = function (appConfig) {
+  return withStringsXml(appConfig, function (decoratedAppConfig) {
+    try {
+      decoratedAppConfig.modResults = AndroidConfig.Strings.setStringItem(
+        [
+          {
+            $: {
+              name: 'expo_splash_screen_status_bar_translucent',
+              translatable: 'false',
+            },
+            _: 'true',
           },
-        },
-      ],
-      modConfig.modResults,
-    );
-    return modConfig;
+        ],
+        decoratedAppConfig.modResults,
+      );
+    } catch (e) {
+      console.error('withAndroidSplashScreen failed', e);
+    }
+    return decoratedAppConfig;
   });
 };
-exports['default'] = withAndroidSplashScreen;

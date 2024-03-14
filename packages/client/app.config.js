@@ -92,15 +92,16 @@ export default {
       },
     ],
     [
-      '@config-plugins/react-native-quick-actions',
-      [
-        {
-          title: 'Conversor',
-          type: 'Conversion',
-          // iconType: 'UIApplicationShortcutIconTypeSearch',
-          iconType: 'UIApplicationShortcutIconTypeCompose',
-        },
-      ],
+      'expo-quick-actions',
+      {
+        iosActions: [
+          {
+            id: 'Conversion',
+            title: 'Conversor',
+            icon: 'compose',
+          },
+        ],
+      },
     ],
     // https://www.aronberezkin.com/posts/a-step-by-step-guide-to-writing-your-first-expo-config-plugin
     './plugins/withAndroidSplashScreen.js',

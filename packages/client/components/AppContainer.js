@@ -9,14 +9,14 @@ import * as Device from 'expo-device';
 import * as Linking from 'expo-linking';
 import * as Localization from 'expo-localization';
 import * as Notifications from 'expo-notifications';
+import { useQuickAction } from 'expo-quick-actions/hooks';
 import * as SplashScreen from 'expo-splash-screen';
 import * as StoreReview from 'expo-store-review';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import React from 'react';
-import { StyleSheet, Platform, View, DeviceEventEmitter } from 'react-native';
+import { StyleSheet, Platform, View } from 'react-native';
 import Purchases from 'react-native-purchases';
-import QuickActions from 'react-native-quick-actions';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 import { MaterialHeaderButtons, Item } from './HeaderButtons';
@@ -386,13 +386,6 @@ const ModalsStackScreen = () => {
   );
 };
 
-let initialQuickAction;
-// https://github.com/jordanbyron/react-native-quick-actions#listening-for-quick-actions
-Settings.IS_PRODUCTION &&
-  QuickActions.popInitialAction()
-    .then((data) => (initialQuickAction = data))
-    .catch(console.warn);
-
 const RootStack = createNativeStackNavigator();
 const AppContainer = ({
   rates,
@@ -440,11 +433,12 @@ const AppContainer = ({
     }
   }, [lastNotificationResponse]);
   // QUICK ACTIONS
-  const onQuickAction = React.useCallback((data) => {
+  const quickAction = useQuickAction();
+  React.useEffect(() => {
     if (__DEV__) {
-      console.log('🎯 Quick action received', data);
+      console.log('🎯 Quick action received', quickAction);
     }
-    const type = data?.type;
+    const type = quickAction?.id;
     if (type) {
       Amplitude.track('Quick action', { type });
       navigationRef.navigate(`${type}Tab`, {
@@ -454,18 +448,7 @@ const AppContainer = ({
         },
       });
     }
-  }, []);
-  React.useEffect(() => {
-    // handle cold launch
-    initialQuickAction && onQuickAction(initialQuickAction);
-    const subscription = DeviceEventEmitter.addListener(
-      'quickActionShortcut',
-      onQuickAction,
-    );
-    return () => {
-      subscription.remove();
-    };
-  }, []);
+  }, [quickAction]);
   // DEEP LINK
   const onDeepLink = React.useCallback((url) => {
     if (url) {
