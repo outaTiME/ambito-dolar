@@ -55,6 +55,9 @@ export const handler = Shared.wrapHandler(async (event) => {
         'Unable to generate the screenshot for notification',
         JSON.stringify({ type, title, error: error.message }),
       );
+      if (generate_only === true) {
+        return {};
+      }
       // send as plain
     }
   }
