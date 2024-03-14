@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.15.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.14.2...@ambito-dolar/api@3.15.0) (2024-03-14)
+
+### Bug Fixes
+
+- avoid to send social notifications in case of errors under generation mode ([f80eb88](https://github.com/outaTiME/ambito-dolar/commit/f80eb88a5bc525cc15244ad2e007e34e2b0c632c))
+
+### Features
+
+- update image storage provider due to preview errors on telegram ([1a5d512](https://github.com/outaTiME/ambito-dolar/commit/1a5d5124c6e667e56f58ee71e90d4d9dacb90391))
+
 ## [3.14.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.14.1...@ambito-dolar/api@3.14.2) (2024-03-01)
 
 ### Bug Fixes

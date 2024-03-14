@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.0.0...@ambito-dolar/client@7.1.0) (2024-03-14)
+
+### Features
+
+- enable large heap on android ([fc9bca4](https://github.com/outaTiME/ambito-dolar/commit/fc9bca4621ca876b8294e6f27016791988538bae))
+- pure black widgets for high readability and contrast ([7e9d9f9](https://github.com/outaTiME/ambito-dolar/commit/7e9d9f99ee9e0f0899b3c7d22f61f09adea91f93))
+
 # [7.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@6.13.0...@ambito-dolar/client@7.0.0) (2024-03-01)
 
 ### Bug Fixes
