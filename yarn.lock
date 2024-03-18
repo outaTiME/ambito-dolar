@@ -123,7 +123,7 @@ __metadata:
     react-native: "npm:0.73.5"
     react-native-animateable-text: "npm:^0.11.1"
     react-native-collapsible: "npm:^1.6.1"
-    react-native-draggable-flatlist: outaTiME/react-native-draggable-flatlist
+    react-native-draggable-flatlist: "https://gitpkg.vercel.app/api/pkg.tgz?url=outaTiME/react-native-draggable-flatlist&commit=main"
     react-native-gesture-handler: "npm:^2.15.0"
     react-native-purchases: "npm:^7.23.0"
     react-native-reanimated: "npm:~3.8.0"
@@ -26587,16 +26587,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-react-native-draggable-flatlist@outaTiME/react-native-draggable-flatlist:
+"react-native-draggable-flatlist@https://gitpkg.vercel.app/api/pkg.tgz?url=outaTiME/react-native-draggable-flatlist&commit=main":
   version: 4.0.1
-  resolution: "react-native-draggable-flatlist@https://github.com/outaTiME/react-native-draggable-flatlist.git#commit=2f6f1968b0027988641bba47afddb26f0db0e408"
+  resolution: "react-native-draggable-flatlist@https://gitpkg.vercel.app/api/pkg.tgz?url=outaTiME/react-native-draggable-flatlist&commit=main"
   dependencies:
     "@babel/preset-typescript": "npm:^7.17.12"
   peerDependencies:
     react-native: ">=0.64.0"
     react-native-gesture-handler: ">=2.0.0"
     react-native-reanimated: ">=2.8.0"
-  checksum: 10/273cb73cb4feba49d07cc7cfdabc71ce37893e525adce43e003c27de1ea3b33ccb495db16e4b647195eff4e2d0ec75c091002bd76d1e96ec0f3f91a0f18e1b96
+  checksum: 10/b4ce1f6abb77f16501c68c3257a84f96cad7ae908ccd1e2a072e7042e2e9a2565f3409be888ff5401678f4a6a5516dd44a423c92881d749213df27e5c25a2216
   languageName: node
   linkType: hard
 
