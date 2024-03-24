@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.1.0...@ambito-dolar/client@7.1.1) (2024-03-24)
+
+**Note:** Version bump only for package @ambito-dolar/client
+
 # [7.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.0.0...@ambito-dolar/client@7.1.0) (2024-03-14)
 
 ### Features
