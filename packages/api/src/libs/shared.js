@@ -714,7 +714,6 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
   return Promise.all(promises).then(_.compact);
 };
 
-// be careful, telegram no longer previews these image urls
 const storeImgurFile = (image) =>
   // AmbitoDolar.fetch('https://api.imgur.com/3/image', {
   AmbitoDolar.fetch('https://api.imgur.com/3/upload', {

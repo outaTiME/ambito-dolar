@@ -57,8 +57,8 @@ export const generateScreenshot = async (url, opts) => {
   // parellelize image processing
   const [target_url, ig_sharp_file, ig_sharp_story_file] = await Promise.all([
     // image hosting service
-    // Shared.storeImgurFile(sharp_file.toString('base64')),
-    Shared.storeImgbbFile(sharp_file.toString('base64')),
+    Shared.storeImgurFile(sharp_file.toString('base64')),
+    // Shared.storeImgbbFile(sharp_file.toString('base64')),
     // ig feed image
     sharp(sharp_file)
       // jpeg format required by instagram-private-api
