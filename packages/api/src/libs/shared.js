@@ -73,7 +73,8 @@ const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
 // 6.x
 const QUOTES_OBJECT_KEY = process.env.QUOTES_OBJECT_KEY;
 const HISTORICAL_QUOTES_OBJECT_KEY = 'historical-' + QUOTES_OBJECT_KEY;
-// const FULL_HISTORICAL_QUOTES_OBJECT_KEY = 'full-historical-' + QUOTES_OBJECT_KEY;
+const FULL_HISTORICAL_QUOTES_OBJECT_KEY =
+  'full-historical-' + QUOTES_OBJECT_KEY;
 
 const getFirebaseAccessToken = () => {
   // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
@@ -203,7 +204,7 @@ const getJsonObject = (key, bucket = S3_BUCKET) => {
         return JSON.parse(uncompressed); */
   });
   /* } catch (error) {
-    // error.code === 'NoSuchKey'
+    // error.name === 'NoSuchKey'
     console.warn(
       'Unable to get object from bucket',
       JSON.stringify({ bucket, key, error: error.message })
@@ -317,9 +318,9 @@ const storeHistoricalRatesJsonObject = async (rates) => {
   // when rates comes from storeRatesJsonObject
   if (rates?.rates) {
     // merge
-    base_rates = await getJsonObject(HISTORICAL_QUOTES_OBJECT_KEY).catch(
+    base_rates = await getJsonObject(FULL_HISTORICAL_QUOTES_OBJECT_KEY).catch(
       (error) => {
-        if (error.code === 'NoSuchKey') {
+        if (error.name === 'NoSuchKey') {
           return {};
         }
         // unhandled error
@@ -327,59 +328,33 @@ const storeHistoricalRatesJsonObject = async (rates) => {
       },
     );
     Object.entries(rates.rates || {}).forEach(([type, { stats }]) => {
-      const moment_from = AmbitoDolar.getTimezoneDate(
-        _.last(stats)[0],
-      ).subtract(1, 'year');
-      const moment_to = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
-      // limit base_rates excluding stats
+      const moment_from = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
       base_rates[type] = (base_rates[type] || [])
+        // leave rates not present on base_rates
         .filter(([timestamp]) => {
           const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
-          const include = moment_timestamp.isBetween(
-            moment_from,
-            moment_to,
-            'day',
-            // moment_to exclusion
-            '[)',
-          );
+          const include = moment_timestamp.isBefore(moment_from, 'day');
           return include;
         })
         // leave new rate without rate open and hash
         .concat(stats.map((stat) => _.take(stat, 3)));
     });
-    // full
-    /* const full_base_rates = await getJsonObject(
-      FULL_HISTORICAL_QUOTES_OBJECT_KEY,
-    ).catch((error) => {
-      if (error.code === 'NoSuchKey') {
-        return {};
-      }
-      // unhandled error
-      throw error;
-    });
-    Object.entries(base_rates || {}).forEach(([type, { stats }]) => {
-      const moment_from = AmbitoDolar.getTimezoneDate(
-        _.last(stats)[0],
-      );
-      const moment_to = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
-      // limit base_rates excluding stats
-      full_base_rates[type] = (full_base_rates[type] || [])
-        .filter(([timestamp]) => {
-          const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
-          const include = moment_timestamp.isBetween(
-            moment_from,
-            moment_to,
-            'day',
-            // moment_to exclusion
-            '[)',
-          );
-          return include;
-        })
-        // leave new rate without rate open and hash
-        .concat(stats.map((stat) => _.take(stat, 3)));
-    }); */
   }
-  const legacy_rates = Object.entries(base_rates || {}).reduce(
+  const base_year_rates = {};
+  Object.entries(base_rates || {}).forEach(([type, stats]) => {
+    const moment_from = AmbitoDolar.getTimezoneDate(_.last(stats)[0]).subtract(
+      1,
+      'year',
+    );
+    base_year_rates[type] = (base_rates[type] || [])
+      // leave rates from last year
+      .filter(([timestamp]) => {
+        const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
+        const include = moment_timestamp.isSameOrAfter(moment_from, 'day');
+        return include;
+      });
+  });
+  const legacy_rates = Object.entries(base_year_rates || {}).reduce(
     (obj, [type, rate]) => {
       // ignore
       if (
@@ -402,10 +377,11 @@ const storeHistoricalRatesJsonObject = async (rates) => {
     {},
   );
   return Promise.all([
+    storePublicJsonObject(FULL_HISTORICAL_QUOTES_OBJECT_KEY, base_rates),
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
     storePublicJsonObject(
       HISTORICAL_RATES_OBJECT_KEY,
-      _.omit(base_rates, [
+      _.omit(base_year_rates, [
         AmbitoDolar.CCB_TYPE,
         AmbitoDolar.SAVING_TYPE,
         AmbitoDolar.QATAR_TYPE,
@@ -414,7 +390,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
         AmbitoDolar.BNA_TYPE,
       ]),
     ),
-    storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_rates),
+    storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_year_rates),
   ]);
 };
 

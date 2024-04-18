@@ -364,7 +364,7 @@ export const handler = Shared.wrapHandler(async (event) => {
     AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
     0;
   const base_rates = await Shared.getRatesJsonObject().catch((error) => {
-    if (error.code === 'NoSuchKey') {
+    if (error.name === 'NoSuchKey') {
       return {};
     }
     // unhandled error
