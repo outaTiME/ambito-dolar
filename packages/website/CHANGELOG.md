@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.11.2...@ambito-dolar/website@1.11.3) (2024-04-21)
+
+**Note:** Version bump only for package @ambito-dolar/website
+
 ## [1.11.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.11.1...@ambito-dolar/website@1.11.2) (2024-03-14)
 
 **Note:** Version bump only for package @ambito-dolar/website

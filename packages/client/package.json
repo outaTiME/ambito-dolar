@@ -88,7 +88,7 @@
     "@babel/core": "^7.24.4",
     "@expo/webpack-config": "^19.0.1"
   },
-  "version": "7.1.1",
+  "version": "7.1.2",
   "installConfig": {
     "hoistingLimits": "workspaces"
   },

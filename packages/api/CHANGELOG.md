@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.15.1...@ambito-dolar/api@3.16.0) (2024-04-21)
+
+### Features
+
+- full rate history save by default ([cd8f674](https://github.com/outaTiME/ambito-dolar/commit/cd8f674a6be2b97d9bd8324a36f89e38e25e7d57))
+- image storage provider rollback to imgur ([0328f0d](https://github.com/outaTiME/ambito-dolar/commit/0328f0df827eeaa352ee804c79a80ea9ce3735bd))
+
 ## [3.15.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.15.0...@ambito-dolar/api@3.15.1) (2024-03-24)
 
 **Note:** Version bump only for package @ambito-dolar/api
