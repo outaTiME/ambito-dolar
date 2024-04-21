@@ -75,7 +75,6 @@ __metadata:
     "@amplitude/analytics-react-native": "npm:^1.4.7"
     "@babel/core": "npm:^7.24.4"
     "@expo/react-native-action-sheet": "npm:^4.0.1"
-    "@expo/vector-icons": "npm:^14.0.0"
     "@expo/webpack-config": "npm:^19.0.1"
     "@react-native-async-storage/async-storage": "npm:1.23.1"
     "@react-native-community/hooks": "npm:^3.0.0"
@@ -11319,7 +11318,7 @@ __metadata:
     aws-cdk-lib: "npm:2.132.1"
     constructs: "npm:10.3.0"
     eslint: "npm:^8.57.0"
-    eslint-config-universe: "npm:12.0.1"
+    eslint-config-universe: "npm:12.1.0"
     husky: "npm:^9.0.11"
     lerna: "npm:^8.1.2"
     prettier: "npm:^3.2.5"
@@ -16423,9 +16422,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-universe@npm:12.0.1":
-  version: 12.0.1
-  resolution: "eslint-config-universe@npm:12.0.1"
+"eslint-config-universe@npm:12.1.0":
+  version: 12.1.0
+  resolution: "eslint-config-universe@npm:12.1.0"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^6.0.0"
     "@typescript-eslint/parser": "npm:^6.0.0"
@@ -16441,7 +16440,7 @@ __metadata:
   peerDependenciesMeta:
     prettier:
       optional: true
-  checksum: 10/845442be784547a97d401bc3a707a539fec2909c2edbbc297d022058385a45ebc9af67f638d39c628ca6fa6e480e0c8ad1e4f8c4c1e2234e9a23d7b266984a24
+  checksum: 10/6e3679c026658169e3666ea38ead2ea0cae92862aa2c39ce3d95c4ae1152c3abd0263c8271dd5e2bf118343430ce023d1a776578c4b6457b4a5fa558bfbac29d
   languageName: node
   linkType: hard
 

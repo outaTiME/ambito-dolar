@@ -13,7 +13,6 @@
     "@ambito-dolar/core": "^3.8.4",
     "@amplitude/analytics-react-native": "^1.4.7",
     "@expo/react-native-action-sheet": "^4.0.1",
-    "@expo/vector-icons": "^14.0.0",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/hooks": "^3.0.0",
     "@react-native-segmented-control/segmented-control": "2.5.2",
@@ -96,7 +95,6 @@
   "expo": {
     "install": {
       "exclude": [
-        "@expo/vector-icons",
         "@react-native-async-storage/async-storage",
         "@react-native-segmented-control/segmented-control",
         "@sentry/react-native",
