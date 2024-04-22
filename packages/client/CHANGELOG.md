@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.1.2...@ambito-dolar/client@7.1.3) (2024-04-22)
+
+### Bug Fixes
+
+- use selected theme instead of the regular one for blur view on iOS ([c21eb58](https://github.com/outaTiME/ambito-dolar/commit/c21eb580a5906bb2b53dbb92454b0b73cdf30e75))
+
 ## [7.1.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.1.1...@ambito-dolar/client@7.1.2) (2024-04-21)
 
 **Note:** Version bump only for package @ambito-dolar/client
