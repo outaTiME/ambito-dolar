@@ -134,8 +134,8 @@ const withAxisDimension = (Component) => (props) => {
       layout: { width, height },
     },
   }) => {
-    const axis_y_width = Helper.roundToEven(width);
-    const axis_font_height = Helper.roundToEven(height);
+    const axis_y_width = Helper.roundToNearestEven(width);
+    const axis_font_height = Helper.roundToNearestEven(height);
     // fire updates together to keep the data / render in sync
     setLayoutData({
       ...props,
@@ -144,6 +144,7 @@ const withAxisDimension = (Component) => (props) => {
       axis_font_height,
     });
   };
+  const { theme } = Helper.useTheme();
   return (
     <>
       <Text
@@ -156,6 +157,7 @@ const withAxisDimension = (Component) => (props) => {
           opacity: 0,
           // https://github.com/expo/expo/issues/1959#issuecomment-780198250
           fontFamily: Settings.getFontObject().fontFamily,
+          color: Settings.getGrayColor(theme),
         }}
         key={reloadKey}
       >
@@ -326,7 +328,7 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
             tickValues={ticks_y}
             tickFormat={axis_y_format}
             tickLabelComponent={
-              <VictoryLabel x={axis_y_width_rounded} textAnchor="end" />
+              <VictoryLabel x={axis_y_width_rounded} dx={1} textAnchor="end" />
             }
             style={axis_y_style}
           />
@@ -455,20 +457,15 @@ export default ({ stats }) => {
       <View
         style={{
           flex: 1,
-          // marginTop: Settings.PADDING + Settings.PADDING / 2,
-          // marginTop: Settings.PADDING + Settings.SMALL_PADDING,
           marginTop: Settings.PADDING,
-          // marginTop: Settings.PADDING,
-          // borderWidth: 1,
-          // borderColor: 'red',
         }}
         {...(!hasLayout && { onLayout })}
       >
         {hasLayout ? (
           <InteractiveRateChartView
             {...{
-              width: Helper.roundToEven(width),
-              height: Helper.roundToEven(height),
+              width: Helper.roundToNearestEven(width),
+              height: Helper.roundToNearestEven(height),
               stats: new_stats,
               data,
               domain,

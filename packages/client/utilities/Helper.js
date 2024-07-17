@@ -339,8 +339,17 @@ export default {
     }
     return value_str;
   },
-  roundToEven(num) {
-    return Math.floor(num - (num % 2));
+  roundToNearestEven(num) {
+    return Math.round(num / 2) * 2;
+  },
+  roundToNearestEvenWithDecimals(num) {
+    const scaledNum = Math.round(num * 100);
+    const evenNum = Math.round(scaledNum / 2) * 2;
+    return evenNum / 100;
+  },
+  roundDownToNearestEven(num) {
+    const evenNum = Math.floor(num / 2) * 2;
+    return evenNum;
   },
   getAvailableAppearances() {
     const appearances = ['system', 'light', 'dark'];
