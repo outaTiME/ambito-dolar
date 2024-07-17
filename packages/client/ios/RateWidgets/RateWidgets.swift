@@ -15,21 +15,27 @@ struct RateValue: Identifiable, Equatable {
   let change: String?
   let plainChange: String?
   let changeColor: Color?
+  let changeValue: Double?
   let price: String
+  let priceValue: Double
   let date: String
-  init(id: String, name: String, change: String?, plainChange: String?, changeColor: Color?, price: String, date: String) {
+  let dateValue: Double
+  init(id: String, name: String, change: String?, plainChange: String?, changeColor: Color?, changeValue: Double?, price: String, priceValue: Double, date: String, dateValue: Double) {
     self.id = id
     self.name = name
     self.change = change
     self.plainChange = plainChange
     self.changeColor = changeColor
+    self.changeValue = changeValue
     self.price = price
+    self.priceValue = priceValue
     self.date = date
+    self.dateValue = dateValue
   }
 }
 
 private func getRates() -> [String: Any]? {
-  // TODO: export fetch uri
+  // TODO: export fetch uri to env
   if let fetchRatesUri = ProcessInfo.processInfo.environment["FETCH_RATES_URI"] {
     print("fetchRatesUri: \(fetchRatesUri)")
   }
@@ -143,7 +149,7 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM HH:mm"
         let date = dateFormatter.string(from: rateDate!)
-        return RateValue(id: type, name: name, change: change, plainChange: plainChange, changeColor: changeColor, price: price, date: date)
+        return RateValue(id: type, name: name, change: change, plainChange: plainChange, changeColor: changeColor, changeValue: rateChange, price: price, priceValue: value, date: date, dateValue: rateDate!.timeIntervalSince1970 * 1000.0)
       }
     }
     return nil
@@ -190,6 +196,16 @@ extension View {
       return background(backgroundView)
     }
   }
+  @ViewBuilder
+  func conditionalContentTransition(value: Double? = nil) -> some View {
+    if #available(iOS 17.0, *), (value != nil) {
+      self.contentTransition(.numericText(value: value!))
+    } else if #available(iOS 16.0, *) {
+      self.contentTransition(.numericText())
+    } else {
+      // ignore
+    }
+  }
 }
 
 struct RateWidgetEntryView : View {
@@ -209,21 +225,42 @@ struct RateWidgetEntryView : View {
           ZStack {
             AccessoryWidgetBackground()
             VStack {
+              /* Rectangle()
+                .fill(Color.blue)
+                .frame(height: 10)
+                .padding(.horizontal, 8)
+              Rectangle()
+                .fill(Color.blue)
+                .frame(height: 10)
+                .padding(.horizontal, 2)
+              Rectangle()
+                .fill(Color.blue)
+                .frame(height: 10)
+                .padding(.horizontal, 8) */
               Text(rate.name)
-                .font(.custom(fontName, size: 11))
+                .font(.custom(fontName, size: 10))
                 .lineLimit(1)
+                .padding(.horizontal, 8)
               Text(rate.price)
-                .font(.custom(fontName, size: 20))
-                .minimumScaleFactor(0.5)
+                .font(.custom(fontName, size: 13))
                 .lineLimit(1)
+                .conditionalContentTransition(value: rate.priceValue)
+                .padding(.horizontal, 2)
                 .widgetAccentable()
               if rate.plainChange != nil {
                 Text((rate.plainChange)!)
-                  .font(.custom(fontName, size: 11))
+                  .font(.custom(fontName, size: 10))
+                  .lineLimit(1)
+                  .conditionalContentTransition(value: rate.changeValue)
+                  .padding(.horizontal, 8)
+              } else {
+                Text(" ")
+                  .font(.custom(fontName, size: 10))
                   .lineLimit(1)
               }
             }
-            .padding(8)
+            // .clipShape(ContainerRelativeShape())
+            // .padding(8)
           }
           .widgetURL(getWidgetUrl(id: rate.id))
           .widgetBackground()
@@ -232,11 +269,11 @@ struct RateWidgetEntryView : View {
             AccessoryWidgetBackground()
             VStack {
               Text("N/D")
-                .font(.custom(fontName, size: 14))
+                .font(.custom(fontName, size: 13))
                 .lineLimit(1)
                 .widgetAccentable()
             }
-            .padding(8)
+            .padding(.horizontal, 2)
           }
           .widgetURL(getWidgetUrl())
           .widgetBackground()
@@ -255,16 +292,19 @@ struct RateWidgetEntryView : View {
               .font(.custom(fontName, size: 14))
               .foregroundColor(rate.changeColor!)
               .lineLimit(1)
+              .conditionalContentTransition(value: rate.changeValue)
           }
           Text(rate.price)
             .font(.custom(fontName, size: 28))
             .foregroundColor(fgColor)
             .lineLimit(1)
+            .conditionalContentTransition(value: rate.priceValue)
           Spacer().frame(height: 8)
           Text(rate.date)
             .font(.custom(fontName, size: 11))
             .foregroundColor(fgSecondaryColor)
             .lineLimit(1)
+            .conditionalContentTransition(value: rate.dateValue)
         }
         .frame(
           maxWidth: .infinity,
@@ -328,6 +368,7 @@ struct RateWidget: Widget {
     IntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateProvider()) { entry in
       RateWidgetEntryView(entry: entry)
         .environment(\.colorScheme, .dark)
+        .environment(\.sizeCategory, .large)
     }
     .configurationDisplayName("Cotizaciones")
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
@@ -378,24 +419,29 @@ struct ListRatesWidgetEntryView : View {
               Text(rate.name)
                 .font(.custom(fontName, size: 14))
                 .foregroundColor(fgColor)
+                .minimumScaleFactor(0.9) // ~ 12.6
                 .lineLimit(1)
               Spacer()
               Text(rate.price)
                 .font(.custom(fontName, size: 16))
                 .foregroundColor(fgColor)
                 .lineLimit(1)
+                .conditionalContentTransition(value: rate.priceValue)
             }
             HStack {
               Text(rate.date)
                 .font(.custom(fontName, size: 11))
                 .foregroundColor(fgSecondaryColor)
+                .minimumScaleFactor(0.9) // ~ 9.9
                 .lineLimit(1)
+                .conditionalContentTransition(value: rate.dateValue)
               Spacer()
               if rate.change != nil {
                 Text(rate.change!)
                   .font(.custom(fontName, size: 11))
                   .foregroundColor(rate.changeColor)
                   .lineLimit(1)
+                  .conditionalContentTransition(value: rate.changeValue)
               }
             }
             if rate != rates?.last {
@@ -411,11 +457,9 @@ struct ListRatesWidgetEntryView : View {
                   // Spacer()
                   Text(" ")
                     .font(.custom(fontName, size: 16))
-                    .foregroundColor(fgColor)
                     .lineLimit(1)
                   Text(" ")
                     .font(.custom(fontName, size: 11))
-                    .foregroundColor(fgSecondaryColor)
                     .lineLimit(1)
                 }
               }
@@ -460,6 +504,7 @@ struct ListRatesWidget: Widget {
     IntentConfiguration(kind: kind, intent: SelectRateTypesIntent.self, provider: ListRatesProvider()) { entry in
       ListRatesWidgetEntryView(entry: entry)
         .environment(\.colorScheme, .dark)
+        .environment(\.sizeCategory, .large)
     }
     .configurationDisplayName("Lista de cotizaciones")
     .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
