@@ -1,5 +1,6 @@
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
+import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import * as actions from '../actions';
@@ -91,6 +92,18 @@ const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
           }}
         />
       </CardView>
+      {Platform.OS === 'android' && (
+        <CardView title="Widgets" plain>
+          <CardItemView
+            title="Cotizaciones"
+            useSwitch={false}
+            chevron={false}
+            onAction={() => {
+              navigation.navigate('RateWidgetPreview');
+            }}
+          />
+        </CardView>
+      )}
     </FixedScrollView>
   );
 };

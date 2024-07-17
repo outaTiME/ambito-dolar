@@ -127,6 +127,9 @@ const i18n = new I18n({
     /* purchase_success: '¡Gracias por tu donación!',
     purchase_success_message:
       'Tu apoyo impulsa el desarrollo y mantenimiento continuo de la aplicación.', */
+    // widgets
+    rate_widget: 'Cotizaciones',
+    list_rates_widget: 'Lista de cotizaciones',
   },
 });
 

@@ -377,6 +377,7 @@ module.exports = {
   formatCurrency,
   isRateFromToday,
   hasRatesFromToday,
+  getAvailableRateTypes,
   getAvailableRates,
   getRateTitle,
   getNotificationTitle,

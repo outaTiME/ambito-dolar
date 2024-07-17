@@ -47,6 +47,7 @@ import NotificationsScreen from '../screens/NotificationsScreen';
 import RateDetailScreen from '../screens/RateDetailScreen';
 import RateOrderScreen from '../screens/RateOrderScreen';
 import RateRawDetailScreen from '../screens/RateRawDetailScreen';
+import RateWidgetPreviewScreen from '../screens/RateWidgetPreviewScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
 import UpdateAppScreen from '../screens/UpdateAppScreen';
@@ -54,6 +55,7 @@ import Amplitude from '../utilities/Amplitude';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
+import { reloadWidgets } from '../widgets';
 
 const BackButton = ({ navigation, popToTop = false }) => (
   <MaterialHeaderButtons>
@@ -266,6 +268,14 @@ const SettingsStackScreen = () => {
           headerLeft: () => <BackButton {...{ navigation }} />,
         })}
         component={RateOrderScreen}
+      />
+      <SettingsStack.Screen
+        name="RateWidgetPreview"
+        options={({ navigation }) => ({
+          title: Helper.getScreenTitle(I18n.t('rate_widget')),
+          headerLeft: () => <BackButton {...{ navigation }} />,
+        })}
+        component={RateWidgetPreviewScreen}
       />
     </SettingsStack.Navigator>
   );
@@ -613,6 +623,7 @@ const withRealtime = (Component) => (props) => {
           dispatch(actions.registerApplicationDownloadRates());
           // force reload of widgets
           WidgetKit.reloadAllTimelines();
+          reloadWidgets(data);
         })
         .catch(() => {
           setError(true);

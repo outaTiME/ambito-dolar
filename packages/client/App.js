@@ -8,11 +8,14 @@ import {
   FontAwesome6,
 } from '@expo/vector-icons';
 import { useAssets } from 'expo-asset';
+// import * as BackgroundFetch from 'expo-background-fetch';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
+// import * as TaskManager from 'expo-task-manager';
 import React from 'react';
 import { Text, TextInput, Platform } from 'react-native';
+// import { requestWidgetUpdate } from 'react-native-android-widget';
 import AnimateableText from 'react-native-animateable-text';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -28,6 +31,9 @@ import useColorScheme from './hooks/useColorScheme';
 import { store, persistor } from './store';
 import Helper from './utilities/Helper';
 import Sentry from './utilities/Sentry';
+// import { getWidgetProps } from './widgets';
+// import RateWidget from './widgets/RateWidget';
+
 
 Text.defaultProps = Text.defaultProps || {};
 // Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
@@ -45,6 +51,46 @@ SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 // force landscape on android tablets
 if (Platform.OS === 'android') {
+  // update widgets every 5 minutes
+  /* const taskName = 'update-widget';
+  // if (!TaskManager.isTaskDefined(taskName)) {
+  TaskManager.defineTask(taskName, () =>
+    requestWidgetUpdate({
+      widgetName: 'Rate',
+      renderWidget: async (widgetInfo) => {
+        // FIXME: handle exception
+        const widgetProps = await getWidgetProps(widgetInfo);
+        console.log(
+          '>>> Update widget task (render)',
+          AmbitoDolar.getTimezoneDate().format(),
+          widgetProps,
+        );
+        return <RateWidget {...widgetProps} />;
+      },
+    })
+      .then(() => {
+        console.log(
+          '>>> Update widget done',
+          AmbitoDolar.getTimezoneDate().format(),
+        );
+        return BackgroundFetch.BackgroundFetchResult.NewData;
+      })
+      .catch((e) => {
+        console.log(
+          '>>> Update widget error',
+          AmbitoDolar.getTimezoneDate().format(),
+          e,
+        );
+        return BackgroundFetch.BackgroundFetchResult.Failed;
+      }),
+  );
+  // }
+  BackgroundFetch.registerTaskAsync(taskName, {
+    minimumInterval: 5 * 60, // 5 minutes
+    stopOnTerminate: false,
+    startOnBoot: true,
+  }).catch(console.warn); */
+  // force landscape on tablets
   ScreenOrientation.lockAsync(
     Settings.IS_TABLET
       ? ScreenOrientation.OrientationLock.LANDSCAPE

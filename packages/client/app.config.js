@@ -103,6 +103,31 @@ export default {
         ],
       },
     ],
+    false && [
+      'react-native-android-widget',
+      {
+        fonts: ['./assets/fonts/FiraGO-Regular-Minimal.otf'],
+        widgets: [
+          {
+            name: 'Rate',
+            // https://developer.android.com/guide/practices/ui_guidelines/widget_design?hl=es-419
+            // 70 * n − 30 (2x2)
+            minWidth: '110dp',
+            minHeight: '110dp',
+            label: 'Cotizaciones',
+            description:
+              'Mantenete al tanto de las cotizaciones durante el transcurso del día.',
+            targetCellWidth: 2,
+            targetCellHeight: 2,
+            previewImage: './assets/widgets/android-2x2.png',
+            resizeMode: 'none',
+            widgetFeatures: 'reconfigurable|configuration_optional',
+            // https://saleksovski.github.io/react-native-android-widget/docs/public-api/interfaces/Widget#updateperiodmillis
+            updatePeriodMillis: 30 * 60 * 1000,
+          },
+        ],
+      },
+    ],
     // https://www.aronberezkin.com/posts/a-step-by-step-guide-to-writing-your-first-expo-config-plugin
     './plugins/withAndroidSplashScreen.js',
     './plugins/withAndroidManifest.js',

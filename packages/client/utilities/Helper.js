@@ -1,6 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { createNavigationContainerRef } from '@react-navigation/native';
+import rgba from 'color-rgba';
 import * as d3Array from 'd3-array';
 import * as Application from 'expo-application';
 import * as MailComposer from 'expo-mail-composer';
@@ -155,6 +156,7 @@ export default {
       }),
     ]);
   },
+  getJson,
   registerDevice: (data = {}) =>
     getJson(Settings.API_URL + '/register-device', {
       method: 'POST',
@@ -492,6 +494,12 @@ export default {
   useAppIcon() {
     const [[appIcon]] = this.useSharedState('assets');
     return appIcon;
+  },
+  getRgbaColor: (color) => {
+    const rgbaArray = rgba(color);
+    if (rgbaArray.length > 0) {
+      return `rgba(${rgbaArray.toString()})`;
+    }
   },
   debug,
 };
