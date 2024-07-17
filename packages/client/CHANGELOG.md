@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.1.3...@ambito-dolar/client@7.2.0) (2024-07-17)
+
+### Bug Fixes
+
+- better chart display on android when scale ([0c26687](https://github.com/outaTiME/ambito-dolar/commit/0c266873cd03571592bb775fce2b049a8c99c10c))
+- reload application when scale ([f2e9e52](https://github.com/outaTiME/ambito-dolar/commit/f2e9e522196dcdaef5b9d9bd326be074f14f432b))
+
+### Features
+
+- add donation modal sheet ([233805b](https://github.com/outaTiME/ambito-dolar/commit/233805b9181163dd55e33825be0ff8bebd0463a6))
+- add value variation and type on spread ([7d3fc4c](https://github.com/outaTiME/ambito-dolar/commit/7d3fc4c7a8d4dcb201c34f6d1d995e1291695527))
+- animated number transitions and accessibility improvements for ios widgets ([f761122](https://github.com/outaTiME/ambito-dolar/commit/f761122e3223fe166e23a6188c5302cf3bb58cca))
+- disable mini chart when no available space ([f0e673f](https://github.com/outaTiME/ambito-dolar/commit/f0e673f107209e55d035fb59e8a2abb2b87ba341))
+- experimental widget support on android ([0bcd007](https://github.com/outaTiME/ambito-dolar/commit/0bcd00724b05ae153c4bd1d00bd215dfbc51c01a))
+- new icon for conversion screen ([2b68bf5](https://github.com/outaTiME/ambito-dolar/commit/2b68bf50b9b649baa3f3b8d01cbbec22922515ad))
+- remove use of installationId ([b78d6e7](https://github.com/outaTiME/ambito-dolar/commit/b78d6e7ed2c0307410d1d132a77c73b3bf735518))
+- update to Expo 51 ([fdaa9f0](https://github.com/outaTiME/ambito-dolar/commit/fdaa9f029f72cdd8048f8d5ffd4f636366a8a2b5))
+
 ## [7.1.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.1.2...@ambito-dolar/client@7.1.3) (2024-04-22)
 
 ### Bug Fixes

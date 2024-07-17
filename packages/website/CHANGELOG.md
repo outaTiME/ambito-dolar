@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.11.3...@ambito-dolar/website@1.12.0) (2024-07-17)
+
+### Features
+
+- update to Expo 51 ([fdaa9f0](https://github.com/outaTiME/ambito-dolar/commit/fdaa9f029f72cdd8048f8d5ffd4f636366a8a2b5))
+
 ## [1.11.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.11.2...@ambito-dolar/website@1.11.3) (2024-04-21)
 
 **Note:** Version bump only for package @ambito-dolar/website

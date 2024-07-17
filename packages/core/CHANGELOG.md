@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.8.4...@ambito-dolar/core@3.9.0) (2024-07-17)
+
+### Features
+
+- experimental widget support on android ([0bcd007](https://github.com/outaTiME/ambito-dolar/commit/0bcd00724b05ae153c4bd1d00bd215dfbc51c01a))
+
 ## [3.8.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@3.8.3...@ambito-dolar/core@3.8.4) (2024-03-01)
 
 **Note:** Version bump only for package @ambito-dolar/core

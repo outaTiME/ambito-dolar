@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.17.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.16.0...@ambito-dolar/api@3.17.0) (2024-07-17)
+
+### Features
+
+- remove use of installationId ([b78d6e7](https://github.com/outaTiME/ambito-dolar/commit/b78d6e7ed2c0307410d1d132a77c73b3bf735518))
+
 # [3.16.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.15.1...@ambito-dolar/api@3.16.0) (2024-04-21)
 
 ### Features
