@@ -45,9 +45,7 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
     shallowEqual,
   );
   const updateHistoricalRates = React.useCallback(() => {
-    if (__DEV__) {
-      console.log('💫 Fetching historical rates');
-    }
+    Helper.debug('💫 Fetching historical rates');
     return Helper.getHistoricalRates().then((rates) => {
       dispatch(actions.updateHistoricalRates(rates));
       dispatch(actions.registerApplicationDownloadHistoricalRates());

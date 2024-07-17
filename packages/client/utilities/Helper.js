@@ -44,10 +44,14 @@ const getNotificationSettingsSelector = createSelector(
   (notification_settings) => getNotificationSettings(notification_settings),
 );
 
-const getJson = (url, opts = {}) => {
+const debug = (...args) => {
   if (__DEV__) {
-    console.log('Get json', url, opts);
+    console.log(...args);
   }
+};
+
+const getJson = (url, opts = {}) => {
+  debug('Get json', url, opts);
   return AmbitoDolar.fetch(url, {
     // method: 'GET',
     headers: {
@@ -57,8 +61,9 @@ const getJson = (url, opts = {}) => {
     ...opts,
   }).then((response) => response.json());
   /* .then((data) => {
+      console.log('>>> data', data);
       return data;
-    }) */
+    }); */
 };
 
 const FRACTION_DIGITS = AmbitoDolar.FRACTION_DIGITS;
@@ -160,9 +165,7 @@ export default {
       if (Settings.RATES_URI) {
         return resolve(getJson(Settings.RATES_URI));
       }
-      if (__DEV__) {
-        console.log('Using local rates file');
-      }
+      debug('Using local rates file');
       return resolve(rates);
     }),
   getHistoricalRates: () =>
@@ -433,9 +436,7 @@ export default {
           Application.getInstallationTimeAsync(),
           Sharing.isAvailableAsync(),
         ]).then((data) => {
-          if (__DEV__) {
-            console.log('Application constants', data);
-          }
+          debug('Application constants', data);
           const [
             contactAvailable,
             storeAvailable,
@@ -490,4 +491,5 @@ export default {
     const [[appIcon]] = this.useSharedState('assets');
     return appIcon;
   },
+  debug,
 };

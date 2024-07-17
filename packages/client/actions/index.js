@@ -53,18 +53,14 @@ const doRegisterDevice = (dispatch, state, value = {}) => {
     notification_settings,
     ...value,
   };
-  if (__DEV__) {
-    console.log('Registration or interaction on device', data);
-  }
+  Helper.debug('Registration or interaction on device', data);
   return Helper.registerDevice(data).then(
     async ({ notificationSettings, statusCode }) => {
       if (notificationSettings) {
-        if (__DEV__) {
-          console.log(
-            'Update notification settings from remote',
-            notificationSettings,
-          );
-        }
+        Helper.debug(
+          'Update notification settings from remote',
+          notificationSettings,
+        );
         // update notification settings from server
         // this will solve issue when lost data after update to v2
         await dispatch({

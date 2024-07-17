@@ -178,9 +178,7 @@ const withScreenshotShareSheet =
                 ],
                 { compress: 1, format: ImageManipulator.SaveFormat.PNG },
               );
-              if (__DEV__) {
-                console.log('Snapshot for sharing', new_uri);
-              }
+              Helper.debug('Snapshot for sharing', new_uri);
               /* if (Settings.IS_IPAD) {
               ActionSheetIOS.showShareActionSheetWithOptions(
                 {

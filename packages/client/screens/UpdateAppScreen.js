@@ -24,9 +24,7 @@ const UpdateAppScreen = ({ navigation }) => {
         }
         // prevent the leaving the screen
         e.preventDefault();
-        if (__DEV__) {
-          console.log('You must confirm the current modal screen');
-        }
+        Helper.debug('You must confirm the current modal screen');
       }),
     [navigation, confirmed],
   );

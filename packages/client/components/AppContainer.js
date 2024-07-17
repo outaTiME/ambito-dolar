@@ -395,9 +395,7 @@ const AppContainer = ({
 }) => {
   const { theme } = Helper.useTheme();
   const trackScreen = React.useCallback((name) => {
-    if (__DEV__) {
-      console.log('👀 Track screen', name);
-    }
+    Helper.debug('👀 Track screen', name);
     Sentry.addBreadcrumb({
       message: `${name} screen`,
     });
@@ -433,9 +431,7 @@ const AppContainer = ({
   // QUICK ACTIONS
   const quickAction = useQuickAction();
   React.useEffect(() => {
-    if (__DEV__) {
-      console.log('🎯 Quick action received', quickAction);
-    }
+    Helper.debug('🎯 Quick action received', quickAction);
     const type = quickAction?.id;
     if (type) {
       Amplitude.track('Quick action', { type });
@@ -451,9 +447,7 @@ const AppContainer = ({
   const onDeepLink = React.useCallback((url) => {
     if (url) {
       const { hostname: route, queryParams: params } = Linking.parse(url);
-      if (__DEV__) {
-        console.log('🎯 Deep link received', url, route, params);
-      }
+      Helper.debug('🎯 Deep link received', url, route, params);
       if (/^rates?$/i.test(route)) {
         navigationRef.navigate('RatesTab', {
           screen:
@@ -604,9 +598,7 @@ const withRealtime = (Component) => (props) => {
   const [stillLoading, setStillLoading] = React.useState(false);
   const fetchRates = React.useCallback(
     (initial) => {
-      if (__DEV__) {
-        console.log('💫 Fetching rates', initial);
-      }
+      Helper.debug('💫 Fetching rates', initial);
       !initial && setUpdatingRates(true);
       setError(false);
       setStillLoading(false);
@@ -639,9 +631,7 @@ const withRealtime = (Component) => (props) => {
   React.useEffect(() => {
     if (!isInitial) {
       if (firebaseApp) {
-        if (__DEV__) {
-          console.log('🚀 Connect to firebase');
-        }
+        Helper.debug('🚀 Connect to firebase');
         const db = getDatabase(firebaseApp);
         return onValue(ref(db, '/u'), (snapshot) => {
           if (!snapshot.exists()) {
@@ -656,29 +646,21 @@ const withRealtime = (Component) => (props) => {
             message: 'Firebase update event',
             data: updated_at,
           });
-          if (__DEV__) {
-            console.log(
-              '⚡️ Firebase updated',
-              updated_at,
-              updatedAtRef.current,
-            );
-          }
+          Helper.debug(
+            '⚡️ Firebase updated',
+            updated_at,
+            updatedAtRef.current,
+          );
           if (updated_at !== updatedAtRef.current) {
             fetchRates(false);
           } else {
-            if (__DEV__) {
-              console.log('Rates already updated', updated_at);
-            }
+            Helper.debug('Rates already updated', updated_at);
           }
         });
       }
-      if (__DEV__) {
-        console.log('❄️ No realtime updates');
-      }
+      Helper.debug('❄️ No realtime updates');
     } else {
-      if (__DEV__) {
-        console.log('🚀 Initial fetch');
-      }
+      Helper.debug('🚀 Initial fetch');
       fetchRates(true);
     }
   }, [isInitial]);
@@ -724,9 +706,7 @@ const withAppUpdateCheck = (Component) => (props) => {
     version === Settings.APP_VERSION;
   React.useEffect(() => {
     if (Settings.APP_VERSION !== version) {
-      if (__DEV__) {
-        console.log('Application updated', Settings.APP_VERSION, version);
-      }
+      Helper.debug('Application updated', Settings.APP_VERSION, version);
       // clean invalid_version and ignore_update flag
       dispatch(actions.registerApplicationUpdate(Settings.APP_VERSION));
     }
@@ -832,26 +812,20 @@ const withUserActivity = (Component) => (props) => {
               // on initial, rehydrate or fail
               dispatch(actions.registerDeviceForNotifications());
             } else if (pushToken && allowNotifications) {
-              if (__DEV__) {
-                console.log(
-                  'Device is already registered to receive notifications',
-                  pushToken,
-                );
-              }
+              Helper.debug(
+                'Device is already registered to receive notifications',
+                pushToken,
+              );
             } else {
               // sending push token or notifications were disabled
             }
           } else {
-            if (__DEV__) {
-              console.log('Notifications are not allowed on virtual devices');
-            }
+            Helper.debug('Notifications are not allowed on virtual devices');
           }
           alreadyHandlingRef.current = false;
         } else {
           // boot already in progress (prevent multiple permission execution)
-          if (__DEV__) {
-            console.log('User activity already in progress');
-          }
+          Helper.debug('User activity already in progress');
         }
       })();
     }
@@ -884,9 +858,7 @@ const withUserActivity = (Component) => (props) => {
             }
           });
         } else {
-          if (__DEV__) {
-            console.log('Store review are not allowed on virtual device');
-          }
+          Helper.debug('Store review are not allowed on virtual device');
         }
       }
     }
@@ -912,9 +884,7 @@ const withPurchases = (Component) => (props) => {
     };
     configure()
       .then(() => {
-        if (__DEV__) {
-          console.log('🤑 Purchases configured');
-        }
+        Helper.debug('🤑 Purchases configured');
         setPurchasesConfigured(true);
       })
       .catch(console.warn);
@@ -933,9 +903,7 @@ const withLocalization = (Component) => (props) => {
         thousands: locale.digitGroupingSeparator,
         decimal: locale.decimalSeparator,
       });
-      if (__DEV__) {
-        console.log('💫 User locale updated', AmbitoDolar.getDelimiters());
-      }
+      Helper.debug('💫 User locale updated', AmbitoDolar.getDelimiters());
       setReloadKey(Date.now());
     } else {
       if (__DEV__) {

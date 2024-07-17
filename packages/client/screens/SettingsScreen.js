@@ -137,10 +137,7 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const [purchaseProduct, setPurchaseProduct] = React.useState();
   React.useEffect(() => {
     if (__DEV__ && purchaseProduct) {
-      console.log(
-        '🎟️ Product to donate updated',
-        JSON.stringify(purchaseProduct),
-      );
+      console.log('🎟️ Product to donate updated', purchaseProduct);
     }
   }, [purchaseProduct]);
   useFocusEffect(
