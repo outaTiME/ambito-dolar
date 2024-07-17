@@ -21,6 +21,7 @@ export const CHANGE_RATE_ORDER_DIRECTION = 'change_rate_order_direction';
 export const EXCLUDE_RATE = 'exclude_rate';
 export const UPDATE_RATE_TYPES = 'update_rate_types';
 export const RESTORE_CUSTOMIZATION = 'restore_customization';
+export const APP_IGNORE_DONATION = 'app_ignore_donation';
 
 // rates
 export const ADD_RATES = 'add_rates';

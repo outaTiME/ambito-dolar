@@ -1,26 +1,43 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { RectButton, BorderlessButton } from 'react-native-gesture-handler';
 
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const ButtonText = ({ title, small = false }) => {
-  const { fonts } = Helper.useTheme();
+const ButtonText = ({ title, small = false, colorScheme, loading }) => {
+  const { theme, fonts } = Helper.useTheme(colorScheme);
   return (
-    <Text
-      style={[
-        small === true ? fonts.footnote : fonts.subhead,
-        {
-          textAlign: 'center',
-          textTransform: 'uppercase',
-          paddingVertical: Settings.PADDING / 2,
-          paddingHorizontal: Settings.PADDING * 2,
-        },
-      ]}
+    <View
+      style={{
+        paddingVertical: Settings.PADDING / 2,
+        paddingHorizontal: Settings.PADDING * 2,
+        justifyContent: 'center',
+      }}
     >
-      {title}
-    </Text>
+      <Text
+        style={[
+          small === true ? fonts.footnote : fonts.subhead,
+          {
+            textAlign: 'center',
+            textTransform: 'uppercase',
+          },
+          loading && {
+            opacity: 0,
+          },
+        ]}
+      >
+        {title}
+      </Text>
+      {loading && (
+        <ActivityIndicator
+          animating
+          color={Settings.getForegroundColor(theme)}
+          size="small"
+          style={{ position: 'absolute', alignSelf: 'center' }}
+        />
+      )}
+    </View>
   );
 };
 
@@ -31,8 +48,10 @@ export default ({
   style,
   alternativeBackground,
   small,
+  colorScheme,
+  loading = false,
 }) => {
-  const { theme } = Helper.useTheme();
+  const { theme } = Helper.useTheme(colorScheme);
   if (borderless) {
     return (
       <View
@@ -43,8 +62,8 @@ export default ({
           style,
         ]}
       >
-        <BorderlessButton onPress={handleOnPress}>
-          <ButtonText {...{ title, small }} />
+        <BorderlessButton onPress={handleOnPress} enabled={!loading}>
+          <ButtonText {...{ title, small, colorScheme, loading }} />
         </BorderlessButton>
       </View>
     );
@@ -70,8 +89,9 @@ export default ({
         onPress={handleOnPress}
         activeOpacity={1}
         underlayColor={Settings.getStrokeColor(theme, true)}
+        enabled={!loading}
       >
-        <ButtonText {...{ title, small }} />
+        <ButtonText {...{ title, small, colorScheme, loading }} />
       </RectButton>
     </View>
   );

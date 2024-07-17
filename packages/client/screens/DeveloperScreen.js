@@ -9,10 +9,12 @@ import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
 import Settings from '../config/settings';
+import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
 
 const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const dispatch = useDispatch();
+  const [, setAppDonationModal] = Helper.useSharedState('appDonationModal');
   return (
     <FixedScrollView
       {...{
@@ -78,6 +80,15 @@ const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
           /* onAction={() => {
             throw new Error('Intentional excepción');
           }} */
+        />
+        <CardItemView
+          title="Ver modal de donación"
+          useSwitch={false}
+          chevron={false}
+          onAction={() => {
+            // force open at every change of value
+            setAppDonationModal(Date.now());
+          }}
         />
       </CardView>
     </FixedScrollView>

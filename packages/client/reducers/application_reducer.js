@@ -25,6 +25,7 @@ import {
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
   APP_USAGE,
+  APP_IGNORE_DONATION,
 } from '../actions/types';
 import DateUtils from '../utilities/Date';
 
@@ -54,6 +55,7 @@ const INITIAL_STATE = {
   invalid_version: false,
   ignore_update: null,
   app_updated: null,
+  ignore_donation: null,
 };
 
 const increment = (state, key, extra = {}) =>
@@ -169,6 +171,10 @@ export default (state = INITIAL_STATE, action) => {
         rate_order_direction: { $set: null },
         excluded_rates: { $set: null },
         rate_types: { $set: null },
+      });
+    case APP_IGNORE_DONATION:
+      return update(state, {
+        ignore_donation: { $set: Date.now() },
       });
     case PRUNE:
       return INITIAL_STATE;

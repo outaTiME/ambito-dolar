@@ -1,5 +1,9 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -10,15 +14,19 @@ import * as Linking from 'expo-linking';
 import * as Localization from 'expo-localization';
 import * as Notifications from 'expo-notifications';
 import { useQuickAction } from 'expo-quick-actions/hooks';
-import * as SplashScreen from 'expo-splash-screen';
 import * as StoreReview from 'expo-store-review';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
+import * as _ from 'lodash';
 import React from 'react';
-import { StyleSheet, Platform, View } from 'react-native';
+import { StyleSheet, Platform, View, Text, Alert } from 'react-native';
 import Purchases from 'react-native-purchases';
+import { useSharedValue } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useStateWithCallbackLazy } from 'use-state-with-callback';
 
+import ActionButton from './ActionButton';
 import { MaterialHeaderButtons, Item } from './HeaderButtons';
 import withContainer from './withContainer';
 import withRates from './withRates';
@@ -916,6 +924,232 @@ const withLocalization = (Component) => (props) => {
   }
 };
 
+const withAppDonation = (Component) => (props) => {
+  const [purchasesConfigured] = Helper.useSharedState(
+    'purchasesConfigured',
+    false,
+  );
+  const { daysUsed, ignoreDonation } = useSelector(
+    ({
+      application: { days_used: daysUsed, ignore_donation: ignoreDonation },
+    }) => ({
+      daysUsed,
+      ignoreDonation,
+    }),
+    shallowEqual,
+  );
+  const THRESHOLD_DAYS_USE = 30;
+  const purchaseSlug = React.useMemo(() => {
+    const slugs = [
+      '¡Wow, usás {APP_NAME} un montón!',
+      '¡Increíble cómo usás {APP_NAME}!',
+      '¡No parás de usar {APP_NAME}!',
+      '¡{APP_NAME} es parte de tu rutina diaria!',
+      '¡Wow, pasás todo el día en {APP_NAME}!',
+      '¡Estás todo el tiempo en {APP_NAME}!',
+      '¡Wow, usás {APP_NAME} todo el tiempo!',
+      '¡Sos inseparable de {APP_NAME}!',
+      '¡Wow, usás {APP_NAME} a toda hora!',
+      '¡No hay día sin {APP_NAME}!',
+      '¡Wow, usás {APP_NAME} sin parar!',
+    ];
+    return _.replace(
+      slugs[daysUsed % slugs.length],
+      '{APP_NAME}',
+      Settings.APP_NAME,
+    );
+  }, [daysUsed]);
+  const [purchaseProduct, setPurchaseProduct] = useStateWithCallbackLazy();
+  const bottomSheetRef = React.useRef();
+  const [appDonationModal, setAppDonationModal] = Helper.useSharedState(
+    'appDonationModal',
+    false,
+  );
+  React.useEffect(() => {
+    if (purchasesConfigured) {
+      let shouldShowModal = daysUsed >= THRESHOLD_DAYS_USE;
+      if (ignoreDonation) {
+        // check between THRESHOLD_DAYS_USE
+        shouldShowModal =
+          Date.now() >=
+          ignoreDonation + THRESHOLD_DAYS_USE * 24 * 60 * 60 * 1000;
+      }
+      shouldShowModal = appDonationModal || shouldShowModal;
+      if (shouldShowModal) {
+        Purchases.getCustomerInfo()
+          .then((customerInfo) => {
+            if (
+              appDonationModal ||
+              customerInfo.nonSubscriptionTransactions.length === 0
+            ) {
+              return Helper.timeout(
+                Purchases.getProducts(
+                  ['small_contribution'],
+                  Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
+                ),
+              ).then((products) => [customerInfo, products?.[0]]);
+              // .then((product) => product ?? (__DEV__ && { price: 1 }));
+            }
+          })
+          .catch(console.warn)
+          .then(([customerInfo, product] = []) => {
+            setPurchaseProduct(product, (product) => {
+              Helper.debug('💖 Donation modal may be required', {
+                forced: !!appDonationModal,
+                transactions: customerInfo?.nonSubscriptionTransactions?.length,
+                product: !!product,
+              });
+              // run after modal re-rendering
+              if (product) {
+                // wait for the next tick to ensure the dynamic size calculation on the sheet
+                // setTimeout(() => {
+                bottomSheetRef.current?.expand();
+                // });
+              }
+            });
+          });
+      } else {
+        Helper.debug('💖 Donation modal not required', {
+          shouldShowModal,
+          daysUsed,
+          ignoreDonation,
+          forced: !!appDonationModal,
+        });
+      }
+    }
+  }, [purchasesConfigured, daysUsed, ignoreDonation, appDonationModal]);
+  const renderBackdrop = React.useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="none"
+      />
+    ),
+    [],
+  );
+  const dispatch = useDispatch();
+  const handleSheetChanges = React.useCallback(
+    (index) => {
+      if (index === -1) {
+        if (appDonationModal) {
+          setAppDonationModal(false);
+        } else {
+          dispatch(actions.ignoreApplicationDonation());
+        }
+      }
+    },
+    [appDonationModal],
+  );
+  const safeAreaInsets = useSafeAreaInsets();
+  // force light
+  const colorScheme = 'light';
+  const { fonts } = Helper.useTheme(colorScheme);
+  // https://github.com/gorhom/react-native-bottom-sheet/pull/1513#issuecomment-1783545921
+  const animatedContentHeight = useSharedValue(0);
+  const [donateLoading, setDonateLoading] = React.useState(false);
+  return (
+    <>
+      <Component {...props} />
+      <BottomSheet
+        ref={bottomSheetRef}
+        style={{
+          marginLeft: (Settings.DEVICE_WIDTH - Settings.CONTENT_WIDTH) / 2,
+          width: Settings.CONTENT_WIDTH,
+        }}
+        backgroundStyle={{
+          marginHorizontal: Settings.CARD_PADDING * 2,
+        }}
+        backdropComponent={renderBackdrop}
+        onChange={handleSheetChanges}
+        enableOverDrag={false}
+        enablePanDownToClose={false}
+        detached
+        bottomInset={safeAreaInsets.bottom || Settings.CARD_PADDING * 2}
+        enableDynamicSizing
+        contentHeight={animatedContentHeight}
+        index={-1}
+        // animateOnMount={false}
+        handleComponent={null}
+      >
+        <BottomSheetView>
+          <View
+            style={{
+              marginHorizontal: Settings.CARD_PADDING * 2,
+              padding: Settings.PADDING * 2,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={[fonts.extraLargeTitle]}>🥰</Text>
+            <Text
+              style={[
+                fonts.body,
+                {
+                  textAlign: 'center',
+                  paddingVertical: Settings.PADDING * 2,
+                },
+              ]}
+            >
+              {`${purchaseSlug}\n\n${I18n.t('opts_support_note')}`}
+            </Text>
+            <ActionButton
+              title={[
+                I18n.t('donate'),
+                Helper.getCurrency(purchaseProduct?.price, true, true),
+              ].join(' ')}
+              handleOnPress={async () => {
+                setDonateLoading(true);
+                try {
+                  await Purchases.purchaseStoreProduct(purchaseProduct);
+                  bottomSheetRef.current?.close();
+                } catch (e) {
+                  if (!e.userCancelled) {
+                    Sentry.captureException(
+                      new Error('Purchase error', { cause: e }),
+                    );
+                    Alert.alert(
+                      I18n.t('generic_error'),
+                      '',
+                      [
+                        {
+                          text: I18n.t('accept'),
+                          onPress: () => {
+                            // pass
+                          },
+                        },
+                      ],
+                      {
+                        cancelable: false,
+                      },
+                    );
+                  }
+                } finally {
+                  setDonateLoading(false);
+                }
+              }}
+              style={{
+                marginVertical: Settings.PADDING,
+              }}
+              alternativeBackground
+              // colorScheme
+              loading={donateLoading}
+            />
+            <ActionButton
+              borderless
+              title="Ahora no"
+              handleOnPress={() => {
+                bottomSheetRef.current?.close();
+              }}
+              colorScheme
+            />
+          </View>
+        </BottomSheetView>
+      </BottomSheet>
+    </>
+  );
+};
+
 export default compose(
   withRates(),
   withRealtime,
@@ -924,5 +1158,6 @@ export default compose(
   withUserActivity,
   withPurchases,
   withLocalization,
+  withAppDonation,
   withContainer(true),
 )(AppContainer);

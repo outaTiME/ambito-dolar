@@ -59,7 +59,20 @@ const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
       .catch(console.warn)
       .finally(() => setLoading(false));
   }, []);
+  React.useEffect(() => {
+    const listener = (customerInfo) => {
+      setDonations(customerInfo.nonSubscriptionTransactions.length.toString());
+    };
+    Purchases.addCustomerInfoUpdateListener(listener);
+    return () => Purchases.removeCustomerInfoUpdateListener(listener);
+  }, []);
   const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
+  // for purchase listener debugging purposes
+  /* const [, setAppDonationModal] = Helper.useSharedState('appDonationModal');
+  React.useEffect(() => {
+    // force open at every change of value
+    setAppDonationModal(Date.now());
+  }, []); */
   return (
     <FixedScrollView
       {...{

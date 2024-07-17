@@ -62,8 +62,7 @@ const i18n = new I18n({
     opts_statistics: 'Estadísticas',
     opts_support: 'Soporte y difusión',
     opts_support_note:
-      // 'Con tu colaboración haces que la aplicación siga creciendo y mejorando.',
-      'Tu apoyo impulsa el desarrollo y mantenimiento continuo de la aplicación.',
+      'Tu aporte es fundamental para el mantenimiento y desarrollo continuo de esta aplicación.',
     send_app_feedback: 'Enviar comentarios',
     leave_app_review: 'Dejar una reseña',
     share: 'Compartir',

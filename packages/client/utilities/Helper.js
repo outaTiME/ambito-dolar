@@ -373,11 +373,11 @@ export default {
     });
     return [state, setState];
   },
-  useTheme() {
+  useTheme(forcedColorScheme) {
     const context = React.useContext(ThemeContext);
     const colorScheme = React.useMemo(
-      () => context?.colorScheme || 'light',
-      [context],
+      () => forcedColorScheme ?? context?.colorScheme ?? 'light',
+      [forcedColorScheme, context],
     );
     const theme = React.useMemo(
       () => ({
@@ -393,8 +393,10 @@ export default {
           body: Settings.getFontObject(colorScheme, 'body'), // 17 (22)
           // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L37
           title: Settings.getFontObject(colorScheme, 'title3'), // 20 (25)
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L23
+          largeTitle: Settings.getFontObject(colorScheme, 'title1'), // 28 (34)
           // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L16
-          largeTitle: Settings.getFontObject(colorScheme, 'title1'), // 28 (41)
+          extraLargeTitle: Settings.getFontObject(colorScheme, 'largeTitle'), // 34 (41)
         },
         invertedTheme: this.getInvertedTheme(colorScheme),
         // TODO: add fonts with theme here ??

@@ -28,6 +28,7 @@ import {
   PRUNE_RATES,
   PRUNE,
   APP_USAGE,
+  APP_IGNORE_DONATION,
 } from './types';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -45,13 +46,12 @@ export const updateHistoricalRates = (payload) => ({
 const doRegisterDevice = (dispatch, state, value = {}) => {
   // send notification settings in each call to avoid error handling
   const {
-    application: { notification_settings },
+    application: { notification_settings, push_token },
   } = state;
   const data = {
-    installation_id: Settings.INSTALLATION_ID,
+    push_token: value?.push_token ?? push_token,
     app_version: Settings.APP_VERSION,
     notification_settings,
-    ...value,
   };
   Helper.debug('Registration or interaction on device', data);
   return Helper.registerDevice(data).then(
@@ -62,7 +62,6 @@ const doRegisterDevice = (dispatch, state, value = {}) => {
           notificationSettings,
         );
         // update notification settings from server
-        // this will solve issue when lost data after update to v2
         await dispatch({
           type: UPDATE_NOTIFICATION_SETTINGS,
           payload: notificationSettings,
@@ -78,32 +77,22 @@ const doRegisterDevice = (dispatch, state, value = {}) => {
   );
 };
 
-const doRegisterDeviceForNotifications = (
-  { data: push_token } = {},
-  dispatch,
-  current_state,
-) => {
-  if (push_token) {
-    return doRegisterDevice(dispatch, current_state, {
-      push_token,
-    }).then(() => push_token);
-  }
-  return Notifications.getExpoPushTokenAsync({
+const doRegisterDeviceForNotifications = (dispatch, current_state) =>
+  Notifications.getExpoPushTokenAsync({
     projectId: Constants.expoConfig.extra.eas.projectId,
   }).then(({ data: push_token }) =>
     doRegisterDevice(dispatch, current_state, { push_token }).then(
       () => push_token,
     ),
   );
-};
 
 export const registerDeviceForNotifications =
-  (push_token) => async (dispatch, getState) => {
+  () => async (dispatch, getState) => {
     await dispatch({
       type: NOTIFICATIONS_REGISTER_PENDING,
     });
     const current_state = getState();
-    return doRegisterDeviceForNotifications(push_token, dispatch, current_state)
+    return doRegisterDeviceForNotifications(dispatch, current_state)
       .then((push_token) =>
         dispatch({
           type: NOTIFICATIONS_REGISTER_SUCCESS,
@@ -211,6 +200,10 @@ export const updateRateTypes = (payload) => ({
 
 export const restoreCustomization = () => ({
   type: RESTORE_CUSTOMIZATION,
+});
+
+export const ignoreApplicationDonation = () => ({
+  type: APP_IGNORE_DONATION,
 });
 
 export const clearRates = () => ({
