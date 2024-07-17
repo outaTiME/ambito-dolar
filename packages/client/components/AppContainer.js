@@ -335,7 +335,8 @@ const MainStackScreen = () => {
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
-              name="filter-outline"
+              // name="filter-outline"
+              name="swap-horizontal-variant"
               color={color}
               size={size}
             />
