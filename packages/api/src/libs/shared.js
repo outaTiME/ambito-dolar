@@ -610,7 +610,7 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
       'reddit',
       // 'twitter',
       'bsky',
-      'whatsapp',
+      // 'whatsapp',
     ],
   )
     .map((target) => {

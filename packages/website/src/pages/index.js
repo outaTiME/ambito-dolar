@@ -122,14 +122,16 @@ const IndexPage = () => {
                           <Bluesky />
                         </a>
                       )}
-                      <a
-                        className="icon"
-                        href="https://whatsapp.com/channel/0029VaNvh4LGpLHUyd75cO1P"
-                        target="_blank"
-                        rel="noopener noreferrer me"
-                      >
-                        <Whatsapp />
-                      </a>
+                      {false && (
+                        <a
+                          className="icon"
+                          href="https://whatsapp.com/channel/0029VaNvh4LGpLHUyd75cO1P"
+                          target="_blank"
+                          rel="noopener noreferrer me"
+                        >
+                          <Whatsapp />
+                        </a>
+                      )}
                       <a
                         className="icon"
                         href="https://github.com/outaTiME/ambito-dolar"

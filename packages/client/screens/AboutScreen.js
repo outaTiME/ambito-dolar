@@ -229,12 +229,14 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
               community
             />
           )}
-          <IconCardItemView
-            title="WhatsApp"
-            iconName="whatsapp"
-            onAction={onPressWhatsapp}
-            community
-          />
+          {false && (
+            <IconCardItemView
+              title="WhatsApp"
+              iconName="whatsapp"
+              onAction={onPressWhatsapp}
+              community
+            />
+          )}
           <IconCardItemView
             title="GitHub"
             iconName="github"

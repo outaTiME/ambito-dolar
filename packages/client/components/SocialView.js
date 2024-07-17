@@ -70,14 +70,16 @@ export default ({
           }}
         />
       )}
-      <FontAwesome6
-        name="whatsapp"
-        size={size}
-        color={Settings.getGrayColor(theme)}
-        style={{
-          marginRight: size,
-        }}
-      />
+      {false && (
+        <FontAwesome6
+          name="whatsapp"
+          size={size}
+          color={Settings.getGrayColor(theme)}
+          style={{
+            marginRight: size,
+          }}
+        />
+      )}
       <FontAwesome6
         name="github"
         size={size}
