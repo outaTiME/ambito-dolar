@@ -1,13 +1,22 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { View, Text, Platform } from 'react-native';
+import { View, Text, Platform, PixelRatio } from 'react-native';
 
 import CardView from '../components/CardView';
 import MiniRateChartView from '../components/VictoryMiniRateChartView';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
+
+const showMiniRateChart =
+  Helper.roundToNearestEven(
+    140 *
+      Math.min(PixelRatio.getFontScale(), Settings.MAX_FONT_SIZE_MULTIPLIER),
+  ) +
+    Settings.CARD_PADDING * 2 +
+    Settings.PADDING <=
+  Helper.roundToNearestEven(Settings.DEVICE_WIDTH / 2);
 
 const InlineRateView = ({ type, value, onSelected }) => {
   const { theme, fonts } = Helper.useTheme();
@@ -145,21 +154,30 @@ const InlineRateDetailView = ({
       >
         {timestamp}
       </Text>
-      <View
-        style={{
-          height: 15, // sames as change font height
-          width: 40,
-          marginHorizontal: Settings.SMALL_PADDING * 2,
-        }}
-      >
-        <MiniRateChartView {...{ stats, color }} />
-      </View>
+      {showMiniRateChart && (
+        <View
+          style={{
+            height: 15, // sames as change font height
+            width: 40,
+            marginHorizontal: Settings.SMALL_PADDING * 2,
+          }}
+        >
+          <MiniRateChartView {...{ stats, color }} />
+        </View>
+      )}
       <Text
         style={[
           fonts.subhead,
           {
-            // FIXME: took width from container and center the chart
-            width: 140,
+            ...(showMiniRateChart && {
+              width: Helper.roundToNearestEven(
+                140 *
+                  Math.min(
+                    PixelRatio.getFontScale(),
+                    Settings.MAX_FONT_SIZE_MULTIPLIER,
+                  ),
+              ),
+            }),
             textAlign: 'right',
             color,
           },
