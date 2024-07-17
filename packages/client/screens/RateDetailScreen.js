@@ -148,20 +148,20 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
     setRangeIndex(index);
   }, []);
   const official_spread = React.useMemo(() => {
-    if (type !== AmbitoDolar.OFFICIAL_TYPE) {
-      const official_stats = rates[AmbitoDolar.OFFICIAL_TYPE]?.stats;
+    if (type !== AmbitoDolar.BNA_TYPE) {
+      const official_stats = rates[AmbitoDolar.BNA_TYPE]?.stats;
       if (official_stats) {
         const official_stat = official_stats[official_stats.length - 1];
         const rate_value = AmbitoDolar.getRateValue(stat);
         const official_rate_value = AmbitoDolar.getRateValue(official_stat);
         // calculate from open / close rate and truncate
-        /* const rate_change_percent = AmbitoDolar.getNumber(
-          (rate_value / official_rate_value - 1) * 100
-        ); */
+        const rate_change_percent = AmbitoDolar.getNumber(
+          (rate_value / official_rate_value - 1) * 100,
+        );
         return AmbitoDolar.getRateChange([
           null,
           rate_value,
-          null,
+          rate_change_percent,
           official_rate_value,
         ]);
       }
@@ -213,7 +213,10 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
         />
         {official_spread && (
           <CardItemView
-            title={I18n.t('spread')}
+            title={I18n.t('spread', {
+              rate: AmbitoDolar.getRateTitle(AmbitoDolar.BNA_TYPE),
+            })}
+            // titleDetail={AmbitoDolar.getRateTitle(AmbitoDolar.BNA_TYPE)}
             useSwitch={false}
             value={official_spread}
           />
