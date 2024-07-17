@@ -7,15 +7,23 @@ import {
   MaterialCommunityIcons,
   FontAwesome6,
 } from '@expo/vector-icons';
+import { reloadAppAsync } from 'expo';
 import { useAssets } from 'expo-asset';
 // import * as BackgroundFetch from 'expo-background-fetch';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
+import * as _ from 'lodash';
 // import * as SystemUI from 'expo-system-ui';
 // import * as TaskManager from 'expo-task-manager';
 import React from 'react';
-import { Text, TextInput, Platform, LogBox } from 'react-native';
+import {
+  Text,
+  TextInput,
+  Platform,
+  LogBox,
+  useWindowDimensions,
+} from 'react-native';
 // import { useColorScheme as useNativeColorScheme } from 'react-native';
 // import { requestWidgetUpdate } from 'react-native-android-widget';
 import AnimateableText from 'react-native-animateable-text';
@@ -171,6 +179,15 @@ const App = () => {
       // colorScheme
     ],
   );
+  const windowDimensions = useWindowDimensions();
+  React.useEffect(() => {
+    if (!_.isEqual(windowDimensions, Settings.windowDimensions)) {
+      // handle screen size or font scale changes
+      Helper.debug('🌀 Screen size or scales were updated');
+      // FIXME: should stop using fixed sizes to avoid application reloading
+      reloadAppAsync();
+    }
+  }, [windowDimensions]);
   if (appIsLoading) {
     return null;
   }

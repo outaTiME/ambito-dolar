@@ -13,7 +13,8 @@ const IS_IPAD = Platform.OS === 'ios' && IS_TABLET;
 const HAPTICS_ENABLED = Platform.OS === 'ios';
 
 // const HEADER_HEIGHT = 54 + Constants.statusBarHeight;
-const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = Dimensions.get('window');
+const windowDimensions = Dimensions.get('window');
+const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = windowDimensions;
 // FIXME: check use width on tablets ?
 // const SMALL_DISPLAY_HEIGHT = Math.round(IS_HANDSET ? DEVICE_HEIGHT : DEVICE_WIDTH) <= 731; // 5.0"
 const SMALL_DISPLAY_HEIGHT = Math.round(DEVICE_HEIGHT) <= 731; // 5.0"
@@ -24,6 +25,7 @@ const CARD_PADDING =
     ? 10
     : PADDING / 2;
 const BORDER_RADIUS = PADDING / 2;
+// const BORDER_RADIUS = 12;
 const BORDER_WIDTH = 1;
 const ALLOW_FONT_SCALING = false;
 const MAX_FONT_SIZE_MULTIPLIER = 1.2;
@@ -285,4 +287,5 @@ export default {
     ); */
     return stretch;
   },
+  windowDimensions,
 };
