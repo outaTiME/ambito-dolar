@@ -34,6 +34,7 @@ import Sentry from './utilities/Sentry';
 // import { getWidgetProps } from './widgets';
 // import RateWidget from './widgets/RateWidget';
 
+const start_time = Date.now();
 
 Text.defaultProps = Text.defaultProps || {};
 // Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
@@ -101,12 +102,19 @@ if (Platform.OS === 'android') {
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+  const onReady = React.useCallback(async () => {
+    Helper.debug(
+      '👌 Application loading is completed',
+      Date.now() - start_time,
+    );
+    await SplashScreen.hideAsync().catch(console.warn);
+  }, []);
   return (
     <ThemeProvider theme={theme}>
       <RootSiblingParent>
         <ActionSheetProvider>
           <HeaderButtonsProvider stackType="native">
-            <AppContainer />
+            <AppContainer onReady={onReady} />
           </HeaderButtonsProvider>
         </ActionSheetProvider>
       </RootSiblingParent>

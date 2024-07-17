@@ -411,6 +411,7 @@ const AppContainer = ({
   stillLoading,
   fetchRates,
   showAppUpdateMessage,
+  onReady,
 }) => {
   const { theme } = Helper.useTheme();
   const trackScreen = React.useCallback((name) => {
@@ -482,17 +483,12 @@ const AppContainer = ({
     );
     return () => subscription.remove();
   }, []);
-  const onReady = React.useCallback(() => {
+  const onNavigationReady = React.useCallback(() => {
     // https://reactnavigation.org/docs/navigating-without-navigation-prop/#handling-initialization
     routeNameRef.current = navigationRef.getCurrentRoute().name;
     // wait a while to avoid flickering
-    Helper.delay(Settings.ANIMATION_DURATION).then(() => {
-      if (__DEV__) {
-        console.log('👌 Application loading is completed');
-      }
-      return SplashScreen.hideAsync().catch(console.warn);
-    });
-  }, []);
+    onReady && Helper.delay(Settings.ANIMATION_DURATION).then(onReady);
+  }, [onReady]);
   const onStateChange = React.useCallback(() => {
     const previousRouteName = routeNameRef.current;
     const currentRouteName = navigationRef.getCurrentRoute().name;
@@ -543,7 +539,7 @@ const AppContainer = ({
     <NavigationContainer
       {...{
         ref: navigationRef,
-        onReady,
+        onReady: onNavigationReady,
         onStateChange,
         theme: navigationTheme,
         // linking,
