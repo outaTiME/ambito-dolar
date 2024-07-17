@@ -458,14 +458,9 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
   );
 });
 
-/* const getUrlParameter = function (key) {
-  return (location.search.match(new RegExp(key + '=(.*?)($|&)', 'i')) || [])[1];
-}; */
-
 const AppContainer = () => {
   const params = new URLSearchParams(document.location.search);
   const { type, ...data } = Object.fromEntries(params);
-  // const data = AmbitoDolar.uncrushJson(getUrlParameter('data')) || {};
   if (type === 'funding') {
     return <FundingContainer {...data} />;
   }

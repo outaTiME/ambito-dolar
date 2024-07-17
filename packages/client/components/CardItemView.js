@@ -109,7 +109,8 @@ export default ({
                 flex: 1,
                 flexDirection: 'row',
                 alignItems: 'center',
-                paddingVertical: Settings.PADDING,
+                // paddingVertical: Settings.PADDING,
+                paddingVertical: Settings.CARD_PADDING + Settings.SMALL_PADDING,
                 // gap: Settings.PADDING,
               },
               drag && {
@@ -217,7 +218,9 @@ export default ({
               <View
                 style={[
                   {
-                    paddingVertical: Settings.PADDING,
+                    // paddingVertical: Settings.PADDING,
+                    paddingVertical:
+                      Settings.CARD_PADDING + Settings.SMALL_PADDING,
                     marginRight: Settings.PADDING,
                     flexShrink: 0,
                     flexGrow: 1,

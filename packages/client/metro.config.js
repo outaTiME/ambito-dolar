@@ -1,3 +1,4 @@
+/* eslint-env node */
 // Learn more https://docs.expo.dev/guides/monorepos
 // const { getDefaultConfig } = require('expo/metro-config');
 const { getSentryExpoConfig } = require('@sentry/react-native/metro');
@@ -19,10 +20,5 @@ config.resolver.nodeModulesPaths = [
 ];
 // 3. Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
 config.resolver.disableHierarchicalLookup = true;
-
-config.resolver.sourceExts.push(
-  // https://github.com/fnando/i18n#im-getting-an-error-like-unable-to-resolve-make-plural-from-node-modulesi18n-jsdistimportpluralizationjs
-  'mjs',
-);
 
 module.exports = config;

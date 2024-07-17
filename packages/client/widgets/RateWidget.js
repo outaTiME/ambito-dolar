@@ -75,7 +75,7 @@ export default function RateWidget(props) {
             text={AmbitoDolar.getRateTitle(type)}
             style={{
               fontSize: getAdaptiveSize(18),
-              fontFamily: 'FiraGO-Regular-Minimal',
+              fontFamily: 'FiraGO-Regular',
               color: '#FFF',
             }}
             maxLines={1}
@@ -87,7 +87,7 @@ export default function RateWidget(props) {
               text={AmbitoDolar.getRateChange([, , change], true)}
               style={{
                 fontSize: getAdaptiveSize(12),
-                fontFamily: 'FiraGO-Regular-Minimal',
+                fontFamily: 'FiraGO-Regular',
                 color: Helper.getRgbaColor(
                   Helper.getChangeColor(change, theme),
                 ),
@@ -99,7 +99,7 @@ export default function RateWidget(props) {
               text={Helper.getInlineRateValue(value)}
               style={{
                 fontSize: getAdaptiveSize(24),
-                fontFamily: 'FiraGO-Regular-Minimal',
+                fontFamily: 'FiraGO-Regular',
                 color: '#FFF',
               }}
               maxLines={1}
@@ -109,7 +109,7 @@ export default function RateWidget(props) {
               text={DateUtils.humanize(timestamp, 1)}
               style={{
                 fontSize: getAdaptiveSize(10),
-                fontFamily: 'FiraGO-Regular-Minimal',
+                fontFamily: 'FiraGO-Regular',
                 color: Helper.getRgbaColor(Settings.getGrayColor(theme)),
                 marginTop: getAdaptiveSize(5),
               }}
@@ -135,7 +135,7 @@ export default function RateWidget(props) {
             text="Cotización no disponible"
             style={{
               fontSize: 12,
-              fontFamily: 'FiraGO-Regular-Minimal',
+              fontFamily: 'FiraGO-Regular',
               color: '#FFF',
               textAlign: 'center',
             }}

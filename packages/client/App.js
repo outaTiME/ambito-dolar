@@ -1,6 +1,6 @@
 /* eslint-disable import/no-duplicates */
 import 'react-native-gesture-handler';
-import 'expo-dev-client';
+// import 'expo-dev-client';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
   MaterialIcons,
@@ -12,9 +12,11 @@ import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
+// import * as SystemUI from 'expo-system-ui';
 // import * as TaskManager from 'expo-task-manager';
 import React from 'react';
-import { Text, TextInput, Platform } from 'react-native';
+import { Text, TextInput, Platform, LogBox } from 'react-native';
+// import { useColorScheme as useNativeColorScheme } from 'react-native';
 // import { requestWidgetUpdate } from 'react-native-android-widget';
 import AnimateableText from 'react-native-animateable-text';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -35,6 +37,7 @@ import Sentry from './utilities/Sentry';
 // import RateWidget from './widgets/RateWidget';
 
 const start_time = Date.now();
+SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 Text.defaultProps = Text.defaultProps || {};
 // Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
@@ -48,9 +51,14 @@ AnimateableText.defaultProps = AnimateableText.defaultProps || {};
 AnimateableText.defaultProps.maxFontSizeMultiplier =
   Settings.MAX_FONT_SIZE_MULTIPLIER;
 
-SplashScreen.preventAutoHideAsync().catch(console.warn);
+if (__DEV__) {
+  LogBox.ignoreLogs([
+    '[Reanimated] Tried to modify key `current` of an object which has been already passed to a worklet.',
+    '[Reanimated] Tried to modify key `reduceMotion` of an object which has been already passed to a worklet',
+    'There was a problem with the store.',
+  ]);
+}
 
-// force landscape on android tablets
 if (Platform.OS === 'android') {
   // update widgets every 5 minutes
   /* const taskName = 'update-widget';
@@ -124,35 +132,52 @@ const ThemedApp = () => {
 
 const App = () => {
   const [assets] = useAssets([require('./assets/about-icon-borderless.png')]);
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontsError] = useFonts({
     ...MaterialIcons.font,
     ...MaterialCommunityIcons.font,
     ...FontAwesome6.font,
-    'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
+    // loaded natively from the plugin
+    // 'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular.otf'),
     // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
   const constantsLoaded = Helper.useApplicationConstants(assets);
   const [appIsReady, setAppIsReady] = React.useState(false);
-  const appIsLoading = !fontsLoaded || !constantsLoaded || !appIsReady;
-  React.useEffect(() => {
-    async function prepare() {
-      try {
-        // additional async stuff here
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
+  const appIsLoading =
+    !(fontsLoaded || fontsError) || !constantsLoaded || !appIsReady;
+  // trace when fonts load error
+  if (fontsError) {
+    console.warn('Error while trying to load fonts', fontsError);
+  }
+  // const colorScheme = useNativeColorScheme();
+  React.useEffect(
+    () => {
+      async function prepare() {
+        try {
+          /* if (Platform.OS === 'android') {
+          const color = Settings.getBackgroundColor(colorScheme, true);
+          console.log('>>> appIsReady', color);
+          await SystemUI.setBackgroundColorAsync(color);
+        } */
+          // additional async stuff here
+        } catch (e) {
+          console.warn(e);
+        } finally {
+          setAppIsReady(true);
+        }
       }
-    }
-    prepare();
-  }, []);
+      prepare();
+    },
+    [
+      // colorScheme
+    ],
+  );
   if (appIsLoading) {
     return null;
   }
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView>
           <SafeAreaProvider>
             <ThemedApp />
           </SafeAreaProvider>

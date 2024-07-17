@@ -144,7 +144,7 @@ export const ConfigurationScreen = Sentry.wrap((props) => {
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
     ...MaterialCommunityIcons.font,
-    'FiraGO-Regular': require('../assets/fonts/FiraGO-Regular-Minimal.otf'),
+    // 'FiraGO-Regular': require('../assets/fonts/FiraGO-Regular.otf'),
     // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
   const [appIsReady, setAppIsReady] = React.useState(false);

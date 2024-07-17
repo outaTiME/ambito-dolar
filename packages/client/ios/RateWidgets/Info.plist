@@ -4,7 +4,7 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>FiraGO-Regular-Minimal.otf</string>
+		<string>FiraGO-Regular.otf</string>
 	</array>
 	<key>NSExtension</key>
 	<dict>

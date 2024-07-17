@@ -33,19 +33,18 @@ const FloatingEmojis = ({
   children,
   disableHorizontalMovement,
   disableVerticalMovement,
-  distance,
-  duration,
-  emojis,
-  fadeOut,
+  distance = 130,
+  duration = 2000,
+  emojis = ['💸'],
+  fadeOut = true,
   marginTop,
-  opacity,
+  opacity = 1,
   opacityThreshold,
-  range,
-  scaleTo,
+  range = [0, 80],
+  scaleTo = 1,
   setOnNewEmoji,
-  size,
-  wiggleFactor,
-  // FIXME: disable when android < 24
+  size = 30,
+  wiggleFactor = 0.5,
   disableMoneyMouthFace,
   ...props
 }) => {
@@ -145,7 +144,7 @@ FloatingEmojis.propTypes = {
   disableVerticalMovement: PropTypes.bool,
   distance: PropTypes.number,
   duration: PropTypes.number,
-  emojis: PropTypes.arrayOf(PropTypes.string).isRequired,
+  emojis: PropTypes.arrayOf(PropTypes.string),
   fadeOut: PropTypes.bool,
   marginTop: PropTypes.number,
   opacity: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
@@ -153,21 +152,9 @@ FloatingEmojis.propTypes = {
   range: PropTypes.arrayOf(PropTypes.number),
   scaleTo: PropTypes.number,
   setOnNewEmoji: PropTypes.func,
-  size: PropTypes.number.isRequired,
+  size: PropTypes.number,
   wiggleFactor: PropTypes.number,
   disableMoneyMouthFace: PropTypes.bool,
-};
-
-FloatingEmojis.defaultProps = {
-  distance: 130,
-  duration: 2000,
-  emojis: ['💸'],
-  fadeOut: true,
-  opacity: 1,
-  range: [0, 80],
-  scaleTo: 1,
-  size: 30,
-  wiggleFactor: 0.5,
 };
 
 export default FloatingEmojis;

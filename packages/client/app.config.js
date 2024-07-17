@@ -1,5 +1,5 @@
-const version = '7.1.3';
-const buildNumber = 128;
+const version = '7.2.0';
+const buildNumber = 131;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -24,9 +24,7 @@ export default {
   name: 'Ámbito Dólar',
   slug: 'ambito-dolar',
   privacy: 'hidden',
-  runtimeVersion: {
-    policy: 'appVersion',
-  },
+  runtimeVersion: version,
   version,
   platforms: ['android', 'ios', 'web'],
   githubUrl:
@@ -75,15 +73,16 @@ export default {
       },
     },
   },
-  updates: {
-    enabled: false,
-    url: 'https://u.expo.dev/88dc0a10-eec5-11e8-bdb0-e9d94f6dfa7d',
-  },
-  assetBundlePatterns: ['**/*'],
   plugins: [
     'expo-localization',
     'expo-build-properties',
-    'expo-font',
+    [
+      'expo-font',
+      {
+        fonts: ['./assets/fonts/FiraGO-Regular.otf'],
+      },
+    ],
+    'expo-asset',
     Boolean(process.env.SENTRY_AUTH_TOKEN) && [
       '@sentry/react-native/expo',
       {
@@ -106,7 +105,7 @@ export default {
     false && [
       'react-native-android-widget',
       {
-        fonts: ['./assets/fonts/FiraGO-Regular-Minimal.otf'],
+        fonts: ['./assets/fonts/FiraGO-Regular.otf'],
         widgets: [
           {
             name: 'Rate',
@@ -168,6 +167,57 @@ export default {
       // optimizes ProMotion refresh rates
       CADisableMinimumFrameDurationOnPhone: true,
     },
+    privacyManifests: {
+      // https://docs.sentry.io/platforms/react-native/data-management/apple-privacy-manifest/#create-privacy-manifest-in-expo
+      NSPrivacyCollectedDataTypes: [
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeCrashData',
+          NSPrivacyCollectedDataTypeLinked: false,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: [
+            'NSPrivacyCollectedDataTypePurposeAppFunctionality',
+          ],
+        },
+        {
+          NSPrivacyCollectedDataType:
+            'NSPrivacyCollectedDataTypePerformanceData',
+          NSPrivacyCollectedDataTypeLinked: false,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: [
+            'NSPrivacyCollectedDataTypePurposeAppFunctionality',
+          ],
+        },
+        {
+          NSPrivacyCollectedDataType:
+            'NSPrivacyCollectedDataTypeOtherDiagnosticData',
+          NSPrivacyCollectedDataTypeLinked: false,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: [
+            'NSPrivacyCollectedDataTypePurposeAppFunctionality',
+          ],
+        },
+      ],
+      // https://github.com/bluesky-social/social-app/blob/main/app.config.js#L103
+      NSPrivacyAccessedAPITypes: [
+        {
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
+          NSPrivacyAccessedAPITypeReasons: ['C617.1', '3B52.1', '0A2A.1'],
+        },
+        {
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',
+          NSPrivacyAccessedAPITypeReasons: ['E174.1', '85F4.1'],
+        },
+        {
+          NSPrivacyAccessedAPIType:
+            'NSPrivacyAccessedAPICategorySystemBootTime',
+          NSPrivacyAccessedAPITypeReasons: ['35F9.1'],
+        },
+        {
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
+          NSPrivacyAccessedAPITypeReasons: ['CA92.1', '1C8F.1'],
+        },
+      ],
+    },
     ...SHARED_SPLASH,
   },
   android: {
@@ -186,7 +236,7 @@ export default {
       googleServicesFile: process.env.GOOGLE_SERVICES_FILE,
     }),
     ...SHARED_SPLASH,
-    allowBackup: false,
+    // allowBackup: false,
     softwareKeyboardLayoutMode: 'pan',
   },
 };

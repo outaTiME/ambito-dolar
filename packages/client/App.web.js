@@ -28,7 +28,7 @@ const App = () => {
   const [fontsLoaded] = useFonts({
     ...MaterialIcons.font,
     ...FontAwesome6.font,
-    'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular-Minimal.otf'),
+    'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular.otf'),
   });
   const constantsLoaded = Helper.useApplicationConstants(assets);
   const [appIsReady, setAppIsReady] = React.useState(false);
@@ -55,7 +55,7 @@ const App = () => {
     return null;
   }
   return (
-    <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+    <GestureHandlerRootView onLayout={onLayoutRootView}>
       <ThemedApp />
     </GestureHandlerRootView>
   );

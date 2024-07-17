@@ -1,4 +1,4 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { HeaderButtons, HeaderButton } from 'react-navigation-header-buttons';
 
@@ -7,13 +7,22 @@ import Helper from '../utilities/Helper';
 
 const MaterialHeaderButton = (props) => {
   const { theme } = Helper.useTheme();
+  const Icon =
+    props.community === true ? MaterialCommunityIcons : MaterialIcons;
   return (
     <HeaderButton
       {...props}
-      IconComponent={MaterialIcons}
+      IconComponent={Icon}
       iconSize={Settings.ICON_SIZE}
       color={Settings.getForegroundColor(theme)}
       buttonStyle={[
+        props.iconName && {
+          height: Settings.ICON_SIZE,
+          width: Settings.ICON_SIZE,
+          justifyContent: 'center',
+          alignItems: 'center',
+          overflow: 'hidden',
+        },
         {
           // perfect fit on native stack
           marginHorizontal: Settings.CARD_PADDING * 2 - 16,
