@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@anatoliygatt/use-prefers-color-scheme": "^1.0.10",
-    "gatsby": "^5.13.4",
+    "gatsby": "^5.13.7",
     "gatsby-omni-font-loader": "^2.0.2",
     "gatsby-plugin-google-gtag": "^5.13.1",
     "gatsby-plugin-humans-txt": "^1.1.4",
@@ -27,7 +27,10 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
-    "react-icons": "^5.1.0",
-    "sass": "^1.75.0"
+    "react-icons": "^5.2.1",
+    "sass": "^1.77.8"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   }
 }
