@@ -1,28 +1,41 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { BatchWriteItemCommand } from '@aws-sdk/client-dynamodb'; // ES Modules import
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { marshall } from '@aws-sdk/util-dynamodb';
 import * as _ from 'lodash';
+import prettyMilliseconds from 'pretty-ms';
 
 import Shared from '../libs/shared';
 
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
-const invalidateDevice = (installation_id) => {
-  const params = {
-    TableName: process.env.DEVICES_TABLE_NAME,
-    Key: {
-      installation_id,
-    },
-    UpdateExpression: 'SET invalidated = :invalidated',
-    ExpressionAttributeValues: {
-      ':invalidated': AmbitoDolar.getTimezoneDate().format(),
-    },
-  };
-  return ddbDocClient.send(new UpdateCommand(params));
+// https://gist.githubusercontent.com/rproenca/5b5fbadd38647a40d8be4497fb8aeb8a/raw/4a816abb2283061896f20026a36ae23b2fa5bd1f/dynamodb_batch_delete.js
+const deleteDevices = async (invalid_receipts) => {
+  const chunks = _.chain(invalid_receipts)
+    .map(({ push_token }) => ({
+      DeleteRequest: {
+        Key: {
+          push_token: marshall(push_token),
+        },
+      },
+    }))
+    // BatchWriteItem limit
+    .chunk(25)
+    .value();
+  return Promise.all(
+    chunks.map((chunk) => {
+      const command = new BatchWriteItemCommand({
+        RequestItems: { [process.env.DEVICES_TABLE_NAME]: chunk },
+      });
+      return ddbDocClient.send(command);
+    }),
+  );
 };
 
 const check = async (items = [], readonly) => {
   if (items.length > 0) {
+    const start_time = Date.now();
     const expo = Shared.getExpoClient();
     const receiptIds = _.map(items, 'id');
     console.info(
@@ -32,12 +45,13 @@ const check = async (items = [], readonly) => {
       }),
     );
     const receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
+    const limit = Shared.promiseLimit();
+    const promises = receiptIdChunks.map((chunk) =>
+      limit(() => expo.getPushNotificationReceiptsAsync(chunk)),
+    );
+    const active_devices = await Shared.getActiveDevices();
     // leave only the records with errors
-    const invalid_receipts = await Promise.all(
-      receiptIdChunks.map((chunk) =>
-        expo.getPushNotificationReceiptsAsync(chunk),
-      ),
-    )
+    const invalid_receipts = await Promise.all(promises)
       // merge objects inside array
       .then((receiptChunks) => Object.assign({}, ...receiptChunks.flat()))
       .then((receipts) =>
@@ -46,7 +60,8 @@ const check = async (items = [], readonly) => {
             if (status === 'error') {
               // https://github.com/expo/expo/issues/6414
               const item = _.find(items, { id });
-              if (item) {
+              // leave valid push_tokens (intended for multiple manual executions)
+              if (item && active_devices.includes(item.push_token)) {
                 obj.push({
                   ...item,
                   status,
@@ -70,15 +85,13 @@ const check = async (items = [], readonly) => {
         throw error;
       });
     if (!readonly) {
-      await Promise.all(
-        invalid_receipts.map(({ installation_id }) =>
-          invalidateDevice(installation_id),
-        ),
-      );
+      await deleteDevices(invalid_receipts);
     }
+    const duration = prettyMilliseconds(Date.now() - start_time);
     return {
-      items: _.map(invalid_receipts, 'installation_id'),
+      // devices: _.map(invalid_receipts, 'push_token'),
       amount: invalid_receipts.length,
+      duration,
     };
   } else {
     console.info('No tickets to check', JSON.stringify({ items }));
@@ -126,7 +139,12 @@ export const handler = Shared.wrapHandler(async (event) => {
       }),
     ),
   ).then((data) =>
-    _.chain(data).flatten().compact().uniqBy('installation_id').value(),
+    _.chain(data)
+      .flatten()
+      .compact()
+      // leave single push_token (when recipient receives multiple messages)
+      .uniqBy('push_token')
+      .value(),
   );
   const results = await check(tickets, readonly === true);
   console.info('Completed', JSON.stringify(results));

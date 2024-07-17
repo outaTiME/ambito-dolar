@@ -89,11 +89,9 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
         // textStyle: [Settings.getFontObject('dark', 'callout')],
         textStyle: [Settings.getFontObject(invertedTheme, 'callout')],
       });
-      // FIXME: update with pushTokenId on next release
-      Clipboard.setStringAsync(Settings.INSTALLATION_ID);
+      Clipboard.setStringAsync(pushToken);
     }
-  }, [invertedTheme]);
-
+  }, [invertedTheme, pushToken]);
   return (
     <>
       {Device.isDevice && !allowNotifications ? (

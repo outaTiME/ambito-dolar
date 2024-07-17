@@ -4,14 +4,14 @@ import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
   const {
-    installation_id,
+    push_token,
     message,
     type,
     social = true,
   } = event.queryStringParameters || {};
   try {
     const message_id = await Shared.triggerNotifyEvent({
-      installation_id,
+      push_token,
       message,
       type,
       social: boolean(social),

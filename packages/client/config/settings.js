@@ -44,7 +44,6 @@ const INTERACTION_DELAY = 120;
 // same as header fonts.title size
 const ICON_SIZE = 24;
 const SOCIAL_ICON_SIZE = 17;
-const APP_IGNORE_UPDATE_EXPIRATION = 30 * 24 * 60 * 60 * 1000; // 30 days
 const {
   expoConfig: {
     name: APP_NAME,
@@ -66,7 +65,6 @@ const {
       },
     },
   },
-  installationId: INSTALLATION_ID,
 } = Constants;
 const APP_COPYRIGHT = `© ${new Date().getFullYear()} ${APP_NAME}`;
 const APP_DOMAIN = 'ambito-dolar.app';
@@ -134,11 +132,9 @@ export default {
   INTERACTION_DELAY,
   ICON_SIZE,
   SOCIAL_ICON_SIZE,
-  APP_IGNORE_UPDATE_EXPIRATION,
   APP_NAME,
   APP_VERSION,
   APP_REVISION_ID,
-  INSTALLATION_ID,
   APP_COPYRIGHT,
   APP_DOMAIN,
   WEBSITE_URL,

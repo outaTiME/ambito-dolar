@@ -22,11 +22,9 @@ export const publish = async (caption, image_url) => {
         url: image_url,
       }),
     });
-    // const duration = Date.now() - start_time;
     return {
       id,
       url,
-      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(

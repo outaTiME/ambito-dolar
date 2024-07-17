@@ -53,12 +53,12 @@ const getRate = (type) => {
           type,
           rate: [identity, rate_last],
         };
-        const duration = Date.now() - start_time;
+        const duration = prettyMilliseconds(Date.now() - start_time);
         console.info(
           'Fetch rate completed',
           JSON.stringify({
             type,
-            duration: prettyMilliseconds(duration),
+            duration,
           }),
         );
         return result;
@@ -108,12 +108,12 @@ const getRate = (type) => {
           type: target_type,
           rate: [identity, value[type]],
         }));
-        const duration = Date.now() - start_time;
+        const duration = prettyMilliseconds(Date.now() - start_time);
         console.info(
           'Fetch crypto rates completed',
           JSON.stringify({
             rates,
-            duration: prettyMilliseconds(duration),
+            duration,
           }),
         );
         return result;

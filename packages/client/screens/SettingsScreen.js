@@ -88,7 +88,6 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
         '',
         '—',
         '',
-        `${I18n.t('installation')}: ${Settings.INSTALLATION_ID}`,
         `${I18n.t('app_version')}: ${
           Settings.APP_REVISION_ID || Settings.APP_VERSION
         }`,

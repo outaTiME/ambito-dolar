@@ -80,13 +80,13 @@ export const generateScreenshot = async (url, opts) => {
       })
       .toBuffer(),
   ]);
-  const duration = Date.now() - start_time;
+  const duration = prettyMilliseconds(Date.now() - start_time);
   console.info(
     'Screenshot completed',
     JSON.stringify({
       url,
       target_url,
-      duration: prettyMilliseconds(duration),
+      duration,
     }),
   );
   return {

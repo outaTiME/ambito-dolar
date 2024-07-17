@@ -18,19 +18,19 @@ const attributes = [
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
-const pruneDevice = (installation_id) => {
-  const params = {
+const pruneDevice = (push_token) => {
+  const command = new UpdateCommand({
     TableName: process.env.DEVICES_TABLE_NAME,
     Key: {
-      installation_id,
+      push_token,
     },
     UpdateExpression: `REMOVE ${attributes.join()}`,
-  };
-  return ddbDocClient.send(new UpdateCommand(params));
+  });
+  return ddbDocClient.send(command);
 };
 
 export const handler = Shared.wrapHandler(async (event) => {
-  const { installation_id } = event.queryStringParameters || {};
+  const { push_token } = event.queryStringParameters || {};
   try {
     let filter_expression = attributes
       .map((attribute) => `attribute_exists(${attribute})`)
@@ -38,24 +38,22 @@ export const handler = Shared.wrapHandler(async (event) => {
     const expression_attribute_values = {
       // pass
     };
-    if (installation_id) {
-      filter_expression = `installation_id = :installation_id AND (${filter_expression})`;
-      expression_attribute_values[':installation_id'] = installation_id;
+    if (push_token) {
+      filter_expression = `push_token = :push_token AND (${filter_expression})`;
+      expression_attribute_values[':push_token'] = push_token;
     }
     const params = {
       TableName: process.env.DEVICES_TABLE_NAME,
-      ProjectionExpression: 'installation_id',
+      ProjectionExpression: 'push_token',
       FilterExpression: filter_expression,
       ...(!_.isEmpty(expression_attribute_values) && {
         ExpressionAttributeValues: expression_attribute_values,
       }),
     };
     const items = await Shared.getAllDataFromDynamoDB(params);
-    await Promise.all(
-      items.map(({ installation_id }) => pruneDevice(installation_id)),
-    );
+    await Promise.all(items.map(({ push_token }) => pruneDevice(push_token)));
     return Shared.serviceResponse(null, 200, {
-      items: _.map(items, 'installation_id'),
+      items: _.map(items, 'push_token'),
       amount: items.length,
     });
   } catch (error) {

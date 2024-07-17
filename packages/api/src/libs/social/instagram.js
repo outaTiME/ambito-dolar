@@ -74,12 +74,10 @@ export const publish = async (file, caption, story_file) => {
         // link: 'https://cafecito.app/ambitodolar',
       });
     }
-    // const duration = Date.now() - start_time;
     return {
       status,
       upload_id,
       media_id,
-      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(

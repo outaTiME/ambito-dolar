@@ -410,12 +410,6 @@ const AppContainer = ({
     Amplitude.track(`${name} screen`);
   }, []);
   React.useEffect(() => {
-    const uid = Settings.INSTALLATION_ID;
-    // use same device identifier for better association
-    Sentry.setUserContext({
-      id: uid,
-    });
-    Amplitude.setUserId(uid);
     // track initial screen
     trackScreen(Settings.INITIAL_ROUTE_NAME);
   }, []);
@@ -684,7 +678,7 @@ const withRealtime = (Component) => (props) => {
   );
 };
 
-const withAppUpdateCheck = (Component) => (props) => {
+/* const withAppUpdateCheck = (Component) => (props) => {
   const { version, invalidVersion, ignoreUpdate } = useSelector(
     ({
       application: {
@@ -699,13 +693,14 @@ const withAppUpdateCheck = (Component) => (props) => {
     }),
     shallowEqual,
   );
-  const dispatch = useDispatch();
+  const EXPIRATION_DAYS = 30;
   let shouldIgnoreUpdate = false;
   if (invalidVersion === true && ignoreUpdate) {
     // check if expired
     shouldIgnoreUpdate =
-      ignoreUpdate + Settings.APP_IGNORE_UPDATE_EXPIRATION >= Date.now();
+      ignoreUpdate + EXPIRATION_DAYS * 24 * 60 * 60 * 1000 >= Date.now();
   }
+  const dispatch = useDispatch();
   const showAppUpdateMessage =
     invalidVersion &&
     shouldIgnoreUpdate === false &&
@@ -720,7 +715,7 @@ const withAppUpdateCheck = (Component) => (props) => {
     }
   }, [dispatch, version]);
   return <Component showAppUpdateMessage={showAppUpdateMessage} {...props} />;
-};
+}; */
 
 const withAppStatistics = (Component) => (props) => {
   const isActiveAppState = useAppState('active');
@@ -887,7 +882,6 @@ const withPurchases = (Component) => (props) => {
       __DEV__ && (await Purchases.setLogLevel(Purchases.LOG_LEVEL.VERBOSE));
       Purchases.configure({
         apiKey: Settings.REVENUECAT_API_KEY,
-        appUserID: Settings.INSTALLATION_ID,
       });
     };
     configure()
@@ -1153,7 +1147,7 @@ const withAppDonation = (Component) => (props) => {
 export default compose(
   withRates(),
   withRealtime,
-  withAppUpdateCheck,
+  // withAppUpdateCheck,
   withAppStatistics,
   withUserActivity,
   withPurchases,

@@ -1,7 +1,10 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import * as _ from 'lodash';
+// import pThrottle from 'p-throttle';
 import prettyMilliseconds from 'pretty-ms';
+import promiseRetry from 'promise-retry';
+import throttledQueue from 'throttled-queue';
 
 import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,
@@ -74,7 +77,7 @@ const getMessagesFromCurrentRate = (items, type, rates) => {
   try {
     const title = AmbitoDolar.getNotificationTitle(type);
     const messages = items.map(
-      ({ installation_id, app_version, push_token, notification_settings }) => {
+      ({ push_token, app_version, notification_settings }) => {
         const settings = AmbitoDolar.getNotificationSettings(
           notification_settings,
         )[type];
@@ -126,9 +129,8 @@ const getMessagesFromCurrentRate = (items, type, rates) => {
             body,
             // internal
             source: {
-              installation_id,
-              app_version,
               push_token,
+              app_version,
             },
           });
         }
@@ -169,27 +171,26 @@ const sendPushNotifications = async (
   const tickets = [];
   if (items.length > 0) {
     const messages = [];
-    items = _.chain(items)
+    /* items = _.chain(items)
       // leave the most updated devices on top (newest settings first)
       .orderBy(
-        (item) => AmbitoDolar.getTimezoneDate(item.last_update).valueOf(),
+        ({ last_update }) => AmbitoDolar.getTimezoneDate(last_update).valueOf(),
         ['desc'],
       )
       // exclude duplicates (removing from below)
       .uniqBy('push_token')
-      .value();
+      .value(); */
     if (body_message) {
-      const { installation_id, app_version, push_token } = items[0];
-      // single item only allowed (installation_id as parameter)
+      const { push_token, app_version } = items[0];
+      // single item only allowed (push_token as parameter)
       messages.push(
         getMessage({
           to: push_token,
           body: body_message,
           // internal
           source: {
-            installation_id,
-            app_version,
             push_token,
+            app_version,
           },
         }),
       );
@@ -225,44 +226,132 @@ const sendPushNotifications = async (
           limit: expo.pushNotificationChunkSizeLimit,
         }),
       );
-      // FIXME: limit promise all to 500 parallel requests
       const failedChunks = [];
-      // FIXME: how to prevent "504 Gateway Time-out" errors?
-      // concurrent requests using maxConcurrentRequests opt
+      // p-throttle
+      // send ~600 notifications per second (100 messages per call)
+      /* const throttle = pThrottle({
+        // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L35
+        limit: 6,
+        // https://docs.expo.dev/push-notifications/sending-notifications/#request-errors
+        interval: 1100,
+        // ensure limit not exceeded
+        strict: true,
+      });
+      const throttled = throttle((chunk, index) =>
+        expo
+          .sendPushNotificationsAsync(
+            // remove source from message
+            chunk.map((message) => _.omit(message, 'source')),
+          )
+          .then((tickets) =>
+            // same order as input
+            tickets.map((ticket, index) => {
+              const { title, body: message, source } = chunk[index];
+              return {
+                ...ticket,
+                title,
+                message,
+                ...source,
+              };
+            }),
+          )
+          .catch((error) => {
+            // ignore when error
+            console.warn('Unable to send the message chunk', index, error);
+            failedChunks.push(chunk);
+          }),
+      );
+      tickets.push(
+        ...(await Promise.all(chunks.map(throttled)).then((ticketChunks) =>
+          _.compact(ticketChunks.flat()),
+        )),
+      ); */
+
+      // throttled-queue
+      // send ~600 notifications per second (100 messages per call)
+      const throttle = throttledQueue(
+        // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L35
+        6,
+        // https://docs.expo.dev/push-notifications/sending-notifications/#request-errors
+        1000,
+        // https://github.com/shaunpersad/throttled-queue?tab=readme-ov-file#evenly-spaced
+        true,
+      );
       tickets.push(
         ...(await Promise.all(
-          chunks.map((chunk) =>
-            expo
-              .sendPushNotificationsAsync(
-                // remove source from message
-                chunk.map((message) => _.omit(message, 'source')),
-              )
-              .then((tickets) =>
-                // same order as input
-                tickets.map((ticket, index) => {
-                  const { title, body: message, source } = chunk[index];
-                  return {
-                    ...ticket,
-                    title,
-                    message,
-                    ...source,
-                  };
-                }),
-              )
-              .catch(() => {
+          chunks.map((chunk, index) =>
+            throttle(() =>
+              promiseRetry((retry, number) =>
+                expo
+                  .sendPushNotificationsAsync(
+                    // remove source from message
+                    chunk.map((message) => _.omit(message, 'source')),
+                  )
+                  .then((tickets) =>
+                    // same order as input
+                    tickets.map((ticket, index) => {
+                      const { title, body: message, source } = chunk[index];
+                      return {
+                        ...ticket,
+                        title,
+                        message,
+                        ...source,
+                      };
+                    }),
+                  )
+                  .catch((error) => {
+                    console.info(
+                      'Unable to send the message chunk',
+                      error.statusCode === 429,
+                      JSON.stringify({
+                        chunk: index,
+                        attempt: number,
+                        error,
+                      }),
+                    );
+                    // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L99
+                    if (error.statusCode === 429) {
+                      return retry(error);
+                    }
+                    throw error;
+                  }),
+              ).catch((error) => {
                 // ignore when error
-                /* console.warn(
-                  'Unable to send the chunk of messages',
+                console.warn(
+                  'Unable to send the message chunk',
                   JSON.stringify({
                     chunk: index,
-                    error: error.message,
-                  })
-                ); */
+                    error,
+                  }),
+                );
                 failedChunks.push(chunk);
               }),
+            ),
           ),
         ).then((ticketChunks) => _.compact(ticketChunks.flat()))),
       );
+      /* for (const chunk of chunks) {
+        try {
+          const ticketChunk = await expo
+            .sendPushNotificationsAsync(chunk)
+            .then((tickets) =>
+              // same order as input
+              tickets.map((ticket, index) => {
+                const { title, body: message, source } = chunk[index];
+                return {
+                  ...ticket,
+                  title,
+                  message,
+                  ...source,
+                };
+              }),
+            );
+          tickets.push(...ticketChunk);
+        } catch (error) {
+          console.info('Unable to send the message chunk', error);
+          failedChunks.push(chunk);
+        }
+      } */
       const duration = prettyMilliseconds(Date.now() - expo_start_time);
       console.info(
         'Messages sent',
@@ -277,7 +366,7 @@ const sendPushNotifications = async (
       );
       // save tickets to aws
       const notification_date = AmbitoDolar.getTimezoneDate().format();
-      const params = {
+      const command = new PutCommand({
         TableName: process.env.NOTIFICATIONS_TABLE_NAME,
         // remove nil values
         Item: _.omitBy(
@@ -290,9 +379,9 @@ const sendPushNotifications = async (
           },
           _.isNil,
         ),
-      };
+      });
       await Promise.all([
-        ddbDocClient.send(new PutCommand(params)),
+        ddbDocClient.send(command),
         Shared.storeTickets(notification_date, type, tickets),
       ]).catch((error) => {
         console.warn(
@@ -313,40 +402,38 @@ const sendPushNotifications = async (
 
 export const handler = Shared.wrapHandler(async (event) => {
   const {
-    installation_id,
+    push_token,
     message,
     type = AmbitoDolar.NOTIFICATION_CLOSE_TYPE,
     rates,
     social = true,
   } = JSON.parse(event.Records[0].Sns.Message);
   // TODO: support message broadcasting?
-  if (!installation_id && message) {
+  if (!push_token && message) {
     throw new Error('Message is malformed, missing or has an invalid value');
   }
   console.info(
     'Message received',
     JSON.stringify({
-      installation_id,
+      push_token,
       message,
       type,
       rates,
       social,
     }),
   );
-  let filter_expression =
-    'attribute_exists(push_token) AND attribute_not_exists(invalidated)';
+  // TODO: invalidated field should be removed
+  let filter_expression = 'attribute_not_exists(invalidated)';
   const expression_attribute_values = {
     // pass
   };
-  if (installation_id) {
-    filter_expression =
-      'installation_id = :installation_id AND ' + filter_expression;
-    expression_attribute_values[':installation_id'] = installation_id;
+  if (push_token) {
+    filter_expression = 'push_token = :push_token AND ' + filter_expression;
+    expression_attribute_values[':push_token'] = push_token;
   }
   const params = {
     TableName: process.env.DEVICES_TABLE_NAME,
-    ProjectionExpression:
-      'installation_id, app_version, push_token, notification_settings, last_update',
+    ProjectionExpression: 'push_token, app_version, notification_settings',
     FilterExpression: filter_expression,
     ...(!_.isEmpty(expression_attribute_values) && {
       ExpressionAttributeValues: expression_attribute_values,
@@ -357,12 +444,12 @@ export const handler = Shared.wrapHandler(async (event) => {
     console.warn(
       'Unable to get devices for push notifications',
       JSON.stringify({
-        installation_id,
+        push_token,
         error: error.message,
       }),
     );
   });
-  if (items && installation_id && message) {
+  if (items && push_token && message) {
     // send plain message
     promises.push(
       sendPushNotifications(items, {
@@ -390,7 +477,7 @@ export const handler = Shared.wrapHandler(async (event) => {
           }),
         );
       }
-      if (social && !installation_id && !process.env.IS_LOCAL) {
+      if (social && !push_token && !process.env.IS_LOCAL) {
         const social_rates = _.omit(current_rates, [
           // rates to exclude on socials
         ]);

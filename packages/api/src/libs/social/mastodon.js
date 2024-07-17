@@ -25,13 +25,11 @@ export const publish = async (caption, file) => {
         mediaIds: [attachment.id],
       }),
     });
-    // const duration = Date.now() - start_time;
     return {
       status_id,
       ...(attachment && {
         media_id: attachment.id,
       }),
-      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(

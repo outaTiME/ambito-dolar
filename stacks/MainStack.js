@@ -125,15 +125,17 @@ export function MainStack({ stack }) {
       // private
       'GET /process': 'packages/api/src/routes/process.handler',
       'GET /active-devices': 'packages/api/src/routes/active-devices.handler',
-      'GET /prune-devices': 'packages/api/src/routes/prune-devices.handler',
       'GET /notify': 'packages/api/src/routes/notify.handler',
-      'GET /invalidate-receipts':
-        'packages/api/src/routes/invalidate-receipts.handler',
       'GET /social-notify': 'packages/api/src/routes/social-notify.handler',
       'GET /funding-notify': 'packages/api/src/routes/funding-notify.handler',
       'POST /update-rates': 'packages/api/src/routes/update-rates.handler',
       'POST /update-historical-rates':
         'packages/api/src/routes/update-historical-rates.handler',
+      // maintenance (private)
+      'GET /invalidate-receipts':
+        'packages/api/src/routes/invalidate-receipts.handler',
+      'GET /prune-devices': 'packages/api/src/routes/prune-devices.handler',
+      'GET /export-devices': 'packages/api/src/routes/export-devices.handler',
       // public
       'GET /test': {
         authorizer: 'none',
@@ -188,8 +190,8 @@ export function MainStack({ stack }) {
     invalidateReceipts: {
       function: {
         handler: 'packages/api/src/subscribers/invalidate-receipts.handler',
-        // ~15s
-        timeout: '30 seconds',
+        // ~30s
+        timeout: '1 minute',
       },
       cdk: {
         subscription: {

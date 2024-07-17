@@ -30,13 +30,11 @@ export const publish = async (caption, file) => {
         },
       }),
     });
-    // const duration = Date.now() - start_time;
     return {
       id,
       ...(media_id && {
         media_id,
       }),
-      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(

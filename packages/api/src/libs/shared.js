@@ -16,6 +16,7 @@ import { JWT } from 'google-auth-library';
 import https from 'https';
 import * as _ from 'lodash';
 import prettyMilliseconds from 'pretty-ms';
+import promiseLimit from 'promise-limit';
 import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import zlib from 'zlib';
@@ -29,13 +30,15 @@ import { publish as publishToWhatsapp } from './social/whatsapp';
 
 // defaults
 
+const MAX_SOCKETS = 250;
+
 const ddbClient = new DynamoDBClient({
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_util_retry.html#maxattempts
   // retryStrategy: new StandardRetryStrategy(5),
   requestHandler: new NodeHttpHandler({
     httpsAgent: new https.Agent({
       // prevent warnings on parallelScan (half of the concurrency value)
-      maxSockets: 250,
+      maxSockets: MAX_SOCKETS,
       // keepAlive: false,
     }),
     // connectionTimeout: 1000,
@@ -134,7 +137,8 @@ const getDynamoDBClient = () => ddbClient;
 const getS3Client = () => s3Client;
 
 /* const getAllDataFromDynamoDB = async (params, allData = []) => {
-  const data = await ddbClient.send(new ScanCommand(params));
+  const command = new ScanCommand(params);
+  const data = await ddbClient.send(command);
   return data.LastEvaluatedKey
     ? getAllDataFromDynamoDB(
         { ...params, ExclusiveStartKey: data.LastEvaluatedKey },
@@ -146,7 +150,7 @@ const getS3Client = () => s3Client;
 const getAllDataFromDynamoDB = (params) => {
   const client = getDynamoDBClient();
   return parallelScan(params, {
-    // ~4000 items per scan (1 MB of data)
+    // up to 1 MB of data per thread
     concurrency: 500,
     client,
   });
@@ -189,28 +193,16 @@ new Promise((resolve, reject) => {
 
 // https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/s3-example-creating-buckets.html#s3-example-creating-buckets-get-object
 const getJsonObject = (key, bucket = S3_BUCKET) => {
-  const bucketParams = {
+  const client = getS3Client();
+  const command = new GetObjectCommand({
     Bucket: bucket,
     Key: `${key}.json`,
-  };
-  // try {
-  const client = getS3Client();
-  return client.send(new GetObjectCommand(bucketParams)).then(async (data) => {
+  });
+  return client.send(command).then(async (data) => {
     const bodyContents = await streamToBuffer(data.Body);
     const uncompressed = zlib.gunzipSync(bodyContents);
     return JSON.parse(uncompressed);
-    /* const buffer = new Buffer.from(data.Body.toString());
-        const uncompressed = zlib.gunzipSync(buffer);
-        return JSON.parse(uncompressed); */
   });
-  /* } catch (error) {
-    // error.name === 'NoSuchKey'
-    console.warn(
-      'Unable to get object from bucket',
-      JSON.stringify({ bucket, key, error: error.message })
-    );
-    // trace and continue
-  } */
 };
 
 const getTickets = (date, type) =>
@@ -236,33 +228,33 @@ const getRates = async (base_rates) => {
   return rates;
 };
 
-// https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/s3-example-creating-buckets.html#s3-example-creating-buckets-upload-file
-const storeJsonObject = (key, json, bucket = S3_BUCKET, is_public = false) => {
-  // try {
-  // https://blog.jonathandion.com/posts/json-gzip-s3/
-  const buffer = new Buffer.from(JSON.stringify(json));
-  const compressed = zlib.gzipSync(buffer);
-  const bucketParams = {
+const storeObject = (
+  key,
+  content,
+  bucket = S3_BUCKET,
+  compressed = true,
+  opts = {},
+) => {
+  const client = getS3Client();
+  const buffer = new Buffer.from(content);
+  const command = new PutObjectCommand({
     Bucket: bucket,
-    Key: `${key}.json`,
-    Body: compressed,
+    Key: key,
+    Body: compressed ? zlib.gzipSync(buffer) : buffer,
+    ...opts,
+  });
+  return client.send(command);
+};
+
+const storeJsonObject = (key, json, bucket = S3_BUCKET, is_public = false) =>
+  storeObject(`${key}.json`, JSON.stringify(json), bucket, true, {
     ContentType: 'application/json; charset=utf-8',
     ...(is_public === true && { ACL: 'public-read' }),
     CacheControl: 'no-cache',
     // brotli-compressed
     // ContentEncoding: 'br',
     ContentEncoding: 'gzip',
-  };
-  const client = getS3Client();
-  return client.send(new PutObjectCommand(bucketParams));
-  /* } catch (error) {
-    console.warn(
-      'Unable to store object in bucket',
-      JSON.stringify({ bucket, key, json, error: error.message })
-    );
-    // trace and continue
-  } */
-};
+  });
 
 const storeTickets = (date, type, json) =>
   storeJsonObject(`notifications/${date}-${type}`, json);
@@ -490,15 +482,13 @@ const getSocialScreenshotUrl = (data) => {
     ...data,
   });
   return url.toString();
-  /* return (
-    process.env.SOCIAL_SCREENSHOT_URL + '?data=' + AmbitoDolar.crushJson(data)
-  ); */
 };
 
 const getExpoClient = () =>
   new Expo({
-    // disable concurrent HTTP requests
-    // maxConcurrentRequests: 0,
+    // disable concurrency on sendPushNotificationsAsync to handle it manually
+    // https://github.com/featurist/promise-limit?tab=readme-ov-file#api
+    maxConcurrentRequests: 0,
   });
 
 // SNS
@@ -512,7 +502,7 @@ const publishMessageToTopic = (event, payload = {}) => {
       payload,
     }),
   );
-  const params = {
+  const command = new PublishCommand({
     Message: JSON.stringify(payload),
     MessageStructure: 'string',
     // https://docs.aws.amazon.com/sns/latest/dg/sns-subscription-filter-policies.html
@@ -523,17 +513,17 @@ const publishMessageToTopic = (event, payload = {}) => {
       },
     },
     TopicArn: process.env.SNS_TOPIC,
-  };
+  });
   return snsClient
-    .send(new PublishCommand(params))
+    .send(command)
     .then(({ MessageId: id }) => {
-      const duration = Date.now() - start_time;
+      const duration = prettyMilliseconds(Date.now() - start_time);
       console.info(
         'Message published to sns topic',
         JSON.stringify({
           id,
           event,
-          duration: prettyMilliseconds(duration),
+          duration,
         }),
       );
       return id;
@@ -583,7 +573,7 @@ const triggerEvent = (event, payload) => {
     },
   )
     .then(() => {
-      // const duration = Date.now() - start_time;
+      // const duration = prettyMilliseconds(Date.now() - start_time);
       /* console.info(
         'Event triggered',
         JSON.stringify({
@@ -593,7 +583,7 @@ const triggerEvent = (event, payload) => {
       ); */
       return {
         event,
-        // duration: prettyMilliseconds(duration),
+        // duration,
       };
     })
     .catch((error) => {
@@ -665,10 +655,10 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
           resolve(
             promise
               .then((/* response */) => {
-                const duration = Date.now() - start_time;
+                const duration = prettyMilliseconds(Date.now() - start_time);
                 return {
                   target,
-                  duration: prettyMilliseconds(duration),
+                  duration,
                   // response,
                 };
               })
@@ -747,6 +737,18 @@ const wrapHandler = (handler) => {
   return handler;
 };
 
+const getActiveDevices = async () => {
+  const items = await getAllDataFromDynamoDB({
+    TableName: process.env.DEVICES_TABLE_NAME,
+    // TODO: invalidated field should be removed
+    ProjectionExpression: 'push_token, invalidated',
+  });
+  return _.chain(items)
+    .filter((item) => !item.invalidated)
+    .map('push_token')
+    .value();
+};
+
 export default {
   // fetchFirebaseData,
   updateFirebaseData,
@@ -761,6 +763,7 @@ export default {
   getTickets,
   getRatesJsonObject,
   getRates,
+  storeObject,
   storeJsonObject,
   storeTickets,
   storeHistoricalRatesJsonObject,
@@ -781,4 +784,7 @@ export default {
   storeImgbbFile,
   fetchImage,
   wrapHandler,
+  // TODO: update default limit close to 500 ???
+  promiseLimit: (concurrency = MAX_SOCKETS) => promiseLimit(concurrency),
+  getActiveDevices,
 };

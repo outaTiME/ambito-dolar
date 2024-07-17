@@ -34,10 +34,8 @@ export const publish = async (caption, file) => {
       }),
     };
     const result = await agent.post(postRecord);
-    // const duration = Date.now() - start_time;
     return {
       ...result,
-      // duration: prettyMilliseconds(duration),
     };
   } catch (error) {
     /* console.error(

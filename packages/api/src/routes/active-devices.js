@@ -1,24 +1,15 @@
-import * as _ from 'lodash';
+import prettyMilliseconds from 'pretty-ms';
 
 import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async () => {
   try {
-    const params = {
-      TableName: process.env.DEVICES_TABLE_NAME,
-      ProjectionExpression: 'push_token, invalidated',
-    };
-    const items = await Shared.getAllDataFromDynamoDB(params);
-    const push_tokens = _.chain(items)
-      .filter((item) => !item.invalidated)
-      .map('push_token')
-      // remove falsey
-      .compact()
-      .value();
+    const start_time = Date.now();
+    const active_devices = await Shared.getActiveDevices();
+    const duration = prettyMilliseconds(Date.now() - start_time);
     return Shared.serviceResponse(null, 200, {
-      amount: items.length,
-      push_tokens: push_tokens.length,
-      // items,
+      amount: active_devices.length,
+      duration,
     });
   } catch (error) {
     return Shared.serviceResponse(null, error.code || 400, {
