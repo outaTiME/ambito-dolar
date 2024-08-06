@@ -979,28 +979,42 @@ const withAppDonation = (Component) => (props) => {
       shouldShowModal = appDonationModal || shouldShowModal;
       if (shouldShowModal) {
         Purchases.getCustomerInfo()
-          .then((customerInfo) => {
+          .then(async (customerInfo) => {
+            const lastPurchaseDate = _.last(
+              customerInfo?.nonSubscriptionTransactions,
+            )?.purchaseDate;
+            const monthsSinceLastPurchase = DateUtils.get().diff(
+              lastPurchaseDate,
+              'months',
+            );
+            let product;
             if (
               appDonationModal ||
-              customerInfo.nonSubscriptionTransactions.length === 0
+              !lastPurchaseDate ||
+              // ask for a new donation within 6 months of the last one
+              monthsSinceLastPurchase >= 6
             ) {
-              return Helper.timeout(
+              product = await Helper.timeout(
                 Purchases.getProducts(
                   ['small_contribution'],
                   Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
                 ),
-              ).then((products) => [customerInfo, products?.[0]]);
+              ).then((products) => products?.[0]);
               // .then((product) => product ?? (__DEV__ && { price: 1 }));
             }
+            return [lastPurchaseDate, monthsSinceLastPurchase, product];
           })
           .catch(console.warn)
-          .then(([customerInfo, product] = []) => {
+          .then(([lastPurchaseDate, monthsSinceLastPurchase, product] = []) => {
+            Helper.debug('💖 Donation modal may be required', {
+              daysUsed,
+              ignoreDonation,
+              forced: !!appDonationModal,
+              lastPurchaseDate,
+              monthsSinceLastPurchase,
+              product: !!product,
+            });
             setPurchaseProduct(product, (product) => {
-              Helper.debug('💖 Donation modal may be required', {
-                forced: !!appDonationModal,
-                transactions: customerInfo?.nonSubscriptionTransactions?.length,
-                product: !!product,
-              });
               // run after modal re-rendering
               if (product) {
                 // wait for the next tick to ensure the dynamic size calculation on the sheet
@@ -1012,7 +1026,6 @@ const withAppDonation = (Component) => (props) => {
           });
       } else {
         Helper.debug('💖 Donation modal not required', {
-          shouldShowModal,
           daysUsed,
           ignoreDonation,
           forced: !!appDonationModal,
@@ -1065,14 +1078,14 @@ const withAppDonation = (Component) => (props) => {
         }}
         backdropComponent={renderBackdrop}
         onChange={handleSheetChanges}
-        enableOverDrag={false}
+        // enableOverDrag={false}
         enablePanDownToClose={false}
         detached
         bottomInset={safeAreaInsets.bottom || Settings.CARD_PADDING * 2}
         enableDynamicSizing
         contentHeight={animatedContentHeight}
         index={-1}
-        // animateOnMount={false}
+        animateOnMount={false}
         handleComponent={null}
       >
         <BottomSheetView>
