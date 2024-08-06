@@ -1,6 +1,5 @@
-/* eslint-disable import/no-duplicates */
-import 'react-native-gesture-handler';
-// import 'expo-dev-client';
+// https://docs.expo.dev/develop/development-builds/use-development-builds/#add-error-handling
+import 'expo-dev-client';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
   MaterialIcons,
@@ -13,8 +12,8 @@ import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
-import * as _ from 'lodash';
 // import * as SystemUI from 'expo-system-ui';
+import * as _ from 'lodash';
 // import * as TaskManager from 'expo-task-manager';
 import React from 'react';
 import {
@@ -30,6 +29,7 @@ import AnimateableText from 'react-native-animateable-text';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+// import { enableFreeze } from 'react-native-screens';
 import { HeaderButtonsProvider } from 'react-navigation-header-buttons';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -47,6 +47,9 @@ import Sentry from './utilities/Sentry';
 const start_time = Date.now();
 SplashScreen.preventAutoHideAsync().catch(console.warn);
 
+// https://github.com/software-mansion/react-native-screens?tab=readme-ov-file#experimental-support-for-react-freeze
+// enableFreeze(true);
+
 Text.defaultProps = Text.defaultProps || {};
 // Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
 Text.defaultProps.maxFontSizeMultiplier = Settings.MAX_FONT_SIZE_MULTIPLIER;
@@ -62,7 +65,6 @@ AnimateableText.defaultProps.maxFontSizeMultiplier =
 if (__DEV__) {
   LogBox.ignoreLogs([
     '[Reanimated] Tried to modify key `current` of an object which has been already passed to a worklet.',
-    '[Reanimated] Tried to modify key `reduceMotion` of an object which has been already passed to a worklet',
     'There was a problem with the store.',
   ]);
 }
@@ -145,7 +147,7 @@ const App = () => {
     ...MaterialCommunityIcons.font,
     ...FontAwesome6.font,
     // loaded natively from the plugin
-    // 'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular.otf'),
+    'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular.otf'),
     // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
   const constantsLoaded = Helper.useApplicationConstants(assets);
@@ -156,29 +158,25 @@ const App = () => {
   if (fontsError) {
     console.warn('Error while trying to load fonts', fontsError);
   }
-  // const colorScheme = useNativeColorScheme();
-  React.useEffect(
-    () => {
-      async function prepare() {
-        try {
-          /* if (Platform.OS === 'android') {
-          const color = Settings.getBackgroundColor(colorScheme, true);
-          console.log('>>> appIsReady', color);
-          await SystemUI.setBackgroundColorAsync(color);
-        } */
-          // additional async stuff here
-        } catch (e) {
-          console.warn(e);
-        } finally {
-          setAppIsReady(true);
-        }
+  React.useEffect(() => {
+    async function prepare() {
+      try {
+        // additional async stuff here
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
       }
-      prepare();
-    },
-    [
-      // colorScheme
-    ],
-  );
+    }
+    prepare();
+  }, []);
+  /* const colorScheme = useNativeColorScheme();
+  React.useEffect(async () => {
+    if (Platform.OS === 'android') {
+      const color = Settings.getBackgroundColor(colorScheme, true);
+      await SystemUI.setBackgroundColorAsync(color);
+    }
+  }, [colorScheme]); */
   const windowDimensions = useWindowDimensions();
   React.useEffect(() => {
     if (!_.isEqual(windowDimensions, Settings.windowDimensions)) {

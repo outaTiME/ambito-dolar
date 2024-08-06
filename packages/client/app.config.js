@@ -76,12 +76,12 @@ export default {
   plugins: [
     'expo-localization',
     'expo-build-properties',
-    [
+    /* [
       'expo-font',
       {
         fonts: ['./assets/fonts/FiraGO-Regular.otf'],
       },
-    ],
+    ], */
     'expo-asset',
     Boolean(process.env.SENTRY_AUTH_TOKEN) && [
       '@sentry/react-native/expo',
