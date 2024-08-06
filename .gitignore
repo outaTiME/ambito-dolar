@@ -21,6 +21,7 @@ public
 web-build
 google-services.json
 __generated__
+packages/client/android
 
 # Node
 node_modules
@@ -39,6 +40,3 @@ yarn-error.log
 # SST build output
 .build
 .sst
-
-# Sentry
-packages/client/ios/sentry.properties
