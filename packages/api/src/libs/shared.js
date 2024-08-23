@@ -489,6 +489,8 @@ const getExpoClient = () =>
     // disable concurrency on sendPushNotificationsAsync to handle it manually
     // https://github.com/featurist/promise-limit?tab=readme-ov-file#api
     maxConcurrentRequests: 0,
+    // https://github.com/expo/expo/issues/28656#issuecomment-2306088066
+    useFcmV1: true,
   });
 
 // SNS
