@@ -1,4 +1,4 @@
-const version = '7.2.1';
+const version = '7.3.0';
 const buildNumber = 132;
 
 const LIGHT_SPLASH = {
@@ -28,7 +28,9 @@ export default {
   name: 'Ámbito Dólar',
   slug: 'ambito-dolar',
   privacy: 'hidden',
-  runtimeVersion: version,
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
   version,
   platforms: ['android', 'ios', 'web'],
   githubUrl:
