@@ -12,16 +12,16 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^19.3.0",
+    "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.2.2",
     "aws-cdk-lib": "2.142.1",
     "constructs": "10.3.0",
     "eslint": "^8.57.0",
     "eslint-config-universe": "^13.0.0",
-    "husky": "^9.1.4",
+    "husky": "^9.1.5",
     "lerna": "^8.1.8",
     "prettier": "^3.3.3",
-    "sst": "2.43.4"
+    "sst": "2.43.6"
   },
   "scripts": {
     "test": "lerna run test",

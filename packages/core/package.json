@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "ava": "^6.1.3",
-    "nock": "^13.5.4"
+    "nock": "^13.5.5"
   },
   "scripts": {
     "test": "yarn g:eslint && ava"
