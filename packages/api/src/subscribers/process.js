@@ -163,6 +163,7 @@ const getNewRates = (rates, new_rates) =>
     const rate = rates[type];
     // detect rate update using hash compare
     if (rate_hash !== _.last(rate)) {
+      // FIXME: use the average between the values instead of the highest one ???
       // eslint-disable-next-line no-sparse-arrays
       const rate_last_max = AmbitoDolar.getRateValue([, rate_last]);
       // get close rate when first rate of day (open)

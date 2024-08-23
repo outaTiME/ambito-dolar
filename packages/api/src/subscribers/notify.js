@@ -300,7 +300,7 @@ const sendPushNotifications = async (
                     }),
                   )
                   .catch((error) => {
-                    console.info(
+                    /* console.info(
                       'Unable to send the message chunk',
                       error.statusCode === 429,
                       JSON.stringify({
@@ -308,7 +308,7 @@ const sendPushNotifications = async (
                         attempt: number,
                         error,
                       }),
-                    );
+                    ); */
                     // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L99
                     if (error.statusCode === 429) {
                       return retry(error);

@@ -1,30 +1,21 @@
 # OSX
 .DS_Store
 
-# Misc
-.env
-.vercel
-.serverless
-
-# Gatsby
-.cache
-public
-
 # Expo
-.expo
+.expo/
+dist/
+web-build/
+
+# Native
+*.orig.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
-*.orig.*
-web-build
-google-services.json
-__generated__
-packages/client/android
 
 # Node
-node_modules
+node_modules/
 npm-debug.log
 yarn-error.log
 
@@ -37,6 +28,23 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 
+# Ignoring using CNG
+packages/client/android/
+
+# Environment variables
+.env
+
+# Firebase (Android) Google services
+google-services.json
+
+# Gatsby
+.cache/
+public/
+
 # SST build output
-.build
-.sst
+.sst/
+
+# Local builds
+*.apk
+*.aab
+*.ipa

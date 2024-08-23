@@ -11,7 +11,6 @@ import { reloadAppAsync } from 'expo';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
-// import * as SystemUI from 'expo-system-ui';
 import * as _ from 'lodash';
 // import * as TaskManager from 'expo-task-manager';
 import React from 'react';
@@ -22,13 +21,14 @@ import {
   LogBox,
   useWindowDimensions,
 } from 'react-native';
-// import { useColorScheme as useNativeColorScheme } from 'react-native';
 // import { requestWidgetUpdate } from 'react-native-android-widget';
 import AnimateableText from 'react-native-animateable-text';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootSiblingParent } from 'react-native-root-siblings';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-// import { enableFreeze } from 'react-native-screens';
+import {
+  initialWindowMetrics,
+  SafeAreaProvider,
+} from 'react-native-safe-area-context';
 import { HeaderButtonsProvider } from 'react-navigation-header-buttons';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -45,9 +45,6 @@ import Sentry from './utilities/Sentry';
 
 const start_time = Date.now();
 SplashScreen.preventAutoHideAsync().catch(console.warn);
-
-// https://github.com/software-mansion/react-native-screens?tab=readme-ov-file#experimental-support-for-react-freeze
-// enableFreeze(true);
 
 Text.defaultProps = Text.defaultProps || {};
 // Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
@@ -180,15 +177,15 @@ const App = () => {
     return null;
   }
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <GestureHandlerRootView>
-          <SafeAreaProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <GestureHandlerRootView>
             <ThemedApp />
-          </SafeAreaProvider>
-        </GestureHandlerRootView>
-      </PersistGate>
-    </Provider>
+          </GestureHandlerRootView>
+        </PersistGate>
+      </Provider>
+    </SafeAreaProvider>
   );
 };
 

@@ -24,14 +24,16 @@ const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
       }}
     >
       <CardView title="Acciones" plain>
-        <CardItemView
-          title="Invalidar versión"
-          useSwitch={false}
-          chevron={false}
-          onAction={() => {
-            dispatch(actions.forceApplicationInvalidVersion());
-          }}
-        />
+        {false && (
+          <CardItemView
+            title="Invalidar versión"
+            useSwitch={false}
+            chevron={false}
+            onAction={() => {
+              dispatch(actions.forceApplicationInvalidVersion());
+            }}
+          />
+        )}
         <CardItemView
           title="Limpiar almacenamiento"
           useSwitch={false}

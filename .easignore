@@ -1,29 +1,21 @@
 # OSX
 .DS_Store
 
-# Misc
-.env
-.vercel
-.serverless
-
-# Gatsby
-.cache
-public
-
 # Expo
-.expo
+.expo/
+dist/
+web-build/
+
+# Native
+*.orig.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
-*.orig.*
-web-build
-google-services.json
-__generated__
 
 # Node
-node_modules
+node_modules/
 npm-debug.log
 yarn-error.log
 
@@ -36,21 +28,48 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 
+# Ignoring using CNG
+packages/client/android/
+
+# Environment variables
+.env
+
+# Firebase (Android) Google services
+google-services.json
+
+# Gatsby
+.cache/
+public/
+
 # SST build output
-.build
-.sst
+.sst/
+
+# Local builds
+*.apk
+*.aab
+*.ipa
 
 # EAS
 # https://github.com/expo/fyi/blob/main/eas-build-archive.md#what-files-are-included-in-the-archive
+.github/
+.husky/
+.vscode/
+assets/
 packages/*
 !packages/core
 !packages/client
-packages/client/ios/build
-packages/client/ios/Pods
+packages/client/ios/build/
+packages/client/ios/Pods/
 packages/client/ios/.xcode.env.local
-/assets
-/sst.json
-/stacks
-/scriptable-widget.js
+stacks/
+.editorconfig
+.eslintrc.js
+.gitattributes
+.gitignore
+.prettierrc.json
+commitlint.config.js
+lerna.json
+scriptable-widget.js
+sst.config.js
 README.md
 CHANGELOG.md
