@@ -9,6 +9,8 @@ const LIGHT_SPLASH = {
 const DARK_SPLASH = {
   image: './assets/splash-dark.png',
   backgroundColor: '#000000',
+  // same color as android navigation bar
+  // backgroundColor: '#1C1C1E',
 };
 
 const SHARED_SPLASH = {
@@ -37,8 +39,13 @@ export default {
   },
   // https://github.com/expo/expo/issues/11604#issuecomment-1018355394
   androidStatusBar: {
+    barStyle: 'light-content',
     backgroundColor: '#00000000',
-    barStyle: 'dark-content',
+  },
+  // https://github.com/bluesky-social/social-app/blob/main/app.config.js#L132
+  androidNavigationBar: {
+    barStyle: 'light-content',
+    backgroundColor: DARK_SPLASH.backgroundColor,
   },
   scheme: 'ambito-dolar',
   extra: {
@@ -127,9 +134,10 @@ export default {
         ],
       },
     ],
+    './plugins/withAndroidManifest.js',
+    './plugins/withAndroidStylesWindowBackground.js',
     // https://www.aronberezkin.com/posts/a-step-by-step-guide-to-writing-your-first-expo-config-plugin
     './plugins/withAndroidSplashScreen.js',
-    './plugins/withAndroidManifest.js',
   ].filter(Boolean),
   splash: LIGHT_SPLASH,
   ios: {
@@ -226,6 +234,7 @@ export default {
     icon: './assets/icon.android.png',
     adaptiveIcon: {
       foregroundImage: './assets/icon.android.adaptive.foreground.png',
+      monochromeImage: './assets/icon.android.adaptive.foreground.png',
       backgroundImage: './assets/icon.android.adaptive.background.png',
     },
     playStoreUrl:

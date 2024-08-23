@@ -506,7 +506,9 @@ const AppContainer = ({
     [theme],
   );
   const navigatorScreenOptions = useNavigatorScreenOptions();
+  const navigationBarColor = navigationTheme.colors.card;
   const statusBarStyle = Helper.getInvertedTheme(theme);
+  // const statusBarColor = Settings.getSeparatorColor(theme);
   const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
   /* const linking = React.useMemo(
     () => ({
@@ -546,6 +548,7 @@ const AppContainer = ({
         screenOptions={{
           ...navigatorScreenOptions,
           headerShown: false,
+          navigationBarColor,
           statusBarStyle,
           statusBarTranslucent: true,
         }}
