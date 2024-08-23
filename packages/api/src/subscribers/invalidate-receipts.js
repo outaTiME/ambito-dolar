@@ -11,8 +11,8 @@ const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 // https://gist.githubusercontent.com/rproenca/5b5fbadd38647a40d8be4497fb8aeb8a/raw/4a816abb2283061896f20026a36ae23b2fa5bd1f/dynamodb_batch_delete.js
-const deleteDevices = async (invalid_receipts) => {
-  const chunks = _.chain(invalid_receipts)
+const invalidateDevices = async (receipts) => {
+  const receipt_chunks = _.chain(receipts)
     .map(({ push_token }) => ({
       DeleteRequest: {
         Key: {
@@ -24,7 +24,7 @@ const deleteDevices = async (invalid_receipts) => {
     .chunk(25)
     .value();
   return Promise.all(
-    chunks.map((chunk) => {
+    receipt_chunks.map((chunk) => {
       const command = new BatchWriteItemCommand({
         RequestItems: { [process.env.DEVICES_TABLE_NAME]: chunk },
       });
@@ -36,28 +36,32 @@ const deleteDevices = async (invalid_receipts) => {
 const check = async (items = [], readonly) => {
   if (items.length > 0) {
     const start_time = Date.now();
-    const expo = Shared.getExpoClient();
-    const receiptIds = _.map(items, 'id');
+    const receipts = _.map(items, 'id');
     console.info(
       'Receipts',
       JSON.stringify({
-        amount: receiptIds.length,
+        amount: receipts.length,
       }),
     );
-    const receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
+    const expo = Shared.getExpoClient();
+    const receipt_chunks = expo.chunkPushNotificationReceiptIds(receipts);
     const limit = Shared.promiseLimit();
-    const promises = receiptIdChunks.map((chunk) =>
-      limit(() => expo.getPushNotificationReceiptsAsync(chunk)),
-    );
-    const active_devices = await Shared.getActiveDevices();
     // leave only the records with errors
-    const invalid_receipts = await Promise.all(promises)
+    const error_receipts = await Promise.all(
+      receipt_chunks.map((chunk) =>
+        limit(() => expo.getPushNotificationReceiptsAsync(chunk)),
+      ),
+    )
       // merge objects inside array
       .then((receiptChunks) => Object.assign({}, ...receiptChunks.flat()))
-      .then((receipts) =>
-        Object.entries(receipts).reduce(
+      .then(async (receipts) => {
+        const active_devices = await Shared.getActiveDevices();
+        return Object.entries(receipts).reduce(
           (obj, [id, { status, message, details }]) => {
-            if (status === 'error') {
+            if (
+              status === 'error' /* &&
+              details?.error === 'DeviceNotRegistered' */
+            ) {
               // https://github.com/expo/expo/issues/6414
               const item = _.find(items, { id });
               // leave valid push_tokens (intended for multiple manual executions)
@@ -73,8 +77,8 @@ const check = async (items = [], readonly) => {
             return obj;
           },
           [],
-        ),
-      )
+        );
+      })
       .catch((error) => {
         console.error(
           'Unable to get receipts',
@@ -84,17 +88,28 @@ const check = async (items = [], readonly) => {
         );
         throw error;
       });
+    const non_registered_devices = _.filter(
+      error_receipts,
+      (receipt) => receipt.details?.error === 'DeviceNotRegistered',
+    );
+    const trace_errors =
+      process.env.IS_LOCAL ||
+      error_receipts.length !== non_registered_devices.length;
+    if (trace_errors) {
+      console.info('Error receipts', JSON.stringify(error_receipts));
+    }
     if (!readonly) {
-      await deleteDevices(invalid_receipts);
+      await invalidateDevices(non_registered_devices);
     }
     const duration = prettyMilliseconds(Date.now() - start_time);
     return {
       // devices: _.map(invalid_receipts, 'push_token'),
-      amount: invalid_receipts.length,
+      ...(trace_errors && { errors: error_receipts.length }),
+      amount: non_registered_devices.length,
       duration,
     };
   } else {
-    console.info('No tickets to check', JSON.stringify({ items }));
+    console.info('No tickets to check');
   }
   return {
     // empty
