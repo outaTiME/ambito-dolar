@@ -434,38 +434,34 @@ export default {
       }
     }, [handler, leading, delay]);
   },
-  useApplicationConstants(assets) {
+  useApplicationConstants() {
     const [constantsLoaded, setConstantsLoaded] = React.useState(false);
     const [, setContactAvailable] = this.useSharedState('contactAvailable');
     const [, setStoreAvailable] = this.useSharedState('storeAvailable');
     const [, setInstallationTime] = this.useSharedState('installationTime');
     const [, setSharingAvailable] = this.useSharedState('sharingAvailable');
-    const [, setAssets] = this.useSharedState('assets');
     React.useEffect(() => {
-      if (assets) {
-        Promise.all([
-          MailComposer.isAvailableAsync(),
-          Linking.canOpenURL(Settings.APP_STORE_URI),
-          Application.getInstallationTimeAsync(),
-          Sharing.isAvailableAsync(),
-        ]).then((data) => {
-          debug('Application constants', data);
-          const [
-            contactAvailable,
-            storeAvailable,
-            installationTime,
-            sharingAvailable,
-          ] = data;
-          setContactAvailable(contactAvailable);
-          setStoreAvailable(storeAvailable);
-          setInstallationTime(installationTime);
-          setSharingAvailable(sharingAvailable);
-          setAssets(assets);
-          // done
-          setConstantsLoaded(true);
-        });
-      }
-    }, [assets]);
+      Promise.all([
+        MailComposer.isAvailableAsync(),
+        Linking.canOpenURL(Settings.APP_STORE_URI),
+        Application.getInstallationTimeAsync(),
+        Sharing.isAvailableAsync(),
+      ]).then((data) => {
+        debug('Application constants', data);
+        const [
+          contactAvailable,
+          storeAvailable,
+          installationTime,
+          sharingAvailable,
+        ] = data;
+        setContactAvailable(contactAvailable);
+        setStoreAvailable(storeAvailable);
+        setInstallationTime(installationTime);
+        setSharingAvailable(sharingAvailable);
+        // done
+        setConstantsLoaded(true);
+      });
+    }, []);
     return constantsLoaded;
   },
   useIndicatorStyle() {
@@ -500,10 +496,6 @@ export default {
     elevation: 10,
   }),
   getNavigationContainerRef: () => navigationRef,
-  useAppIcon() {
-    const [[appIcon]] = this.useSharedState('assets');
-    return appIcon;
-  },
   getRgbaColor: (color) => {
     const rgbaArray = rgba(color);
     if (rgbaArray.length > 0) {

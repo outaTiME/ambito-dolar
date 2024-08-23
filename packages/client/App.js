@@ -7,7 +7,6 @@ import {
   FontAwesome6,
 } from '@expo/vector-icons';
 import { reloadAppAsync } from 'expo';
-import { useAssets } from 'expo-asset';
 // import * as BackgroundFetch from 'expo-background-fetch';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -141,7 +140,6 @@ const ThemedApp = () => {
 };
 
 const App = () => {
-  const [assets] = useAssets([require('./assets/about-icon-borderless.png')]);
   const [fontsLoaded, fontsError] = useFonts({
     ...MaterialIcons.font,
     ...MaterialCommunityIcons.font,
@@ -150,7 +148,7 @@ const App = () => {
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular.otf'),
     // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
-  const constantsLoaded = Helper.useApplicationConstants(assets);
+  const constantsLoaded = Helper.useApplicationConstants();
   const [appIsReady, setAppIsReady] = React.useState(false);
   const appIsLoading =
     !(fontsLoaded || fontsError) || !constantsLoaded || !appIsReady;
