@@ -119,19 +119,12 @@ if (Platform.OS === 'android') {
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
-  const onReady = React.useCallback(async () => {
-    Helper.debug(
-      '👌 Application loading is completed',
-      Date.now() - start_time,
-    );
-    await SplashScreen.hideAsync().catch(console.warn);
-  }, []);
   return (
     <ThemeProvider theme={theme}>
       <RootSiblingParent>
         <ActionSheetProvider>
           <HeaderButtonsProvider stackType="native">
-            <AppContainer onReady={onReady} />
+            <AppContainer />
           </HeaderButtonsProvider>
         </ActionSheetProvider>
       </RootSiblingParent>
@@ -168,13 +161,15 @@ const App = () => {
     }
     prepare();
   }, []);
-  /* const colorScheme = useNativeColorScheme();
-  React.useEffect(async () => {
-    if (Platform.OS === 'android') {
-      const color = Settings.getBackgroundColor(colorScheme, true);
-      await SystemUI.setBackgroundColorAsync(color);
+  React.useEffect(() => {
+    if (!appIsLoading) {
+      Helper.debug(
+        '👌 Application loading is completed',
+        Date.now() - start_time,
+      );
+      SplashScreen.hideAsync().catch(console.warn);
     }
-  }, [colorScheme]); */
+  }, [appIsLoading]);
   const windowDimensions = useWindowDimensions();
   React.useEffect(() => {
     if (!_.isEqual(windowDimensions, Settings.windowDimensions)) {
