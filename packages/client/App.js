@@ -137,9 +137,6 @@ const App = () => {
     ...MaterialIcons.font,
     ...MaterialCommunityIcons.font,
     ...FontAwesome6.font,
-    // loaded natively from the plugin
-    'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular.otf'),
-    // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
   });
   const constantsLoaded = Helper.useApplicationConstants();
   const [appIsReady, setAppIsReady] = React.useState(false);
