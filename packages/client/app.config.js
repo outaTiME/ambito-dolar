@@ -22,6 +22,8 @@ const SHARED_SPLASH = {
   },
 };
 
+const IS_NEW_ARCH_ENABLED = false;
+
 export default {
   name: 'Ámbito Dólar',
   slug: 'ambito-dolar',
@@ -82,14 +84,23 @@ export default {
   },
   plugins: [
     'expo-localization',
-    'expo-build-properties',
-    /* [
+    [
+      'expo-build-properties',
+      {
+        ios: {
+          newArchEnabled: IS_NEW_ARCH_ENABLED,
+        },
+        android: {
+          newArchEnabled: IS_NEW_ARCH_ENABLED,
+        },
+      },
+    ],
+    [
       'expo-font',
       {
         fonts: ['./assets/fonts/FiraGO-Regular.otf'],
       },
-    ], */
-    'expo-asset',
+    ],
     Boolean(process.env.SENTRY_AUTH_TOKEN) && [
       '@sentry/react-native/expo',
       {
