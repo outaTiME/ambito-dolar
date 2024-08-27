@@ -70,8 +70,8 @@ export function MainStack({ stack }) {
         permissions: [topic],
       },
     },
-    // 19hs
-    schedule: 'cron(0 22 ? * MON-FRI *)',
+    // 20hs
+    schedule: 'cron(0 23 ? * MON-FRI *)',
     enabled: IS_PRODUCTION,
   });
   // eslint-disable-next-line no-new
