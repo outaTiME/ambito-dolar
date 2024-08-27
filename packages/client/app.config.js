@@ -28,9 +28,7 @@ export default {
   name: 'Ámbito Dólar',
   slug: 'ambito-dolar',
   privacy: 'hidden',
-  runtimeVersion: {
-    policy: 'appVersion',
-  },
+  runtimeVersion: version,
   version,
   platforms: ['android', 'ios', 'web'],
   githubUrl:
