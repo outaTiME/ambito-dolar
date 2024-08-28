@@ -256,7 +256,8 @@ export default {
       googleServicesFile: process.env.GOOGLE_SERVICES_FILE,
     }),
     ...SHARED_SPLASH,
-    // allowBackup: false,
+    // prevents restore of auto-generated IDs
+    allowBackup: false,
     softwareKeyboardLayoutMode: 'pan',
   },
 };
