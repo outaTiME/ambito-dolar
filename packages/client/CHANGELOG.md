@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.2.0...@ambito-dolar/client@7.3.0) (2024-08-28)
+
+### Bug Fixes
+
+- ask for a new donation within 6 months of the last one ([63abdd2](https://github.com/outaTiME/ambito-dolar/commit/63abdd244ea5e34b856fda73eaa9c063dd2d54a3))
+- hide splash screen after load store ([438cfb1](https://github.com/outaTiME/ambito-dolar/commit/438cfb10061344acf4ae8ba855193777ad5e3956))
+- prevent backup restore on android ([0215f02](https://github.com/outaTiME/ambito-dolar/commit/0215f02831834824c026ce4044b8900bf3dcb046))
+- remove invalid user for amplitude ([9b4a962](https://github.com/outaTiME/ambito-dolar/commit/9b4a962b8bfeb9b4c028c3e7acfce90f4fd78af5))
+- splash screen hide issue on ios ([968181c](https://github.com/outaTiME/ambito-dolar/commit/968181c496be740f97247d30e316547158a14ee9))
+- use legacy font loading due to android issues ([03547d1](https://github.com/outaTiME/ambito-dolar/commit/03547d14c3e5db77aa53caf02ed6da4f3bfaa207))
+
+### Features
+
+- force disable new architecture ([ac62ebe](https://github.com/outaTiME/ambito-dolar/commit/ac62ebec301a673dfe98f46fc0436a93ba0dbb9e))
+- improved dark support for android ([b3115db](https://github.com/outaTiME/ambito-dolar/commit/b3115db30e2f2533cc51a30879e74ac777280748))
+- load fonts using native plugin ([b3c812a](https://github.com/outaTiME/ambito-dolar/commit/b3c812ac22d91dca444c00553ab573e201ef1e3b))
+
 # [7.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.1.3...@ambito-dolar/client@7.2.0) (2024-07-17)
 
 ### Bug Fixes

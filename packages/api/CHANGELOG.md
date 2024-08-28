@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.17.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.17.0...@ambito-dolar/api@3.17.1) (2024-08-28)
+
+### Bug Fixes
+
+- force use of fcm v1 to send push messages on android ([6716bbe](https://github.com/outaTiME/ambito-dolar/commit/6716bbefa924c8c84f48b150666be87886125570))
+- invalidate only unregistered devices ([168592b](https://github.com/outaTiME/ambito-dolar/commit/168592be28b6dc8a4f92d510c4e9cdbd1d8d0250))
+
 # [3.17.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.16.0...@ambito-dolar/api@3.17.0) (2024-07-17)
 
 ### Features
