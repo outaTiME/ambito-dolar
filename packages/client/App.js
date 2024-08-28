@@ -116,6 +116,23 @@ if (Platform.OS === 'android') {
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+  React.useEffect(() => {
+    // hide splash screen after storage restore
+    Helper.debug(
+      '👌 Application loading is completed',
+      Date.now() - start_time,
+    );
+    SplashScreen.hideAsync().catch(console.warn);
+  }, []);
+  const windowDimensions = useWindowDimensions();
+  React.useEffect(() => {
+    if (!_.isEqual(windowDimensions, Settings.windowDimensions)) {
+      // handle screen size or font scale changes
+      Helper.debug('🌀 Screen size or scales were updated');
+      // FIXME: should stop using fixed sizes to avoid application reloading
+      reloadAppAsync();
+    }
+  }, [windowDimensions]);
   return (
     <ThemeProvider theme={theme}>
       <RootSiblingParent>
@@ -155,24 +172,6 @@ const App = () => {
     }
     prepare();
   }, []);
-  React.useEffect(() => {
-    if (!appIsLoading) {
-      Helper.debug(
-        '👌 Application loading is completed',
-        Date.now() - start_time,
-      );
-      SplashScreen.hideAsync().catch(console.warn);
-    }
-  }, [appIsLoading]);
-  const windowDimensions = useWindowDimensions();
-  React.useEffect(() => {
-    if (!_.isEqual(windowDimensions, Settings.windowDimensions)) {
-      // handle screen size or font scale changes
-      Helper.debug('🌀 Screen size or scales were updated');
-      // FIXME: should stop using fixed sizes to avoid application reloading
-      reloadAppAsync();
-    }
-  }, [windowDimensions]);
   if (appIsLoading) {
     return null;
   }
