@@ -32,7 +32,7 @@ __metadata:
   resolution: "@ambito-dolar/api@workspace:packages/api"
   dependencies:
     "@ambito-dolar/core": "npm:^3.9.0"
-    "@atproto/api": "npm:^0.13.3"
+    "@atproto/api": "npm:^0.13.4"
     "@aws-sdk/client-dynamodb": "npm:^3.637.0"
     "@aws-sdk/client-s3": "npm:^3.637.0"
     "@aws-sdk/client-sns": "npm:^3.637.0"
@@ -123,7 +123,7 @@ __metadata:
     react-native: "npm:0.74.5"
     react-native-android-widget: "npm:^0.14.1"
     react-native-animateable-text: "npm:^0.12.1"
-    react-native-collapsible: "npm:^1.6.1"
+    react-native-collapsible: "npm:1.6.1"
     react-native-draggable-flatlist: "https://gitpkg.vercel.app/api/pkg.tgz?url=outaTiME/react-native-draggable-flatlist&commit=main"
     react-native-gesture-handler: "npm:^2.18.1"
     react-native-purchases: "npm:^8.1.0"
@@ -305,18 +305,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atproto/api@npm:^0.13.3":
-  version: 0.13.3
-  resolution: "@atproto/api@npm:0.13.3"
+"@atproto/api@npm:^0.13.4":
+  version: 0.13.4
+  resolution: "@atproto/api@npm:0.13.4"
   dependencies:
     "@atproto/common-web": "npm:^0.3.0"
     "@atproto/lexicon": "npm:^0.4.1"
     "@atproto/syntax": "npm:^0.3.0"
-    "@atproto/xrpc": "npm:^0.6.0"
+    "@atproto/xrpc": "npm:^0.6.1"
     await-lock: "npm:^2.2.2"
     multiformats: "npm:^9.9.0"
     tlds: "npm:^1.234.0"
-  checksum: 10/c8f429965e2ec4460a7b7598374533562c6b57b6669ab032ddf92221f916fc065ce0d7d60a6e40929d75694fec078e46693ddd397e790a37b34f134d0159e58a
+  checksum: 10/06703ebafc9f39685ea19c2ffebae152b85dc716499d728f9a6b60c4ff53809f7d814c596ab597626469436578b2c81ebac375f35b32146810959fa0fb671348
   languageName: node
   linkType: hard
 
@@ -352,13 +352,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atproto/xrpc@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "@atproto/xrpc@npm:0.6.0"
+"@atproto/xrpc@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "@atproto/xrpc@npm:0.6.1"
   dependencies:
     "@atproto/lexicon": "npm:^0.4.1"
     zod: "npm:^3.23.8"
-  checksum: 10/14751a305503243522f7fdd00fd2639d49f0ebacf5ad76adba411065487e11e683768f2697d1bb6d6c0a0fed1d57c5c0490d476e9aefe3ff9bb5a47bdd4bcb1b
+  checksum: 10/ef484d4435573d837673021e3edfebeba6650832519c42cbe895fb23042288b681a53685c71725fbd41a292b17f6402d1d2c748f4fd0c481daa65ee526d43c6a
   languageName: node
   linkType: hard
 
@@ -9256,9 +9256,9 @@ __metadata:
   linkType: hard
 
 "@types/aws-lambda@npm:^8.10.62":
-  version: 8.10.143
-  resolution: "@types/aws-lambda@npm:8.10.143"
-  checksum: 10/326a6af5f26e6abab5ec0479829998714280656ea4f9e8623d1f18b159db7993116acbe2e5b0351e8e34601ff283c79b2e8c7c8c0c874f43d2649d9b00c50942
+  version: 8.10.144
+  resolution: "@types/aws-lambda@npm:8.10.144"
+  checksum: 10/faa310a4d1f121317eeaf50e61e8edf925eaa3df79881b1a31af96608e5848876ed27e2f7665f827e21de974c46ee57eceb8ee2b03134789e60b8c72ad7921b0
   languageName: node
   linkType: hard
 
@@ -10800,7 +10800,7 @@ __metadata:
     husky: "npm:^9.1.5"
     lerna: "npm:^8.1.8"
     prettier: "npm:^3.3.3"
-    sst: "npm:2.43.6"
+    sst: "npm:^2.43.7"
   languageName: unknown
   linkType: soft
 
@@ -11595,8 +11595,8 @@ __metadata:
   linkType: hard
 
 "aws-sdk@npm:^2.1501.0, aws-sdk@npm:^2.1610.0":
-  version: 2.1683.0
-  resolution: "aws-sdk@npm:2.1683.0"
+  version: 2.1684.0
+  resolution: "aws-sdk@npm:2.1684.0"
   dependencies:
     buffer: "npm:4.9.2"
     events: "npm:1.1.1"
@@ -11608,7 +11608,7 @@ __metadata:
     util: "npm:^0.12.4"
     uuid: "npm:8.0.0"
     xml2js: "npm:0.6.2"
-  checksum: 10/a0384647c5e2234129eed5adcab03bed52e0b716f8b49ee6a17856282a8bc9a0d7787912065cb9f64390196b4ef81720ccc52ffac3a4181a73ad50c81f8e5444
+  checksum: 10/21d305a5e449f795f47637a75a19399d07f0691fd710dbc4e7eb458e9b83d3f12450510e4ac6b55d80734f2bb64ee31fb3419d9928837b739d0aa995a8ec3d13
   languageName: node
   linkType: hard
 
@@ -26523,7 +26523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-collapsible@npm:^1.6.1":
+"react-native-collapsible@npm:1.6.1":
   version: 1.6.1
   resolution: "react-native-collapsible@npm:1.6.1"
   peerDependencies:
@@ -28805,9 +28805,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sst@npm:2.43.6":
-  version: 2.43.6
-  resolution: "sst@npm:2.43.6"
+"sst@npm:^2.43.7":
+  version: 2.43.7
+  resolution: "sst@npm:2.43.7"
   dependencies:
     "@aws-cdk/aws-lambda-python-alpha": "npm:2.142.1-alpha.0"
     "@aws-cdk/cloud-assembly-schema": "npm:2.142.1"
@@ -28883,7 +28883,7 @@ __metadata:
       optional: true
   bin:
     sst: cli/sst.js
-  checksum: 10/333596437e5e84dba71bc5cba1e3227f65d13bce9152a22daa26bd5a22b9f7eb27359486dcf19fc690c533c8fda53c1d2e9f8832d1f89327e49f09a6d9c9ae3e
+  checksum: 10/2a4fe714743752efb68f623b04ca4104143932f39381bb8d6e3ea62e71974f0a01536001f2611ce6ae359a51b641d607e3b2051a00c91991aad484e602e9e83a
   languageName: node
   linkType: hard
 
