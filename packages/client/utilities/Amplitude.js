@@ -6,11 +6,7 @@ import Settings from '../config/settings';
 // https://www.docs.developers.amplitude.com/data/sdks/typescript-react-native/#advertising-identifiers
 Settings.IS_PRODUCTION &&
   Settings.AMPLITUDE_KEY &&
-  init(Settings.AMPLITUDE_KEY, {
-    trackingOptions: {
-      adId: false,
-    },
-  });
+  init(Settings.AMPLITUDE_KEY);
 
 export default {
   setUserId,

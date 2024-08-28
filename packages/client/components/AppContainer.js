@@ -421,6 +421,8 @@ const AppContainer = ({
     Amplitude.track(`${name} screen`);
   }, []);
   React.useEffect(() => {
+    // remove user_id from cookie storage and leave the device_id
+    Amplitude.setUserId(undefined);
     // track initial screen
     trackScreen(Settings.INITIAL_ROUTE_NAME);
   }, []);
