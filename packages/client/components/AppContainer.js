@@ -993,8 +993,8 @@ const withAppDonation = (Component) => (props) => {
             if (
               appDonationModal ||
               !lastPurchaseDate ||
-              // ask for a new donation within 6 months of the last one
-              monthsSinceLastPurchase >= 6
+              // ask for donation once a year (since last donation)
+              monthsSinceLastPurchase >= 12
             ) {
               product = await Helper.timeout(
                 Purchases.getProducts(
