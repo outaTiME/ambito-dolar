@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.3.0...@ambito-dolar/client@7.4.0) (2024-08-30)
+
+### Bug Fixes
+
+- ask for donation once a year (since last donation) ([0a6509b](https://github.com/outaTiME/ambito-dolar/commit/0a6509b42f0ce77ac4b077af1a19c9e3579f2843))
+- manual font loading due to android failures ([fbd9244](https://github.com/outaTiME/ambito-dolar/commit/fbd9244461c7c49d926fd1b9f2c36bfca67ed3a4))
+
+### Features
+
+- add identifier to handle errors and support ([24952d2](https://github.com/outaTiME/ambito-dolar/commit/24952d242e26e651beb34d0ceb01ece66307a3d5))
+
 # [7.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.2.0...@ambito-dolar/client@7.3.0) (2024-08-28)
 
 ### Bug Fixes
