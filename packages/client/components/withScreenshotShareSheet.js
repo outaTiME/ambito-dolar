@@ -67,7 +67,7 @@ const withScreenshotShareSheet =
                           const share_opt = I18n.t('share');
                           const crash_opt = 'Forzar crash';
                           const action_sheet_opts = [].concat(
-                            action_opts || [],
+                            action_opts ?? [],
                           );
                           if (sharingAvailable && Settings.IS_HANDSET) {
                             action_sheet_opts.push(share_opt);

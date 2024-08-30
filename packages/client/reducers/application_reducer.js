@@ -161,7 +161,7 @@ export default (state = INITIAL_STATE, action) => {
       }
       return {
         ...state,
-        excluded_rates: [type].concat(state.excluded_rates || []),
+        excluded_rates: [type].concat(state.excluded_rates ?? []),
       };
     }
     case UPDATE_RATE_TYPES:

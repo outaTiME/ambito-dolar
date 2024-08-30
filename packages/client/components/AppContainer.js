@@ -433,16 +433,18 @@ const AppContainer = ({
   // QUICK ACTIONS
   const quickAction = useQuickAction();
   React.useEffect(() => {
-    Helper.debug('🎯 Quick action received', quickAction);
-    const type = quickAction?.id;
-    if (type) {
-      Amplitude.track('Quick action', { type });
-      navigationRef.navigate(`${type}Tab`, {
-        screen: type,
-        params: {
-          focus: true,
-        },
-      });
+    if (quickAction) {
+      Helper.debug('🎯 Quick action received', quickAction);
+      const type = quickAction?.id;
+      if (type) {
+        Amplitude.track('Quick action', { type });
+        navigationRef.navigate(`${type}Tab`, {
+          screen: type,
+          params: {
+            focus: true,
+          },
+        });
+      }
     }
   }, [quickAction]);
   // DEEP LINK
