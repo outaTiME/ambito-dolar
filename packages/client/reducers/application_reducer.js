@@ -1,5 +1,6 @@
 import update from 'immutability-helper';
 import * as _ from 'lodash';
+import { nanoid } from 'nanoid/non-secure';
 
 import {
   NOTIFICATIONS_REGISTER_PENDING,
@@ -56,6 +57,8 @@ const INITIAL_STATE = {
   ignore_update: null,
   app_updated: null,
   ignore_donation: null,
+  // identifier to handle errors and support
+  installation_id: nanoid(),
 };
 
 const increment = (state, key, extra = {}) =>
@@ -177,7 +180,11 @@ export default (state = INITIAL_STATE, action) => {
         ignore_donation: { $set: Date.now() },
       });
     case PRUNE:
-      return INITIAL_STATE;
+      return update(INITIAL_STATE, {
+        // preserve
+        installation_id: { $set: state.installation_id },
+      });
+
     default:
       return state;
   }

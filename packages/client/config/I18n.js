@@ -68,6 +68,7 @@ const i18n = new I18n({
     leave_app_review: 'Dejar una reseña',
     share: 'Compartir',
     donate: 'Donar',
+    installation_id: 'ID',
     // donate: 'Contribuir',
     // donate: 'Hacer una donación',
     // notifications

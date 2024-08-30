@@ -50,7 +50,6 @@ const {
   expoConfig: {
     name: APP_NAME,
     version: APP_VERSION,
-    revisionId: APP_REVISION_ID,
     // empty on web
     android: { package: ANDROID_APP_ID } = {},
     extra: {
@@ -136,7 +135,6 @@ export default {
   SOCIAL_ICON_SIZE,
   APP_NAME,
   APP_VERSION,
-  APP_REVISION_ID,
   APP_COPYRIGHT,
   APP_DOMAIN,
   WEBSITE_URL,

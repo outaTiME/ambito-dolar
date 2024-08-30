@@ -413,20 +413,7 @@ const AppContainer = ({
   showAppUpdateMessage,
 }) => {
   const { theme } = Helper.useTheme();
-  const trackScreen = React.useCallback((name) => {
-    Helper.debug('👀 Track screen', name);
-    Sentry.addBreadcrumb({
-      message: `${name} screen`,
-    });
-    Amplitude.track(`${name} screen`);
-  }, []);
-  React.useEffect(() => {
-    // remove user_id from cookie storage and leave the device_id
-    Amplitude.setUserId(undefined);
-    // track initial screen
-    trackScreen(Settings.INITIAL_ROUTE_NAME);
-  }, []);
-  // https://reactnavigation.org/docs/screen-tracking
+  // https://reactnavigation.org/docs/navigating-without-navigation-prop/#handling-initialization
   const navigationRef = Helper.getNavigationContainerRef();
   const routeNameRef = React.useRef();
   // NOTIFICATIONS (user interaction)
@@ -484,15 +471,15 @@ const AppContainer = ({
     );
     return () => subscription.remove();
   }, []);
-  const onReady = React.useCallback(() => {
-    // https://reactnavigation.org/docs/navigating-without-navigation-prop/#handling-initialization
-    routeNameRef.current = navigationRef.getCurrentRoute().name;
-  }, []);
   const onStateChange = React.useCallback(() => {
     const previousRouteName = routeNameRef.current;
     const currentRouteName = navigationRef.getCurrentRoute().name;
     if (previousRouteName !== currentRouteName) {
-      trackScreen(currentRouteName);
+      Helper.debug('👀 Track screen', currentRouteName);
+      Sentry.addBreadcrumb({
+        message: `${currentRouteName} screen`,
+      });
+      Amplitude.track(`${currentRouteName} screen`);
     }
     // save the current route name for later comparision
     routeNameRef.current = currentRouteName;
@@ -540,7 +527,8 @@ const AppContainer = ({
     <NavigationContainer
       {...{
         ref: navigationRef,
-        onReady,
+        // track initial screen
+        onReady: onStateChange,
         onStateChange,
         theme: navigationTheme,
         // linking,
@@ -594,6 +582,13 @@ const AppContainer = ({
       </RootStack.Navigator>
     </NavigationContainer>
   );
+};
+
+const withAppIdentifier = (Component) => (props) => {
+  const installationId = useSelector(
+    (state) => state.application.installation_id,
+  );
+  return <Component {...{ installationId, ...props }} />;
 };
 
 const firebaseApp =
@@ -879,6 +874,15 @@ const withUserActivity = (Component) => (props) => {
     dispatch,
     isActiveAppState /* , appUpdated, lastVersionReviewed, version */,
   ]);
+  // HANDLE ERRORS AND SUPPORT
+  const installationId = props.installationId;
+  React.useEffect(() => {
+    // same identifier for cross-platform mapping
+    Sentry.setUserContext({
+      id: installationId,
+    });
+    Amplitude.setUserId(installationId);
+  }, [installationId]);
   return <Component {...props} />;
 };
 
@@ -887,20 +891,21 @@ const withPurchases = (Component) => (props) => {
     'purchasesConfigured',
     false,
   );
+  const installationId = props.installationId;
   React.useEffect(() => {
     const configure = async () => {
       __DEV__ && (await Purchases.setLogLevel(Purchases.LOG_LEVEL.VERBOSE));
       Purchases.configure({
         apiKey: Settings.REVENUECAT_API_KEY,
+        appUserID: installationId,
       });
     };
     configure()
       .then(() => {
-        Helper.debug('🤑 Purchases configured');
         setPurchasesConfigured(true);
       })
       .catch(console.warn);
-  }, []);
+  }, [installationId]);
   return <Component {...props} />;
 };
 
@@ -1169,6 +1174,7 @@ const withAppDonation = (Component) => (props) => {
 
 export default compose(
   withRates(),
+  withAppIdentifier,
   withRealtime,
   // withAppUpdateCheck,
   withAppStatistics,

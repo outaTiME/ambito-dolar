@@ -1,22 +1,25 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { compose } from '@reduxjs/toolkit';
-import * as Device from 'expo-device';
+import * as Clipboard from 'expo-clipboard';
+import * as Haptics from 'expo-haptics';
 import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
 import {
   Linking,
   Share,
-  View,
-  Text,
-  ActivityIndicator,
+  // View,
+  // Text,
+  // ActivityIndicator,
   Alert,
 } from 'react-native';
 import Purchases from 'react-native-purchases';
+import Toast from 'react-native-root-toast';
 import { useSelector, shallowEqual } from 'react-redux';
 
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
+import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
@@ -25,7 +28,7 @@ import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
 
-const PriceBadge = ({ price, currencyCode, loading }) => {
+/* const PriceBadge = ({ price, currencyCode, loading }) => {
   const { theme, fonts } = Helper.useTheme();
   return (
     <View
@@ -69,13 +72,22 @@ const PriceBadge = ({ price, currencyCode, loading }) => {
       )}
     </View>
   );
-};
+}; */
 
 const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
-  const { updatedAt, appearance } = useSelector(
-    ({ rates: { updated_at: updatedAt }, application: { appearance } }) => ({
+  const { updatedAt, appearance, pushToken, installationId } = useSelector(
+    ({
+      rates: { updated_at: updatedAt },
+      application: {
+        appearance,
+        push_token: pushToken,
+        installation_id: installationId,
+      },
+    }) => ({
       updatedAt,
       appearance,
+      pushToken,
+      installationId,
     }),
     shallowEqual,
   );
@@ -88,10 +100,7 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
         '',
         '—',
         '',
-        `${I18n.t('app_version')}: ${
-          Settings.APP_REVISION_ID || Settings.APP_VERSION
-        }`,
-        `${I18n.t('device')}: ${Device.modelName} (${Device.osVersion})`,
+        `${I18n.t('installation_id')}: ${installationId}`,
       ].join('\r\n'),
     }).catch(console.warn);
   }, []);
@@ -190,6 +199,36 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
       });
   }, [purchaseProduct]);
   const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
+  // identifier
+  const alreadyShowingToastRef = React.useRef(false);
+  const { invertedTheme } = Helper.useTheme();
+  const onLongPressIdentifier = React.useCallback(() => {
+    if (alreadyShowingToastRef.current === false) {
+      alreadyShowingToastRef.current = true;
+      Settings.HAPTICS_ENABLED && Haptics.selectionAsync();
+      Toast.show(I18n.t('text_copied'), {
+        // duration: Settings.ANIMATION_DURATION,
+        // position: -(tabBarheight + Settings.CARD_PADDING),
+        position: Toast.positions.CENTER,
+        onHidden: () => {
+          alreadyShowingToastRef.current = false;
+        },
+        opacity: 1,
+        shadow: false,
+        containerStyle: {
+          paddingHorizontal: 10 * 2,
+          borderRadius: Settings.BORDER_RADIUS,
+          backgroundColor: Settings.getBackgroundColor(invertedTheme, true),
+          // custom shadow config
+          ...Helper.getShadowDefaults(),
+        },
+        // force white
+        // textStyle: [Settings.getFontObject('dark', 'callout')],
+        textStyle: [Settings.getFontObject(invertedTheme, 'callout')],
+      });
+      Clipboard.setStringAsync([installationId].concat(pushToken ?? []).join());
+    }
+  }, [invertedTheme, pushToken, installationId]);
   return (
     <FixedScrollView
       {...{
@@ -310,6 +349,12 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
           }}
         />
       </CardView>
+      {installationId && (
+        <TextCardView
+          text={`${I18n.t('installation_id')}: ${installationId}`}
+          onLongPress={onLongPressIdentifier}
+        />
+      )}
     </FixedScrollView>
   );
 };
