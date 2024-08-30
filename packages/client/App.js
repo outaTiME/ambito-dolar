@@ -151,6 +151,7 @@ const App = () => {
     ...MaterialIcons.font,
     ...MaterialCommunityIcons.font,
     ...FontAwesome6.font,
+    'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular.otf'),
   });
   const constantsLoaded = Helper.useApplicationConstants();
   const [appIsReady, setAppIsReady] = React.useState(false);
