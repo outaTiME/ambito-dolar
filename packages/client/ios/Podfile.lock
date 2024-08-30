@@ -1577,7 +1577,7 @@ PODS:
   - RNPurchases (8.1.0):
     - PurchasesHybridCommon (= 13.1.0)
     - React-Core
-  - RNReanimated (3.15.0):
+  - RNReanimated (3.15.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1597,10 +1597,10 @@ PODS:
     - React-utils
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.15.0)
-    - RNReanimated/worklets (= 3.15.0)
+    - RNReanimated/reanimated (= 3.15.1)
+    - RNReanimated/worklets (= 3.15.1)
     - Yoga
-  - RNReanimated/reanimated (3.15.0):
+  - RNReanimated/reanimated (3.15.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1621,7 +1621,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.15.0):
+  - RNReanimated/worklets (3.15.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1664,7 +1664,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (5.31.0):
+  - RNSentry (5.31.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2134,9 +2134,9 @@ SPEC CHECKSUMS:
   RNFlashList: e9c5b8fe1b84f9c198cb550eb4cc0c45569fbf42
   RNGestureHandler: efed690b8493a00b99654043daeb1335276ac4a2
   RNPurchases: 2233090d55e80c8aab508ea426ba720f41b2e142
-  RNReanimated: 45553a3ae29a75a76269595f8554d07d4090e392
+  RNReanimated: 9ed0e560d784729b12ff79920677a1117d4b13ec
   RNScreens: aa943ad421c3ced3ef5a47ede02b0cbfc43a012e
-  RNSentry: 905bc4282df5e41af22229411b1e0ab4c3dad170
+  RNSentry: 2c78e72aaa6e55d61ce60d98a62f01b666f76513
   RNSVG: 5da7a24f31968ec74f0b091e3440080f347e279b
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
