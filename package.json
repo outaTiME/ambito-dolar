@@ -42,7 +42,7 @@
     "depcheck": "yarn workspaces foreach --verbose exec npx depcheck",
     "postinstall": "husky"
   },
-  "packageManager": "yarn@4.4.1",
+  "packageManager": "yarn@4.5.0",
   "resolutions": {
     "eslint": "^8.9.0"
   }
