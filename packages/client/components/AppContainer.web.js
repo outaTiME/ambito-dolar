@@ -251,7 +251,8 @@ const FundingContainer = compose(withStats)(({
               },
             ]}
           >
-            {`${Settings.APP_NAME} opera de forma transparente compartiendo sus métricas mensuales con la comunidad.`}
+            {Settings.APP_NAME} es gratuita, de código abierto y garantiza la
+            transparencia compartiendo sus métricas.
           </Text>
           {false && (
             <FundingView

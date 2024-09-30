@@ -82,7 +82,7 @@ const DoneButton = ({ navigation, popToTop = false }) => {
   );
 };
 
-// for market capture purposes
+// for android market capture purposes
 const BLUR_EFFECT_ON_NAVIGATION_BARS = true;
 
 const NavigatorBackgroundView = ({ style }) => {
@@ -112,10 +112,7 @@ const NavigatorBackgroundView = ({ style }) => {
 
 const useNavigatorScreenOptions = (modal = false) => {
   const { theme, fonts } = Helper.useTheme();
-  const headerBackground = React.useCallback(
-    () => <NavigatorBackgroundView />,
-    [],
-  );
+  const { colors } = useTheme();
   return {
     headerBackVisible: false,
     headerShadowVisible: false,
@@ -124,7 +121,9 @@ const useNavigatorScreenOptions = (modal = false) => {
     ...Platform.select({
       ios: {
         ...(!BLUR_EFFECT_ON_NAVIGATION_BARS
-          ? { headerBackground }
+          ? {
+              headerStyle: { backgroundColor: colors.card },
+            }
           : {
               headerBlurEffect: modal
                 ? `systemMaterial${AmbitoDolar.getCapitalized(theme)}`
@@ -133,8 +132,7 @@ const useNavigatorScreenOptions = (modal = false) => {
         headerTransparent: true,
       },
       android: {
-        // doesn't work correctly on android
-        // headerBackground,
+        // pass
       },
     }),
   };
@@ -309,8 +307,7 @@ const MainStackScreen = () => {
             tabBarBackground,
           },
           android: {
-            // doesn't work correctly on android
-            // tabBarBackground,
+            // pass
           },
         }),
       }}

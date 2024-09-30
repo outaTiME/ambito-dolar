@@ -143,7 +143,6 @@ export default ({
                       fonts.footnote,
                       {
                         color: Settings.getGrayColor(theme),
-                        marginTop: Settings.SMALL_PADDING,
                       },
                       extra.titleDetailStyle,
                     ]}
