@@ -1,5 +1,5 @@
-const version = '7.4.0';
-const buildNumber = 136;
+const version = '7.5.0';
+const buildNumber = 137;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -173,6 +173,7 @@ export default {
       ],
       LSApplicationQueriesSchemes: [
         'twitter',
+        'x',
         'tg',
         'instagram',
         'fb',
