@@ -52,6 +52,7 @@
       <string>github</string>
       <string>ivory</string>
       <string>mastodon</string>
+      <string>bluesky</string>
       <string>itms-apps</string>
     </array>
     <key>LSRequiresIPhoneOS</key>

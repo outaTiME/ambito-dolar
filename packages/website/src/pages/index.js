@@ -7,8 +7,8 @@ import {
   FaFacebook as Facebook,
   FaRedditAlien as Reddit,
   FaMastodon as Mastodon,
-  FaSquare as Bluesky,
   FaWhatsapp as Whatsapp,
+  FaSquare as Bluesky,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa6';
@@ -115,16 +115,6 @@ const IndexPage = () => {
                       {false && (
                         <a
                           className="icon"
-                          href="https://bsky.app/profile/ambitodolar.bsky.social"
-                          target="_blank"
-                          rel="noopener noreferrer me"
-                        >
-                          <Bluesky />
-                        </a>
-                      )}
-                      {false && (
-                        <a
-                          className="icon"
                           href="https://whatsapp.com/channel/0029VaNvh4LGpLHUyd75cO1P"
                           target="_blank"
                           rel="noopener noreferrer me"
@@ -132,6 +122,14 @@ const IndexPage = () => {
                           <Whatsapp />
                         </a>
                       )}
+                      <a
+                        className="icon"
+                        href="https://bsky.app/profile/ambitodolar.bsky.social"
+                        target="_blank"
+                        rel="noopener noreferrer me"
+                      >
+                        <Bluesky />
+                      </a>
                       <a
                         className="icon"
                         href="https://github.com/outaTiME/ambito-dolar"

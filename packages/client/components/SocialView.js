@@ -1,4 +1,4 @@
-import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
 
 import Settings from '../config/settings';
@@ -61,16 +61,6 @@ export default ({
         }}
       />
       {false && (
-        <MaterialCommunityIcons
-          name="square-rounded"
-          size={size}
-          color={Settings.getGrayColor(theme)}
-          style={{
-            marginRight: size,
-          }}
-        />
-      )}
-      {false && (
         <FontAwesome6
           name="whatsapp"
           size={size}
@@ -80,6 +70,14 @@ export default ({
           }}
         />
       )}
+      <FontAwesome6
+        name="bluesky"
+        size={size}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: size,
+        }}
+      />
       <FontAwesome6
         name="github"
         size={size}

@@ -180,6 +180,7 @@ export default {
         'github',
         'ivory',
         'mastodon',
+        'bluesky',
         'itms-apps',
       ],
       UIViewControllerBasedStatusBarAppearance: true,
