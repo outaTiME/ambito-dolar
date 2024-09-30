@@ -103,7 +103,7 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
             {
               textAlign: 'right',
               // prevents flickering when the cursor moves quickly
-              width: '25%',
+              width: '30%',
             },
             {
               // borderWidth: 1,
@@ -437,8 +437,7 @@ export default ({ stats }) => {
         value: Helper.getInlineRateValue(stat[1]),
         // ignore when empty
         ...(stat[2] !== undefined && {
-          change: AmbitoDolar.getRateChange(stat[2]),
-          // change: Helper.getDynamicChange(stat),
+          change: AmbitoDolar.getRateChange(stat[2], true),
           change_color: Helper.getChangeColor(stat[2], theme),
         }),
       })),

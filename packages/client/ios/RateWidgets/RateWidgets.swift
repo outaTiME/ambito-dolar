@@ -12,6 +12,7 @@ import Intents
 struct RateValue: Identifiable, Equatable {
   let id: String
   let name: String
+  let detail: String?
   let change: String?
   let plainChange: String?
   let changeColor: Color?
@@ -20,9 +21,10 @@ struct RateValue: Identifiable, Equatable {
   let priceValue: Double
   let date: String
   let dateValue: Double
-  init(id: String, name: String, change: String?, plainChange: String?, changeColor: Color?, changeValue: Double?, price: String, priceValue: Double, date: String, dateValue: Double) {
+  init(id: String, name: String, detail: String? = nil, change: String?, plainChange: String?, changeColor: Color?, changeValue: Double?, price: String, priceValue: Double, date: String, dateValue: Double) {
     self.id = id
     self.name = name
+    self.detail = detail
     self.change = change
     self.plainChange = plainChange
     self.changeColor = changeColor
@@ -46,7 +48,6 @@ private func getRates() -> [String: Any]? {
     if let data = data {
       if let response = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
         rates = response
-        // rate = response[type] as? [Any]
       }
     }
     semaphore.signal()
@@ -60,6 +61,7 @@ private func formatNumber(num: Double) -> String {
   let nf = NumberFormatter()
   nf.numberStyle = .decimal
   nf.minimumFractionDigits = 2
+  nf.maximumFractionDigits = 2
   nf.roundingMode = .down
   return nf.string(for: num)!
 }
@@ -107,20 +109,14 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
     if let type = $0.identifier {
       let name = $0.displayString
       // check if the rate is available
-      if Helper.getRateTypes().contains(where: {$0.identifier == type }), rates != nil, let rate = rates![type] as? [Any] {
+      if Helper.getRateTypes().contains(where: { $0.identifier == type }), rates != nil, let rate = rates![type] as? [Any] {
         let rateValue = rate[1]
         let value: Double
         let amount: Double
         if rateValue is Double {
           value = rateValue as! Double
           amount = value
-          // price = formatRateCurrency(num: rateValue as! Double)
         } else {
-          /* var arr = [String]()
-          for item in rateValue as! NSArray {
-            arr.append(formatRateCurrency(num: item as! Double))
-          }
-          price = arr.joined(separator: "–") */
           var arr = [Double]()
           for item in rateValue as! NSArray {
             arr.append(item as! Double)
@@ -135,7 +131,6 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
             value = sell
           }
           amount = sell
-          // price = formatRateCurrency(num: arr.max()!)
         }
         let price = formatRateCurrency(num: value)
         var rateChange = rate[2] as! Double
@@ -143,13 +138,24 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
           rateChange = amount - (rate[3] as! Double)
         }
         let change = formatRateChange(num: rateChange, type: changeType)
-        let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false )
+        let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false)
         let changeColor = getChangeColor(num: rateChange)
         let rateDate = ISO8601DateFormatter().date(from: rate[0] as! String)
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM HH:mm"
         let date = dateFormatter.string(from: rateDate!)
-        return RateValue(id: type, name: name, change: change, plainChange: plainChange, changeColor: changeColor, changeValue: rateChange, price: price, priceValue: value, date: date, dateValue: rateDate!.timeIntervalSince1970 * 1000.0)
+        return RateValue(
+          id: type,
+          name: name,
+          change: change,
+          plainChange: plainChange,
+          changeColor: changeColor,
+          changeValue: rateChange,
+          price: price,
+          priceValue: value,
+          date: date,
+          dateValue: rateDate!.timeIntervalSince1970 * 1000.0
+        )
       }
     }
     return nil
@@ -159,6 +165,45 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
 struct SimpleEntry: TimelineEntry {
   let date: Date
   let rates: [RateValue]?
+}
+
+extension View {
+  func widgetBackground(backgroundView: some View = Color.black) -> some View {
+    if #available(iOSApplicationExtension 17.0, *) {
+      return containerBackground(for: .widget) {
+        backgroundView
+      }
+    } else {
+      return background(backgroundView)
+    }
+  }
+  @ViewBuilder
+  func conditionalContentTransition(value: Double? = nil) -> some View {
+    if #available(iOS 17.0, *), (value != nil) {
+      self.contentTransition(.numericText(value: value!))
+    } else if #available(iOS 16.0, *) {
+      self.contentTransition(.numericText())
+    } else {
+      // ignore
+    }
+  }
+}
+
+extension WidgetConfiguration {
+  func contentMarginsDisabledIfAvailable() -> some WidgetConfiguration {
+    if #available(iOSApplicationExtension 17.0, *) {
+      return self.contentMarginsDisabled()
+    } else {
+      return self
+    }
+  }
+  func disfavoredLocationsIfAvailable() -> some WidgetConfiguration {
+    if #available(iOS 17, *) {
+      return self.disfavoredLocations([.lockScreen, .standBy], for: [.systemSmall])
+    } else {
+      return self
+    }
+  }
 }
 
 struct RateProvider: IntentTimelineProvider {
@@ -183,31 +228,6 @@ struct RateProvider: IntentTimelineProvider {
   }
 }
 
-extension View {
-  // func widgetBackground(backgroundView: some View = EmptyView()) -> some View {
-  // func widgetBackground(backgroundView: some View = Color("WidgetBackground")) -> some View {
-  func widgetBackground(backgroundView: some View = Color.black) -> some View {
-  // func widgetBackground(backgroundView: some View = LinearGradient(gradient: Gradient(colors: [Color(red: 25/255, green: 25/255, blue: 25/255), Color(red: 13/255, green: 13/255, blue: 13/255)]), startPoint: .top, endPoint: .bottom)) -> some View {
-    if #available(iOSApplicationExtension 17.0, *) {
-      return containerBackground(for: .widget) {
-        backgroundView
-      }
-    } else {
-      return background(backgroundView)
-    }
-  }
-  @ViewBuilder
-  func conditionalContentTransition(value: Double? = nil) -> some View {
-    if #available(iOS 17.0, *), (value != nil) {
-      self.contentTransition(.numericText(value: value!))
-    } else if #available(iOS 16.0, *) {
-      self.contentTransition(.numericText())
-    } else {
-      // ignore
-    }
-  }
-}
-
 struct RateWidgetEntryView : View {
   @Environment(\.widgetFamily) var widgetFamily
   let entry: RateProvider.Entry
@@ -225,18 +245,6 @@ struct RateWidgetEntryView : View {
           ZStack {
             AccessoryWidgetBackground()
             VStack {
-              /* Rectangle()
-                .fill(Color.blue)
-                .frame(height: 10)
-                .padding(.horizontal, 8)
-              Rectangle()
-                .fill(Color.blue)
-                .frame(height: 10)
-                .padding(.horizontal, 2)
-              Rectangle()
-                .fill(Color.blue)
-                .frame(height: 10)
-                .padding(.horizontal, 8) */
               Text(rate.name)
                 .font(.custom(fontName, size: 10))
                 .lineLimit(1)
@@ -247,8 +255,8 @@ struct RateWidgetEntryView : View {
                 .conditionalContentTransition(value: rate.priceValue)
                 .padding(.horizontal, 2)
                 .widgetAccentable()
-              if rate.plainChange != nil {
-                Text((rate.plainChange)!)
+              if let plainChange = rate.plainChange {
+                Text(plainChange)
                   .font(.custom(fontName, size: 10))
                   .lineLimit(1)
                   .conditionalContentTransition(value: rate.changeValue)
@@ -259,8 +267,6 @@ struct RateWidgetEntryView : View {
                   .lineLimit(1)
               }
             }
-            // .clipShape(ContainerRelativeShape())
-            // .padding(8)
           }
           .widgetURL(getWidgetUrl(id: rate.id))
           .widgetBackground()
@@ -287,10 +293,10 @@ struct RateWidgetEntryView : View {
             .foregroundColor(fgColor)
             .lineLimit(1)
           Spacer()
-          if rate.change != nil {
-            Text((rate.change)!)
+          if let change = rate.change {
+            Text(change)
               .font(.custom(fontName, size: 14))
-              .foregroundColor(rate.changeColor!)
+              .foregroundColor(rate.changeColor)
               .lineLimit(1)
               .conditionalContentTransition(value: rate.changeValue)
           }
@@ -299,7 +305,7 @@ struct RateWidgetEntryView : View {
             .foregroundColor(fgColor)
             .lineLimit(1)
             .conditionalContentTransition(value: rate.priceValue)
-          Spacer().frame(height: 8)
+          // Spacer().frame(height: 4)
           Text(rate.date)
             .font(.custom(fontName, size: 11))
             .foregroundColor(fgSecondaryColor)
@@ -333,23 +339,6 @@ struct RateWidgetEntryView : View {
   }
 }
 
-extension WidgetConfiguration {
-  func contentMarginsDisabledIfAvailable() -> some WidgetConfiguration {
-    if #available(iOSApplicationExtension 17.0, *) {
-      return self.contentMarginsDisabled()
-    } else {
-      return self
-    }
-  }
-  func disfavoredLocationsIfAvailable() -> some WidgetConfiguration {
-    if #available(iOS 17, *) {
-      return self.disfavoredLocations([.lockScreen, .standBy], for: [.systemSmall])
-    } else {
-      return self
-    }
-  }
-}
-
 struct RateWidget: Widget {
   let kind: String = "RateWidget"
   private var supportedFamilies: [WidgetFamily] {
@@ -371,7 +360,7 @@ struct RateWidget: Widget {
         .environment(\.sizeCategory, .large)
     }
     .configurationDisplayName("Cotizaciones")
-    .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
+    .description("Consulta las cotizaciones a lo largo del día.")
     .supportedFamilies(supportedFamilies)
     .contentMarginsDisabledIfAvailable()
     // .disfavoredLocationsIfAvailable()
@@ -436,8 +425,8 @@ struct ListRatesWidgetEntryView : View {
                 .lineLimit(1)
                 .conditionalContentTransition(value: rate.dateValue)
               Spacer()
-              if rate.change != nil {
-                Text(rate.change!)
+              if let change = rate.change {
+                Text(change)
                   .font(.custom(fontName, size: 11))
                   .foregroundColor(rate.changeColor)
                   .lineLimit(1)
@@ -446,15 +435,11 @@ struct ListRatesWidgetEntryView : View {
             }
             if rate != rates?.last {
               Spacer()
-              // Divider().padding(.trailing, -16)
-              // Spacer()
             } else {
               if (rates!.count < 3) {
                 // complete the remaining slots
                 ForEach(0..<3-rates!.count, id: \.self) { _ in
                   Spacer()
-                  // Divider().padding(.trailing, -16)
-                  // Spacer()
                   Text(" ")
                     .font(.custom(fontName, size: 16))
                     .lineLimit(1)
@@ -507,7 +492,202 @@ struct ListRatesWidget: Widget {
         .environment(\.sizeCategory, .large)
     }
     .configurationDisplayName("Lista de cotizaciones")
-    .description("Mantenete al tanto de las cotizaciones durante el transcurso del día.")
+    .description("Consulta las cotizaciones a lo largo del día.")
+    .supportedFamilies(supportedFamilies)
+    .contentMarginsDisabledIfAvailable()
+    // .disfavoredLocationsIfAvailable()
+  }
+}
+
+struct SpreadProvider: IntentTimelineProvider {
+  func placeholder(in context: Context) -> SimpleEntry {
+    let rates = lookupRateValues()
+    return SimpleEntry(date: Date(), rates: rates)
+  }
+  func getSnapshot(for configuration: SelectSpreadRateTypesIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
+    let rates = lookupRateValues(rateTypes: configuration.rateTypes!)
+    let entry = SimpleEntry(date: Date(), rates: rates)
+    completion(entry)
+  }
+  func getTimeline(for configuration: SelectSpreadRateTypesIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+    var entries: [SimpleEntry] = []
+    let date = Date()
+    let rates = lookupRateValues(rateTypes: configuration.rateTypes!)
+    let entry = SimpleEntry(date: date, rates: rates)
+    entries.append(entry)
+    let reloadDate = Calendar.current.date(byAdding: .minute, value: 5, to: date)!
+    let timeline = Timeline(entries: entries, policy: .after(reloadDate))
+    completion(timeline)
+  }
+}
+
+struct SpreadWidgetEntryView : View {
+  @Environment(\.widgetFamily) var widgetFamily
+  let entry: SpreadProvider.Entry
+  // postscript name
+  let fontName = "FiraGO-Regular"
+  // https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
+  let fgColor = Color(UIColor.label)
+  let fgSecondaryColor = Color(UIColor.secondaryLabel)
+  var body: some View {
+    let rates = entry.rates
+    let firstRate = rates?[0]
+    let secondRate = rates?[1]
+    var spreadRate: RateValue? {
+      if let firstRate = firstRate, let secondRate = secondRate {
+        let detail =  "\(firstRate.name) → \(secondRate.name)"
+        let value = firstRate.priceValue - secondRate.priceValue
+        let price = formatRateCurrency(num: value)
+        let rateChange = (firstRate.priceValue / secondRate.priceValue - 1) * 100
+        let changeType = ChangeType.percentage
+        let change = formatRateChange(num: rateChange, type: changeType)
+        let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false)
+        let changeColor = getChangeColor(num: rateChange)
+        let (date, dateValue) = {
+          if (firstRate.date > secondRate.date) {
+            return (firstRate.date, firstRate.dateValue)
+          }
+          return (secondRate.date, secondRate.dateValue)
+        }()
+        return RateValue(
+          id: "spread",
+          name: "Brecha",
+          detail: detail,
+          change: change,
+          plainChange: plainChange,
+          changeColor: changeColor,
+          changeValue: rateChange,
+          price: price,
+          priceValue: value,
+          date: date,
+          dateValue: dateValue
+        )
+      }
+      return nil
+    }
+    switch widgetFamily {
+    case .accessoryCircular:
+      if #available(iOSApplicationExtension 16.0, *) {
+        if let spreadRate = spreadRate {
+          ZStack {
+            AccessoryWidgetBackground()
+            VStack {
+              Text(spreadRate.name)
+                .font(.custom(fontName, size: 10))
+                .lineLimit(1)
+                .padding(.horizontal, 8)
+              Text(spreadRate.price)
+                .font(.custom(fontName, size: 13))
+                .lineLimit(1)
+                .conditionalContentTransition(value: spreadRate.priceValue)
+                .padding(.horizontal, 2)
+                .widgetAccentable()
+              Text(spreadRate.plainChange!)
+                .font(.custom(fontName, size: 10))
+                .lineLimit(1)
+                .conditionalContentTransition(value: spreadRate.changeValue)
+                .padding(.horizontal, 8)
+            }
+          }
+          .widgetURL(getWidgetUrl(id: firstRate!.id))
+          .widgetBackground()
+        } else {
+          ZStack {
+            AccessoryWidgetBackground()
+            VStack {
+              Text("N/D")
+                .font(.custom(fontName, size: 13))
+                .lineLimit(1)
+                .widgetAccentable()
+            }
+            .padding(.horizontal, 2)
+          }
+          .widgetURL(getWidgetUrl())
+          .widgetBackground()
+        }
+      }
+    default:
+      if let spreadRate = spreadRate {
+        VStack(alignment: .leading) {
+          Text(spreadRate.name)
+            .font(.custom(fontName, size: 20))
+            .foregroundColor(fgColor)
+            .lineLimit(1)
+          if let detail = spreadRate.detail {
+            Text(detail)
+              .font(.custom(fontName, size: 14))
+              .foregroundColor(fgSecondaryColor)
+              .lineLimit(1)
+          }
+          Spacer()
+          if let change = spreadRate.change {
+            Text(change)
+              .font(.custom(fontName, size: 14))
+              .foregroundColor(spreadRate.changeColor)
+              .lineLimit(1)
+              .conditionalContentTransition(value: spreadRate.changeValue)
+          }
+          Text(spreadRate.price)
+            .font(.custom(fontName, size: 28))
+            .foregroundColor(fgColor)
+            .lineLimit(1)
+            .conditionalContentTransition(value: spreadRate.priceValue)
+          // Spacer().frame(height: 4)
+          Text(spreadRate.date)
+            .font(.custom(fontName, size: 11))
+            .foregroundColor(fgSecondaryColor)
+            .lineLimit(1)
+            .conditionalContentTransition(value: spreadRate.dateValue)
+        }
+        .frame(
+          maxWidth: .infinity,
+          maxHeight: .infinity,
+          alignment: .topLeading
+        )
+        .padding(16)
+        .widgetURL(getWidgetUrl(id: firstRate!.id))
+        .widgetBackground()
+      } else {
+        VStack {
+          Text("Cotizaciones no disponibles")
+            .font(.custom(fontName, size: 14))
+            .foregroundColor(fgColor)
+            .multilineTextAlignment(.center)
+        }
+        .frame(
+          maxWidth: .infinity,
+          maxHeight: .infinity
+        )
+        .padding(16)
+        .widgetURL(getWidgetUrl())
+        .widgetBackground()
+      }
+    }
+  }
+}
+
+struct SpreadWidget: Widget {
+  let kind: String = "SpreadWidget"
+  private var supportedFamilies: [WidgetFamily] {
+    if #available(iOSApplicationExtension 16.0, *) {
+      return [
+        .systemSmall,
+        .accessoryCircular,
+      ]
+    } else {
+      return [
+        .systemSmall,
+      ]
+    }
+  }
+  var body: some WidgetConfiguration {
+    IntentConfiguration(kind: kind, intent: SelectSpreadRateTypesIntent.self, provider: SpreadProvider()) { entry in
+      SpreadWidgetEntryView(entry: entry)
+        .environment(\.colorScheme, .dark)
+        .environment(\.sizeCategory, .large)
+    }
+    .configurationDisplayName("Brechas")
+    .description("Consulta las brechas entre cotizaciones a lo largo del día.")
     .supportedFamilies(supportedFamilies)
     .contentMarginsDisabledIfAvailable()
     // .disfavoredLocationsIfAvailable()
@@ -520,10 +700,11 @@ struct RateWidgets: WidgetBundle {
   var body: some Widget {
     RateWidget()
     ListRatesWidget()
+    SpreadWidget()
   }
 }
 
-@available(iOSApplicationExtension 16.0, *)
+@available(iOS 16.0, *)
 struct RateWidgets_Previews: PreviewProvider {
   static var previews: some View {
     let rates = lookupRateValues()
@@ -538,6 +719,12 @@ struct RateWidgets_Previews: PreviewProvider {
       ListRatesWidgetEntryView(entry: entry)
         .previewContext(WidgetPreviewContext(family: .systemSmall))
         .previewDisplayName("ListRatesWidget")
+      SpreadWidgetEntryView(entry: entry)
+        .previewContext(WidgetPreviewContext(family: .systemSmall))
+        .previewDisplayName("SpreadWidget")
+      SpreadWidgetEntryView(entry: entry)
+        .previewContext(WidgetPreviewContext(family: .accessoryCircular))
+        .previewDisplayName("SpreadWidget (Lock screen)")
     }
   }
 }

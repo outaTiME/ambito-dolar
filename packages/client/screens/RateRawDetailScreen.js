@@ -26,7 +26,7 @@ const RateRawDetailItem = ({ timestamp, value, change }) => {
       title={Helper.getInlineRateValue(value)}
       titleDetail={DateUtils.humanize(timestamp, 5)}
       useSwitch={false}
-      value={AmbitoDolar.getRateChange(change)}
+      value={AmbitoDolar.getRateChange(change, true)}
       valueStyle={{
         color: Helper.getChangeColor(change, theme),
       }}

@@ -22,10 +22,14 @@ struct Helper {
       RateType(identifier: "mayorista", display: "Mayorista")
     ]
   }
+  static func getDefaultRateType() -> RateType {
+    getRateTypes().first!
+  }
   static func getDefaultRateTypes() -> [RateType] {
     Array(getRateTypes().prefix(3))
   }
-  static func getDefaultRateType() -> RateType {
-    getRateTypes().first!
+  static func getDefaultSpreadRateTypes() -> [RateType] {
+    let rateTypes = getRateTypes()
+    return [rateTypes[2], rateTypes[1]]
   }
 }

@@ -1,15 +1,11 @@
 {
-.appVersion = "1346";
+.appVersion = "3134";
 DisplayStrings = (
-"/minus",
-"-"
+"/upArrow",
+"/rightArrow"
 );
 copyright = "Digitized data copyright 2012–2018 for FiraGO, bBox Type GmbH and HERE Europe B.V. All rights reserved, with Reserved Font Name \"Fira\" / Digitized data copyright 2012–2018 for Fira Sans The Mozilla Foundation, Telefonica S.A., Carrois Corporate GbR and bBox Type GmbH, with Reserved Font Name \"Fira\"";
 customParameters = (
-{
-name = vendorID;
-value = "bB  ";
-},
 {
 name = panose;
 value = (
@@ -341,19 +337,29 @@ ring,
 tilde,
 apostrophemod
 );
+},
+{
+name = vendorID;
+value = "bB  ";
+},
+{
+name = Axes;
+value = (
+{
+Name = Weight;
+Tag = wght;
+},
+{
+Name = Width;
+Tag = wdth;
+}
+);
 }
 );
 date = "2018-03-20 13:18:12 +0000";
 disablesAutomaticAlignment = 1;
 disablesNiceNames = 1;
 familyName = FiraGO;
-features = (
-{
-code = "sub zero by zero.tnum;\012sub one by one.tnum;\012sub two by two.tnum;\012sub three by three.tnum;\012sub four by four.tnum;\012sub five by five.tnum;\012sub six by six.tnum;\012sub seven by seven.tnum;\012sub eight by eight.tnum;\012sub nine by nine.tnum;\012sub numbersign by numbersign.tnum;\012sub figuredash by figuredash.tnum;\012sub cent by cent.tnum;\012sub currency by currency.tnum;\012sub dollar by dollar.tnum;\012sub euro by euro.tnum;\012sub sterling by sterling.tnum;\012sub yen by yen.tnum;\012sub plus by plus.tnum;\012sub minus by minus.tnum;\012sub multiply by multiply.tnum;\012sub divide by divide.tnum;\012sub equal by equal.tnum;\012sub greater by greater.tnum;\012sub less by less.tnum;\012sub plusminus by plusminus.tnum;\012sub asciitilde by asciitilde.tnum;\012sub logicalnot by logicalnot.tnum;\012sub percent by percent.tnum;\012sub perthousand by perthousand.tnum;\012sub section by section.tnum;\012sub degree by degree.tnum;\012sub dagger by dagger.tnum;\012sub daggerdbl by daggerdbl.tnum;\012";
-disabled = 1;
-name = tnum;
-}
-);
 fontMaster = (
 {
 ascender = 935;
@@ -412,7 +418,7 @@ layerId = "931AEA66-7EA2-48A5-BA1F-5BA74D8FF7A7";
 width = 666;
 }
 );
-note = .notdef;
+note = ".notdef";
 },
 {
 glyphname = CR;
@@ -6873,24 +6879,6 @@ unicode = 00A2;
 },
 {
 color = 0;
-glyphname = cent.tnum;
-lastChange = "2020-10-04 23:40:50 +0000";
-layers = (
-{
-components = (
-{
-name = cent;
-transform = "{1, 0, 0, 1, 28, 0}";
-}
-);
-layerId = "931AEA66-7EA2-48A5-BA1F-5BA74D8FF7A7";
-width = 560;
-}
-);
-note = glyph00215;
-},
-{
-color = 0;
 glyphname = currency;
 lastChange = "2020-10-04 23:44:24 +0000";
 layers = (
@@ -9111,6 +9099,92 @@ width = 228;
 );
 note = uni02BC;
 unicode = 02BC;
+},
+{
+glyphname = rightArrow;
+lastChange = "2024-09-28 19:18:20 +0000";
+layers = (
+{
+hints = (
+{
+horizontal = 1;
+place = "{289, 80}";
+type = Stem;
+},
+{
+place = "{122, 666}";
+type = Stem;
+}
+);
+layerId = "931AEA66-7EA2-48A5-BA1F-5BA74D8FF7A7";
+paths = (
+{
+closed = 1;
+nodes = (
+"165 297 LINE",
+"625 297 LINE",
+"591 276 OFFCURVE",
+"562 244 QCURVE SMOOTH",
+"444 116 LINE",
+"496 69 LINE",
+"735 335 LINE",
+"496 601 LINE",
+"444 554 LINE",
+"562 426 LINE SMOOTH",
+"591 394 OFFCURVE",
+"625 373 QCURVE",
+"165 373 LINE"
+);
+}
+);
+width = 900;
+}
+);
+note = arrowright;
+unicode = 2192;
+},
+{
+glyphname = leftArrow;
+lastChange = "2024-09-28 19:05:19 +0000";
+layers = (
+{
+hints = (
+{
+horizontal = 1;
+place = "{289, 80}";
+type = Stem;
+},
+{
+place = "{112, 666}";
+type = Stem;
+}
+);
+layerId = "931AEA66-7EA2-48A5-BA1F-5BA74D8FF7A7";
+paths = (
+{
+closed = 1;
+nodes = (
+"735 373 LINE",
+"275 373 LINE",
+"309 394 OFFCURVE",
+"338 426 QCURVE SMOOTH",
+"456 554 LINE",
+"404 601 LINE",
+"165 335 LINE",
+"404 69 LINE",
+"456 116 LINE",
+"338 244 LINE SMOOTH",
+"309 276 OFFCURVE",
+"275 297 QCURVE",
+"735 297 LINE"
+);
+}
+);
+width = 900;
+}
+);
+note = arrowleft;
+unicode = 2190;
 }
 );
 instances = (
@@ -9119,10 +9193,15 @@ instanceInterpolations = {
 "931AEA66-7EA2-48A5-BA1F-5BA74D8FF7A7" = 1;
 };
 name = Regular;
-weightClass = Normal;
 }
 );
 unitsPerEm = 1000;
+userData = {
+GSDimensionPlugin.Dimensions = {
+"931AEA66-7EA2-48A5-BA1F-5BA74D8FF7A7" = {
+};
+};
+};
 versionMajor = 1;
 versionMinor = 1;
 }

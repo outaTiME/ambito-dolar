@@ -1,7 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
-import { View, Alert } from 'react-native';
+import { Text, View, Alert } from 'react-native';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
 import * as actions from '../actions';
@@ -17,6 +17,121 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
+
+const SpreadCardItemView = ({ rateType, nominalValue, percentageValue }) => {
+  const { theme, fonts } = Helper.useTheme();
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        columnGap: Settings.SMALL_PADDING,
+        // same as CardItemView
+        paddingHorizontal: Settings.PADDING,
+        paddingVertical: Settings.CARD_PADDING + Settings.SMALL_PADDING,
+      }}
+    >
+      <Text
+        style={[
+          fonts.body,
+          {
+            flex: 1.7,
+          },
+        ]}
+        numberOfLines={1}
+      >
+        {AmbitoDolar.getRateTitle(rateType)}
+      </Text>
+      <Text
+        style={[
+          fonts.body,
+          {
+            flex: 1,
+            color: Settings.getGrayColor(theme),
+            textAlign: 'right',
+          },
+        ]}
+        numberOfLines={1}
+      >
+        {nominalValue}
+      </Text>
+      <Text
+        style={[
+          // fonts.subhead,
+          fonts.body,
+          {
+            // same as victory chart header
+            flex: 1.3,
+            color: Helper.getChangeColor(percentageValue, theme),
+            textAlign: 'right',
+          },
+        ]}
+        numberOfLines={1}
+      >
+        {AmbitoDolar.getRateChange(percentageValue, true)}
+      </Text>
+    </View>
+  );
+};
+
+const Spreads = withRates(true)(({ type, stat, rates, rateTypes }) => {
+  const { theme } = Helper.useTheme();
+  const getItemView = React.useCallback(
+    (itemType) => {
+      if (itemType !== type) {
+        const itemStats = rates[itemType]?.stats;
+        if (itemStats) {
+          const rateValue = AmbitoDolar.getRateValue(stat);
+          const itemStat = itemStats[itemStats.length - 1];
+          const itemRateValue = AmbitoDolar.getRateValue(itemStat);
+          // calculate from open / close rate and truncate
+          const rateChangePercent = AmbitoDolar.getNumber(
+            (rateValue / itemRateValue - 1) * 100,
+          );
+          const showValueElement = true;
+          const rateChange = AmbitoDolar.getRateChange(
+            [
+              null,
+              rateValue,
+              showValueElement === true ? null : rateChangePercent,
+              itemRateValue,
+            ],
+            true,
+          );
+          if (showValueElement === true) {
+            return (
+              <SpreadCardItemView
+                {...{
+                  key: itemType,
+                  rateType: itemType,
+                  nominalValue: rateChange,
+                  percentageValue: rateChangePercent,
+                }}
+              />
+            );
+          }
+          return (
+            <CardItemView
+              key={itemType}
+              title={AmbitoDolar.getRateTitle(itemType)}
+              useSwitch={false}
+              value={rateChange}
+              valueStyle={{
+                color: Helper.getChangeColor(rateChangePercent, theme),
+              }}
+            />
+          );
+        }
+      }
+    },
+    [type, rates, stat, theme],
+  );
+  return (
+    <CardView title={I18n.t('spreads')} plain>
+      {rateTypes.map((type) => getItemView(type))}
+    </CardView>
+  );
+});
 
 const RANGE_TYPES = [
   I18n.t('one_week'),
@@ -147,26 +262,6 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
   const onTabPress = React.useCallback((index) => {
     setRangeIndex(index);
   }, []);
-  const official_spread = React.useMemo(() => {
-    if (type !== AmbitoDolar.BNA_TYPE) {
-      const official_stats = rates[AmbitoDolar.BNA_TYPE]?.stats;
-      if (official_stats) {
-        const official_stat = official_stats[official_stats.length - 1];
-        const rate_value = AmbitoDolar.getRateValue(stat);
-        const official_rate_value = AmbitoDolar.getRateValue(official_stat);
-        // calculate from open / close rate and truncate
-        const rate_change_percent = AmbitoDolar.getNumber(
-          (rate_value / official_rate_value - 1) * 100,
-        );
-        return AmbitoDolar.getRateChange([
-          null,
-          rate_value,
-          rate_change_percent,
-          official_rate_value,
-        ]);
-      }
-    }
-  }, [type, rates, stat]);
   // reset when current rate is excluded
   React.useEffect(() => {
     if ((excluded_rates || []).includes(type)) {
@@ -211,16 +306,6 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
           useSwitch={false}
           value={Helper.getCurrency(stat[3])}
         />
-        {official_spread && (
-          <CardItemView
-            title={I18n.t('spread', {
-              rate: AmbitoDolar.getRateTitle(AmbitoDolar.BNA_TYPE),
-            })}
-            // titleDetail={AmbitoDolar.getRateTitle(AmbitoDolar.BNA_TYPE)}
-            useSwitch={false}
-            value={official_spread}
-          />
-        )}
       </CardView>
       {rate.max_date && rate.max && (
         <CardView plain>
@@ -232,6 +317,12 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
           />
         </CardView>
       )}
+      <Spreads
+        {...{
+          type,
+          stat,
+        }}
+      />
       <CardView title={I18n.t('source')} plain>
         <CardItemView title={rate.provider} useSwitch={false} />
       </CardView>

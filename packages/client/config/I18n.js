@@ -36,8 +36,7 @@ const i18n = new I18n({
     show_detail: 'Ver detalle',
     day_summary: 'Resumen de jornada',
     variation: 'Variación',
-    // spread: 'Brecha',
-    spread: 'Brecha %{rate}',
+    spreads: 'Brechas',
     previous_close: 'Cierre anterior',
     'all-time_high': 'Máximo histórico',
     source: 'Fuente',
@@ -55,7 +54,7 @@ const i18n = new I18n({
     installation: 'Instalación',
     app_version: 'Versión',
     device: 'Dispositivo',
-    share_message: `Te recomiendo descargar %{appName}, es mi aplicación preferida para seguir de manera simple, elegante y efectiva el mercado cambiario en la Argentina. %{websiteUrl}`,
+    share_message: `Te recomiendo descargar %{appName}, es la app que uso siempre para seguir el mercado cambiario en la Argentina de forma simple, elegante y efectiva. ¡Está buenísima! %{websiteUrl}`,
     opts_general: 'General',
     opts_general_note:
       'Las cotizaciones se actualizarán automáticamente durante la jornada cambiaria. Última actualización: %{lastUpdate}',

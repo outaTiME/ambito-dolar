@@ -95,12 +95,12 @@ export default {
         },
       },
     ],
-    /* [
+    [
       'expo-font',
       {
         fonts: ['./assets/fonts/FiraGO-Regular.otf'],
       },
-    ], */
+    ],
     Boolean(process.env.SENTRY_AUTH_TOKEN) && [
       '@sentry/react-native/expo',
       {

@@ -106,11 +106,11 @@
 	<key>INIntentDefinitionNamespace</key>
 	<string>88xZPY</string>
 	<key>INIntentDefinitionSystemVersion</key>
-	<string>23A344</string>
+	<string>24A335</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>15A240d</string>
+	<string>16A242d</string>
 	<key>INIntentDefinitionToolsVersion</key>
-	<string>15.0</string>
+	<string>16.0</string>
 	<key>INIntents</key>
 	<array>
 		<dict>
@@ -443,6 +443,141 @@
 			<string>Select Rate Types</string>
 			<key>INIntentTitleID</key>
 			<string>JtpQnj</string>
+			<key>INIntentType</key>
+			<string>Custom</string>
+			<key>INIntentVerb</key>
+			<string>View</string>
+		</dict>
+		<dict>
+			<key>INIntentCategory</key>
+			<string>information</string>
+			<key>INIntentDescription</key>
+			<string>Seleccionar cotizaciones</string>
+			<key>INIntentDescriptionID</key>
+			<string>HqAe7T</string>
+			<key>INIntentEligibleForWidgets</key>
+			<true/>
+			<key>INIntentIneligibleForSuggestions</key>
+			<true/>
+			<key>INIntentLastParameterTag</key>
+			<integer>5</integer>
+			<key>INIntentName</key>
+			<string>SelectSpreadRateTypes</string>
+			<key>INIntentParameters</key>
+			<array>
+				<dict>
+					<key>INIntentParameterArraySizes</key>
+					<array>
+						<dict>
+							<key>INIntentParameterArraySizeSize</key>
+							<integer>2</integer>
+							<key>INIntentParameterArraySizeSizeClass</key>
+							<string>Small</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterArraySizeSize</key>
+							<integer>4</integer>
+							<key>INIntentParameterArraySizeSizeClass</key>
+							<string>Medium</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterArraySizeSize</key>
+							<integer>8</integer>
+							<key>INIntentParameterArraySizeSizeClass</key>
+							<string>Large</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterArraySizeSize</key>
+							<integer>12</integer>
+							<key>INIntentParameterArraySizeSizeClass</key>
+							<string>ExtraLarge</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterArraySizeSize</key>
+							<integer>1</integer>
+							<key>INIntentParameterArraySizeSizeClass</key>
+							<string>AccessoryInline</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterArraySizeSize</key>
+							<integer>1</integer>
+							<key>INIntentParameterArraySizeSizeClass</key>
+							<string>AccessoryCorner</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterArraySizeSize</key>
+							<integer>2</integer>
+							<key>INIntentParameterArraySizeSizeClass</key>
+							<string>AccessoryCircular</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterArraySizeSize</key>
+							<integer>2</integer>
+							<key>INIntentParameterArraySizeSizeClass</key>
+							<string>AccessoryRectangular</string>
+						</dict>
+					</array>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Cotizaciones</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>GmXW7i</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>1</integer>
+					<key>INIntentParameterFixedSizeArray</key>
+					<integer>1</integer>
+					<key>INIntentParameterName</key>
+					<string>rateTypes</string>
+					<key>INIntentParameterObjectType</key>
+					<string>RateType</string>
+					<key>INIntentParameterObjectTypeNamespace</key>
+					<string>88xZPY</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Configuration</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Primary</string>
+						</dict>
+					</array>
+					<key>INIntentParameterSupportsDynamicEnumeration</key>
+					<true/>
+					<key>INIntentParameterSupportsMultipleValues</key>
+					<true/>
+					<key>INIntentParameterTag</key>
+					<integer>3</integer>
+					<key>INIntentParameterType</key>
+					<string>Object</string>
+				</dict>
+			</array>
+			<key>INIntentResponse</key>
+			<dict>
+				<key>INIntentResponseCodes</key>
+				<array>
+					<dict>
+						<key>INIntentResponseCodeName</key>
+						<string>success</string>
+						<key>INIntentResponseCodeSuccess</key>
+						<true/>
+					</dict>
+					<dict>
+						<key>INIntentResponseCodeName</key>
+						<string>failure</string>
+					</dict>
+				</array>
+			</dict>
+			<key>INIntentTitle</key>
+			<string>Select Spread Rate Types</string>
+			<key>INIntentTitleID</key>
+			<string>Fppt3K</string>
 			<key>INIntentType</key>
 			<string>Custom</string>
 			<key>INIntentVerb</key>

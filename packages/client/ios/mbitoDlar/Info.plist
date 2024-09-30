@@ -76,6 +76,7 @@
     <array>
       <string>SelectRateTypeIntent</string>
       <string>SelectRateTypesIntent</string>
+      <string>SelectSpreadRateTypesIntent</string>
     </array>
     <key>UIAppFonts</key>
     <array>
