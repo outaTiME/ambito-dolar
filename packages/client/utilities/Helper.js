@@ -8,7 +8,7 @@ import * as MailComposer from 'expo-mail-composer';
 import * as Sharing from 'expo-sharing';
 import * as _ from 'lodash';
 import React from 'react';
-import { Platform, Linking } from 'react-native';
+import { Platform, Linking, PixelRatio } from 'react-native';
 import { useSelector, shallowEqual } from 'react-redux';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
@@ -472,13 +472,21 @@ export default {
     const headerHeight = useHeaderHeight();
     if (Platform.OS === 'ios') {
       if (modal === true) {
-        // https://github.com/react-navigation/react-navigation/blob/main/packages/elements/src/Header/getDefaultHeaderHeight.tsx#L26
+        // https://github.com/react-navigation/react-navigation/blob/6.x/packages/elements/src/Header/getDefaultHeaderHeight.tsx#L26
         return 56;
       }
+      const offset = 1 / PixelRatio.get();
       // https://github.com/react-navigation/react-navigation/issues/11655#issuecomment-1781782125
       // https://github.com/react-navigation/react-navigation/commit/4c521b5c865f2c46d58abb2e9e7fd1b0d2074215
       if (headerHeight === 98) {
-        return headerHeight - 0.33;
+        // iPhone 15 / iPhone 15 Pro / iPhone 15 Pro Max / iPhone 16
+        return headerHeight - offset;
+      } else if (headerHeight === 100) {
+        // iPhone 16 Pro
+        return headerHeight - (1 + offset);
+      } else if (headerHeight === 101) {
+        // iPhone 16 Pro Max
+        return headerHeight - (1 / 2 + offset);
       }
     }
     return headerHeight;
