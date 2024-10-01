@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.4.0...@ambito-dolar/client@7.5.0) (2024-10-01)
+
+### Bug Fixes
+
+- resolve display issues on iPhone 16 Pro and iPhone 16 Pro Max ([c7ca722](https://github.com/outaTiME/ambito-dolar/commit/c7ca722dc5bc06907a9f0d3735ac1bb463874851))
+- resolve text wrapping issue on Android when font scale is large ([cf1ae09](https://github.com/outaTiME/ambito-dolar/commit/cf1ae0972129d824ba7796bdc337d5c2322f315a))
+
+### Features
+
+- add bluesky social ([a380a9c](https://github.com/outaTiME/ambito-dolar/commit/a380a9c29550fc2e0bb197baef223ee7e25e7d1f))
+- exchange rate spread support ([613cbc1](https://github.com/outaTiME/ambito-dolar/commit/613cbc1b70d41a449b08a847cd7db8d1ace41d74))
+
 # [7.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.3.0...@ambito-dolar/client@7.4.0) (2024-08-30)
 
 ### Bug Fixes

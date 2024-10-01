@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.12.1...@ambito-dolar/website@1.13.0) (2024-10-01)
+
+### Bug Fixes
+
+- correct typo on bluesky social icon ([dbe44f5](https://github.com/outaTiME/ambito-dolar/commit/dbe44f5b72e61eda199f4fd089d19baf2be93dd5))
+
+### Features
+
+- add bluesky social ([a380a9c](https://github.com/outaTiME/ambito-dolar/commit/a380a9c29550fc2e0bb197baef223ee7e25e7d1f))
+
 ## [1.12.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.12.0...@ambito-dolar/website@1.12.1) (2024-08-28)
 
 **Note:** Version bump only for package @ambito-dolar/website
