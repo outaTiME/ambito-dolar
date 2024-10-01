@@ -8,7 +8,7 @@ import {
   FaRedditAlien as Reddit,
   FaMastodon as Mastodon,
   FaWhatsapp as Whatsapp,
-  FaSquare as Bluesky,
+  FaBluesky as Bluesky,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa6';
