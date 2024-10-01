@@ -16,7 +16,7 @@ const showMiniRateChart =
   ) +
     Settings.CARD_PADDING * 2 +
     Settings.PADDING <=
-  Helper.roundToNearestEven(Settings.DEVICE_WIDTH / 2);
+  Helper.roundToNearestEven(Settings.CONTENT_WIDTH / 2);
 
 const InlineRateView = ({ type, value, onSelected }) => {
   const { theme, fonts } = Helper.useTheme();

@@ -35,7 +35,7 @@ const SpreadCardItemView = ({ rateType, nominalValue, percentageValue }) => {
         style={[
           fonts.body,
           {
-            flex: 1.7,
+            width: '40%',
           },
         ]}
         numberOfLines={1}
@@ -46,7 +46,7 @@ const SpreadCardItemView = ({ rateType, nominalValue, percentageValue }) => {
         style={[
           fonts.body,
           {
-            flex: 1,
+            width: '25%',
             color: Settings.getGrayColor(theme),
             textAlign: 'right',
           },
@@ -61,12 +61,13 @@ const SpreadCardItemView = ({ rateType, nominalValue, percentageValue }) => {
           fonts.body,
           {
             // same as victory chart header
-            flex: 1.3,
+            width: '35%',
             color: Helper.getChangeColor(percentageValue, theme),
             textAlign: 'right',
           },
         ]}
         numberOfLines={1}
+        ellipsizeMode="middle"
       >
         {AmbitoDolar.getRateChange(percentageValue, true)}
       </Text>

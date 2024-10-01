@@ -103,7 +103,7 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
             {
               textAlign: 'right',
               // prevents flickering when the cursor moves quickly
-              width: '30%',
+              width: '35%',
             },
             {
               // borderWidth: 1,
@@ -113,6 +113,7 @@ const RateChartHeaderView = ({ stats, selectionIndex }) => {
           ]}
           numberOfLines={1}
           animatedProps={change_props}
+          ellipsizeMode="middle"
         />
       </View>
     </>
