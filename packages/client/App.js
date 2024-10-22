@@ -24,7 +24,10 @@ import {
 // import { requestWidgetUpdate } from 'react-native-android-widget';
 import AnimateableText from 'react-native-animateable-text';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { RootSiblingParent } from 'react-native-root-siblings';
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from 'react-native-reanimated';
 import {
   initialWindowMetrics,
   SafeAreaProvider,
@@ -64,6 +67,12 @@ if (__DEV__) {
     'There was a problem with the store.',
   ]);
 }
+
+// https://github.com/gorhom/react-native-bottom-sheet/issues/1983
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 if (Platform.OS === 'android') {
   // update widgets every 5 minutes

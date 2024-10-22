@@ -26,7 +26,6 @@ import * as _ from 'lodash';
 import React from 'react';
 import { StyleSheet, Platform, View, Text, Alert } from 'react-native';
 import Purchases from 'react-native-purchases';
-import { useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
@@ -986,13 +985,12 @@ const withAppDonation = (Component) => (props) => {
       '¡Increíble cómo usás {APP_NAME}!',
       '¡No parás de usar {APP_NAME}!',
       '¡{APP_NAME} es parte de tu rutina diaria!',
-      '¡Wow, pasás todo el día en {APP_NAME}!',
       '¡Estás todo el tiempo en {APP_NAME}!',
-      '¡Wow, usás {APP_NAME} todo el tiempo!',
       '¡Sos inseparable de {APP_NAME}!',
-      '¡Wow, usás {APP_NAME} a toda hora!',
       '¡No hay día sin {APP_NAME}!',
       '¡Wow, usás {APP_NAME} sin parar!',
+      '¡No te despegás de {APP_NAME} ni un segundo!',
+      '¡Wow, abrís {APP_NAME} a cada rato!',
     ];
     return _.replace(
       slugs[daysUsed % slugs.length],
@@ -1056,10 +1054,7 @@ const withAppDonation = (Component) => (props) => {
             setPurchaseProduct(product, (product) => {
               // run after modal re-rendering
               if (product) {
-                // wait for the next tick to ensure the dynamic size calculation on the sheet
-                // setTimeout(() => {
                 bottomSheetRef.current?.expand();
-                // });
               }
             });
           });
@@ -1100,14 +1095,15 @@ const withAppDonation = (Component) => (props) => {
   // force light
   const colorScheme = 'light';
   const { fonts } = Helper.useTheme(colorScheme);
-  // https://github.com/gorhom/react-native-bottom-sheet/pull/1513#issuecomment-1783545921
-  const animatedContentHeight = useSharedValue(0);
   const [donateLoading, setDonateLoading] = React.useState(false);
   return (
     <>
       <Component {...props} />
       <BottomSheet
         ref={bottomSheetRef}
+        index={-1}
+        detached
+        animateOnMount={false}
         style={{
           marginLeft: (Settings.DEVICE_WIDTH - Settings.CONTENT_WIDTH) / 2,
           width: Settings.CONTENT_WIDTH,
@@ -1115,17 +1111,10 @@ const withAppDonation = (Component) => (props) => {
         backgroundStyle={{
           marginHorizontal: Settings.CARD_PADDING * 2,
         }}
-        backdropComponent={renderBackdrop}
-        onChange={handleSheetChanges}
-        // enableOverDrag={false}
-        enablePanDownToClose={false}
-        detached
         bottomInset={safeAreaInsets.bottom || Settings.CARD_PADDING * 2}
-        enableDynamicSizing
-        contentHeight={animatedContentHeight}
-        index={-1}
-        animateOnMount={false}
+        onChange={handleSheetChanges}
         handleComponent={null}
+        backdropComponent={renderBackdrop}
       >
         <BottomSheetView>
           <View
