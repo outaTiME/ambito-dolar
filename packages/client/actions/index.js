@@ -8,9 +8,6 @@ import {
   APP_REVIEW,
   UPDATE_NOTIFICATION_SETTINGS,
   APP_UPDATE,
-  APP_IGNORE_UPDATE,
-  APP_INVALID_VERSION,
-  FORCE_APP_INVALID_VERSION,
   APP_USAGE_DAY,
   APP_CONVERSION,
   APP_SHARE_RATES,
@@ -65,11 +62,6 @@ const doRegisterDevice = (dispatch, state, value = {}) => {
         await dispatch({
           type: UPDATE_NOTIFICATION_SETTINGS,
           payload: notificationSettings,
-        });
-      }
-      if (statusCode === 'update_app') {
-        return dispatch({
-          type: APP_INVALID_VERSION,
         });
       }
       return Promise.resolve();
@@ -132,14 +124,6 @@ export const updateNotificationSettings =
 export const registerApplicationUpdate = (payload) => ({
   type: APP_UPDATE,
   payload,
-});
-
-export const ignoreApplicationUpdate = () => ({
-  type: APP_IGNORE_UPDATE,
-});
-
-export const forceApplicationInvalidVersion = () => ({
-  type: FORCE_APP_INVALID_VERSION,
 });
 
 export const registerApplicationUsage = () => ({

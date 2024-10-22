@@ -54,14 +54,6 @@ export const handler = Shared.wrapHandler(async (event) => {
           notificationSettings,
         }),
     };
-    /* if (
-      process.env.IS_LOCAL &&
-      app_version &&
-      Shared.isSemverLt(app_version, MIN_CLIENT_VERSION)
-    ) {
-      results.statusCode = 'update_app';
-      results.statusMessage = `Device with client version ${MIN_CLIENT_VERSION} or later is required`;
-    } */
     console.info(
       'Registration or interaction for the device completed',
       // JSON.stringify(data)

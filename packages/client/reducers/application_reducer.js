@@ -10,9 +10,6 @@ import {
   UPDATE_NOTIFICATION_SETTINGS,
   PRUNE,
   APP_UPDATE,
-  APP_IGNORE_UPDATE,
-  APP_INVALID_VERSION,
-  FORCE_APP_INVALID_VERSION,
   APP_USAGE_DAY,
   APP_CONVERSION,
   APP_SHARE_RATES,
@@ -53,8 +50,6 @@ const INITIAL_STATE = {
   rate_types: null,
   // version check
   version: null,
-  invalid_version: false,
-  ignore_update: null,
   app_updated: null,
   ignore_donation: null,
   // identifier to handle errors and support
@@ -97,23 +92,7 @@ export default (state = INITIAL_STATE, action) => {
     case APP_UPDATE:
       return update(state, {
         version: { $set: action.payload },
-        invalid_version: { $set: false },
-        ignore_update: { $set: null },
-        // days_used_for_review: { $set: 0 },
         app_updated: { $set: Date.now() },
-      });
-    case APP_IGNORE_UPDATE:
-      return update(state, {
-        ignore_update: { $set: Date.now() },
-      });
-    case APP_INVALID_VERSION:
-      return update(state, {
-        invalid_version: { $set: true },
-      });
-    case FORCE_APP_INVALID_VERSION:
-      return update(state, {
-        invalid_version: { $set: true },
-        ignore_update: { $set: null },
       });
     case APP_USAGE_DAY: {
       const current_date = DateUtils.get();

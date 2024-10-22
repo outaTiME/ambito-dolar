@@ -55,7 +55,6 @@ import RateRawDetailScreen from '../screens/RateRawDetailScreen';
 import RateWidgetPreviewScreen from '../screens/RateWidgetPreviewScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
-import UpdateAppScreen from '../screens/UpdateAppScreen';
 import Amplitude from '../utilities/Amplitude';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
@@ -590,11 +589,6 @@ const AppContainer = ({ rates, rateTypes, stillLoading }) => {
               />
             )}
           </RootStack.Screen>
-        ) : showAppUpdateMessage ? (
-          <RootStack.Screen
-            name={Settings.INITIAL_ROUTE_NAME}
-            component={UpdateAppScreen}
-          />
         ) : (
           <>
             <RootStack.Screen
@@ -746,44 +740,19 @@ const withRealtime = (Component) => (props) => {
   );
 };
 
-/* const withAppUpdateCheck = (Component) => (props) => {
-  const { version, invalidVersion, ignoreUpdate } = useSelector(
-    ({
-      application: {
-        version,
-        invalid_version: invalidVersion,
-        ignore_update: ignoreUpdate,
-      },
-    }) => ({
-      version,
-      invalidVersion,
-      ignoreUpdate,
-    }),
-    shallowEqual,
-  );
-  const EXPIRATION_DAYS = 30;
-  let shouldIgnoreUpdate = false;
-  if (invalidVersion === true && ignoreUpdate) {
-    // check if expired
-    shouldIgnoreUpdate =
-      ignoreUpdate + EXPIRATION_DAYS * 24 * 60 * 60 * 1000 >= Date.now();
-  }
+const withAppUpdateCheck = (Component) => (props) => {
+  const version = useSelector((state) => state.application.version);
   const dispatch = useDispatch();
-  const showAppUpdateMessage =
-    invalidVersion &&
-    shouldIgnoreUpdate === false &&
-    // prevents app update message after version upgrade
-    version &&
-    version === Settings.APP_VERSION;
   React.useEffect(() => {
     if (Settings.APP_VERSION !== version) {
-      Helper.debug('Application updated', Settings.APP_VERSION, version);
-      // clean invalid_version and ignore_update flag
+      Helper.debug('⚡️ Application updated', Settings.APP_VERSION, version);
       dispatch(actions.registerApplicationUpdate(Settings.APP_VERSION));
+    } else {
+      Helper.debug('✅ Application already updated', version);
     }
   }, [dispatch, version]);
-  return <Component showAppUpdateMessage={showAppUpdateMessage} {...props} />;
-}; */
+  return <Component {...props} />;
+};
 
 const withAppStatistics = (Component) => (props) => {
   const isActiveAppState = useAppState('active');
@@ -1239,7 +1208,7 @@ export default compose(
   withRates(),
   withAppIdentifier,
   withRealtime,
-  // withAppUpdateCheck,
+  withAppUpdateCheck,
   withAppStatistics,
   withUserActivity,
   withPurchases,
