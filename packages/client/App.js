@@ -176,7 +176,12 @@ const App = () => {
     return null;
   }
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+    <SafeAreaProvider
+      // https://github.com/software-mansion/react-native-screens/issues/1276#issuecomment-1156710669
+      {...(Platform.OS === 'ios' && {
+        initialMetrics: initialWindowMetrics,
+      })}
+    >
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <GestureHandlerRootView>

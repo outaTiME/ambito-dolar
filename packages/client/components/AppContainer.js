@@ -8,6 +8,7 @@ import {
   createBottomTabNavigator,
   BottomTabBar,
 } from '@react-navigation/bottom-tabs';
+import { HeaderShownContext } from '@react-navigation/elements';
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { compose } from '@reduxjs/toolkit';
@@ -407,6 +408,22 @@ const MainStackScreen = () => {
       />
     </Tab.Navigator>
   );
+  const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
+  // https://github.com/software-mansion/react-native-screens/issues/1276#issuecomment-1172691544
+  if (Platform.OS === 'android') {
+    content = (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.card,
+          paddingTop: insets.top,
+        }}
+      >
+        {content}
+      </View>
+    );
+  }
   return content;
 };
 
@@ -518,46 +535,23 @@ const AppContainer = ({ rates, rateTypes, stillLoading }) => {
     // save the current route name for later comparision
     routeNameRef.current = currentRouteName;
   }, []);
+  const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
   const navigationTheme = React.useMemo(
     () => ({
       dark: theme === 'dark',
       colors: {
-        card: Settings.getContentColor(theme),
+        card: !hasRates
+          ? Settings.getBackgroundColor(theme, true)
+          : Settings.getContentColor(theme),
         border: Settings.getSeparatorColor(theme),
       },
     }),
-    [theme],
+    [theme, hasRates],
   );
   const navigatorScreenOptions = useNavigatorScreenOptions();
   const navigationBarColor = navigationTheme.colors.card;
   const statusBarStyle = Helper.getInvertedTheme(theme);
-  // const statusBarColor = Settings.getSeparatorColor(theme);
-  const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
-  /* const linking = React.useMemo(
-    () => ({
-      prefixes: [Linking.createURL('/')],
-      config: {
-        // initialRouteName: Settings.INITIAL_ROUTE_NAME,
-        screens: {
-          [Settings.INITIAL_ROUTE_NAME]: {
-            // initialRouteName: 'RatesTab',
-            screens: {
-              RatesTab: {
-                initialRouteName: Settings.INITIAL_ROUTE_NAME,
-                screens: {
-                  [Settings.INITIAL_ROUTE_NAME]: 'rates',
-                  // FIXME: handle invalid types
-                  RateDetail: 'rate/:type',
-                },
-              },
-            },
-          },
-        },
-      },
-    }),
-    []
-  ); */
-  return (
+  let content = (
     <NavigationContainer
       {...{
         ref: navigationRef,
@@ -565,7 +559,6 @@ const AppContainer = ({ rates, rateTypes, stillLoading }) => {
         onReady: onStateChange,
         onStateChange,
         theme: navigationTheme,
-        // linking,
       }}
     >
       <RootStack.Navigator
@@ -609,6 +602,13 @@ const AppContainer = ({ rates, rateTypes, stillLoading }) => {
       </RootStack.Navigator>
     </NavigationContainer>
   );
+  // https://github.com/react-navigation/react-navigation/issues/11353#issuecomment-1588570491
+  if (Platform.OS === 'android') {
+    content = (
+      <HeaderShownContext.Provider value>{content}</HeaderShownContext.Provider>
+    );
+  }
+  return content;
 };
 
 const withAppIdentifier = (Component) => (props) => {
