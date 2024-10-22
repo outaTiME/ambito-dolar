@@ -1,9 +1,5 @@
 {
 .appVersion = "3134";
-DisplayStrings = (
-"/upArrow",
-"/rightArrow"
-);
 copyright = "Digitized data copyright 2012–2018 for FiraGO, bBox Type GmbH and HERE Europe B.V. All rights reserved, with Reserved Font Name \"Fira\" / Digitized data copyright 2012–2018 for Fira Sans The Mozilla Foundation, Telefonica S.A., Carrois Corporate GbR and bBox Type GmbH, with Reserved Font Name \"Fira\"";
 customParameters = (
 {
@@ -9185,6 +9181,70 @@ width = 900;
 );
 note = arrowleft;
 unicode = 2190;
+},
+{
+glyphname = uni100063.small;
+lastChange = "2024-10-12 15:25:11 +0000";
+layers = (
+{
+layerId = "931AEA66-7EA2-48A5-BA1F-5BA74D8FF7A7";
+paths = (
+{
+closed = 1;
+nodes = (
+"751 -101 OFFCURVE",
+"950 101 OFFCURVE",
+"950 340 CURVE SMOOTH",
+"950 579 OFFCURVE",
+"751 779 OFFCURVE",
+"512 779 CURVE SMOOTH",
+"270 779 OFFCURVE",
+"70 579 OFFCURVE",
+"70 340 CURVE SMOOTH",
+"70 101 OFFCURVE",
+"270 -101 OFFCURVE",
+"512 -101 CURVE SMOOTH"
+);
+},
+{
+closed = 1;
+nodes = (
+"306 331 OFFCURVE",
+"324 351 OFFCURVE",
+"345 351 CURVE SMOOTH",
+"358 351 OFFCURVE",
+"369 348 OFFCURVE",
+"381 328 CURVE",
+"459 229 LINE",
+"633 508 LINE SMOOTH",
+"643 524 OFFCURVE",
+"655 530 OFFCURVE",
+"669 530 CURVE SMOOTH",
+"690 530 OFFCURVE",
+"710 518 OFFCURVE",
+"710 494 CURVE SMOOTH",
+"710 484 OFFCURVE",
+"705 473 OFFCURVE",
+"696 461 CURVE",
+"503 155 LINE SMOOTH",
+"493 139 OFFCURVE",
+"481 130 OFFCURVE",
+"462 130 CURVE SMOOTH",
+"446 130 OFFCURVE",
+"433 137 OFFCURVE",
+"418 155 CURVE SMOOTH",
+"316 282 LINE",
+"311 291 OFFCURVE",
+"306 302 OFFCURVE",
+"306 311 CURVE SMOOTH"
+);
+}
+);
+width = 1020;
+}
+);
+note = uni100063.small;
+unicode = 100063;
 }
 );
 instances = (

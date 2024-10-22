@@ -17,7 +17,7 @@ export default (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
     case ADD_RATES: {
       const { rates, updated_at } = payload;
-      // rates should update only on firebase changes
+      // rates should update only on real-time changes
       if (!_.isEqual(state.rates, rates)) {
         return {
           ...state,

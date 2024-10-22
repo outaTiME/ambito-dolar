@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 // import { StandardRetryStrategy } from '@aws-sdk/util-retry';
-import { captureConsoleIntegration } from '@sentry/integrations';
+import { init, tx } from '@instantdb/admin';
 import * as Sentry from '@sentry/serverless';
 import { parallelScan } from '@shelf/dynamodb-parallel-scan';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
@@ -110,16 +110,52 @@ const fetchFirebaseData = async (uri, opts) => {
   return AmbitoDolar.fetch(url.href, opts).then((response) => response.json());
 };
 
-const updateFirebaseData = (uri, payload = {}) =>
+// remove data from payload
+const updateFirebaseData = (uri, { data, ...payload } = {}) =>
   fetchFirebaseData(uri, {
     method: 'PATCH',
     body: JSON.stringify(payload),
   }).catch((error) => {
     console.warn(
-      'Unable update firebase with payload',
+      'Unable to update firebase',
       JSON.stringify({ uri, payload, error: error.message }),
     );
+    // ignore
   });
+
+const updateInstantData = async ({ data } = {}) => {
+  // ignore when there are no updates
+  if (data) {
+    const db = init({
+      appId: process.env.INSTANT_APP_ID,
+      adminToken: process.env.INSTANT_ADMIN_TOKEN,
+    });
+    const res = await db.query({
+      boards: {
+        $: {
+          // avoid fixed record identifier
+          limit: 1,
+        },
+      },
+    });
+    const boardId = res.boards[0]?.id;
+    if (boardId) {
+      const payload = { data, updated_at: data?.updated_at };
+      return db
+        .transact([tx.boards[boardId].update(payload)])
+        .catch((error) => {
+          console.warn(
+            'Unable to update instant',
+            JSON.stringify({ boardId, payload, error: error.message }),
+          );
+          // ignore
+        });
+    }
+  }
+};
+
+const updateRealtimeData = (payload) =>
+  Promise.all([updateFirebaseData('', payload), updateInstantData(payload)]);
 
 const serviceResponse = (res, code, json) => {
   if (res) {
@@ -753,7 +789,8 @@ const getActiveDevices = async () => {
 
 export default {
   // fetchFirebaseData,
-  updateFirebaseData,
+  // updateFirebaseData,
+  updateRealtimeData,
   serviceResponse,
   getDynamoDBClient,
   getS3Client,

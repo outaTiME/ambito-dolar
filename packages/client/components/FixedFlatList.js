@@ -87,9 +87,8 @@ const FixedFlatList = ({
   ...extra
 }) => {
   const { theme } = Helper.useTheme();
-  const { shadowColor, shadowOpacity, shadowRadius, elevation } =
+  const { shadowColor, shadowOpacity, shadowRadius } =
     Helper.getShadowDefaults();
-
   const renderItem = React.useCallback(
     ({ item: { component }, index, drag, isActive, getIndex, onStartDrag }) => {
       index = index ?? getIndex();
@@ -105,7 +104,7 @@ const FixedFlatList = ({
                 shadowColor,
                 shadowOpacity,
                 shadowRadius,
-                elevation,
+                elevation: 10,
               }),
             },
             index === 0 && {

@@ -20,7 +20,8 @@ export const handler = Shared.wrapHandler(async (event) => {
     // save json files
     await Shared.storeRatesJsonObject(base_rates, true);
     // firebase update should occur after saving json files
-    await Shared.updateFirebaseData('', {
+    await Shared.updateRealtimeData({
+      data: base_rates,
       updated_at: processed_at_fmt,
       u: processed_at_unix,
     });

@@ -64,9 +64,14 @@ const {
         ios: REVENUECAT_IOS_API_KEY,
         android: REVENUECAT_ANDROID_API_KEY,
       },
+      instantApiId: INSTANT_APP_ID,
     },
   },
 } = Constants;
+// force local fixtures
+// const RATES_URI = null;
+// const HISTORICAL_RATES_URI = null;
+// const INSTANT_APP_ID = null;
 const APP_COPYRIGHT = `© ${new Date().getFullYear()} ${APP_NAME}`;
 const APP_DOMAIN = 'ambito-dolar.app';
 const WEBSITE_URL = `https://${APP_DOMAIN}`;
@@ -120,6 +125,7 @@ export default {
     ios: REVENUECAT_IOS_API_KEY,
     android: REVENUECAT_ANDROID_API_KEY,
   }),
+  INSTANT_APP_ID,
   FETCH_REFRESH_INTERVAL,
   BULLET_SEPARATOR,
   SPACE_SEPARATOR,

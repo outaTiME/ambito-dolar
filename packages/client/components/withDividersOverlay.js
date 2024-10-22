@@ -1,4 +1,4 @@
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+// import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { StyleSheet, Platform } from 'react-native';
 // import { useHeaderHeight } from 'react-native-screens/native-stack';
@@ -14,7 +14,8 @@ export default (Component) => (props) => {
   // const headerHeight = 97 + StyleSheet.hairlineWidth * 2;
   const safeAreaInsets = useSafeAreaInsets();
   const tabBarheight = !isModal
-    ? useBottomTabBarHeight()
+    ? // ? useBottomTabBarHeight()
+      Helper.getTabBarHeight(safeAreaInsets)
     : Platform.OS === 'ios'
       ? Settings.IS_TABLET ||
         (Settings.IS_HANDSET && safeAreaInsets.bottom === 0)

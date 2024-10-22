@@ -62,6 +62,7 @@ export default {
       ios: process.env.REVENUECAT_IOS_API_KEY,
       android: process.env.REVENUECAT_ANDROID_API_KEY,
     },
+    instantApiId: process.env.INSTANT_APP_ID,
     eas: {
       projectId: '88dc0a10-eec5-11e8-bdb0-e9d94f6dfa7d',
       build: {

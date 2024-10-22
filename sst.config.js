@@ -45,10 +45,8 @@ export default {
         BSKY_PASSWORD: process.env.BSKY_PASSWORD,
         WHATSAPP_CHANNEL_ID: process.env.WHATSAPP_CHANNEL_ID,
         WHAPI_TOKEN: process.env.WHAPI_TOKEN,
-        // https://aws.amazon.com/es/blogs/compute/node-js-18-x-runtime-now-available-in-aws-lambda/
-        // NODE_OPTIONS: '--no-experimental-fetch',
-        // prevents experimental warnings from buffer.File
-        NODE_OPTIONS: '--no-warnings',
+        INSTANT_APP_ID: process.env.INSTANT_APP_ID,
+        INSTANT_ADMIN_TOKEN: process.env.INSTANT_ADMIN_TOKEN,
         // NODE_NO_WARNINGS: 1,
       },
       // runtime: 'nodejs18.x',

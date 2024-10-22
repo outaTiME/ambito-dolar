@@ -13,14 +13,10 @@ const i18n = new I18n({
     no_available_rates: 'Sin cotizaciones disponibles.',
     no_available_stats: 'Sin métricas disponibles.',
     rates_loading_error: 'Imposible obtener las cotizaciones.',
-    // still_loading: 'Conectividad limitada, aguarde un momento...',
-    // still_loading: 'Aguarde un momento...',
+    // still_loading: 'Conectividad limitada, la carga se reanudará automáticamente.',
+    // still_loading: 'Las cotizaciones se mostrarán en cuanto se restablezca tu conexión.',
     still_loading:
-      'Conectividad limitada, la carga se reanudará automáticamente.',
-    update_app:
-      'Tenés que actualizar esta aplicación a una versión más reciente.',
-    update: 'Actualizar',
-    remind_me_later: 'Más tarde',
+      'Conectividad limitada, verás las cotizaciones cuando se recupere la conexión.',
     retry: 'Reintentar',
     developer: 'Desarrollador',
     text_copied: 'Texto copiado al portapapeles',

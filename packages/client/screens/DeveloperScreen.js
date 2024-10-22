@@ -1,3 +1,4 @@
+import { tx, id } from '@instantdb/react-native';
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -10,12 +11,14 @@ import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import withDividersOverlay from '../components/withDividersOverlay';
 import Settings from '../config/settings';
+import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
 
 const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const dispatch = useDispatch();
   const [, setAppDonationModal] = Helper.useSharedState('appDonationModal');
+  const showActivityToast = Helper.useActivityToast();
   return (
     <FixedScrollView
       {...{
@@ -91,6 +94,56 @@ const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
           onAction={() => {
             // force open at every change of value
             setAppDonationModal(Date.now());
+          }}
+        />
+        <CardItemView
+          title="Ver toast de actividad"
+          useSwitch={false}
+          chevron={false}
+          onAction={() => {
+            showActivityToast('Toast de actividad');
+          }}
+        />
+      </CardView>
+      <CardView title="InstantDB" plain>
+        <CardItemView
+          title="Crear nuevo tablero"
+          useSwitch={false}
+          chevron={false}
+          onAction={() => {
+            const db = Helper.getInstantDB();
+            const boardId = id();
+            const data = {
+              // empty
+            };
+            const updated_at = DateUtils.get();
+            db.transact([
+              tx.boards[boardId].update({ data, updated_at }),
+            ]).catch(console.warn);
+          }}
+        />
+        <CardItemView
+          title="Eliminar tablero existente"
+          useSwitch={false}
+          chevron={false}
+          onAction={() => {
+            const db = Helper.getInstantDB();
+            db.queryOnce({
+              boards: {
+                $: {
+                  // avoid fixed record identifier
+                  limit: 1,
+                },
+              },
+            })
+              .then(({ data }) => {
+                const boardId = data?.boards?.[0]?.id;
+                if (boardId) {
+                  return db.transact(tx.boards[boardId].delete());
+                }
+                throw new Error('No board found');
+              })
+              .catch(console.warn);
           }}
         />
       </CardView>

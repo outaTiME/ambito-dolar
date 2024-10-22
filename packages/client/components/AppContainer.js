@@ -4,19 +4,23 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  createBottomTabNavigator,
+  BottomTabBar,
+} from '@react-navigation/bottom-tabs';
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { compose } from '@reduxjs/toolkit';
 import { BlurView } from 'expo-blur';
 import * as Device from 'expo-device';
+import * as Haptics from 'expo-haptics';
 import * as Linking from 'expo-linking';
 import * as Localization from 'expo-localization';
 import * as Notifications from 'expo-notifications';
 import { useQuickAction } from 'expo-quick-actions/hooks';
 import * as StoreReview from 'expo-store-review';
-import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, onValue } from 'firebase/database';
+// import { initializeApp } from 'firebase/app';
+// import { getDatabase, ref, onValue } from 'firebase/database';
 import * as _ from 'lodash';
 import React from 'react';
 import { StyleSheet, Platform, View, Text, Alert } from 'react-native';
@@ -28,6 +32,7 @@ import { useStateWithCallbackLazy } from 'use-state-with-callback';
 
 import ActionButton from './ActionButton';
 import { MaterialHeaderButtons, Item } from './HeaderButtons';
+import Toast from './Toast';
 import withContainer from './withContainer';
 import withRates from './withRates';
 import * as actions from '../actions';
@@ -56,6 +61,7 @@ import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
 import { reloadWidgets } from '../widgets';
+import ToastPositionContainer from './ToastPositionContainer';
 
 const BackButton = ({ navigation, popToTop = false }) => (
   <MaterialHeaderButtons>
@@ -279,6 +285,42 @@ const SettingsStackScreen = () => {
   );
 };
 
+const ToastBottomTabBar = (props) => {
+  const tabBarHeight = Helper.getTabBarHeight(props.insets);
+  const [activityToast, setActivityToast] =
+    Helper.useSharedState('activityToast');
+  const [activeToast, setActiveToast] = React.useState();
+  React.useEffect(() => {
+    if (activityToast) {
+      // show only once per update
+      setActivityToast(null);
+      if (!activeToast?.isVisible) {
+        setActiveToast({
+          isVisible: true,
+          ...activityToast,
+        });
+        activityToast.feedback &&
+          Settings.HAPTICS_ENABLED &&
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        setTimeout(() => {
+          setActiveToast({
+            isVisible: false,
+            ...activityToast,
+          });
+        }, 2 * 1000);
+      }
+    }
+  }, [activityToast]);
+  return (
+    <>
+      <ToastPositionContainer height={tabBarHeight}>
+        <Toast isVisible={activeToast?.isVisible} text={activeToast?.message} />
+      </ToastPositionContainer>
+      <BottomTabBar {...props} />
+    </>
+  );
+};
+
 const Tab = createBottomTabNavigator();
 const MainStackScreen = () => {
   const { theme } = Helper.useTheme();
@@ -286,19 +328,18 @@ const MainStackScreen = () => {
     () => <NavigatorBackgroundView />,
     [],
   );
-  return (
+  let content = (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveTintColor: Settings.getForegroundColor(theme),
         tabBarInactiveTintColor: Settings.getStrokeColor(theme),
-        // tabBarAllowFontScaling: Settings.ALLOW_FONT_SCALING,
         tabBarStyle: {
           ...(Platform.OS === 'ios' && {
             position: 'absolute',
           }),
-          // https://github.com/react-navigation/react-navigation/blob/main/packages/bottom-tabs/src/views/BottomTabBar.tsx#L382
+          // https://github.com/react-navigation/react-navigation/blob/6.x/packages/bottom-tabs/src/views/BottomTabBar.tsx#L385
           borderTopWidth: 0,
           elevation: 0,
         },
@@ -311,6 +352,7 @@ const MainStackScreen = () => {
           },
         }),
       }}
+      tabBar={(props) => <ToastBottomTabBar {...props} />}
     >
       <Tab.Screen
         name="RatesTab"
@@ -366,6 +408,7 @@ const MainStackScreen = () => {
       />
     </Tab.Navigator>
   );
+  return content;
 };
 
 const ModalsStack = createNativeStackNavigator();
@@ -401,14 +444,7 @@ const ModalsStackScreen = () => {
 };
 
 const RootStack = createNativeStackNavigator();
-const AppContainer = ({
-  rates,
-  rateTypes,
-  loadingError,
-  stillLoading,
-  fetchRates,
-  showAppUpdateMessage,
-}) => {
+const AppContainer = ({ rates, rateTypes, stillLoading }) => {
   const { theme } = Helper.useTheme();
   // https://reactnavigation.org/docs/navigating-without-navigation-prop/#handling-initialization
   const navigationRef = Helper.getNavigationContainerRef();
@@ -547,11 +583,9 @@ const AppContainer = ({
             {(props) => (
               <InitialScreen
                 {...{
-                  rates,
-                  loadingError,
-                  stillLoading,
-                  fetchRates,
                   ...props,
+                  rates,
+                  stillLoading,
                 }}
               />
             )}
@@ -590,27 +624,16 @@ const withAppIdentifier = (Component) => (props) => {
   return <Component {...{ installationId, ...props }} />;
 };
 
-const firebaseApp =
-  Settings.FIREBASE_CONFIG_JSON &&
-  initializeApp(JSON.parse(Settings.FIREBASE_CONFIG_JSON));
+const db = Helper.getInstantDB();
 
 const withRealtime = (Component) => (props) => {
-  const rates = props.rates;
-  const isInitial = !rates;
   const dispatch = useDispatch();
-  const [, setUpdatingRates] = Helper.useSharedState('updatingRates');
-  const [error, setError] = React.useState(false);
   const [stillLoading, setStillLoading] = React.useState(false);
-  const fetchRates = React.useCallback(
-    (initial) => {
-      Helper.debug('💫 Fetching rates', initial);
-      !initial && setUpdatingRates(true);
-      setError(false);
-      setStillLoading(false);
-      const timer_id = setTimeout(() => {
-        setStillLoading(true);
-      }, Settings.STILL_LOADING_TIMEOUT);
-      return Helper.getRates(initial)
+  const stillLoadingRef = React.useRef();
+  const updateLocalRates = React.useCallback(
+    (rates) => {
+      Helper.debug('💫 Updating local rates', { withRates: !!rates });
+      return Promise.resolve(rates ?? Helper.getRates())
         .then((data) => {
           dispatch(actions.addRates(data));
           dispatch(actions.registerApplicationDownloadRates());
@@ -618,65 +641,106 @@ const withRealtime = (Component) => (props) => {
           WidgetKit.reloadAllTimelines();
           reloadWidgets(data);
         })
-        .catch(() => {
-          setError(true);
-        })
-        .finally(() => {
-          !initial && setUpdatingRates(false);
-          clearTimeout(timer_id);
-        });
+        .catch(console.warn);
     },
     [dispatch],
   );
   // UPDATE CHECK
   const updatedAt = useSelector((state) => state.rates.updated_at);
   const updatedAtRef = React.useRef();
+  const [forceUpdate, setForceUpdate] = React.useState();
   React.useEffect(() => {
+    if (updatedAtRef.current && !updatedAt) {
+      // force re-render when clear rates
+      Helper.debug('💨 Store cleared');
+      setForceUpdate(Date.now());
+    }
     updatedAtRef.current = updatedAt;
   }, [updatedAt]);
+  const { isLocal, isLoading, data } = db
+    ? db.useQuery({
+        boards: {
+          $: {
+            // avoid fixed record identifier
+            limit: 1,
+          },
+        },
+      })
+    : {
+        // no real-time updates
+        isLocal: true,
+      };
+  const isActiveAppState = useAppState('active');
+  const timeInForeground = React.useRef();
   React.useEffect(() => {
-    if (!isInitial) {
-      if (firebaseApp) {
-        Helper.debug('🚀 Connect to firebase');
-        const db = getDatabase(firebaseApp);
-        return onValue(ref(db, '/u'), (snapshot) => {
-          if (!snapshot.exists()) {
-            // this should never happen
-            console.error('No data available on firebase');
-            return;
-          }
-          const data = snapshot.val();
-          // use rates file format
-          const updated_at = AmbitoDolar.getTimezoneDate(data * 1000).format();
-          Sentry.addBreadcrumb({
-            message: 'Firebase update event',
-            data: updated_at,
-          });
-          Helper.debug(
-            '⚡️ Firebase updated',
-            updated_at,
-            updatedAtRef.current,
-          );
-          if (updated_at !== updatedAtRef.current) {
-            fetchRates(false);
-          } else {
-            Helper.debug('Rates already updated', updated_at);
-          }
-        });
-      }
-      Helper.debug('❄️ No realtime updates');
-    } else {
-      Helper.debug('🚀 Initial fetch');
-      fetchRates(true);
+    if (isActiveAppState) {
+      // app comes from background
+      timeInForeground.current = Date.now();
     }
-  }, [isInitial]);
+  }, [isActiveAppState]);
+  const showActivityToast = Helper.useActivityToast();
+  React.useEffect(() => {
+    if (!isLocal) {
+      if (isLoading) {
+        // only for initial load
+        setStillLoading(false);
+        stillLoadingRef.current = setTimeout(() => {
+          setStillLoading(true);
+        }, Settings.STILL_LOADING_TIMEOUT);
+      } else {
+        const board = data?.boards?.[0]?.data;
+        if (board) {
+          const updated_at = board.updated_at;
+          if (updated_at !== updatedAtRef.current) {
+            Sentry.addBreadcrumb({
+              message: 'Instant update event',
+              data: updated_at,
+            });
+            // show toast when update is within 10s of app in foreground (skip on init)
+            const shouldShowToast =
+              updatedAtRef.current &&
+              timeInForeground.current &&
+              DateUtils.get().diff(timeInForeground.current, 'milliseconds') <=
+                Settings.STILL_LOADING_TIMEOUT;
+            Helper.debug(
+              '⚡️ Instant updated',
+              updated_at,
+              updatedAtRef.current,
+              shouldShowToast,
+            );
+            Promise.resolve(
+              // only for initial load or when clear rates
+              !updatedAtRef.current && Helper.delay(),
+            )
+              .then(() => updateLocalRates(board))
+              .then(() => {
+                if (shouldShowToast) {
+                  showActivityToast('􀁣 Actualizado', true);
+                  // force a single toast per app foreground entry
+                  timeInForeground.current = null;
+                }
+              })
+              .finally(() => {
+                // initial load completed
+                clearTimeout(stillLoadingRef.current);
+              });
+          } else {
+            Helper.debug('✅ Rates already updated', updated_at);
+          }
+        } else {
+          // silent fail
+        }
+      }
+    } else {
+      Helper.debug('❄️ No real-time updates');
+      updateLocalRates();
+    }
+  }, [isLocal, isLoading, data, forceUpdate]);
   return (
     <Component
       {...{
-        loadingError: error,
-        stillLoading,
-        fetchRates,
         ...props,
+        stillLoading,
       }}
     />
   );

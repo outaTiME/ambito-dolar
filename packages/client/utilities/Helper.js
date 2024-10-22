@@ -1,4 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import { init } from '@instantdb/react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import rgba from 'color-rgba';
@@ -116,6 +117,15 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
 
 const navigationRef = createNavigationContainerRef();
 
+const instatDB =
+  Settings.INSTANT_APP_ID && init({ appId: Settings.INSTANT_APP_ID });
+
+// https://github.com/react-navigation/react-navigation/blob/6.x/packages/bottom-tabs/src/views/BottomTabBar.tsx#L32
+const DEFAULT_TABBAR_HEIGHT = 49;
+
+const getPaddingBottom = (insets) =>
+  Math.max(insets.bottom - Platform.select({ ios: 4, default: 0 }), 0);
+
 export default {
   getCurrency(str, include_symbol = false, usd = false) {
     if (include_symbol === true) {
@@ -139,45 +149,42 @@ export default {
     }
     return Settings.getRedColor(theme);
   },
-  delay(ms = 2 * 1000) {
-    return new Promise((resolve) => {
+  delay: (ms = Settings.ANIMATION_DURATION) =>
+    new Promise((resolve) => {
       setTimeout(() => {
         resolve();
       }, ms);
-    });
-  },
-  timeout(p, ms = AmbitoDolar.FETCH_TIMEOUT) {
-    return Promise.race([
+    }),
+  timeout: (p, ms = AmbitoDolar.FETCH_TIMEOUT) =>
+    Promise.race([
       p,
-      new Promise((_resolve, reject) => {
+      new Promise((resolve, reject) => {
         setTimeout(() => {
           reject(new Error('Promise execution timed out.'));
         }, ms);
       }),
-    ]);
-  },
+    ]),
   getJson,
   registerDevice: (data = {}) =>
     getJson(Settings.API_URL + '/register-device', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
-  getRates: () =>
-    new Promise((resolve) => {
-      if (Settings.RATES_URI) {
-        return resolve(getJson(Settings.RATES_URI));
-      }
-      debug('Using local rates file');
-      return resolve(rates);
-    }),
-  getHistoricalRates: () =>
-    new Promise((resolve, reject) => {
-      if (Settings.HISTORICAL_RATES_URI) {
-        return resolve(getJson(Settings.HISTORICAL_RATES_URI));
-        // return resolve(getJson('https://httpstat.us/200?sleep=30000'));
-      }
-      return reject(new Error('No historical rates available'));
-    }),
+  async getRates() {
+    if (Settings.RATES_URI) {
+      return getJson(Settings.RATES_URI);
+    }
+    debug('Using local rates file');
+    // delay the response to defer the navigation redraw
+    return this.delay().then(() => rates);
+  },
+  getHistoricalRates: async () => {
+    if (Settings.HISTORICAL_RATES_URI) {
+      return getJson(Settings.HISTORICAL_RATES_URI);
+      // return getJson('https://httpstat.us/200?sleep=30000');
+    }
+    throw new Error('No historical rates available');
+  },
   getStats: (earlier) => {
     let url = Settings.API_URL + '/stats';
     // TODO: add parameters to url like getSocialScreenshotUrl ???
@@ -202,59 +209,61 @@ export default {
   getNotificationSettings,
   getNotificationSettingsSelector,
   getSortedRates(rates, order, orderDirection, excludedRates, rateTypes) {
-    // defaults
-    order ?? (order = 'default');
-    orderDirection ?? (orderDirection = 'asc');
-    rateTypes ?? (rateTypes = Object.keys(rates));
-    // Unexpected token: operator (?) on expo with hermes
-    // order ??= 'default';
-    // orderDirection ??= 'asc';
-    /* console.log(
+    if (rates) {
+      // defaults
+      order ?? (order = 'default');
+      orderDirection ?? (orderDirection = 'asc');
+      rateTypes ?? (rateTypes = Object.keys(rates));
+      // Unexpected token: operator (?) on expo with hermes
+      // order ??= 'default';
+      // orderDirection ??= 'asc';
+      /* console.log(
       '>>> getSortedRates',
       order,
       orderDirection,
       excludedRates,
       rateTypes
     ); */
-    let chain = _.chain(rates).omit(excludedRates).toPairs();
-    if (order === 'default' && orderDirection === 'desc') {
-      chain = chain
-        // .orderBy(1, 'desc')
-        .reverse();
-    } else if (order === 'name') {
-      chain = chain.orderBy(([type]) => {
-        const title = AmbitoDolar.getRateTitle(type);
-        return title;
-      }, orderDirection);
-    } else if (order === 'price') {
-      chain = chain.orderBy(([, { stats }]) => {
-        const stat = _.last(stats);
-        const value = AmbitoDolar.getRateValue(stat);
-        return value;
-      }, orderDirection);
-    } else if (order === 'change') {
-      chain = chain.orderBy(([, { stats }]) => {
-        const stat = _.last(stats);
-        const change = stat[2];
-        return change;
-      }, orderDirection);
-    } else if (order === 'update') {
-      chain = chain.orderBy(([, { stats }]) => {
-        const stat = _.last(stats);
-        const timestamp = stat[0];
-        return timestamp;
-      }, orderDirection);
-    } else if (order === 'custom') {
-      chain = chain.orderBy(([type]) => {
-        // when not rateTypes leave to last (usually when a new rate is added)
-        const index =
-          rateTypes.indexOf(type) > -1
-            ? rateTypes.indexOf(type)
-            : rateTypes.length;
-        return index;
-      }, orderDirection);
+      let chain = _.chain(rates).omit(excludedRates).toPairs();
+      if (order === 'default' && orderDirection === 'desc') {
+        chain = chain
+          // .orderBy(1, 'desc')
+          .reverse();
+      } else if (order === 'name') {
+        chain = chain.orderBy(([type]) => {
+          const title = AmbitoDolar.getRateTitle(type);
+          return title;
+        }, orderDirection);
+      } else if (order === 'price') {
+        chain = chain.orderBy(([, { stats }]) => {
+          const stat = _.last(stats);
+          const value = AmbitoDolar.getRateValue(stat);
+          return value;
+        }, orderDirection);
+      } else if (order === 'change') {
+        chain = chain.orderBy(([, { stats }]) => {
+          const stat = _.last(stats);
+          const change = stat[2];
+          return change;
+        }, orderDirection);
+      } else if (order === 'update') {
+        chain = chain.orderBy(([, { stats }]) => {
+          const stat = _.last(stats);
+          const timestamp = stat[0];
+          return timestamp;
+        }, orderDirection);
+      } else if (order === 'custom') {
+        chain = chain.orderBy(([type]) => {
+          // when not rateTypes leave to last (usually when a new rate is added)
+          const index =
+            rateTypes.indexOf(type) > -1
+              ? rateTypes.indexOf(type)
+              : rateTypes.length;
+          return index;
+        }, orderDirection);
+      }
+      return chain.fromPairs().value();
     }
-    return chain.fromPairs().value();
   },
   getAvailableRates(rates) {
     if (rates) {
@@ -491,17 +500,28 @@ export default {
     }
     return headerHeight;
   },
+  useActivityToast() {
+    const [, setActivityToast] = this.useSharedState('activityToast');
+    const showToast = React.useCallback((message, feedback = false) => {
+      setActivityToast({
+        message,
+        feedback,
+        // force data change
+        timestamp: Date.now(),
+      });
+    }, []);
+    return showToast;
+  },
   removeProtocol: (url) => url.replace(/^https?:\/\//, ''),
-  // https://ethercreative.github.io/react-native-shadow-generator/
+  // https://github.com/rainbow-me/rainbow/blob/develop/src/components/toasts/Toast.tsx#L33
   getShadowDefaults: () => ({
-    shadowColor: '#000',
+    shadowColor: '#25292E',
     shadowOffset: {
-      width: 0,
-      height: 5,
+      height: 0,
+      width: 6,
     },
-    shadowOpacity: 0.34,
-    shadowRadius: 6.27,
-    elevation: 10,
+    shadowOpacity: 0.14,
+    shadowRadius: 10,
   }),
   getNavigationContainerRef: () => navigationRef,
   getRgbaColor: (color) => {
@@ -511,4 +531,10 @@ export default {
     }
   },
   debug,
+  getInstantDB: () => instatDB,
+  getTabBarHeight: (insets) => {
+    const paddingBottom = getPaddingBottom(insets);
+    const tabBarHeight = DEFAULT_TABBAR_HEIGHT + paddingBottom;
+    return tabBarHeight;
+  },
 };

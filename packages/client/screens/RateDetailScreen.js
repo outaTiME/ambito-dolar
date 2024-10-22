@@ -230,7 +230,7 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
     if (range_updated && rangeIndex > 0 && !historical_rates) {
       setLoading(true);
       // wait at least ANIMATION_DURATION before request to prevent fast dialogs on fails
-      Helper.delay(Settings.ANIMATION_DURATION).then(() =>
+      Helper.delay().then(() =>
         updateHistoricalRates()
           .catch(() => {
             setRangeIndex(prev_rangeIndex);
