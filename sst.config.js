@@ -47,6 +47,14 @@ export default {
         WHAPI_TOKEN: process.env.WHAPI_TOKEN,
         INSTANT_APP_ID: process.env.INSTANT_APP_ID,
         INSTANT_ADMIN_TOKEN: process.env.INSTANT_ADMIN_TOKEN,
+        NODE_OPTIONS: [
+          // https://aws.amazon.com/es/blogs/compute/node-js-18-x-runtime-now-available-in-aws-lambda/
+          // '--no-experimental-fetch',
+          // prevents experimental warnings from buffer.File
+          '--no-warnings',
+          // https://docs.sentry.io/platforms/javascript/guides/aws-lambda/install/esm-npm/#4-set-environment-variables
+          // '--import @sentry/aws-serverless/awslambda-auto',
+        ].join(' '),
         // NODE_NO_WARNINGS: 1,
       },
       // runtime: 'nodejs18.x',
@@ -54,6 +62,10 @@ export default {
       // https://docs.serverless-stack.com/constructs/Function#setting-additional-props
       logRetention: 'one_day',
       retryAttempts: 0,
+      // https://docs.sentry.io/platforms/javascript/guides/aws-lambda/install/esm-npm/
+      /* nodejs: {
+        install: ["@sentry/aws-serverless"]
+      } */
     });
     app.setDefaultRemovalPolicy('destroy');
     app.stack(MainStack, { id: 'stack' });

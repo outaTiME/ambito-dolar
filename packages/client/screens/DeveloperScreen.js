@@ -13,7 +13,6 @@ import withDividersOverlay from '../components/withDividersOverlay';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
-import Sentry from '../utilities/Sentry';
 
 const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const dispatch = useDispatch();
@@ -82,10 +81,8 @@ const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
           title="Simular excepción"
           useSwitch={false}
           chevron={false}
-          onAction={Sentry.nativeCrash}
-          /* onAction={() => {
-            throw new Error('Intentional excepción');
-          }} */
+          // onAction={Sentry.nativeCrash}
+          onAction={() => Helper.forceException()}
         />
         <CardItemView
           title="Ver modal de donación"

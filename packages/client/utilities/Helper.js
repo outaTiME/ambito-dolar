@@ -532,6 +532,9 @@ export default {
   },
   debug,
   getInstantDB: () => instatDB,
+  forceException(message) {
+    throw new Error(message ?? 'Forced exception signal');
+  },
   getTabBarHeight: (insets) => {
     const paddingBottom = getPaddingBottom(insets);
     const tabBarHeight = DEFAULT_TABBAR_HEIGHT + paddingBottom;

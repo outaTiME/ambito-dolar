@@ -18,10 +18,15 @@ const init = (dsn) => {
 
 Settings.IS_PRODUCTION && Settings.SENTRY_DSN && init(Settings.SENTRY_DSN);
 
-const setUserContext = (ctx = {}) => {
-  Sentry.configureScope((scope) => {
+const setUserContext = (ctx = {}, extras) => {
+  // https://docs.sentry.io/platforms/react-native/enriching-events/scopes/#configuring-the-scope
+  const scope = Sentry.getGlobalScope();
+  if (!ctx) {
+    scope.clear();
+  } else {
     scope.setUser(ctx);
-  });
+    extras && scope.setExtras(extras);
+  }
 };
 
 const withScope = ({ extras, tags, level = 'error' } = {}, cb) => {

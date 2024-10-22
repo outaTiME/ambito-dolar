@@ -8,7 +8,7 @@ import {
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 // import { StandardRetryStrategy } from '@aws-sdk/util-retry';
 import { init, tx } from '@instantdb/admin';
-import * as Sentry from '@sentry/serverless';
+import * as Sentry from '@sentry/aws-serverless';
 import { parallelScan } from '@shelf/dynamodb-parallel-scan';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
 import { Expo } from 'expo-server-sdk';
@@ -760,17 +760,17 @@ const fetchImage = (url) =>
 
 const wrapHandler = (handler) => {
   if (!process.env.IS_LOCAL) {
-    Sentry.AWSLambda.init({
+    Sentry.init({
       dsn: process.env.SENTRY_DSN,
       // disable performance monitoring
       // tracesSampleRate: 1.0,
       integrations: [
-        captureConsoleIntegration({
+        Sentry.captureConsoleIntegration({
           levels: ['warn', 'error'],
         }),
       ],
     });
-    return Sentry.AWSLambda.wrapHandler(handler);
+    return Sentry.wrapHandler(handler);
   }
   return handler;
 };
