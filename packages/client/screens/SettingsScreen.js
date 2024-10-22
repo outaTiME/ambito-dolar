@@ -4,16 +4,9 @@ import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
-import {
-  Linking,
-  Share,
-  // View,
-  // Text,
-  // ActivityIndicator,
-  Alert,
-} from 'react-native';
+import { Linking, Share, Alert } from 'react-native';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Purchases from 'react-native-purchases';
-import Toast from 'react-native-root-toast';
 import { useSelector, shallowEqual } from 'react-redux';
 
 import CardItemView from '../components/CardItemView';
@@ -27,52 +20,6 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
-
-/* const PriceBadge = ({ price, currencyCode, loading }) => {
-  const { theme, fonts } = Helper.useTheme();
-  return (
-    <View
-      style={[
-        {
-          borderColor: Settings.getStrokeColor(theme, false),
-          borderWidth: 1,
-          borderRadius: Settings.BORDER_RADIUS / 2,
-          paddingVertical: 2,
-          paddingHorizontal: 6,
-          justifyContent: 'center',
-          marginVertical: -Settings.PADDING,
-        },
-        loading && {
-          borderColor: 'transparent',
-        },
-      ]}
-    >
-      <Text
-        style={[
-          fonts.body,
-          {
-            color: Settings.getGrayColor(theme),
-            textAlign: 'right',
-          },
-          loading && {
-            opacity: 0,
-          },
-        ]}
-        numberOfLines={1}
-      >
-        {currencyCode} {Helper.getCurrency(price)}
-      </Text>
-      {loading && (
-        <ActivityIndicator
-          animating
-          color={Settings.getForegroundColor(theme)}
-          size="small"
-          style={{ position: 'absolute', alignSelf: 'center' }}
-        />
-      )}
-    </View>
-  );
-}; */
 
 const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const { updatedAt, appearance, pushToken, installationId } = useSelector(
@@ -118,10 +65,13 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
   const [tick, setTick] = React.useState();
-  const updatedAtFromNow = React.useMemo(
-    () => DateUtils.get(updatedAt).calendar(),
-    [tick],
-  );
+  const updatedAtFromNow = React.useMemo(() => {
+    const lastUpdate = DateUtils.get(updatedAt);
+    /* if (DateUtils.get().isSame(lastUpdate, 'day')) {
+      return lastUpdate.fromNow();
+    } */
+    return lastUpdate.calendar();
+  }, [tick]);
   const tickCallback = React.useCallback(
     (tick) => {
       setTick(tick);
@@ -199,36 +149,17 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
       });
   }, [purchaseProduct]);
   const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
-  // identifier
-  const alreadyShowingToastRef = React.useRef(false);
-  const { invertedTheme } = Helper.useTheme();
-  const onLongPressIdentifier = React.useCallback(() => {
-    if (alreadyShowingToastRef.current === false) {
-      alreadyShowingToastRef.current = true;
-      Settings.HAPTICS_ENABLED && Haptics.selectionAsync();
-      Toast.show(I18n.t('text_copied'), {
-        // duration: Settings.ANIMATION_DURATION,
-        // position: -(tabBarheight + Settings.CARD_PADDING),
-        position: Toast.positions.CENTER,
-        onHidden: () => {
-          alreadyShowingToastRef.current = false;
-        },
-        opacity: 1,
-        shadow: false,
-        containerStyle: {
-          paddingHorizontal: 10 * 2,
-          borderRadius: Settings.BORDER_RADIUS,
-          backgroundColor: Settings.getBackgroundColor(invertedTheme, true),
-          // custom shadow config
-          ...Helper.getShadowDefaults(),
-        },
-        // force white
-        // textStyle: [Settings.getFontObject('dark', 'callout')],
-        textStyle: [Settings.getFontObject(invertedTheme, 'callout')],
+  const onDoubleTapIdentifier = Gesture.Tap()
+    .runOnJS(true)
+    .numberOfTaps(2)
+    .onEnd(() => {
+      Clipboard.setStringAsync(
+        [installationId].concat(pushToken ?? []).join(),
+      ).then(() => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       });
-      Clipboard.setStringAsync([installationId].concat(pushToken ?? []).join());
-    }
-  }, [invertedTheme, pushToken, installationId]);
+    });
+
   return (
     <FixedScrollView
       {...{
@@ -301,20 +232,6 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
             {...(purchaseProduct && {
               value: `${Helper.getCurrency(purchaseProduct.price, true, true)}`,
             })}
-            // large opt
-            /* titleDetail={I18n.t('donate_detail')}
-            {...(!donateLoading && {
-              onAction: onPressDonate,
-            })}
-            {...(purchaseProduct && {
-              value: (
-                <PriceBadge
-                  price={purchaseProduct.price}
-                  currencyCode={purchaseProduct.currencyCode}
-                  loading={donateLoading}
-                />
-              ),
-            })} */
           />
         )}
         {contactAvailable && (
@@ -350,10 +267,13 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
         />
       </CardView>
       {installationId && (
-        <TextCardView
-          text={`${I18n.t('installation_id')}: ${installationId}`}
-          onLongPress={onLongPressIdentifier}
-        />
+        <>
+          <GestureDetector gesture={onDoubleTapIdentifier}>
+            <TextCardView
+              text={`${I18n.t('installation_id')}: ${installationId}`}
+            />
+          </GestureDetector>
+        </>
       )}
     </FixedScrollView>
   );

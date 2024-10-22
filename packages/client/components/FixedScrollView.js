@@ -11,43 +11,41 @@ const FixedScrollView = ({
   headerHeight,
   tabBarheight,
   ...extra
-}) => {
-  return (
-    <ScrollView
-      // automaticallyAdjustContentInsets={false}
-      scrollIndicatorInsets={{
-        top: headerHeight,
-        bottom: tabBarheight,
-      }}
-      automaticallyAdjustsScrollIndicatorInsets={false}
-      contentContainerStyle={[
-        {
-          flexGrow: 1,
-          // required when translucent bars
-          ...(Platform.OS === 'ios' && {
-            paddingTop: headerHeight,
-            paddingBottom: tabBarheight,
-          }),
-        },
-      ]}
-      /* style={
+}) => (
+  <ScrollView
+    // automaticallyAdjustContentInsets={false}
+    scrollIndicatorInsets={{
+      top: headerHeight,
+      bottom: tabBarheight,
+    }}
+    automaticallyAdjustsScrollIndicatorInsets={false}
+    contentContainerStyle={[
+      {
+        flexGrow: 1,
+        // required when translucent bars
+        ...(Platform.OS === 'ios' && {
+          paddingTop: headerHeight,
+          paddingBottom: tabBarheight,
+        }),
+      },
+    ]}
+    /* style={
         {
           backgroundColor: 'pink',
         }
       } */
-      // contentInsetAdjustmentBehavior="automatic"
-      // scrollToOverflowEnabled
-      {...extra}
+    // contentInsetAdjustmentBehavior="automatic"
+    // scrollToOverflowEnabled
+    {...extra}
+  >
+    <ContentView
+      style={{ flex: 1, backgroundColor }}
+      contentContainerStyle={{ flex: 1 }}
+      ref={contentContainerRef}
     >
-      <ContentView
-        style={{ flex: 1, backgroundColor }}
-        contentContainerStyle={{ flex: 1 }}
-        ref={contentContainerRef}
-      >
-        {children}
-      </ContentView>
-    </ScrollView>
-  );
-};
+      {children}
+    </ContentView>
+  </ScrollView>
+);
 
 export default FixedScrollView;

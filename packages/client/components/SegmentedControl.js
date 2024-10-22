@@ -71,7 +71,6 @@ const DefaultSegmentedControl = ({
         enabled,
       }}
       borderRadius={Settings.BORDER_RADIUS}
-      allowFontScaling={Settings.ALLOW_FONT_SCALING}
     />
   );
 };

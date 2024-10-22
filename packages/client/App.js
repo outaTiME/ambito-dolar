@@ -43,6 +43,7 @@ import useColorScheme from './hooks/useColorScheme';
 import { store, persistor } from './store';
 import Helper from './utilities/Helper';
 import Sentry from './utilities/Sentry';
+
 // import { getWidgetProps } from './widgets';
 // import RateWidget from './widgets/RateWidget';
 
@@ -50,14 +51,11 @@ const start_time = Date.now();
 SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 Text.defaultProps = Text.defaultProps || {};
-// Text.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
 Text.defaultProps.maxFontSizeMultiplier = Settings.MAX_FONT_SIZE_MULTIPLIER;
 TextInput.defaultProps = TextInput.defaultProps || {};
-// TextInput.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
 TextInput.defaultProps.maxFontSizeMultiplier =
   Settings.MAX_FONT_SIZE_MULTIPLIER;
 AnimateableText.defaultProps = AnimateableText.defaultProps || {};
-// AnimateableText.defaultProps.allowFontScaling = Settings.ALLOW_FONT_SCALING;
 AnimateableText.defaultProps.maxFontSizeMultiplier =
   Settings.MAX_FONT_SIZE_MULTIPLIER;
 
@@ -144,13 +142,11 @@ const ThemedApp = () => {
   }, [windowDimensions]);
   return (
     <ThemeProvider theme={theme}>
-      <RootSiblingParent>
-        <ActionSheetProvider>
-          <HeaderButtonsProvider stackType="native">
-            <AppContainer />
-          </HeaderButtonsProvider>
-        </ActionSheetProvider>
-      </RootSiblingParent>
+      <ActionSheetProvider>
+        <HeaderButtonsProvider stackType="native">
+          <AppContainer />
+        </HeaderButtonsProvider>
+      </ActionSheetProvider>
     </ThemeProvider>
   );
 };

@@ -614,7 +614,14 @@ const withAppIdentifier = (Component) => (props) => {
   const installationId = useSelector(
     (state) => state.application.installation_id,
   );
-  return <Component {...{ installationId, ...props }} />;
+  return (
+    <Component
+      {...{
+        ...props,
+        installationId,
+      }}
+    />
+  );
 };
 
 const db = Helper.getInstantDB();
@@ -829,13 +836,8 @@ const withUserActivity = (Component) => (props) => {
                 finalSettings = await Notifications.requestPermissionsAsync({
                   ios: {
                     allowAlert: true,
-                    // allowBadge: false
                     allowSound: true,
                     allowDisplayInCarPlay: true,
-                    // allowCriticalAlerts: true,
-                    // https://forums.expo.io/t/handling-provideappnotificationsettings-on-sdk38/39565
-                    // provideAppNotificationSettings: true,
-                    // allowProvisional: true,
                     allowAnnouncements: true,
                   },
                 });
@@ -960,7 +962,14 @@ const withLocalization = (Component) => (props) => {
     }
   }, [locale]);
   if (reloadKey) {
-    return <Component key={reloadKey} {...props} />;
+    return (
+      <Component
+        {...{
+          ...props,
+          key: reloadKey,
+        }}
+      />
+    );
   }
 };
 
