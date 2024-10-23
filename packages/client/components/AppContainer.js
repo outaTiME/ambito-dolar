@@ -651,20 +651,23 @@ const withRealtime = (Component) => (props) => {
     }
     updatedAtRef.current = updatedAt;
   }, [updatedAt]);
+  const isActiveAppState = useAppState('active');
   const { isLocal, isLoading, data } = db
-    ? db.useQuery({
-        boards: {
-          $: {
-            // avoid fixed record identifier
-            limit: 1,
+    ? db.useQuery(
+        // force disconnect when app goes to background
+        isActiveAppState && {
+          boards: {
+            $: {
+              // avoid fixed record identifier
+              limit: 1,
+            },
           },
         },
-      })
+      )
     : {
         // no real-time updates
         isLocal: true,
       };
-  const isActiveAppState = useAppState('active');
   const timeInForeground = React.useRef();
   React.useEffect(() => {
     if (isActiveAppState) {
