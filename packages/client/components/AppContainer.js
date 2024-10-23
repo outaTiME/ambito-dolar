@@ -940,24 +940,37 @@ const withPurchases = (Component) => (props) => {
 };
 
 const withLocalization = (Component) => (props) => {
-  const locales = Localization.useLocales();
-  // required for certain iOS devices where the locales are null
-  const locale = (locales ?? [])[0];
   const [reloadKey, setReloadKey] = React.useState();
+  const isActiveAppState = useAppState('active');
+  const activeLocale = React.useRef();
+  const activeCalendar = React.useRef();
   React.useEffect(() => {
-    if (locale) {
-      AmbitoDolar.setDelimiters({
-        thousands: locale.digitGroupingSeparator,
-        decimal: locale.decimalSeparator,
-      });
-      Helper.debug('💫 User locale updated', AmbitoDolar.getDelimiters());
-      setReloadKey(Date.now());
-    } else {
-      if (__DEV__) {
-        console.warn('User locale not available');
+    if (isActiveAppState) {
+      // reloadKey will have a value (in this scope) on the next app foreground entry
+      let forceReload = !reloadKey;
+      const locales = Localization.getLocales();
+      const locale = locales?.[0];
+      if (!_.isEqual(locale, activeLocale.current)) {
+        AmbitoDolar.setDelimiters({
+          thousands: locale?.digitGroupingSeparator,
+          decimal: locale?.decimalSeparator,
+        });
+        Helper.debug('💫 User locale updated', locale);
+        activeLocale.current = locale;
+        forceReload = true;
+      }
+      const calendars = Localization.getCalendars();
+      const calendar = calendars?.[0];
+      if (!_.isEqual(calendar, activeCalendar.current)) {
+        Helper.debug('💫 User calendar updated', calendar);
+        activeCalendar.current = calendar;
+        forceReload = true;
+      }
+      if (forceReload === true) {
+        setReloadKey(Date.now());
       }
     }
-  }, [locale]);
+  }, [isActiveAppState]);
   if (reloadKey) {
     return (
       <Component

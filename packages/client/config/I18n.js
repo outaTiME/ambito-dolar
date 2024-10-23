@@ -132,6 +132,6 @@ const i18n = new I18n({
 
 i18n.defaultLocale = 'es';
 i18n.enableFallback = true;
-i18n.locale = Localization.locale;
+i18n.locale = Localization.getLocales()?.[0]?.languageTag;
 
 export default i18n;
