@@ -300,7 +300,7 @@ const ToastBottomTabBar = (props) => {
         });
         activityToast.feedback &&
           Settings.HAPTICS_ENABLED &&
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          Haptics.notificationAsync();
         setTimeout(() => {
           setActiveToast({
             isVisible: false,

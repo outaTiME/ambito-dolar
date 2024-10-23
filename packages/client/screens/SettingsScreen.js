@@ -156,7 +156,7 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
       Clipboard.setStringAsync(
         [installationId].concat(pushToken ?? []).join(),
       ).then(() => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        Haptics.notificationAsync();
       });
     });
 
