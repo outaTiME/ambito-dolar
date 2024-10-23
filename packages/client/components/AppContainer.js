@@ -327,7 +327,7 @@ const MainStackScreen = () => {
     () => <NavigatorBackgroundView />,
     [],
   );
-  let content = (
+  return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
@@ -407,23 +407,6 @@ const MainStackScreen = () => {
       />
     </Tab.Navigator>
   );
-  const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
-  // https://github.com/software-mansion/react-native-screens/issues/1276#issuecomment-1172691544
-  if (Platform.OS === 'android') {
-    content = (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.card,
-          paddingTop: insets.top,
-        }}
-      >
-        {content}
-      </View>
-    );
-  }
-  return content;
 };
 
 const ModalsStack = createNativeStackNavigator();
@@ -602,9 +585,20 @@ const AppContainer = ({ rates, rateTypes, stillLoading }) => {
     </NavigationContainer>
   );
   // https://github.com/react-navigation/react-navigation/issues/11353#issuecomment-1588570491
+  const insets = useSafeAreaInsets();
   if (Platform.OS === 'android') {
     content = (
-      <HeaderShownContext.Provider value>{content}</HeaderShownContext.Provider>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: navigationBarColor,
+          paddingTop: insets.top,
+        }}
+      >
+        <HeaderShownContext.Provider value>
+          {content}
+        </HeaderShownContext.Provider>
+      </View>
     );
   }
   return content;
