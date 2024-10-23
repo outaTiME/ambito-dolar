@@ -1300,7 +1300,7 @@ PODS:
     - React-Core
   - react-native-safe-area-context (4.11.1):
     - React-Core
-  - react-native-segmented-control (2.5.4):
+  - react-native-segmented-control (2.5.5):
     - React-Core
   - react-native-view-shot (3.8.0):
     - React-Core
@@ -2138,7 +2138,7 @@ SPEC CHECKSUMS:
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-safe-area-context: 5141f11858b033636f1788b14f32eaba92cee810
-  react-native-segmented-control: fde795d4d9c95ebc97cd37a034eb0a7a922f1ec5
+  react-native-segmented-control: 6a1ba93bd548d4706df5f472e8c71aea84874d92
   react-native-view-shot: 6b7ed61d77d88580fed10954d45fad0eb2d47688
   React-nativeconfig: ba9a2e54e2f0882cf7882698825052793ed4c851
   React-NativeModulesApple: 8d11ff8955181540585c944cf48e9e7236952697

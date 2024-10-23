@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "prebuild:ios": "expo prebuild --platform ios && npx pod-install",
     "lint": "expo lint",
-    "eas-build-pre-install": "corepack enable && yarn set version 4"
+    "eas-build-pre-install": "corepack enable && yarn set version 4",
+    "check": "expo install --check"
   },
   "dependencies": {
     "@ambito-dolar/core": "^3.9.1",
@@ -21,7 +22,7 @@
     "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-native-community/hooks": "^3.0.0",
     "@react-native-community/netinfo": "^11.4.1",
-    "@react-native-segmented-control/segmented-control": "^2.5.4",
+    "@react-native-segmented-control/segmented-control": "^2.5.5",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/elements": "^1.3.31",
     "@react-navigation/native": "^6.1.18",
