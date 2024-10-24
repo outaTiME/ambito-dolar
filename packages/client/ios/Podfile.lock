@@ -1557,7 +1557,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNGestureHandler (2.20.1):
+  - RNGestureHandler (2.20.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1668,7 +1668,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.34.0):
+  - RNScreens (3.34.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2166,10 +2166,10 @@ SPEC CHECKSUMS:
   RevenueCat: a7117d40c27bc1e8a48e41ca4ea6856209664097
   RNCAsyncStorage: d35c79ffba52c1013013e16b1fc295aec2feabb6
   RNFlashList: e9c5b8fe1b84f9c198cb550eb4cc0c45569fbf42
-  RNGestureHandler: d965a561d5458dd1e10617602f55726e04e4aac5
+  RNGestureHandler: a8e61b93b4c5c44e6cd797cdaba43126ec36acaa
   RNPurchases: 704efdac386e00fdadf1be815ba39efb6bbd2e8e
   RNReanimated: af4e059a8fd0fb7a9cdf5ad35ead4699598a9447
-  RNScreens: aa943ad421c3ced3ef5a47ede02b0cbfc43a012e
+  RNScreens: 7efd7587bd3e6a1faed7d5a09ff5d742aae8d31d
   RNSentry: 9752b085f3cb1a806ac3cd2766149e438658686e
   RNSVG: 8b1a777d54096b8c2a0fd38fc9d5a454332bbb4d
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3

@@ -127,13 +127,13 @@ __metadata:
     react-native-animateable-text: "npm:^0.12.1"
     react-native-collapsible: "npm:1.6.1"
     react-native-draggable-flatlist: "https://gitpkg.vercel.app/api/pkg.tgz?url=outaTiME/react-native-draggable-flatlist&commit=main"
-    react-native-gesture-handler: "npm:^2.20.1"
+    react-native-gesture-handler: "npm:^2.20.2"
     react-native-get-random-values: "npm:^1.11.0"
     react-native-purchases: "npm:^8.2.4"
     react-native-reanimated: "npm:^3.16.1"
     react-native-redash: "npm:^18.1.3"
     react-native-safe-area-context: "npm:^4.11.1"
-    react-native-screens: "npm:^3.34.0"
+    react-native-screens: "npm:^3.34.1"
     react-native-segmented-control-tab: "npm:^4.0.0"
     react-native-svg: "npm:^15.8.0"
     react-native-typography: "npm:^1.4.1"
@@ -27201,9 +27201,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:^2.20.1":
-  version: 2.20.1
-  resolution: "react-native-gesture-handler@npm:2.20.1"
+"react-native-gesture-handler@npm:^2.20.2":
+  version: 2.20.2
+  resolution: "react-native-gesture-handler@npm:2.20.2"
   dependencies:
     "@egjs/hammerjs": "npm:^2.0.17"
     hoist-non-react-statics: "npm:^3.3.0"
@@ -27212,7 +27212,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/23b87bd16405727e2b9bf007f015940a3bf5508546a592da980397f4b36ba36bd400f98b2777d6b871d0c44b6985b3a7c06f10d18a66ac8ac5b4ff47e2fc05ed
+  checksum: 10/64ab125c539ca8c275f5d305f5e11d366e6098d9e24e3cab25cbfd46a8d618fc3925ea86219972ccc63364e578384bb0120a72562312e596894a04ee0518a363
   languageName: node
   linkType: hard
 
@@ -27288,16 +27288,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-screens@npm:^3.34.0":
-  version: 3.34.0
-  resolution: "react-native-screens@npm:3.34.0"
+"react-native-screens@npm:^3.34.1":
+  version: 3.34.1
+  resolution: "react-native-screens@npm:3.34.1"
   dependencies:
     react-freeze: "npm:^1.0.0"
     warn-once: "npm:^0.1.0"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/dfcbde7de4aae27980191bc64861190b2edece8f0e3988ef7e83ee6a7895df35fe006024d8fa0611cefc1e7dd6d574ce598f1dcb036750dc6b0a5fca073dd2b9
+  checksum: 10/13128ddca9d58683fb1de84905c06bd03b40091acaeebc66dc51a6e2c5ec5bba906a3d699b86f48154fed583e1a277b124953fab7f7b39d124ab546de0698978
   languageName: node
   linkType: hard
 
