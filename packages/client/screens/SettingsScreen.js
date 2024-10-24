@@ -148,16 +148,17 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
       });
   }, [purchaseProduct]);
   const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
-  const onLongPressIdentifier = React.useCallback(() => {
-    Clipboard.setStringAsync(
-      [installationId].concat(pushToken ?? []).join(),
-    ).then((status) => {
-      if (status === true) {
-        return Haptics.notificationAsync();
-      }
-    });
-  }, [installationId, pushToken]);
-
+  const onDoubleTapIdentifier = React.useCallback(
+    () =>
+      Clipboard.setStringAsync(
+        [installationId].concat(pushToken ?? []).join(),
+      ).then((status) => {
+        if (status === true) {
+          return Haptics.notificationAsync();
+        }
+      }),
+    [installationId, pushToken],
+  );
   return (
     <FixedScrollView
       {...{
@@ -267,7 +268,7 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
       {installationId && (
         <TextCardView
           text={`${I18n.t('installation_id')}: ${installationId}`}
-          onLongPress={onLongPressIdentifier}
+          onDoubleTap={onDoubleTapIdentifier}
         />
       )}
     </FixedScrollView>
