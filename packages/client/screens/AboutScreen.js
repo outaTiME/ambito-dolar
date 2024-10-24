@@ -159,7 +159,6 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
           >
             {({ onNewEmoji }) => (
               <Bounceable
-                // activeScale={0.86}
                 onPress={(x, y) => {
                   // according to the emoji size (40)
                   onNewEmoji(x - 20, y - 20);
@@ -255,7 +254,6 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
           />
         </CardView>
         <TextCardView
-          // style={{ flexGrow: 1 }}
           text={`${Settings.APP_COPYRIGHT} ${Settings.DASH_SEPARATOR} Hecho con ♥ en Buenos Aires, Argentina.`}
         />
       </FixedScrollView>

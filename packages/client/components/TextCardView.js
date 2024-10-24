@@ -22,9 +22,7 @@ export default ({ style, text, onLongPress }) => {
             style={[
               fonts.subhead,
               {
-                flex: 1,
                 color: Settings.getGrayColor(theme),
-                // textTransform: 'uppercase',
                 textAlign: 'center',
               },
             ]}
@@ -34,14 +32,8 @@ export default ({ style, text, onLongPress }) => {
             {text}
           </Text>
         }
-        {...{
-          containerStyle: {
-            // paddingHorizontal: 0,
-          },
-          titleContainerStyle: {
-            // paddingVertical: 0,
-          },
-          // onAction,
+        titleContainerStyle={{
+          justifyContent: 'center',
         }}
         useSwitch={false}
         chevron={false}

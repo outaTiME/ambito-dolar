@@ -5,7 +5,6 @@ import * as Haptics from 'expo-haptics';
 import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
 import { Linking, Share, Alert } from 'react-native';
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Purchases from 'react-native-purchases';
 import { useSelector, shallowEqual } from 'react-redux';
 
@@ -149,16 +148,15 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
       });
   }, [purchaseProduct]);
   const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
-  const onDoubleTapIdentifier = Gesture.Tap()
-    .runOnJS(true)
-    .numberOfTaps(2)
-    .onEnd(() => {
-      Clipboard.setStringAsync(
-        [installationId].concat(pushToken ?? []).join(),
-      ).then(() => {
-        Haptics.notificationAsync();
-      });
+  const onLongPressIdentifier = React.useCallback(() => {
+    Clipboard.setStringAsync(
+      [installationId].concat(pushToken ?? []).join(),
+    ).then((status) => {
+      if (status === true) {
+        return Haptics.notificationAsync();
+      }
     });
+  }, [installationId, pushToken]);
 
   return (
     <FixedScrollView
@@ -267,13 +265,10 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
         />
       </CardView>
       {installationId && (
-        <>
-          <GestureDetector gesture={onDoubleTapIdentifier}>
-            <TextCardView
-              text={`${I18n.t('installation_id')}: ${installationId}`}
-            />
-          </GestureDetector>
-        </>
+        <TextCardView
+          text={`${I18n.t('installation_id')}: ${installationId}`}
+          onLongPress={onLongPressIdentifier}
+        />
       )}
     </FixedScrollView>
   );
