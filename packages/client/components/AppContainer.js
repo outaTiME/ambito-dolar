@@ -712,7 +712,7 @@ const withRealtime = (Component) => (props) => {
               .then(() => updateLocalRates(board))
               .then(() => {
                 if (shouldShowToast) {
-                  showActivityToast('􀁣 Actualizado', true);
+                  showActivityToast(I18n.t('rates_updated'), true);
                   // force a single toast per app foreground entry
                   timeInForeground.current = null;
                 }

@@ -14,7 +14,6 @@ import Helper from '../utilities/Helper';
 const springConfig = {
   mass: 1,
   damping: 14,
-  // duration: 1 * 1000,
   stiffness: 121.6,
   overshootClamping: false,
   restDisplacementThreshold: 0.001,
@@ -27,9 +26,15 @@ const distance = 20 / 2 + Settings.PADDING / 2;
 export default ({ isVisible, text, onCompleted }) => {
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(isVisible ? 1 : 0, undefined, (isFinished) => {
-        onCompleted && runOnJS(onCompleted)(isVisible, isFinished);
-      }),
+      opacity: withTiming(
+        isVisible ? 1 : 0,
+        {
+          duration: 200,
+        },
+        (isFinished) => {
+          onCompleted && runOnJS(onCompleted)(isVisible, isFinished);
+        },
+      ),
       transform: [
         {
           translateY: withSpring(
