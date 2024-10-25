@@ -1,5 +1,5 @@
 const version = '8.0.0';
-const buildNumber = 140;
+const buildNumber = 141;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
@@ -188,6 +188,7 @@ export default {
       UIViewControllerBasedStatusBarAppearance: true,
       // optimizes ProMotion refresh rates
       CADisableMinimumFrameDurationOnPhone: true,
+      LSMinimumSystemVersion: '12.0',
     },
     privacyManifests: {
       // https://docs.sentry.io/platforms/react-native/data-management/apple-privacy-manifest/#create-privacy-manifest-in-expo
