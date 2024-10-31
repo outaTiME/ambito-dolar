@@ -5,7 +5,8 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/outaTiME/ambito-dolar/main.yml?branch=master)](https://github.com/outaTiME/ambito-dolar/actions/workflows/main.yml)
 [![License: CC-BY-NC-ND-4.0](https://img.shields.io/badge/license-CC--BY--NC--ND--4.0-yellow)](https://creativecommons.org/licenses/by-nc-nd/4.0)
 
-> A free and open-source mobile application to follow the different quotes of the USD in Argentina.
+> A free and open-source mobile app to follow different exchange rates for the USD in Argentina.
+
 
 ## Preview
 
