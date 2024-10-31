@@ -61,7 +61,14 @@ export default ({ isVisible, text, onCompleted }) => {
           maxWidth: Settings.CONTENT_WIDTH - 38,
           position: 'absolute',
           zIndex: 100,
-          ...Helper.getShadowDefaults(),
+          // https://github.com/rainbow-me/rainbow/blob/develop/src/components/toasts/Toast.tsx#L33
+          shadowColor: '#25292E',
+          shadowOffset: {
+            height: 0,
+            width: 6,
+          },
+          shadowOpacity: 0.14,
+          shadowRadius: 10,
         }}
       >
         <Text

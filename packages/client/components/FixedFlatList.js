@@ -87,8 +87,6 @@ const FixedFlatList = ({
   ...extra
 }) => {
   const { theme } = Helper.useTheme();
-  const { shadowColor, shadowOpacity, shadowRadius } =
-    Helper.getShadowDefaults();
   const renderItem = React.useCallback(
     ({ item: { component }, index, drag, isActive, getIndex, onStartDrag }) => {
       index = index ?? getIndex();
@@ -101,9 +99,13 @@ const FixedFlatList = ({
               marginHorizontal: Settings.CARD_PADDING * 2,
               // add shadow while dragging
               ...(isActive && {
-                shadowColor,
-                shadowOpacity,
-                shadowRadius,
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 0,
+                },
+                shadowOpacity: 0.34,
+                shadowRadius: 6.27,
                 elevation: 10,
               }),
             },

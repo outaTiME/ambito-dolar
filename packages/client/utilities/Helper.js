@@ -513,16 +513,6 @@ export default {
     return showToast;
   },
   removeProtocol: (url) => url.replace(/^https?:\/\//, ''),
-  // https://github.com/rainbow-me/rainbow/blob/develop/src/components/toasts/Toast.tsx#L33
-  getShadowDefaults: () => ({
-    shadowColor: '#25292E',
-    shadowOffset: {
-      height: 0,
-      width: 6,
-    },
-    shadowOpacity: 0.14,
-    shadowRadius: 10,
-  }),
   getNavigationContainerRef: () => navigationRef,
   getRgbaColor: (color) => {
     const rgbaArray = rgba(color);
