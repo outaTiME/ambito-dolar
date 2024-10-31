@@ -1,14 +1,13 @@
-const JsonURL = require('@jsonurl/jsonurl');
-const fetch = require('cross-fetch');
-const isEmpty = require('lodash.isempty');
-const max = require('lodash.max');
-const merge = require('lodash.merge');
-const pick = require('lodash.pick');
-const pickBy = require('lodash.pickby');
-const moment = require('moment-timezone');
-require('moment/locale/es');
-const numeral = require('numeral');
-require('numeral/locales');
+import JsonURL from '@jsonurl/jsonurl';
+import ky from 'ky';
+import * as _ from 'lodash';
+import moment from 'moment-timezone';
+import numeral from 'numeral';
+
+// locales
+
+import 'moment/locale/es.js';
+import 'numeral/locales/es.js';
 
 // defaults
 
@@ -102,7 +101,7 @@ const getDelimiters = () => {
   return localeData.delimiters;
 };
 
-const toFixedNoRounding = function (num, n) {
+const toFixedNoRounding = (num, n) => {
   const reg = new RegExp('^-?\\d+(?:\\.\\d{0,' + n + '})?', 'g');
   const a = num.toString().match(reg)[0];
   const dot = a.indexOf('.');
@@ -188,7 +187,7 @@ const isRateFromToday = (rate) => {
 };
 
 const hasRatesFromToday = (rates = {}) =>
-  !isEmpty(pickBy(rates, (rate) => isRateFromToday(rate)));
+  !_.isEmpty(_.pickBy(rates, (rate) => isRateFromToday(rate)));
 
 const getAvailableRateTypes = () => [
   OFFICIAL_TYPE,
@@ -209,7 +208,7 @@ const getAvailableRates = (rates, check = false) => {
   // respect the order from getAvailableRateTypes
   const available_rate_types = getAvailableRateTypes();
   // leave only the available rates sorted
-  rates = pick(rates, available_rate_types);
+  rates = _.pick(rates, available_rate_types);
   /* if (
     check === false ||
     (check === true &&
@@ -217,7 +216,7 @@ const getAvailableRates = (rates, check = false) => {
   ) {
     return rates;
   } */
-  return isEmpty(rates) ? false : rates;
+  return _.isEmpty(rates) ? false : rates;
 };
 
 const getRateTitle = (type) => {
@@ -270,7 +269,7 @@ const getNotificationSettings = (notification_settings) => {
     rates: rate_defaults,
   };
   // use new instance to prevent update issues over the same type_defaults instance
-  return merge(
+  return _.merge(
     {},
     {
       enabled: true,
@@ -289,7 +288,7 @@ const getNotificationSettings = (notification_settings) => {
   );
 };
 
-const getRateValue = (stat) => max([].concat(stat[1]));
+const getRateValue = (stat) => Math.max(...[].concat(stat[1]));
 
 const getRateChange = (stat, include_symbol = false) => {
   const str = [];
@@ -318,27 +317,14 @@ const getRateChange = (stat, include_symbol = false) => {
   return str.join('');
 };
 
-const fetchData = (url, { timeout = FETCH_TIMEOUT, ...opts } = {}) => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeout);
-  return require('@vercel/fetch-retry')(fetch)(url, {
+const fetchData = (url, opts = {}) =>
+  ky(url, {
+    // https://github.com/sindresorhus/ky?tab=readme-ov-file#timeout
+    timeout: FETCH_TIMEOUT,
     ...opts,
-    signal: controller.signal,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      return response;
-    })
-    .finally(() => {
-      clearTimeout(timeoutId);
-    });
-};
+  });
 
-module.exports = {
+export default {
   TIMEZONE,
   OFFICIAL_TYPE,
   INFORMAL_TYPE,

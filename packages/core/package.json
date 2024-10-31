@@ -2,27 +2,26 @@
   "name": "@ambito-dolar/core",
   "private": true,
   "version": "3.9.1",
+  "type": "module",
   "dependencies": {
     "@jsonurl/jsonurl": "^1.1.8",
-    "@vercel/fetch-retry": "https://gitpkg.vercel.app/api/pkg.tgz?url=outaTiME/fetch/packages/fetch-retry&commit=main",
-    "cross-fetch": "^4.0.0",
-    "lodash.isempty": "^4.4.0",
-    "lodash.max": "^4.0.1",
-    "lodash.merge": "^4.6.2",
-    "lodash.pick": "^4.4.0",
-    "lodash.pickby": "^4.6.0",
+    "ky": "^1.7.2",
+    "lodash": "^4.17.21",
     "moment-timezone": "^0.5.46",
     "numeral": "^2.0.6"
   },
   "devDependencies": {
-    "ava": "^6.1.3",
-    "nock": "^13.5.5"
+    "ava": "^6.2.0",
+    "undici": "^6.20.1"
   },
   "scripts": {
     "test": "yarn g:eslint && ava"
   },
-  "exports": "./index.js",
+  "main": "index.js",
   "files": [
     "index.js"
-  ]
+  ],
+  "engines": {
+    "node": ">=18"
+  }
 }

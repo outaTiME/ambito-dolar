@@ -1,26 +1,46 @@
 /* eslint-disable no-sparse-arrays */
-const test = require('ava');
-const nock = require('nock');
+import test from 'ava';
+import { MockAgent, setGlobalDispatcher } from 'undici';
 
-const AmbitoDolar = require('.');
+import AmbitoDolar from './index.js';
 
-/* test.before(function (t) {
-  nock.disableNetConnect();
-  nock('https://httpbin.org')
-    .get('/delay/2')
-    .delayConnection(2 * 1000)
-    .reply(200)
-    .get('/status/500')
-    .times(2)
-    .reply(500);
+const mockAgent = new MockAgent();
+mockAgent.disableNetConnect();
+setGlobalDispatcher(mockAgent);
+
+const mockPool = mockAgent.get('https://httpbin.org');
+
+mockPool
+  .intercept({
+    path: '/delay/2',
+    method: 'GET',
+  })
+  .reply(200)
+  .delay(2 * 1000);
+
+mockPool
+  .intercept({
+    path: '/status/500',
+    method: 'GET',
+  })
+  .reply(500);
+
+mockPool
+  .intercept({
+    path: '/error/ECONNRESET',
+    method: 'GET',
+  })
+  .replyWithError({
+    code: 'ECONNRESET',
+    message: 'Connection was reset',
+  });
+
+test.after.always((t) => {
+  t.notThrows(() => mockAgent.assertNoPendingInterceptors());
+  return mockAgent.close();
 });
 
-test.after.always(function (t) {
-  nock.cleanAll();
-  nock.enableNetConnect();
-}); */
-
-test('Dates should use the default timezone', function (t) {
+test('Dates should use the default timezone', (t) => {
   const date_tz = AmbitoDolar.getTimezoneDate();
   const utc_offset = date_tz.utcOffset();
   t.is(
@@ -65,7 +85,7 @@ test('Dates should use the default timezone', function (t) {
   );
 });
 
-test('Number should be formatted as a percentage', function (t) {
+test('Number should be formatted as a percentage', (t) => {
   t.is(AmbitoDolar.formatRateChange(10), '+10,00%');
   t.is(AmbitoDolar.formatRateChange(-10), '-10,00%');
   t.is(AmbitoDolar.formatRateChange(0), '0,00%');
@@ -76,7 +96,7 @@ test('Number should be formatted as a percentage', function (t) {
   t.is(AmbitoDolar.getRateChange([, [201, 205], 0, 205]), '0,00 (0,00%)');
 });
 
-test('Number should be formatted as currency', function (t) {
+test('Number should be formatted as currency', (t) => {
   t.is(AmbitoDolar.formatRateCurrency(1000.5), '1.000,50');
   t.is(AmbitoDolar.formatRateCurrency(-1.0094462868053427), '-1,00');
   t.is(AmbitoDolar.formatRateCurrency(0), '0,00');
@@ -85,13 +105,13 @@ test('Number should be formatted as currency', function (t) {
   t.is(AmbitoDolar.formatCurrency(''), null);
 });
 
-test('Number should be truncated without rounding', function (t) {
+test('Number should be truncated without rounding', (t) => {
   t.is(AmbitoDolar.getNumber(1.0094462868053427), 1);
   t.is(AmbitoDolar.getNumber(-0.39812243262198876), -0.39);
   t.is(AmbitoDolar.getNumber(0.43640854206165614), 0.43);
 });
 
-test('Should return a number from a string', function (t) {
+test('Should return a number from a string', (t) => {
   t.is(AmbitoDolar.getNumber('1,00'), 1);
   t.is(AmbitoDolar.getNumber('0,04'), 0.04);
   t.is(AmbitoDolar.getNumber(), 0);
@@ -100,50 +120,41 @@ test('Should return a number from a string', function (t) {
   t.is(AmbitoDolar.getNumber('a'), null);
 });
 
-test('Rate should be of the current day', function (t) {
+test('Rate should be of the current day', (t) => {
   const today = AmbitoDolar.getTimezoneDate();
   t.true(AmbitoDolar.isRateFromToday([today]));
   const yesterday = AmbitoDolar.getTimezoneDate().subtract(1, 'day');
   t.false(AmbitoDolar.isRateFromToday([yesterday]));
 });
 
-test('Fetch should timeout with abort signal', function (t) {
-  const scope = nock('https://httpbin.org')
-    .get('/delay/2')
-    .delayConnection(2 * 1000)
-    .reply(200);
-  return AmbitoDolar.fetch('https://httpbin.org/delay/2', {
-    timeout: 1 * 1000,
-  })
-    .catch((err) => {
-      t.is(err.type, 'aborted');
-    })
-    .finally(() => {
-      // throws an error if the interceptor is not performed
-      scope.done();
-    });
-});
+test('Fetch should timeout with error', (t) =>
+  t.throwsAsync(
+    AmbitoDolar.fetch('https://httpbin.org/delay/2', {
+      timeout: 1 * 1000,
+    }),
+    { name: 'TimeoutError' },
+  ));
 
-test('Fetch should retry after a network error', function (t) {
-  const scope = nock('https://httpbin.org')
-    .get('/status/500')
-    .times(2)
-    .reply(500);
+test('Fetch should retry after a network error', (t) => {
   const max_retries = 1;
   let retries = 0;
-  return AmbitoDolar.fetch('https://httpbin.org/status/500', {
-    retry: {
-      retries: max_retries,
-      onRetry: () => {
-        ++retries;
-      },
-    },
-  })
-    .catch(() => {
-      t.is(retries, max_retries);
-    })
-    .finally(() => {
-      // throws an error if the interceptor is not performed
-      scope.done();
-    });
+  return Promise.allSettled(
+    [
+      'https://httpbin.org/status/500',
+      'https://httpbin.org/error/ECONNRESET',
+    ].map((url) =>
+      AmbitoDolar.fetch(url, {
+        retry: max_retries,
+        hooks: {
+          beforeRetry: [
+            () => {
+              retries++;
+            },
+          ],
+        },
+      }),
+    ),
+  ).then((results) => {
+    t.is(retries, max_retries * results.length);
+  });
 });
