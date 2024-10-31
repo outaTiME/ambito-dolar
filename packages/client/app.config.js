@@ -1,5 +1,5 @@
 const version = '8.0.0';
-const buildNumber = 141;
+const buildNumber = 142;
 
 const LIGHT_SPLASH = {
   image: './assets/splash-light.png',
