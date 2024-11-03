@@ -362,8 +362,8 @@ PODS:
   - libwebp/sharpyuv (1.3.2)
   - libwebp/webp (1.3.2):
     - libwebp/sharpyuv
-  - PurchasesHybridCommon (13.5.1):
-    - RevenueCat (= 5.6.0)
+  - PurchasesHybridCommon (13.7.0):
+    - RevenueCat (= 5.7.0)
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -1600,7 +1600,7 @@ PODS:
     - React-Core
   - react-native-netinfo (11.4.1):
     - React-Core
-  - react-native-safe-area-context (4.12.0):
+  - react-native-safe-area-context (4.14.0):
     - React-Core
   - react-native-segmented-control (2.5.5):
     - React-Core
@@ -1866,7 +1866,7 @@ PODS:
     - React-logger (= 0.75.4)
     - React-perflogger (= 0.75.4)
     - React-utils (= 0.75.4)
-  - RevenueCat (5.6.0)
+  - RevenueCat (5.7.0)
   - RNCAsyncStorage (2.0.0):
     - React-Core
   - RNFlashList (1.7.1):
@@ -1911,8 +1911,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNPurchases (8.2.4):
-    - PurchasesHybridCommon (= 13.5.1)
+  - RNPurchases (8.2.5):
+    - PurchasesHybridCommon (= 13.7.0)
     - React-Core
   - RNReanimated (3.16.1):
     - DoubleConversion
@@ -2466,7 +2466,7 @@ SPEC CHECKSUMS:
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
-  PurchasesHybridCommon: 8e28d8363ad95bab48ef4da2c6af2ee5132d7170
+  PurchasesHybridCommon: cfcbc24de93b4fd30181233f83814e29b87c48b5
   RCT-Folly: 4464f4d875961fce86008d45f4ecf6cef6de0740
   RCTDeprecation: 726d24248aeab6d7180dac71a936bbca6a994ed1
   RCTRequired: a94e7febda6db0345d207e854323c37e3a31d93b
@@ -2499,7 +2499,7 @@ SPEC CHECKSUMS:
   react-native-animateable-text: 26f224bce86f696cbb45b4a19bf4fe7c4ae4205c
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
-  react-native-safe-area-context: 142fade490cbebbe428640b8cbdb09daf17e8191
+  react-native-safe-area-context: 4532f1a0c5d34a46b9324ccaaedcb5582a302b7d
   react-native-segmented-control: 6a1ba93bd548d4706df5f472e8c71aea84874d92
   react-native-view-shot: 6b7ed61d77d88580fed10954d45fad0eb2d47688
   React-nativeconfig: 8c83d992b9cc7d75b5abe262069eaeea4349f794
@@ -2528,11 +2528,11 @@ SPEC CHECKSUMS:
   React-utils: cbe8b8b3d7b2ac282e018e46f0e7b25cdc87c5a0
   ReactCodegen: 4bcb34e6b5ebf6eef5cee34f55aa39991ea1c1f1
   ReactCommon: 6a952e50c2a4b694731d7682aaa6c79bc156e4ad
-  RevenueCat: a7117d40c27bc1e8a48e41ca4ea6856209664097
+  RevenueCat: f4d2291de0fa400f7880e62283fb19a148567a6a
   RNCAsyncStorage: d35c79ffba52c1013013e16b1fc295aec2feabb6
   RNFlashList: 115dd44377580761bff386a0caebf165424cf16f
   RNGestureHandler: 511250b190a284388f9dd0d2e56c1df76f14cfb8
-  RNPurchases: 704efdac386e00fdadf1be815ba39efb6bbd2e8e
+  RNPurchases: 1564013718b159e6bc0cd15ab797fb05fa50f663
   RNReanimated: f42a5044d121d68e91680caacb0293f4274228eb
   RNScreens: c7ceced6a8384cb9be5e7a5e88e9e714401fd958
   RNSentry: 4580b02d92932a15deb7adfd582feff799c7d289
