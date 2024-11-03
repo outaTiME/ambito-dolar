@@ -1213,6 +1213,7 @@ const withAppDonation = (Component) => (props) => {
 };
 
 export default compose(
+  withContainer,
   withRates(),
   withAppIdentifier,
   withRealtime,
@@ -1222,5 +1223,4 @@ export default compose(
   withPurchases,
   withLocalization,
   withAppDonation,
-  withContainer(true),
 )(AppContainer);

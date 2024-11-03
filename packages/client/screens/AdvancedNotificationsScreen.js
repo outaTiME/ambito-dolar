@@ -8,7 +8,6 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import withRates from '../components/withRates';
 import I18n from '../config/I18n';
 import Helper from '../utilities/Helper';
@@ -79,8 +78,4 @@ const AdvancedNotificationsScreen = ({
   );
 };
 
-export default compose(
-  withContainer(),
-  withDividersOverlay,
-  withRates(),
-)(AdvancedNotificationsScreen);
+export default compose(withContainer, withRates())(AdvancedNotificationsScreen);

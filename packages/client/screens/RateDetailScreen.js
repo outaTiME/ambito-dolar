@@ -10,7 +10,6 @@ import CardView from '../components/CardView';
 import SegmentedControlTab from '../components/SegmentedControl';
 import VictoryRateChartView from '../components/VictoryRateChartView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import withRates from '../components/withRates';
 import withScreenshotShareSheet from '../components/withScreenshotShareSheet';
 import I18n from '../config/I18n';
@@ -332,8 +331,7 @@ const RateDetailScreen = ({ navigation, rates, route: { params } }) => {
 };
 
 export default compose(
-  withContainer(),
-  withDividersOverlay,
+  withContainer,
   withRates(),
   withScreenshotShareSheet(),
 )(RateDetailScreen);

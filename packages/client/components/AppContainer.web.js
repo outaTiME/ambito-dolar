@@ -468,4 +468,4 @@ const AppContainer = () => {
   return <RatesContainer {...data} />;
 };
 
-export default compose(withContainer())(AppContainer);
+export default compose(withContainer)(AppContainer);

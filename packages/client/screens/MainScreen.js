@@ -8,19 +8,12 @@ import ActionButton from '../components/ActionButton';
 import MessageView from '../components/MessageView';
 import RateView from '../components/RateView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import withRates from '../components/withRates';
 import withScreenshotShareSheet from '../components/withScreenshotShareSheet';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 
-const MainScreen = ({
-  navigation,
-  headerHeight,
-  tabBarheight,
-  rates,
-  rateTypes,
-}) => {
+const MainScreen = ({ navigation, rates, rateTypes, shoudStretch }) => {
   const dispatch = useDispatch();
   const onRateSelected = React.useCallback(
     (type) => {
@@ -28,10 +21,6 @@ const MainScreen = ({
       navigation.navigate('RateDetail', { type });
     },
     [dispatch],
-  );
-  const shoudStretch = React.useMemo(
-    () => Settings.shoudStretchRates(rateTypes, headerHeight, tabBarheight),
-    [rateTypes, headerHeight, tabBarheight],
   );
   const getItemView = React.useCallback(
     (type) => (
@@ -88,8 +77,7 @@ const MainScreen = ({
 };
 
 export default compose(
-  withContainer(),
-  withDividersOverlay,
+  withContainer,
   withRates(true),
   withScreenshotShareSheet({
     actions: [I18n.t('edit')],

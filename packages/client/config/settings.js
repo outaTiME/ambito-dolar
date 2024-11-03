@@ -265,29 +265,5 @@ export default {
     };
   },
   moderateScale,
-  shoudStretchRates(rateTypes, headerHeight, tabBarheight) {
-    // ignore on web
-    if (Platform.OS === 'web') {
-      return true;
-    }
-    const device_height =
-      Math.round(DEVICE_HEIGHT) - headerHeight - tabBarheight;
-    // rate height ~100px
-    const rates_per_page = Math.floor(device_height / 100);
-    /* if (SMALL_DISPLAY_HEIGHT) {
-      rates_per_page += 1;
-    } */
-    // disable stretch if few rates
-    const stretch = rateTypes?.length >= rates_per_page;
-    /* console.log(
-      '>>> shoudStretchRates',
-      rateTypes,
-      headerHeight,
-      tabBarheight,
-      rates_per_page,
-      stretch
-    ); */
-    return stretch;
-  },
   windowDimensions,
 };

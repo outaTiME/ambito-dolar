@@ -21,7 +21,6 @@ import ScrollView from '../components/ScrollView';
 import SegmentedControlTab from '../components/SegmentedControl';
 import TextInput from '../components/TextInput';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import withRates from '../components/withRates';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
@@ -38,6 +37,7 @@ const ConversionScreen = ({
   tabBarheight,
   rates,
   rateTypes,
+  shoudStretch,
   route: { params },
 }) => {
   const { theme, fonts } = Helper.useTheme();
@@ -140,10 +140,6 @@ const ConversionScreen = ({
       });
       return () => task.cancel();
     }, [navigation, params]),
-  );
-  const shoudStretch = React.useMemo(
-    () => Settings.shoudStretchRates(rateTypes, headerHeight, tabBarheight),
-    [rateTypes, headerHeight, tabBarheight],
   );
   return (
     <>
@@ -284,7 +280,6 @@ const ConversionScreen = ({
             <CardView
               plain
               style={{
-                // TODO: remove when customization is allowed
                 ...(shoudStretch && {
                   flex: 1,
                 }),
@@ -299,8 +294,4 @@ const ConversionScreen = ({
   );
 };
 
-export default compose(
-  withContainer(),
-  withDividersOverlay,
-  withRates(true),
-)(ConversionScreen);
+export default compose(withContainer, withRates(true))(ConversionScreen);

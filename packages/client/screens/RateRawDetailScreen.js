@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import CardItemView from '../components/CardItemView';
 import FixedFlatList from '../components/FixedFlatList';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import withRates from '../components/withRates';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
@@ -128,8 +127,4 @@ const RateRawDetailScreen = ({
   );
 };
 
-export default compose(
-  withContainer(),
-  withDividersOverlay,
-  withRates(),
-)(RateRawDetailScreen);
+export default compose(withContainer, withRates())(RateRawDetailScreen);

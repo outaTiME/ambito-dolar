@@ -227,7 +227,6 @@ export default ({
     <CardView
       style={[
         shoudStretch === true && {
-          // TODO: remove when customization is allowed (review on web)
           flex: 1,
         },
         highlight === false && {

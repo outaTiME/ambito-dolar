@@ -1,6 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { init } from '@instantdb/react-native';
-import { useHeaderHeight } from '@react-navigation/elements';
+import { HeaderHeightContext } from '@react-navigation/elements';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import rgba from 'color-rgba';
 import * as d3Array from 'd3-array';
@@ -9,7 +9,8 @@ import * as MailComposer from 'expo-mail-composer';
 import * as Sharing from 'expo-sharing';
 import * as _ from 'lodash';
 import React from 'react';
-import { Platform, Linking, PixelRatio } from 'react-native';
+import { Platform, Linking, PixelRatio, StyleSheet } from 'react-native';
+import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import { useSelector, shallowEqual } from 'react-redux';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
@@ -478,27 +479,33 @@ export default {
     return theme === 'light' ? 'black' : 'white';
   },
   useHeaderHeight: (modal = false) => {
-    const headerHeight = useHeaderHeight();
-    if (Platform.OS === 'ios') {
-      if (modal === true) {
-        // https://github.com/react-navigation/react-navigation/blob/6.x/packages/elements/src/Header/getDefaultHeaderHeight.tsx#L26
-        return 56;
+    const headerHeight = React.useContext(HeaderHeightContext);
+    return React.useMemo(() => {
+      if (headerHeight) {
+        if (Platform.OS === 'ios') {
+          if (modal === true) {
+            // https://github.com/react-navigation/react-navigation/blob/6.x/packages/elements/src/Header/getDefaultHeaderHeight.tsx#L26
+            return 56;
+          }
+          const offset = 1 / PixelRatio.get();
+          // https://github.com/react-navigation/react-navigation/issues/11655#issuecomment-1781782125
+          // https://github.com/react-navigation/react-navigation/commit/4c521b5c865f2c46d58abb2e9e7fd1b0d2074215
+          if (headerHeight === 98) {
+            // iPhone 15 / iPhone 15 Pro / iPhone 15 Pro Max / iPhone 16
+            return headerHeight - offset;
+          } else if (headerHeight === 100) {
+            // iPhone 16 Pro
+            return headerHeight - (1 + offset);
+          } else if (headerHeight === 101) {
+            // iPhone 16 Pro Max
+            return headerHeight - (1 / 2 + offset);
+          }
+        }
+        return headerHeight;
+      } else {
+        // header height unavailable outside navigator
       }
-      const offset = 1 / PixelRatio.get();
-      // https://github.com/react-navigation/react-navigation/issues/11655#issuecomment-1781782125
-      // https://github.com/react-navigation/react-navigation/commit/4c521b5c865f2c46d58abb2e9e7fd1b0d2074215
-      if (headerHeight === 98) {
-        // iPhone 15 / iPhone 15 Pro / iPhone 15 Pro Max / iPhone 16
-        return headerHeight - offset;
-      } else if (headerHeight === 100) {
-        // iPhone 16 Pro
-        return headerHeight - (1 + offset);
-      } else if (headerHeight === 101) {
-        // iPhone 16 Pro Max
-        return headerHeight - (1 / 2 + offset);
-      }
-    }
-    return headerHeight;
+    }, [headerHeight, modal]);
   },
   useActivityToast() {
     const [, setActivityToast] = this.useSharedState('activityToast');
@@ -529,5 +536,39 @@ export default {
     const paddingBottom = getPaddingBottom(insets);
     const tabBarHeight = DEFAULT_TABBAR_HEIGHT + paddingBottom;
     return tabBarHeight;
+  },
+  useContentMetrics(isModal) {
+    const safeAreaInsets = React.useContext(SafeAreaInsetsContext);
+    const headerHeight = this.useHeaderHeight(isModal);
+    return React.useMemo(() => {
+      if (safeAreaInsets && headerHeight) {
+        const tabBarheight = !isModal // ? useBottomTabBarHeight()
+          ? this.getTabBarHeight(safeAreaInsets)
+          : Platform.OS === 'ios'
+            ? Settings.IS_TABLET ||
+              (Settings.IS_HANDSET && safeAreaInsets.bottom === 0)
+              ? 0
+              : safeAreaInsets.bottom + 15
+            : safeAreaInsets.bottom;
+        const dividerHeight = StyleSheet.hairlineWidth;
+        const headerHeightWithDivider = headerHeight + dividerHeight;
+        const tabBarheightWithDivider =
+          tabBarheight + (!isModal ? dividerHeight : 0);
+        const contentHeight = Math.round(
+          Settings.DEVICE_HEIGHT -
+            headerHeightWithDivider -
+            tabBarheightWithDivider -
+            safeAreaInsets.top,
+        );
+        return {
+          headerHeight,
+          tabBarheight,
+          dividerHeight,
+          headerHeightWithDivider,
+          tabBarheightWithDivider,
+          contentHeight,
+        };
+      }
+    }, [isModal, safeAreaInsets, headerHeight]);
   },
 };

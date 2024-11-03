@@ -5,7 +5,6 @@ import { View } from 'react-native';
 import { WidgetPreview } from 'react-native-android-widget';
 
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import withRates from '../components/withRates';
 import Helper from '../utilities/Helper';
 import RateWidget from '../widgets/RateWidget';
@@ -47,8 +46,4 @@ const RateWidgetPreviewScreen = ({ rates, rateTypes }) => {
   );
 };
 
-export default compose(
-  withRates(),
-  withContainer(),
-  withDividersOverlay,
-)(RateWidgetPreviewScreen);
+export default compose(withContainer, withRates())(RateWidgetPreviewScreen);

@@ -39,4 +39,4 @@ const InitialScreen = ({ rates, stillLoading }) => {
   );
 };
 
-export default compose(withContainer(true))(InitialScreen);
+export default compose(withContainer)(InitialScreen);

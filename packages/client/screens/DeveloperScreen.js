@@ -9,7 +9,6 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
@@ -150,4 +149,4 @@ const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
   );
 };
 
-export default compose(withContainer(), withDividersOverlay)(DeveloperScreen);
+export default compose(withContainer)(DeveloperScreen);

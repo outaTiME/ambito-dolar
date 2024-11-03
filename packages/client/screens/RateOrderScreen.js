@@ -7,7 +7,6 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import Helper from '../utilities/Helper';
 
 const RateOrderScreen = ({ isModal, headerHeight, tabBarheight }) => {
@@ -71,4 +70,4 @@ const RateOrderScreen = ({ isModal, headerHeight, tabBarheight }) => {
   );
 };
 
-export default compose(withContainer(), withDividersOverlay)(RateOrderScreen);
+export default compose(withContainer)(RateOrderScreen);

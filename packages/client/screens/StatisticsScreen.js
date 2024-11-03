@@ -7,7 +7,6 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
@@ -145,4 +144,4 @@ const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
   );
 };
 
-export default compose(withContainer(), withDividersOverlay)(StatisticsScreen);
+export default compose(withContainer)(StatisticsScreen);

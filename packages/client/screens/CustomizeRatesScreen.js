@@ -12,7 +12,6 @@ import CardView from '../components/CardView';
 import ContentView from '../components/ContentView';
 import FixedFlatList from '../components/FixedFlatList';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import withRates from '../components/withRates';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
@@ -158,8 +157,4 @@ const CustomizeRatesScreen = ({
   );
 };
 
-export default compose(
-  withContainer(),
-  withDividersOverlay,
-  withRates(),
-)(CustomizeRatesScreen);
+export default compose(withContainer, withRates())(CustomizeRatesScreen);

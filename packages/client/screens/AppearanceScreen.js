@@ -7,7 +7,6 @@ import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import Helper from '../utilities/Helper';
 
@@ -47,4 +46,4 @@ const AppearanceScreen = ({ headerHeight, tabBarheight }) => {
   );
 };
 
-export default compose(withContainer(), withDividersOverlay)(AppearanceScreen);
+export default compose(withContainer)(AppearanceScreen);

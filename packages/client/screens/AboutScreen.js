@@ -11,7 +11,6 @@ import FloatingEmojis from '../components/FloatingEmojis';
 import IconCardItemView from '../components/IconCardItemView';
 import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
@@ -261,4 +260,4 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
   );
 };
 
-export default compose(withContainer(), withDividersOverlay)(AboutScreen);
+export default compose(withContainer)(AboutScreen);

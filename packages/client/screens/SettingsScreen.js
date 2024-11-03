@@ -13,7 +13,6 @@ import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
 import TextCardView from '../components/TextCardView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
@@ -275,4 +274,4 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   );
 };
 
-export default compose(withContainer(), withDividersOverlay)(SettingsScreen);
+export default compose(withContainer)(SettingsScreen);

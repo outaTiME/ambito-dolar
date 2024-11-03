@@ -14,7 +14,6 @@ import ContentView from '../components/ContentView';
 import FixedScrollView from '../components/FixedScrollView';
 import MessageView from '../components/MessageView';
 import withContainer from '../components/withContainer';
-import withDividersOverlay from '../components/withDividersOverlay';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -105,7 +104,4 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
   );
 };
 
-export default compose(
-  withContainer(),
-  withDividersOverlay,
-)(NotificationsScreen);
+export default compose(withContainer)(NotificationsScreen);
