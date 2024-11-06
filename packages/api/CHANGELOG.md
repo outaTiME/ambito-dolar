@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.17.3...@ambito-dolar/api@4.0.0) (2024-11-06)
+
+### Bug Fixes
+
+- remove logic to force app update ([0712c7e](https://github.com/outaTiME/ambito-dolar/commit/0712c7ee7ac13648ec4e45d003c720059953f939))
+
+### Features
+
+- migrate from firebase in favor of instantdb ([918af53](https://github.com/outaTiME/ambito-dolar/commit/918af53e9a0212ce00d540bbcfa2978a1f732ee8))
+
+### BREAKING CHANGES
+
+- this change switches the real-time engine from firebase to instantdb
+
 ## [3.17.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@3.17.2...@ambito-dolar/api@3.17.3) (2024-10-01)
 
 **Note:** Version bump only for package @ambito-dolar/api

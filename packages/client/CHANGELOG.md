@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.5.0...@ambito-dolar/client@8.0.0) (2024-11-06)
+
+### Bug Fixes
+
+- adjust insets for modals on android ([d37a14d](https://github.com/outaTiME/ambito-dolar/commit/d37a14d4b3cc8dfb86d3d93444517b20b4c7a52e))
+- force realtime disconnect when app goes to background for platform consistency ([c0b78a8](https://github.com/outaTiME/ambito-dolar/commit/c0b78a8145078561c199db53661f6af85dffc1b0))
+- remove logic to force app update ([0712c7e](https://github.com/outaTiME/ambito-dolar/commit/0712c7ee7ac13648ec4e45d003c720059953f939))
+- resolve initial flickering issue on android ([22bc42b](https://github.com/outaTiME/ambito-dolar/commit/22bc42b27caf72ec6bf49dc5d1065f405c493c72))
+- resolve initial flickering issue on android ([022b7cd](https://github.com/outaTiME/ambito-dolar/commit/022b7cdd15356daa08425fcb6d79ebf61a4aa2c1))
+- use same haptics for notifications ([b3a6e8c](https://github.com/outaTiME/ambito-dolar/commit/b3a6e8cc5f8c6c1dc679c645bcb39d806e032d3a))
+
+### Features
+
+- detect changes in localization and timezone ([56bd100](https://github.com/outaTiME/ambito-dolar/commit/56bd1009fc9faa690a615e40ec0c0b5c56e0248a))
+- migrate from firebase in favor of instantdb ([918af53](https://github.com/outaTiME/ambito-dolar/commit/918af53e9a0212ce00d540bbcfa2978a1f732ee8))
+
+### BREAKING CHANGES
+
+- this change switches the real-time engine from firebase to instantdb
+
 # [7.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.4.0...@ambito-dolar/client@7.5.0) (2024-10-01)
 
 ### Bug Fixes

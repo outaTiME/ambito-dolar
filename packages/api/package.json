@@ -1,9 +1,9 @@
 {
   "name": "@ambito-dolar/api",
   "private": true,
-  "version": "3.17.3",
+  "version": "4.0.0",
   "dependencies": {
-    "@ambito-dolar/core": "^3.9.1",
+    "@ambito-dolar/core": "^4.0.0",
     "@atproto/api": "^0.13.14",
     "@aws-sdk/client-dynamodb": "^3.682.0",
     "@aws-sdk/client-s3": "^3.682.0",
