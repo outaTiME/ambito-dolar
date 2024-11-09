@@ -123,34 +123,49 @@ const updateFirebaseData = (uri, { data, ...payload } = {}) =>
     // ignore
   });
 
-const updateInstantData = async ({ data } = {}) => {
-  // ignore when there are no updates
+const updateInstantData = ({ data } = {}) => {
   if (data) {
     const db = init({
       appId: process.env.INSTANT_APP_ID,
       adminToken: process.env.INSTANT_ADMIN_TOKEN,
     });
-    const res = await db.query({
-      boards: {
-        $: {
-          // avoid fixed record identifier
-          limit: 1,
+    return db
+      .query({
+        boards: {
+          $: {
+            // avoid fixed record identifier
+            limit: 1,
+          },
         },
-      },
-    });
-    const boardId = res.boards[0]?.id;
-    if (boardId) {
-      const payload = { data, updated_at: data?.updated_at };
-      return db
-        .transact([tx.boards[boardId].update(payload)])
-        .catch((error) => {
-          console.warn(
-            'Unable to update instant',
-            JSON.stringify({ boardId, payload, error: error.message }),
-          );
-          // ignore
-        });
-    }
+      })
+      .then((res) => {
+        const boardId = res.boards?.[0]?.id;
+        if (boardId) {
+          const payload = { data, updated_at: data?.updated_at };
+          return db.transact([tx.boards[boardId].update(payload)]).then(() => {
+            console.info(
+              'Board updated on instant',
+              JSON.stringify({
+                boardId,
+                payload,
+              }),
+            );
+          });
+        } else {
+          // ignore when no board available
+          console.warn('No board found on instant', JSON.stringify(res));
+        }
+      })
+      .catch((error) => {
+        console.warn(
+          'Unable to update board on instant',
+          JSON.stringify({ error: error.message }),
+        );
+        // ignore
+      });
+  } else {
+    // ignore when there are no updates
+    console.warn('No data to update board on instant');
   }
 };
 
