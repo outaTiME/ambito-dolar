@@ -1,7 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFonts } from 'expo-font';
 import * as StatusBar from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import * as _ from 'lodash';
@@ -141,14 +139,8 @@ export const ConfigurationScreen = Sentry.wrap((props) => {
     prepare();
   }, [colorScheme]);
   // resources
-  const [fontsLoaded] = useFonts({
-    ...MaterialIcons.font,
-    ...MaterialCommunityIcons.font,
-    // 'FiraGO-Regular': require('../assets/fonts/FiraGO-Regular.otf'),
-    // 'SF-Pro-Rounded-Regular': require('./assets/fonts/SF-Pro-Rounded-Regular.otf'),
-  });
   const [appIsReady, setAppIsReady] = React.useState(false);
-  const appIsLoading = !fontsLoaded || !appIsReady;
+  const appIsLoading = !appIsReady;
   // settings
   const widgetInfo = props.widgetInfo;
   const storageKey = React.useMemo(

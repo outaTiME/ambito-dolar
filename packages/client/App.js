@@ -1,14 +1,8 @@
 // https://docs.expo.dev/develop/development-builds/use-development-builds/#add-error-handling
 import 'expo-dev-client';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
-import {
-  MaterialIcons,
-  MaterialCommunityIcons,
-  FontAwesome6,
-} from '@expo/vector-icons';
 import { reloadAppAsync } from 'expo';
 // import * as BackgroundFetch from 'expo-background-fetch';
-import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import * as _ from 'lodash';
@@ -142,19 +136,9 @@ const ThemedApp = () => {
 };
 
 const App = () => {
-  const [fontsLoaded, fontsError] = useFonts({
-    ...MaterialIcons.font,
-    ...MaterialCommunityIcons.font,
-    ...FontAwesome6.font,
-  });
   const constantsLoaded = Helper.useApplicationConstants();
   const [appIsReady, setAppIsReady] = React.useState(false);
-  const appIsLoading =
-    !(fontsLoaded || fontsError) || !constantsLoaded || !appIsReady;
-  // trace when fonts load error
-  if (fontsError) {
-    console.warn('Error while trying to load fonts', fontsError);
-  }
+  const appIsLoading = !constantsLoaded || !appIsReady;
   React.useEffect(() => {
     async function prepare() {
       try {

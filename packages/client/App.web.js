@@ -1,4 +1,4 @@
-import { MaterialIcons, FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -26,9 +26,9 @@ const ThemedApp = () => {
 const App = () => {
   const [assets] = useAssets([require('./assets/about-icon-borderless.png')]);
   const [fontsLoaded] = useFonts({
-    ...MaterialIcons.font,
-    ...FontAwesome6.font,
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular.otf'),
+    ...FontAwesome6.font,
+    ...MaterialIcons.font,
   });
   const constantsLoaded = Helper.useApplicationConstants(assets);
   const [appIsReady, setAppIsReady] = React.useState(false);
