@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.0.0...@ambito-dolar/client@8.0.1) (2024-11-09)
+
+### Bug Fixes
+
+- remove font preload to avoid boot errors on android ([babde47](https://github.com/outaTiME/ambito-dolar/commit/babde47708e4672bd8e7d1350632622e7d5576dc))
+
 # [8.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@7.5.0...@ambito-dolar/client@8.0.0) (2024-11-06)
 
 ### Bug Fixes
