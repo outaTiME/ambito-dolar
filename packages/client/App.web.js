@@ -11,11 +11,20 @@ import AppContainer from './components/AppContainer';
 import Helper from './utilities/Helper';
 import Sentry from './utilities/Sentry';
 
+const start_time = Date.now();
 SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
   const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+  React.useEffect(() => {
+    // hide splash screen after storage restore
+    Helper.debug(
+      '👌 Application loading is completed',
+      Date.now() - start_time,
+    );
+    SplashScreen.hideAsync().catch(console.warn);
+  }, []);
   return (
     <ThemeProvider theme={theme}>
       <AppContainer />
@@ -45,17 +54,11 @@ const App = () => {
     }
     prepare();
   }, []);
-  const onLayoutRootView = React.useCallback(async () => {
-    if (!appIsLoading) {
-      // console.log('👌 Application is loaded');
-      await SplashScreen.hideAsync().catch(console.warn);
-    }
-  }, [appIsLoading]);
   if (appIsLoading) {
     return null;
   }
   return (
-    <GestureHandlerRootView onLayout={onLayoutRootView}>
+    <GestureHandlerRootView>
       <ThemedApp />
     </GestureHandlerRootView>
   );

@@ -9,7 +9,7 @@ export default (Component) => (props) => {
   const { theme } = Helper.useTheme();
   const isModal = props?.route?.params?.modal === true;
   const contentMetrics = Helper.useContentMetrics(isModal);
-  const isRoot = !contentMetrics;
+  const isRoot = !contentMetrics && Platform.OS !== 'web';
   const backgroundColor = Settings.getBackgroundColor(theme, isRoot, isModal);
   const containerStyle = React.useMemo(
     () => [
