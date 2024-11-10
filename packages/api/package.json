@@ -32,6 +32,6 @@
     "semver": "^7.6.3",
     "sharp": "^0.32.6",
     "throttled-queue": "^2.1.4",
-    "twitter-api-v2": "^1.18.1"
+    "twitter-api-v2": "^1.18.2"
   }
 }

@@ -60,7 +60,7 @@ __metadata:
     semver: "npm:^7.6.3"
     sharp: "npm:^0.32.6"
     throttled-queue: "npm:^2.1.4"
-    twitter-api-v2: "npm:^1.18.1"
+    twitter-api-v2: "npm:^1.18.2"
   languageName: unknown
   linkType: soft
 
@@ -30964,10 +30964,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twitter-api-v2@npm:^1.18.1":
-  version: 1.18.1
-  resolution: "twitter-api-v2@npm:1.18.1"
-  checksum: 10/ac02b92fea671d9d5a1ee1eaca958d51e266b47beefda3966860559c882cf534452f41ed3900cc6fc23720c01406ffca934d145d95499f1c9e422c25a9153de1
+"twitter-api-v2@npm:^1.18.2":
+  version: 1.18.2
+  resolution: "twitter-api-v2@npm:1.18.2"
+  checksum: 10/fe4689a62cdf79782e76f4f82a066a52ba1fe2a68c075242f6f0e0957eacf7e00663c9ded997bb2d8cf17c60a3bcc059b263750672702e7747b0a8f77aa04b8c
   languageName: node
   linkType: hard
 
