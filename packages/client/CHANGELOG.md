@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.0.1...@ambito-dolar/client@8.0.2) (2024-11-12)
+
+### Bug Fixes
+
+- adjust background color on rate screenshots site ([383d228](https://github.com/outaTiME/ambito-dolar/commit/383d22816acf06bf999cc8c14a33d4c9a9c57199))
+- replace @expo/vector-icons with react-native-vector-icons (preload via expo-font) ([c0021f0](https://github.com/outaTiME/ambito-dolar/commit/c0021f0a26c919a709eb0bfe8bd116f123fa3454))
+
 ## [8.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.0.0...@ambito-dolar/client@8.0.1) (2024-11-09)
 
 ### Bug Fixes
