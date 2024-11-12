@@ -21,7 +21,7 @@
     "husky": "^9.1.6",
     "lerna": "^8.1.9",
     "prettier": "^3.3.3",
-    "sst": "2.44.0"
+    "sst": "2.44.1"
   },
   "scripts": {
     "test": "lerna run test",
