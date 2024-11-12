@@ -1,4 +1,5 @@
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialIcons';
 import { View, ActivityIndicator } from 'react-native';
 
 import Settings from '../config/settings';

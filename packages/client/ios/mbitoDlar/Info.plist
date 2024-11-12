@@ -84,6 +84,10 @@
     <key>UIAppFonts</key>
     <array>
       <string>FiraGO-Regular.otf</string>
+      <string>MaterialCommunityIcons.ttf</string>
+      <string>MaterialIcons.ttf</string>
+      <string>FontAwesome6_Brands.ttf</string>
+      <string>FontAwesome6_Solid.ttf</string>
     </array>
     <key>UIApplicationShortcutItems</key>
     <array>

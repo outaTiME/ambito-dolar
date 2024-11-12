@@ -1,5 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import { MaterialIcons } from '@expo/vector-icons';
+import MaterialIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialIcons';
 import React from 'react';
 import { View, Text, Platform, PixelRatio } from 'react-native';
 

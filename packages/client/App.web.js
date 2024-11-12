@@ -1,4 +1,3 @@
-import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -36,8 +35,7 @@ const App = () => {
   const [assets] = useAssets([require('./assets/about-icon-borderless.png')]);
   const [fontsLoaded] = useFonts({
     'FiraGO-Regular': require('./assets/fonts/FiraGO-Regular.otf'),
-    ...FontAwesome6.font,
-    ...MaterialIcons.font,
+    FontAwesome6_Brands: require('./node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Brands.ttf'),
   });
   const constantsLoaded = Helper.useApplicationConstants(assets);
   const [appIsReady, setAppIsReady] = React.useState(false);

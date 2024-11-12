@@ -12,6 +12,9 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		251C9388E0E24532A8F7CD2F /* FiraGO-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = A04DF8652DD8418698C27697 /* FiraGO-Regular.otf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		4A089B2BFE5641F496727F86 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 36E8B31293DB47E4A48232DA /* MaterialCommunityIcons.ttf */; };
+		6E53C14613A94F62A00928A8 /* FontAwesome6_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E26710A49ACF4E92AC585051 /* FontAwesome6_Brands.ttf */; };
+		8D2F0A11A7BA4B549B713389 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 239E92F02F0F4433B1864755 /* MaterialIcons.ttf */; };
 		96905EF65AED1B983A6B3ABC /* libPods-mbitoDlar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -31,6 +34,7 @@
 		C25107832C40ED1C00FAC065 /* FiraGO-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = A04DF8652DD8418698C27697 /* FiraGO-Regular.otf */; };
 		DCB153073B1F454FBBECA750 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4B5CDA403543420095BF8A27 /* PrivacyInfo.xcprivacy */; };
 		E320CBB8C349412EB326DBC9 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655084A5E5B94E5AA67AB50A /* noop-file.swift */; };
+		F1DC1F381AF74CD5B32EC54D /* FontAwesome6_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9284434E925443BB90AD7CF0 /* FontAwesome6_Solid.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,11 +76,14 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mbitoDlar/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mbitoDlar/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mbitoDlar/main.m; sourceTree = "<group>"; };
+		239E92F02F0F4433B1864755 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
+		36E8B31293DB47E4A48232DA /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		4B5CDA403543420095BF8A27 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = mbitoDlar/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mbitoDlar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mbitoDlar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		655084A5E5B94E5AA67AB50A /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "mbitoDlar/noop-file.swift"; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-mbitoDlar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.debug.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-mbitoDlar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.release.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.release.xcconfig"; sourceTree = "<group>"; };
+		9284434E925443BB90AD7CF0 /* FontAwesome6_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Solid.ttf; path = "../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Solid.ttf"; sourceTree = "<group>"; };
 		A04DF8652DD8418698C27697 /* FiraGO-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "FiraGO-Regular.otf"; path = "../assets/fonts/FiraGO-Regular.otf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = mbitoDlar/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
@@ -93,6 +100,7 @@
 		C21E45DC2A787A2E00DE33BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C21E45E52A787AB600DE33BF /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		C28DC3622CAB55AA00F19252 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/RateWidgets.strings"; sourceTree = "<group>"; };
+		E26710A49ACF4E92AC585051 /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Brands.ttf; path = "../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Brands.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F3D86AC280A943AB944FE020 /* mbitoDlar-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "mbitoDlar-Bridging-Header.h"; path = "mbitoDlar/mbitoDlar-Bridging-Header.h"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-mbitoDlar/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
@@ -131,6 +139,10 @@
 			isa = PBXGroup;
 			children = (
 				A04DF8652DD8418698C27697 /* FiraGO-Regular.otf */,
+				36E8B31293DB47E4A48232DA /* MaterialCommunityIcons.ttf */,
+				239E92F02F0F4433B1864755 /* MaterialIcons.ttf */,
+				E26710A49ACF4E92AC585051 /* FontAwesome6_Brands.ttf */,
+				9284434E925443BB90AD7CF0 /* FontAwesome6_Solid.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -376,6 +388,10 @@
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				251C9388E0E24532A8F7CD2F /* FiraGO-Regular.otf in Resources */,
 				DCB153073B1F454FBBECA750 /* PrivacyInfo.xcprivacy in Resources */,
+				4A089B2BFE5641F496727F86 /* MaterialCommunityIcons.ttf in Resources */,
+				8D2F0A11A7BA4B549B713389 /* MaterialIcons.ttf in Resources */,
+				6E53C14613A94F62A00928A8 /* FontAwesome6_Brands.ttf in Resources */,
+				F1DC1F381AF74CD5B32EC54D /* FontAwesome6_Solid.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -99,7 +99,13 @@ export default {
     [
       'expo-font',
       {
-        fonts: ['./assets/fonts/FiraGO-Regular.otf'],
+        fonts: [
+          './assets/fonts/FiraGO-Regular.otf',
+          './node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf',
+          './node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf',
+          './node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Brands.ttf',
+          './node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Solid.ttf',
+        ],
       },
     ],
     Boolean(process.env.SENTRY_AUTH_TOKEN) && [

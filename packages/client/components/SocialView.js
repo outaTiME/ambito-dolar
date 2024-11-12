@@ -1,4 +1,4 @@
-import { FontAwesome6 } from '@expo/vector-icons';
+import FontAwesome6 from '@expo/vector-icons/build/vendor/react-native-vector-icons/FontAwesome6';
 import React from 'react';
 
 import Settings from '../config/settings';

@@ -1,5 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialCommunityIcons';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,

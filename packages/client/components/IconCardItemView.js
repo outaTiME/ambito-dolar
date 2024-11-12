@@ -1,4 +1,5 @@
-import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
+import FontAwesome6 from '@expo/vector-icons/build/vendor/react-native-vector-icons/FontAwesome6';
+import MaterialCommunityIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialCommunityIcons';
 import React from 'react';
 import { View, Text } from 'react-native';
 
