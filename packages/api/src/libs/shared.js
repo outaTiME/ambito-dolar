@@ -145,10 +145,7 @@ const updateInstantData = ({ data } = {}) => {
           return db.transact([tx.boards[boardId].update(payload)]).then(() => {
             console.info(
               'Board updated on instant',
-              JSON.stringify({
-                boardId,
-                payload,
-              }),
+              JSON.stringify({ boardId }),
             );
           });
         } else {
