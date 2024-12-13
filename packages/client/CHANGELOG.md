@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.0.2...@ambito-dolar/client@8.0.3) (2024-12-13)
+
+### Bug Fixes
+
+- ensure app icon borderRadius displays correctly on Android for share screenshot ([c798aa0](https://github.com/outaTiME/ambito-dolar/commit/c798aa0920d8819a74ae9eee8bbc152460bf58b6))
+
 ## [8.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.0.1...@ambito-dolar/client@8.0.2) (2024-11-12)
 
 ### Bug Fixes
