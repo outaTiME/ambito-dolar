@@ -19,6 +19,7 @@ import prettyMilliseconds from 'pretty-ms';
 import promiseLimit from 'promise-limit';
 import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
+import yn from 'yn';
 import zlib from 'zlib';
 
 import { publish as publishToBsky } from './social/bsky';
@@ -799,6 +800,14 @@ const getActiveDevices = async () => {
     .value();
 };
 
+const isTruthy = yn;
+
+const isQueryParamTruthy = (value) =>
+  isTruthy(value, {
+    // truthy when value exists and is blank
+    default: value === '',
+  });
+
 export default {
   // fetchFirebaseData,
   // updateFirebaseData,
@@ -838,4 +847,6 @@ export default {
   // TODO: update default limit close to 500 ???
   promiseLimit: (concurrency = MAX_SOCKETS) => promiseLimit(concurrency),
   getActiveDevices,
+  isTruthy,
+  isQueryParamTruthy,
 };

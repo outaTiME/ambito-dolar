@@ -1,5 +1,4 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import { boolean } from 'boolean';
 import * as _ from 'lodash';
 
 import Shared from '../libs/shared';
@@ -22,7 +21,7 @@ export const handler = Shared.wrapHandler(async (event) => {
     ).then(async (response) => {
       const { data: { labels = [], values = [] } = {} } = await response.json();
       // remove current stats when earlier flag
-      if (boolean(earlier) === true) {
+      if (Shared.isQueryParamTruthy(earlier) === true) {
         values.pop();
       }
       const date = labels[values.length - 1]?.[0];

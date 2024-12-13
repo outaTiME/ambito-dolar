@@ -1,5 +1,3 @@
-import { boolean } from 'boolean';
-
 import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
@@ -10,7 +8,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       type,
       title,
       caption,
-      generate_only: boolean(generate_only),
+      generate_only: Shared.isQueryParamTruthy(generate_only),
       ...(targets && { targets: targets.split(',') }),
     });
     return Shared.serviceResponse(null, 200, {

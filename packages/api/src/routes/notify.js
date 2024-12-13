@@ -1,5 +1,3 @@
-import { boolean } from 'boolean';
-
 import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
@@ -14,7 +12,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       push_token,
       message,
       type,
-      social: boolean(social),
+      social: Shared.isQueryParamTruthy(social),
     });
     return Shared.serviceResponse(null, 200, {
       message_id,
