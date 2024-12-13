@@ -54,6 +54,7 @@ export default {
           '--no-warnings',
           // https://docs.sentry.io/platforms/javascript/guides/aws-lambda/install/esm-npm/#4-set-environment-variables
           // '--import @sentry/aws-serverless/awslambda-auto',
+          '--trace-deprecation',
         ].join(' '),
         // NODE_NO_WARNINGS: 1,
       },

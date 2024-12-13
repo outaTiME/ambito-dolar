@@ -178,9 +178,6 @@ const ConversionScreen = ({
                   {
                     lineHeight: undefined,
                     includeFontPadding: false,
-                    // forced lineHeight required by android
-                    // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L25
-                    // height: 34,
                   },
                 ]}
                 underlineColorAndroid="transparent"
