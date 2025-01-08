@@ -1,4 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
+import * as chrono from 'chrono-node/es';
 import Joi from 'joi';
 import * as _ from 'lodash';
 import hash from 'object-hash';
@@ -44,25 +45,30 @@ const getRate = (type) => {
           'Invalid schema validation on rate',
           JSON.stringify({ type, data, error: error.message }),
         );
-      } else {
-        const identity = value.fecha;
-        const rate_last = value.valor
-          ? value.valor
-          : [value.compra, value.venta];
-        const result = {
-          type,
-          rate: [identity, rate_last],
-        };
-        const duration = prettyMilliseconds(Date.now() - start_time);
-        console.info(
-          'Fetch rate completed',
-          JSON.stringify({
-            type,
-            duration,
-          }),
-        );
-        return result;
+        return;
       }
+      // parse date string to prevent formatting errors
+      const date = chrono.strict.parseDate(value.fecha);
+      if (date === null) {
+        console.warn('Invalid date on rate', JSON.stringify({ type, data }));
+        return;
+      }
+      // avoid unnecessary updates caused by time changes (reducing update frequency)
+      const identity = AmbitoDolar.getTimezoneDate(date).format('l');
+      const rate_last = value.valor ? value.valor : [value.compra, value.venta];
+      const result = {
+        type,
+        rate: [identity, rate_last],
+      };
+      const duration = prettyMilliseconds(Date.now() - start_time);
+      console.info(
+        'Rate fetch completed',
+        JSON.stringify({
+          type,
+          duration,
+        }),
+      );
+      return result;
     })
     .catch((error) => {
       // log error and continue processing
@@ -110,7 +116,7 @@ const getRate = (type) => {
         }));
         const duration = prettyMilliseconds(Date.now() - start_time);
         console.info(
-          'Fetch crypto rates completed',
+          'Crypto rates fetch completed',
           JSON.stringify({
             rates,
             duration,
@@ -189,7 +195,7 @@ const getNewRates = (rates, new_rates) =>
       );
       const should_notify = value_diff !== 0 && value_diff > rate_threshold;
       console.info(
-        'Look for rate variation to notify',
+        'Check for rate variation to notify',
         JSON.stringify({
           type,
           prev: notification_rate,
@@ -312,7 +318,7 @@ const notify = (
           const notification_rate = rate[4];
           const notify = prev_notification_rate !== notification_rate;
           console.info(
-            'Notify variation on rate',
+            'Notify rate variation',
             JSON.stringify({
               type,
               prev: prev_notification_rate,
