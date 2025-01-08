@@ -253,7 +253,7 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
           />
         </CardView>
         <TextCardView
-          text={`${Settings.APP_COPYRIGHT} ${Settings.DASH_SEPARATOR} Hecho con ♥ desde algún rincón de la Argentina.`}
+          text={`${Settings.APP_COPYRIGHT} ${Settings.DASH_SEPARATOR} Hecho con ♥ desde algún lugar de la Argentina.`}
         />
       </FixedScrollView>
     </>
