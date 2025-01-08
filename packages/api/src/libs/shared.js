@@ -17,6 +17,7 @@ import https from 'https';
 import * as _ from 'lodash';
 import prettyMilliseconds from 'pretty-ms';
 import promiseLimit from 'promise-limit';
+import promiseRetry from 'promise-retry';
 import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import yn from 'yn';
@@ -604,16 +605,8 @@ const triggerFundingNotifyEvent = (payload) =>
 
 // IFTTT
 
-const triggerEvent = (event, payload) => {
-  // const start_time = Date.now();
-  /* console.info(
-    'Triggering event',
-    JSON.stringify({
-      event,
-      payload,
-    }),
-  ); */
-  return AmbitoDolar.fetch(
+const triggerEvent = (event, payload) =>
+  AmbitoDolar.fetch(
     `https://maker.ifttt.com/trigger/${event}/with/key/${process.env.IFTTT_KEY}`,
     {
       method: 'POST',
@@ -622,29 +615,20 @@ const triggerEvent = (event, payload) => {
       },
       body: JSON.stringify(payload),
     },
-  )
-    .then(() => {
-      // const duration = prettyMilliseconds(Date.now() - start_time);
-      /* console.info(
+  ).then(() => {
+    // const duration = prettyMilliseconds(Date.now() - start_time);
+    /* console.info(
         'Event triggered',
         JSON.stringify({
           event,
           duration,
         }),
       ); */
-      return {
-        event,
-        // duration,
-      };
-    })
-    .catch((error) => {
-      // ignore error and trace
-      console.warn(
-        'Unable to trigger the event',
-        JSON.stringify({ event, error: error.message }),
-      );
-    });
-};
+    return {
+      event,
+      // duration,
+    };
+  });
 
 const triggerSendSocialNotificationsEvent = (caption, image_url) =>
   triggerEvent('ambito-dolar-social-notifications', {
@@ -699,33 +683,31 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
     })
     // remove falsey
     .compact()
-    .map(
-      ([target, promise]) =>
-        new Promise((resolve) => {
-          const start_time = Date.now();
-          resolve(
-            promise
-              .then((/* response */) => {
-                const duration = prettyMilliseconds(Date.now() - start_time);
-                return {
-                  target,
-                  duration,
-                  // response,
-                };
-              })
-              // ignore error and trace
-              .catch((error) => {
-                console.warn(
-                  'Unable to trigger social',
-                  JSON.stringify({
-                    target,
-                    error: error.message,
-                  }),
-                );
-              }),
-          );
-        }),
-    )
+    .map(([target, promise]) => {
+      const start_time = Date.now();
+      return promiseRetry((retry, attempt) =>
+        promise
+          .then((/* response */) => {
+            const duration = prettyMilliseconds(Date.now() - start_time);
+            return {
+              target,
+              duration,
+              // response,
+              attempt,
+            };
+          })
+          .catch(retry),
+      ).catch((error) => {
+        // ignore when error
+        console.warn(
+          'Unable to trigger social',
+          JSON.stringify({
+            target,
+            error: error.message,
+          }),
+        );
+      });
+    })
     .value();
   // remove errors
   return Promise.all(promises).then(_.compact);
@@ -759,11 +741,8 @@ const storeImgbbFile = (image) =>
       image,
     }),
   }).then(async (response) => {
-    if (response.ok) {
-      const { data } = await response.json();
-      return data.url;
-    }
-    throw Error(response.statusText);
+    const { data } = await response.json();
+    return data.url;
   });
 
 const fetchImage = (url) =>
