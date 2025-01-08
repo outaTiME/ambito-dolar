@@ -266,7 +266,6 @@ const sendPushNotifications = async (
           _.compact(ticketChunks.flat()),
         )),
       ); */
-
       // throttled-queue
       // send ~600 notifications per second (100 messages per call)
       const throttle = throttledQueue(
@@ -330,28 +329,6 @@ const sendPushNotifications = async (
           ),
         ).then((ticketChunks) => _.compact(ticketChunks.flat()))),
       );
-      /* for (const chunk of chunks) {
-        try {
-          const ticketChunk = await expo
-            .sendPushNotificationsAsync(chunk)
-            .then((tickets) =>
-              // same order as input
-              tickets.map((ticket, index) => {
-                const { title, body: message, source } = chunk[index];
-                return {
-                  ...ticket,
-                  title,
-                  message,
-                  ...source,
-                };
-              }),
-            );
-          tickets.push(...ticketChunk);
-        } catch (error) {
-          console.info('Unable to send the message chunk', error);
-          failedChunks.push(chunk);
-        }
-      } */
       const duration = prettyMilliseconds(Date.now() - expo_start_time);
       console.info(
         'Messages sent',

@@ -9,13 +9,12 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
+const CHANGE_WIDTH = Helper.roundToNearestEven(
+  140 * Math.min(PixelRatio.getFontScale(), Settings.MAX_FONT_SIZE_MULTIPLIER),
+);
+
 const showMiniRateChart =
-  Helper.roundToNearestEven(
-    140 *
-      Math.min(PixelRatio.getFontScale(), Settings.MAX_FONT_SIZE_MULTIPLIER),
-  ) +
-    Settings.CARD_PADDING * 2 +
-    Settings.PADDING <=
+  CHANGE_WIDTH + Settings.CARD_PADDING * 2 + Settings.PADDING <=
   Helper.roundToNearestEven(Settings.CONTENT_WIDTH / 2);
 
 const InlineRateView = ({ type, value, onSelected }) => {
@@ -170,13 +169,7 @@ const InlineRateDetailView = ({
           fonts.subhead,
           {
             ...(showMiniRateChart && {
-              width: Helper.roundToNearestEven(
-                140 *
-                  Math.min(
-                    PixelRatio.getFontScale(),
-                    Settings.MAX_FONT_SIZE_MULTIPLIER,
-                  ),
-              ),
+              width: CHANGE_WIDTH,
             }),
             textAlign: 'right',
             color,

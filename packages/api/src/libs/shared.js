@@ -162,10 +162,9 @@ const updateInstantData = ({ data } = {}) => {
         );
         // ignore
       });
-  } else {
-    // ignore when there are no updates
-    console.warn('No data to update board on instant');
   }
+  // ignore when there are no updates
+  // console.warn('No data to update board on instant');
 };
 
 const updateRealtimeData = (payload) =>
@@ -793,7 +792,7 @@ export default {
   updateRealtimeData,
   serviceResponse,
   getDynamoDBClient,
-  getS3Client,
+  // getS3Client,
   getAllDataFromDynamoDB,
   isSemverLt,
   isSemverGte,
@@ -817,7 +816,7 @@ export default {
   triggerNotifyEvent,
   triggerSocialNotifyEvent,
   triggerFundingNotifyEvent,
-  triggerSendSocialNotificationsEvent,
+  // triggerSendSocialNotificationsEvent,
   triggerSocials,
   storeImgurFile,
   storeImgbbFile,
