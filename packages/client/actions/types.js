@@ -5,8 +5,8 @@ export const NOTIFICATIONS_REGISTER_ERROR = 'notifications_register_error';
 export const APP_REVIEW = 'app_review';
 export const UPDATE_NOTIFICATION_SETTINGS = 'update_notification_settings';
 export const APP_UPDATE = 'app_update';
-export const APP_USAGE = 'app_usage';
 export const APP_USAGE_DAY = 'app_usage_day';
+export const APP_USAGE = 'app_usage';
 export const APP_CONVERSION = 'app_conversion';
 export const APP_SHARE_RATES = 'app_share_rates';
 export const APP_DOWNLOAD_RATES = 'app_download_rates';
@@ -18,6 +18,7 @@ export const CHANGE_RATE_ORDER_DIRECTION = 'change_rate_order_direction';
 export const EXCLUDE_RATE = 'exclude_rate';
 export const UPDATE_RATE_TYPES = 'update_rate_types';
 export const RESTORE_CUSTOMIZATION = 'restore_customization';
+export const SHOW_UPDATE_TOAST = 'show_update_toast';
 export const APP_IGNORE_DONATION = 'app_ignore_donation';
 
 // rates

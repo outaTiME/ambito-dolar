@@ -571,4 +571,12 @@ export default {
       }
     }, [isModal, safeAreaInsets, headerHeight]);
   },
+  useSelectorRef(selector) {
+    const select = useSelector(selector);
+    const ref = React.useRef(select);
+    React.useEffect(() => {
+      ref.current = select;
+    }, [select]);
+    return ref;
+  },
 };

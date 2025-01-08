@@ -8,9 +8,9 @@ import {
   NOTIFICATIONS_REGISTER_ERROR,
   APP_REVIEW,
   UPDATE_NOTIFICATION_SETTINGS,
-  PRUNE,
   APP_UPDATE,
   APP_USAGE_DAY,
+  APP_USAGE,
   APP_CONVERSION,
   APP_SHARE_RATES,
   APP_DOWNLOAD_RATES,
@@ -22,8 +22,9 @@ import {
   EXCLUDE_RATE,
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
-  APP_USAGE,
+  SHOW_UPDATE_TOAST,
   APP_IGNORE_DONATION,
+  PRUNE,
 } from '../actions/types';
 import DateUtils from '../utilities/Date';
 
@@ -48,6 +49,7 @@ const INITIAL_STATE = {
   rate_order_direction: null,
   excluded_rates: null,
   rate_types: null,
+  show_update_toast: true,
   // version check
   version: null,
   app_updated: null,
@@ -153,6 +155,10 @@ export default (state = INITIAL_STATE, action) => {
         rate_order_direction: { $set: null },
         excluded_rates: { $set: null },
         rate_types: { $set: null },
+      });
+    case SHOW_UPDATE_TOAST:
+      return update(state, {
+        show_update_toast: { $set: action.payload },
       });
     case APP_IGNORE_DONATION:
       return update(state, {

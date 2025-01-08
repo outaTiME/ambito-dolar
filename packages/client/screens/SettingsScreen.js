@@ -6,8 +6,9 @@ import * as MailComposer from 'expo-mail-composer';
 import React from 'react';
 import { Linking, Share, Alert } from 'react-native';
 import Purchases from 'react-native-purchases';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
+import * as actions from '../actions';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import FixedScrollView from '../components/FixedScrollView';
@@ -20,22 +21,25 @@ import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
 
 const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
-  const { updatedAt, appearance, pushToken, installationId } = useSelector(
-    ({
-      rates: { updated_at: updatedAt },
-      application: {
+  const { updatedAt, pushToken, appearance, showUpdateToast, installationId } =
+    useSelector(
+      ({
+        rates: { updated_at: updatedAt },
+        application: {
+          push_token: pushToken,
+          appearance,
+          show_update_toast: showUpdateToast,
+          installation_id: installationId,
+        },
+      }) => ({
+        updatedAt,
+        pushToken,
         appearance,
-        push_token: pushToken,
-        installation_id: installationId,
-      },
-    }) => ({
-      updatedAt,
-      appearance,
-      pushToken,
-      installationId,
-    }),
-    shallowEqual,
-  );
+        showUpdateToast,
+        installationId,
+      }),
+      shallowEqual,
+    );
   const onPressContact = React.useCallback(() => {
     MailComposer.composeAsync({
       recipients: [`soporte@${Settings.APP_DOMAIN}`],
@@ -77,6 +81,7 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
     [updatedAt],
   );
   Helper.useInterval(tickCallback);
+  const dispatch = useDispatch();
   // donate
   const getPurchaseProduct = React.useCallback(
     () =>
@@ -194,6 +199,13 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
             navigation.navigate('CustomizeRates', {
               modal: false,
             });
+          }}
+        />
+        <CardItemView
+          title={I18n.t('show_toast')}
+          value={showUpdateToast}
+          onValueChange={(value) => {
+            dispatch(actions.showUpdateToast(value));
           }}
         />
       </CardView>

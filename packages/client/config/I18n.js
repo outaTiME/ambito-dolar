@@ -128,6 +128,7 @@ const i18n = new I18n({
     // widgets
     rate_widget: 'Cotizaciones',
     list_rates_widget: 'Lista de cotizaciones',
+    show_toast: 'Mostrar actualización',
   },
 });
 

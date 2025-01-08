@@ -33,6 +33,7 @@ import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import ActionButton from './ActionButton';
 import { MaterialHeaderButtons, Item } from './HeaderButtons';
 import Toast from './Toast';
+import ToastPositionContainer from './ToastPositionContainer';
 import withContainer from './withContainer';
 import withRates from './withRates';
 import * as actions from '../actions';
@@ -60,7 +61,6 @@ import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
 import { reloadWidgets } from '../widgets';
-import ToastPositionContainer from './ToastPositionContainer';
 
 const BackButton = ({ navigation, popToTop = false }) => (
   <MaterialHeaderButtons>
@@ -641,7 +641,7 @@ const withRealtime = (Component) => (props) => {
   );
   // UPDATE CHECK
   const updatedAt = useSelector((state) => state.rates.updated_at);
-  const updatedAtRef = React.useRef();
+  const updatedAtRef = React.useRef(updatedAt);
   const [forceUpdate, setForceUpdate] = React.useState();
   React.useEffect(() => {
     if (updatedAtRef.current && !updatedAt) {
@@ -675,6 +675,9 @@ const withRealtime = (Component) => (props) => {
       timeInForeground.current = Date.now();
     }
   }, [isActiveAppState]);
+  const showUpdateToastRef = Helper.useSelectorRef(
+    (state) => state.application.show_update_toast,
+  );
   const showActivityToast = Helper.useActivityToast();
   React.useEffect(() => {
     if (!isLocal) {
@@ -712,7 +715,8 @@ const withRealtime = (Component) => (props) => {
               .then(() => updateLocalRates(board))
               .then(() => {
                 if (shouldShowToast) {
-                  showActivityToast(I18n.t('rates_updated'), true);
+                  showUpdateToastRef.current !== false &&
+                    showActivityToast(I18n.t('rates_updated'), true);
                   // force a single toast per app foreground entry
                   timeInForeground.current = null;
                 }

@@ -9,6 +9,7 @@ import {
   UPDATE_NOTIFICATION_SETTINGS,
   APP_UPDATE,
   APP_USAGE_DAY,
+  APP_USAGE,
   APP_CONVERSION,
   APP_SHARE_RATES,
   APP_DOWNLOAD_RATES,
@@ -20,12 +21,12 @@ import {
   EXCLUDE_RATE,
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
+  SHOW_UPDATE_TOAST,
+  APP_IGNORE_DONATION,
   ADD_RATES,
   UPDATE_HISTORICAL_RATES,
   PRUNE_RATES,
   PRUNE,
-  APP_USAGE,
-  APP_IGNORE_DONATION,
 } from './types';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -184,6 +185,11 @@ export const updateRateTypes = (payload) => ({
 
 export const restoreCustomization = () => ({
   type: RESTORE_CUSTOMIZATION,
+});
+
+export const showUpdateToast = (payload) => ({
+  type: SHOW_UPDATE_TOAST,
+  payload,
 });
 
 export const ignoreApplicationDonation = () => ({
