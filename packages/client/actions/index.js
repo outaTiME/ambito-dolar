@@ -18,6 +18,7 @@ import {
   CHANGE_APPEARANCE,
   CHANGE_RATE_ORDER,
   CHANGE_RATE_ORDER_DIRECTION,
+  CHANGE_RATE_DISPLAY,
   EXCLUDE_RATE,
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
@@ -167,6 +168,11 @@ export const changeRateOrder = (payload) => ({
 
 export const changeRateOrderDirection = (payload) => ({
   type: CHANGE_RATE_ORDER_DIRECTION,
+  payload,
+});
+
+export const changeRateDisplay = (payload) => ({
+  type: CHANGE_RATE_DISPLAY,
   payload,
 });
 

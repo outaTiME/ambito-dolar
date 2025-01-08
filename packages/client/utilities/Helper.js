@@ -380,6 +380,9 @@ export default {
   getRateOrderString(order) {
     return I18n.t((order ?? 'default') + '_rate_order');
   },
+  getRateDisplayString(display) {
+    return I18n.t((display ?? 'default') + '_rate_display');
+  },
   getInvertedTheme(theme) {
     return theme === 'light' ? 'dark' : 'light';
   },

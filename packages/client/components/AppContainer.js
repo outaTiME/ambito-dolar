@@ -51,6 +51,7 @@ import InitialScreen from '../screens/InitialScreen';
 import MainScreen from '../screens/MainScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import RateDetailScreen from '../screens/RateDetailScreen';
+import RateDisplayScreen from '../screens/RateDisplayScreen';
 import RateOrderScreen from '../screens/RateOrderScreen';
 import RateRawDetailScreen from '../screens/RateRawDetailScreen';
 import RateWidgetPreviewScreen from '../screens/RateWidgetPreviewScreen';
@@ -273,6 +274,14 @@ const SettingsStackScreen = () => {
         component={RateOrderScreen}
       />
       <SettingsStack.Screen
+        name="RateDisplay"
+        options={({ navigation }) => ({
+          title: Helper.getScreenTitle(I18n.t('rate_display')),
+          headerLeft: () => <BackButton {...{ navigation }} />,
+        })}
+        component={RateDisplayScreen}
+      />
+      <SettingsStack.Screen
         name="RateWidgetPreview"
         options={({ navigation }) => ({
           title: Helper.getScreenTitle(I18n.t('rate_widget')),
@@ -436,6 +445,14 @@ const ModalsStackScreen = () => {
           headerLeft: () => <BackButton {...{ navigation }} />,
         })}
         component={RateOrderScreen}
+      />
+      <ModalsStack.Screen
+        name="RateDisplay"
+        options={({ navigation }) => ({
+          title: Helper.getScreenTitle(I18n.t('rate_display')),
+          headerLeft: () => <BackButton {...{ navigation }} />,
+        })}
+        component={RateDisplayScreen}
       />
     </ModalsStack.Navigator>
   );

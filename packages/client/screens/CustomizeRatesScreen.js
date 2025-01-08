@@ -27,9 +27,12 @@ const CustomizeRatesScreen = ({
   tabBarheight,
   rates,
 }) => {
-  const { rate_order, excluded_rates, rate_types } = useSelector(
-    ({ application: { rate_order, excluded_rates, rate_types } }) => ({
+  const { rate_order, rate_display, excluded_rates, rate_types } = useSelector(
+    ({
+      application: { rate_order, rate_display, excluded_rates, rate_types },
+    }) => ({
       rate_order,
+      rate_display,
       excluded_rates,
       rate_types,
     }),
@@ -113,6 +116,19 @@ const CustomizeRatesScreen = ({
                   }}
                   isModal={isModal}
                 />
+                {false && (
+                  <CardItemView
+                    title="Mostrar"
+                    useSwitch={false}
+                    value={Helper.getRateDisplayString(rate_display)}
+                    onAction={() => {
+                      navigation.navigate('RateDisplay', {
+                        modal: isModal,
+                      });
+                    }}
+                    isModal={isModal}
+                  />
+                )}
               </CardView>
             </ContentView>
           ),

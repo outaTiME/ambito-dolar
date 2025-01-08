@@ -19,6 +19,7 @@ import {
   CHANGE_APPEARANCE,
   CHANGE_RATE_ORDER,
   CHANGE_RATE_ORDER_DIRECTION,
+  CHANGE_RATE_DISPLAY,
   EXCLUDE_RATE,
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
@@ -47,6 +48,7 @@ const INITIAL_STATE = {
   appearance: null,
   rate_order: null,
   rate_order_direction: null,
+  rate_display: null,
   excluded_rates: null,
   rate_types: null,
   show_update_toast: true,
@@ -131,6 +133,10 @@ export default (state = INITIAL_STATE, action) => {
     case CHANGE_RATE_ORDER_DIRECTION:
       return update(state, {
         rate_order_direction: { $set: action.payload },
+      });
+    case CHANGE_RATE_DISPLAY:
+      return update(state, {
+        rate_display: { $set: action.payload },
       });
     case EXCLUDE_RATE: {
       const { type, value } = action.payload;
