@@ -115,7 +115,7 @@ const toFixedNoRounding = (num, n) => {
 
 const getNumber = (value, maxDigits = FRACTION_DIGITS) => {
   value = numeral(value).value();
-  if (typeof value === 'number') {
+  if (typeof value === 'number' && !isNaN(value)) {
     // return +value.toFixed(maxDigits);
     // truncate to max digits
     return +toFixedNoRounding(value, maxDigits);
@@ -130,7 +130,7 @@ const formatNumber = (
 ) => {
   // truncate to prevent rounding issues
   num = getNumber(num, maxDigits);
-  if (typeof num === 'number') {
+  if (typeof num === 'number' && !isNaN(num)) {
     const decimal_digits = '0'.repeat(maxDigits);
     let fmt = '0,0.' + decimal_digits;
     if (forceFractionDigits !== true) {

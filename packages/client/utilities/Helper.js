@@ -82,7 +82,7 @@ const formatCurrency = AmbitoDolar.formatCurrency;
 // https://github.com/realadvisor/rifm/blob/master/pages/number-format/index.js#L39
 
 const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
-  if (typeof value === 'number') {
+  if (typeof value === 'number' && !isNaN(value)) {
     return formatNumber(value, maxDigits, false);
   }
   // handles delimiter updates due to system settings or initial boot
