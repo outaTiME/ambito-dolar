@@ -79,7 +79,7 @@ private func getChangeSymbol(num: Double) -> String {
   return "↓"
 }
 
-private func formatRateChange(num: Double, type: ChangeType, symbol: Bool = true) -> String {
+private func formatRateChange(num: Double, type: ChangeType = .amount, symbol: Bool = true) -> String {
   let change = (num > 0 ? "+" : "") + formatRateCurrency(num: num) + (type == ChangeType.percentage ? "%" : "")
   if symbol == true {
     return change + " " + getChangeSymbol(num: num)
@@ -537,7 +537,7 @@ struct SpreadWidgetEntryView : View {
       if let firstRate = firstRate, let secondRate = secondRate {
         let detail =  "\(firstRate.name) → \(secondRate.name)"
         let value = firstRate.priceValue - secondRate.priceValue
-        let price = formatRateCurrency(num: value)
+        let price = formatRateChange(num: value, symbol: false)
         let rateChange = (firstRate.priceValue / secondRate.priceValue - 1) * 100
         let changeType = ChangeType.percentage
         let change = formatRateChange(num: rateChange, type: changeType)
