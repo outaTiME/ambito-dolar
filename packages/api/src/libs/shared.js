@@ -16,8 +16,8 @@ import { JWT } from 'google-auth-library';
 import https from 'https';
 import * as _ from 'lodash';
 import prettyMilliseconds from 'pretty-ms';
-import promiseLimit from 'promise-limit';
-import promiseRetry from 'promise-retry';
+import pLimit from 'promise-limit';
+import pRetry from 'promise-retry';
 import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import yn from 'yn';
@@ -635,6 +635,15 @@ const triggerSendSocialNotificationsEvent = (caption, image_url) =>
     ...(image_url && { value2: image_url }),
   });
 
+const promiseRetry = (fn, opts) =>
+  pRetry(fn, {
+    // https://github.com/vercel/fetch-retry/blob/master/index.js#L5
+    retries: 5,
+    factor: 6,
+    minTimeout: 10,
+    ...opts,
+  });
+
 const triggerSocials = (targets, caption, url, file, story_file) => {
   const promises = _.chain(
     targets ?? [
@@ -688,6 +697,15 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
         promise
           .then((/* response */) => {
             const duration = prettyMilliseconds(Date.now() - start_time);
+            console.info(
+              'Social trigger completed',
+              JSON.stringify({
+                target,
+                duration,
+                // response,
+                attempt,
+              }),
+            );
             return {
               target,
               duration,
@@ -817,13 +835,14 @@ export default {
   triggerSocialNotifyEvent,
   triggerFundingNotifyEvent,
   // triggerSendSocialNotificationsEvent,
+  promiseRetry,
   triggerSocials,
   storeImgurFile,
   storeImgbbFile,
   fetchImage,
   wrapHandler,
   // TODO: update default limit close to 500 ???
-  promiseLimit: (concurrency = MAX_SOCKETS) => promiseLimit(concurrency),
+  promiseLimit: (concurrency = MAX_SOCKETS) => pLimit(concurrency),
   getActiveDevices,
   isTruthy,
   isQueryParamTruthy,

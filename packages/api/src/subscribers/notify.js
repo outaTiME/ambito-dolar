@@ -3,7 +3,6 @@ import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import * as _ from 'lodash';
 // import pThrottle from 'p-throttle';
 import prettyMilliseconds from 'pretty-ms';
-import promiseRetry from 'promise-retry';
 import throttledQueue from 'throttled-queue';
 
 import Shared, {
@@ -280,7 +279,7 @@ const sendPushNotifications = async (
         ...(await Promise.all(
           chunks.map((chunk, index) =>
             throttle(() =>
-              promiseRetry((retry, number) =>
+              Shared.promiseRetry((retry, number) =>
                 expo
                   .sendPushNotificationsAsync(
                     // remove source from message
