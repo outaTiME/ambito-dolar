@@ -639,8 +639,8 @@ const promiseRetry = (fn, opts) =>
   pRetry(fn, {
     // https://github.com/vercel/fetch-retry/blob/master/index.js#L5
     retries: 5,
-    factor: 6,
-    minTimeout: 10,
+    // factor: 6,
+    // minTimeout: 10,
     ...opts,
   });
 
