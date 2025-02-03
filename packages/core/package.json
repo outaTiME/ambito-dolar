@@ -7,7 +7,7 @@
     "@jsonurl/jsonurl": "^1.1.8",
     "ky": "^1.7.4",
     "lodash": "^4.17.21",
-    "moment-timezone": "^0.5.46",
+    "moment-timezone": "^0.5.47",
     "numeral": "^2.0.6"
   },
   "devDependencies": {
