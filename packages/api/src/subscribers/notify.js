@@ -1,9 +1,8 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import * as _ from 'lodash';
-// import pThrottle from 'p-throttle';
+import pThrottle from 'p-throttle';
 import prettyMilliseconds from 'pretty-ms';
-import throttledQueue from 'throttled-queue';
 
 import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,
@@ -215,7 +214,6 @@ const sendPushNotifications = async (
     const expo_start_time = Date.now();
     if (messages.length > 0) {
       const expo = Shared.getExpoClient();
-      // https://github.com/expo/expo-server-sdk-node/blob/master/src/ExpoClient.ts#L20
       const chunks = expo.chunkPushNotifications(messages);
       console.info(
         'Generated messages',
@@ -226,107 +224,65 @@ const sendPushNotifications = async (
         }),
       );
       const failedChunks = [];
-      // p-throttle
-      // send ~600 notifications per second (100 messages per call)
-      /* const throttle = pThrottle({
-        // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L35
-        limit: 6,
-        // https://docs.expo.dev/push-notifications/sending-notifications/#request-errors
-        interval: 1100,
-        // ensure limit not exceeded
-        strict: true,
-      });
+      // throttle 6 reqs/1s (100 notifs each) exact expo 600/s cap (strict mode)
+      // https://docs.expo.dev/push-notifications/sending-notifications/#request-errors
+      const throttle = pThrottle({ limit: 6, interval: 1000, strict: true });
       const throttled = throttle((chunk, index) =>
-        expo
-          .sendPushNotificationsAsync(
-            // remove source from message
-            chunk.map((message) => _.omit(message, 'source')),
-          )
-          .then((tickets) =>
-            // same order as input
-            tickets.map((ticket, index) => {
-              const { title, body: message, source } = chunk[index];
-              return {
-                ...ticket,
-                title,
-                message,
-                ...source,
-              };
+        // extra retries required to reduce failures
+        Shared.promiseRetry(
+          (retry, attempt) =>
+            expo
+              .sendPushNotificationsAsync(
+                // remove source from message
+                chunk.map((message) => _.omit(message, 'source')),
+              )
+              .then((tickets) =>
+                // same order as input
+                tickets.map((ticket, index) => {
+                  const { title, body: message, source } = chunk[index];
+                  return {
+                    ...ticket,
+                    title,
+                    message,
+                    ...source,
+                  };
+                }),
+              )
+              .catch((error) => {
+                // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L87
+                if (error.statusCode === 429) {
+                  console.info(
+                    'Retrying to send message chunk',
+                    JSON.stringify({
+                      chunk: index,
+                      attempt,
+                      error,
+                    }),
+                  );
+                  return retry(error);
+                }
+                throw error;
+              }),
+          {
+            // reduced from 5 to 3 retries (expo handles 2 additional attempts)
+            // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L94
+            retries: 3,
+          },
+        ).catch((error) => {
+          console.warn(
+            'Unable to send the message chunk',
+            JSON.stringify({
+              chunk: index,
+              error,
             }),
-          )
-          .catch((error) => {
-            // ignore when error
-            console.warn('Unable to send the message chunk', index, error);
-            failedChunks.push(chunk);
-          }),
+          );
+          failedChunks.push(chunk);
+        }),
       );
       tickets.push(
         ...(await Promise.all(chunks.map(throttled)).then((ticketChunks) =>
           _.compact(ticketChunks.flat()),
         )),
-      ); */
-      // throttled-queue
-      // send ~600 notifications per second (100 messages per call)
-      const throttle = throttledQueue(
-        // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L35
-        6,
-        // https://docs.expo.dev/push-notifications/sending-notifications/#request-errors
-        1000,
-        // https://github.com/shaunpersad/throttled-queue?tab=readme-ov-file#evenly-spaced
-        true,
-      );
-      tickets.push(
-        ...(await Promise.all(
-          chunks.map((chunk, index) =>
-            throttle(() =>
-              Shared.promiseRetry((retry, number) =>
-                expo
-                  .sendPushNotificationsAsync(
-                    // remove source from message
-                    chunk.map((message) => _.omit(message, 'source')),
-                  )
-                  .then((tickets) =>
-                    // same order as input
-                    tickets.map((ticket, index) => {
-                      const { title, body: message, source } = chunk[index];
-                      return {
-                        ...ticket,
-                        title,
-                        message,
-                        ...source,
-                      };
-                    }),
-                  )
-                  .catch((error) => {
-                    /* console.info(
-                      'Unable to send the message chunk',
-                      error.statusCode === 429,
-                      JSON.stringify({
-                        chunk: index,
-                        attempt: number,
-                        error,
-                      }),
-                    ); */
-                    // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L99
-                    if (error.statusCode === 429) {
-                      return retry(error);
-                    }
-                    throw error;
-                  }),
-              ).catch((error) => {
-                // ignore when error
-                console.warn(
-                  'Unable to send the message chunk',
-                  JSON.stringify({
-                    chunk: index,
-                    error,
-                  }),
-                );
-                failedChunks.push(chunk);
-              }),
-            ),
-          ),
-        ).then((ticketChunks) => _.compact(ticketChunks.flat()))),
       );
       const duration = prettyMilliseconds(Date.now() - expo_start_time);
       console.info(
