@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.0.3...@ambito-dolar/client@8.1.0) (2025-02-03)
+
+### Bug Fixes
+
+- add positive sign on the spread widget for app consistency ([d65f105](https://github.com/outaTiME/ambito-dolar/commit/d65f10553c8a676594bfbc8b2faf670170bccf74))
+- handle NaN errors on conversion screen for some Android devices ([b6421e8](https://github.com/outaTiME/ambito-dolar/commit/b6421e8263f0fb70e59e1ec2429f9f94479b5009))
+- use percentage-over-value display on spread widget to keep align with application ([6fb800e](https://github.com/outaTiME/ambito-dolar/commit/6fb800ebf9cffeb3605300977115741750719684))
+
+### Features
+
+- add new option to customize rates value display (currently disabled) ([4ebcef6](https://github.com/outaTiME/ambito-dolar/commit/4ebcef6f57572cf98efc8b888b707672f46c6d8b))
+- add toast visibility toggle for rates updates ([ee89445](https://github.com/outaTiME/ambito-dolar/commit/ee894458a7c65792e2de4c58ecd5b28bb496f684))
+
 ## [8.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.0.2...@ambito-dolar/client@8.0.3) (2024-12-13)
 
 ### Bug Fixes

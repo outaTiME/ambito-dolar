@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.0.3...@ambito-dolar/api@4.1.0) (2025-02-03)
+
+### Bug Fixes
+
+- improve reliability of push notification delivery ([1909ee7](https://github.com/outaTiME/ambito-dolar/commit/1909ee739aef85d693ca824fb956518e9450ed36))
+
+### Features
+
+- add retry policy to social trigger ([b3ae302](https://github.com/outaTiME/ambito-dolar/commit/b3ae302fd81a2ccb388aa4eb6d73df4e682d3607))
+- improve rate update detection using date-only checks ([c9e9582](https://github.com/outaTiME/ambito-dolar/commit/c9e9582cff74525384c98ef586dd81f17bdecf6b))
+
 ## [4.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.0.2...@ambito-dolar/api@4.0.3) (2024-12-13)
 
 **Note:** Version bump only for package @ambito-dolar/api

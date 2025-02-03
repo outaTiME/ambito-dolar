@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@4.0.1...@ambito-dolar/core@4.0.2) (2025-02-03)
+
+### Bug Fixes
+
+- handle NaN errors on conversion screen for some Android devices ([b6421e8](https://github.com/outaTiME/ambito-dolar/commit/b6421e8263f0fb70e59e1ec2429f9f94479b5009))
+
 ## [4.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@4.0.0...@ambito-dolar/core@4.0.1) (2024-12-13)
 
 **Note:** Version bump only for package @ambito-dolar/core
