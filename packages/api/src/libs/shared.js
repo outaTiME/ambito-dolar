@@ -769,6 +769,7 @@ const fetchImage = (url) =>
 
 const wrapHandler = (handler) => {
   if (!process.env.IS_LOCAL) {
+    // https://docs.sentry.io/platforms/javascript/guides/aws-lambda/install/esm-npm/#alternative-initialize-the-sdk-in-code
     Sentry.init({
       dsn: process.env.SENTRY_DSN,
       // disable performance monitoring

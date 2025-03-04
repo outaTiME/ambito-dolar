@@ -224,50 +224,44 @@ const sendPushNotifications = async (
         }),
       );
       const failedChunks = [];
-      // throttle 6 reqs/1s (100 notifs each) exact expo 600/s cap (strict mode)
+      // throttle 6 reqs/1.1s (100 notifs each) +10% buffer, under expo 600/s cap (strict mode)
       // https://docs.expo.dev/push-notifications/sending-notifications/#request-errors
-      const throttle = pThrottle({ limit: 6, interval: 1000, strict: true });
+      const throttle = pThrottle({ limit: 6, interval: 1100, strict: true });
       const throttled = throttle((chunk, index) =>
         // extra retries required to reduce failures
-        Shared.promiseRetry(
-          (retry, attempt) =>
-            expo
-              .sendPushNotificationsAsync(
-                // remove source from message
-                chunk.map((message) => _.omit(message, 'source')),
-              )
-              .then((tickets) =>
-                // same order as input
-                tickets.map((ticket, index) => {
-                  const { title, body: message, source } = chunk[index];
-                  return {
-                    ...ticket,
-                    title,
-                    message,
-                    ...source,
-                  };
-                }),
-              )
-              .catch((error) => {
-                // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L87
-                if (error.statusCode === 429) {
-                  console.info(
-                    'Retrying to send message chunk',
-                    JSON.stringify({
-                      chunk: index,
-                      attempt,
-                      error,
-                    }),
-                  );
-                  return retry(error);
-                }
-                throw error;
+        Shared.promiseRetry((retry, attempt) =>
+          expo
+            .sendPushNotificationsAsync(
+              // remove source from message
+              chunk.map((message) => _.omit(message, 'source')),
+            )
+            .then((tickets) =>
+              // same order as input
+              tickets.map((ticket, index) => {
+                const { title, body: message, source } = chunk[index];
+                return {
+                  ...ticket,
+                  title,
+                  message,
+                  ...source,
+                };
               }),
-          {
-            // reduced from 5 to 3 retries (expo handles 2 additional attempts)
-            // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L94
-            retries: 3,
-          },
+            )
+            .catch((error) => {
+              // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L87
+              if (error.statusCode === 429) {
+                console.info(
+                  'Retrying to send message chunk',
+                  JSON.stringify({
+                    chunk: index,
+                    attempt,
+                    error,
+                  }),
+                );
+                return retry(error);
+              }
+              throw error;
+            }),
         ).catch((error) => {
           console.warn(
             'Unable to send the message chunk',
