@@ -19,9 +19,9 @@
     "eslint": "^8.57.1",
     "eslint-config-universe": "^14.0.0",
     "husky": "^9.1.7",
-    "lerna": "^8.1.9",
-    "prettier": "^3.4.2",
-    "sst": "2.47.1"
+    "lerna": "^8.2.1",
+    "prettier": "^3.5.3",
+    "sst": "2.47.3"
   },
   "scripts": {
     "test": "lerna run test",
@@ -37,6 +37,7 @@
     "api:publish": "yarn sst deploy",
     "api:remove": "yarn sst remove",
     "website:start": "yarn workspace @ambito-dolar/website run start",
+    "website:clean": "yarn workspace @ambito-dolar/website run clean",
     "publish": "lerna version --conventional-commits --conventional-graduate",
     "version": "yarn install && git stage yarn.lock",
     "depcheck": "yarn workspaces foreach --verbose exec npx depcheck",
@@ -46,6 +47,6 @@
   "resolutions": {
     "eslint": "^8.9.0",
     "promise": "^8.3.0",
-    "react-native": "patch:react-native@npm%3A0.75.4#~/.yarn/patches/react-native-npm-0.75.4-dbfb07e7dd.patch"
+    "react-native": "patch:react-native@npm%3A0.75.5#~/.yarn/patches/react-native-npm-0.75.5-9fccf87ffa.patch"
   }
 }

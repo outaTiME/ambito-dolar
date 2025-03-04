@@ -52,8 +52,6 @@ export default {
           // '--no-experimental-fetch',
           // prevents experimental warnings from buffer.File
           '--no-warnings',
-          // https://docs.sentry.io/platforms/javascript/guides/aws-lambda/install/esm-npm/#4-set-environment-variables
-          // '--import @sentry/aws-serverless/awslambda-auto',
           '--trace-deprecation',
         ].join(' '),
         // NODE_NO_WARNINGS: 1,
@@ -63,10 +61,6 @@ export default {
       // https://docs.serverless-stack.com/constructs/Function#setting-additional-props
       logRetention: 'one_day',
       retryAttempts: 0,
-      // https://docs.sentry.io/platforms/javascript/guides/aws-lambda/install/esm-npm/
-      /* nodejs: {
-        install: ["@sentry/aws-serverless"]
-      } */
     });
     app.setDefaultRemovalPolicy('destroy');
     app.stack(MainStack, { id: 'stack' });
