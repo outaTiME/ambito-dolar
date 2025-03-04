@@ -103,6 +103,18 @@ private func getWidgetUrl(id: String? = nil) -> URL? {
   return URL(string: "ambito-dolar://rates")
 }
 
+extension ValueType {
+  var displayName: String? {
+    let mapping: [ValueType: String] = [
+      .buy: "Compra",
+      .avg: "Promedio",
+      .sell: "Venta"
+    ]
+    // unknown case returns nil
+    return mapping[self]
+  }
+}
+
 private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes(), valueType: ValueType = ValueType.sell, changeType: ChangeType = ChangeType.percentage ) -> [RateValue]? {
   let rates = getRates()
   return rateTypes.map {
@@ -113,6 +125,7 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
         let rateValue = rate[1]
         let value: Double
         let amount: Double
+        var detail: String?
         if rateValue is Double {
           value = rateValue as! Double
           amount = value
@@ -131,6 +144,7 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
             value = sell
           }
           amount = sell
+          detail = valueType.displayName
         }
         let price = formatRateCurrency(num: value)
         var rateChange = rate[2] as! Double
@@ -147,6 +161,7 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
         return RateValue(
           id: type,
           name: name,
+          detail: detail,
           change: change,
           plainChange: plainChange,
           changeColor: changeColor,
@@ -292,6 +307,12 @@ struct RateWidgetEntryView : View {
             .font(.custom(fontName, size: 20))
             .foregroundColor(fgColor)
             .lineLimit(1)
+          if let detail = rate.detail {
+            Text(detail)
+              .font(.custom(fontName, size: 14))
+              .foregroundColor(fgSecondaryColor)
+              .lineLimit(1)
+          }
           Spacer()
           if let change = rate.change {
             Text(change)
