@@ -37,6 +37,8 @@ const WHATSAPP_WEB_URL = `https://whatsapp.com/channel/0029VaNvh4LGpLHUyd75cO1P`
 const BLUESKY_URI = 'profile/ambitodolar.bsky.social';
 const BLUESKY_DEEP_LINK = `bluesky://${BLUESKY_URI}`;
 const BLUESKY_WEB_URL = `https://bsky.app/${BLUESKY_URI}`;
+const THREADS_DEEP_LINK = 'barcelona://user?username=ambitodolar';
+const THREADS_WEB_URL = 'https://www.threads.net/@ambitodolar';
 const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
 const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
 const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
@@ -116,6 +118,15 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
         supported
           ? Linking.openURL(BLUESKY_DEEP_LINK)
           : Linking.openURL(BLUESKY_WEB_URL),
+      )
+      .catch(console.warn);
+  }, []);
+  const onPressThreads = React.useCallback(() => {
+    Linking.canOpenURL(THREADS_DEEP_LINK)
+      .then((supported) =>
+        supported
+          ? Linking.openURL(THREADS_DEEP_LINK)
+          : Linking.openURL(THREADS_WEB_URL),
       )
       .catch(console.warn);
   }, []);
@@ -238,6 +249,11 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
             title="Bluesky"
             iconName="bluesky"
             onAction={onPressBluesky}
+          />
+          <IconCardItemView
+            title="Threads"
+            iconName="threads"
+            onAction={onPressThreads}
           />
           <IconCardItemView
             title="GitHub"

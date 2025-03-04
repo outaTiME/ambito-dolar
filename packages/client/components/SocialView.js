@@ -79,6 +79,14 @@ export default ({
         }}
       />
       <FontAwesome6
+        name="threads"
+        size={size}
+        color={Settings.getGrayColor(theme)}
+        style={{
+          marginRight: size,
+        }}
+      />
+      <FontAwesome6
         name="github"
         size={size}
         color={Settings.getGrayColor(theme)}

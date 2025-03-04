@@ -295,8 +295,8 @@ const withScreenshotShareSheet =
               <View
                 style={[
                   {
-                    // footnote lineHeight diff
-                    paddingVertical: Settings.CARD_PADDING * 2 - (18 - 13),
+                    // `fonts.caption1` lineHeight diff
+                    paddingVertical: Settings.CARD_PADDING * 2 - (18 - 12),
                     // paddingVertical: Settings.CARD_PADDING,
                     paddingHorizontal: Settings.CARD_PADDING * 2,
                     backgroundColor: colors.card,
@@ -314,7 +314,7 @@ const withScreenshotShareSheet =
               >
                 <Text
                   style={[
-                    fonts.footnote,
+                    fonts.caption1,
                     {
                       flex: 1,
                       color: Settings.getGrayColor(theme),
@@ -341,8 +341,8 @@ const withScreenshotShareSheet =
                     },
                   ]}
                 >
-                  {/* same size as `fonts.footnote` of copyright */}
-                  <SocialView size={13} />
+                  {/* same size as `fonts.caption1` of copyright */}
+                  <SocialView size={12} />
                 </View>
               </View>
               <WatermarkOverlayView />

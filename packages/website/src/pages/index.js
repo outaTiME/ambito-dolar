@@ -9,6 +9,7 @@ import {
   FaMastodon as Mastodon,
   FaWhatsapp as Whatsapp,
   FaBluesky as Bluesky,
+  FaThreads as Threads,
   FaGithub as Github,
   FaEnvelope as Mail,
 } from 'react-icons/fa6';
@@ -129,6 +130,14 @@ const IndexPage = () => {
                         rel="noopener noreferrer me"
                       >
                         <Bluesky />
+                      </a>
+                      <a
+                        className="icon"
+                        href="https://www.threads.net/@ambitodolar"
+                        target="_blank"
+                        rel="noopener noreferrer me"
+                      >
+                        <Threads />
                       </a>
                       <a
                         className="icon"

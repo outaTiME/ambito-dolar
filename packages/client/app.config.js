@@ -189,6 +189,8 @@ export default {
         'ivory',
         'mastodon',
         'bluesky',
+        'barcelona',
+        // required for app store review
         'itms-apps',
       ],
       UIViewControllerBasedStatusBarAppearance: true,

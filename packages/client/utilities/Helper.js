@@ -407,6 +407,8 @@ export default {
       () => ({
         theme: colorScheme,
         fonts: {
+          // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L79
+          caption1: Settings.getFontObject(colorScheme, 'caption1'), // 12 (16)
           // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L72
           footnote: Settings.getFontObject(colorScheme, 'footnote'), // 13 (18)
           // https://github.com/hectahertz/react-native-typography/blob/master/src/collections/human.js#L65
