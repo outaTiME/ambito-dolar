@@ -7,11 +7,7 @@ import Helper from '../utilities/Helper';
 
 export default () => {
   const { theme } = Helper.useTheme();
-  // https://github.com/react-native-svg/react-native-svg/issues/1386#issuecomment-852581471
-  if (Platform.OS === 'ios') {
-    return null;
-  }
-  // http://thenewcode.com/1051/Generate-Page-Watermarks-with-SVG
+  // https://codepen.io/dudleystorey/pen/PqBLjd/
   return (
     <Svg style={StyleSheet.absoluteFillObject} width="100%" height="100%">
       <Defs>
@@ -20,7 +16,10 @@ export default () => {
           patternUnits="userSpaceOnUse"
           width="250"
           height="100"
-          patternTransform="rotate(-45)"
+          // https://github.com/react-native-svg/react-native-svg/issues/1386#issuecomment-852581471
+          {...(Platform.OS !== 'ios' && {
+            patternTransform: 'rotate(-45)',
+          })}
         >
           <SvgText
             // use height without font size
