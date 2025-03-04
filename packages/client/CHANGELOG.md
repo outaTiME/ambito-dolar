@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.1.0...@ambito-dolar/client@8.2.0) (2025-03-04)
+
+### Features
+
+- add threads social ([5a4ab74](https://github.com/outaTiME/ambito-dolar/commit/5a4ab7468fed5a55af7c4db43ed99802c3554f11))
+- add watermark (without rotation) on iOS for share screenshot ([8809ecc](https://github.com/outaTiME/ambito-dolar/commit/8809eccd7a7b40b910f6cb20d69d13f86318e6fd))
+- show value type (buy, avg, or sell) on the rates widget only when available ([9832f47](https://github.com/outaTiME/ambito-dolar/commit/9832f470c61e1c5aef8a213384e0b5af0e516391))
+
 # [8.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.0.3...@ambito-dolar/client@8.1.0) (2025-02-03)
 
 ### Bug Fixes

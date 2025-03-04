@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.1.0...@ambito-dolar/api@4.1.1) (2025-03-04)
+
+### Bug Fixes
+
+- improve reliability of push notification delivery ([1f483ca](https://github.com/outaTiME/ambito-dolar/commit/1f483caa87badb48fb9d18fe1721de901db6f81f))
+
 # [4.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.0.3...@ambito-dolar/api@4.1.0) (2025-02-03)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.13.4...@ambito-dolar/website@1.14.0) (2025-03-04)
+
+### Features
+
+- add threads social ([5a4ab74](https://github.com/outaTiME/ambito-dolar/commit/5a4ab7468fed5a55af7c4db43ed99802c3554f11))
+
 ## [1.13.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.13.3...@ambito-dolar/website@1.13.4) (2025-02-03)
 
 **Note:** Version bump only for package @ambito-dolar/website
