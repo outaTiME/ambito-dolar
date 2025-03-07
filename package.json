@@ -12,8 +12,8 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^19.7.1",
-    "@commitlint/config-conventional": "^19.7.1",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "aws-cdk-lib": "2.171.1",
     "constructs": "10.3.0",
     "eslint": "^8.57.1",
