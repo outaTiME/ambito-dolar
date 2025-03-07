@@ -38,7 +38,7 @@ __metadata:
     "@aws-sdk/client-sns": "npm:^3.758.0"
     "@aws-sdk/lib-dynamodb": "npm:^3.758.0"
     "@aws-sdk/util-dynamodb": "npm:^3.758.0"
-    "@instantdb/admin": "npm:^0.17.24"
+    "@instantdb/admin": "npm:^0.17.27"
     "@sentry/aws-serverless": "npm:8.54.0"
     "@shelf/dynamodb-parallel-scan": "npm:^3.9.2"
     "@smithy/node-http-handler": "npm:^4.0.3"
@@ -75,7 +75,7 @@ __metadata:
     "@expo/vector-icons": "npm:^14.0.4"
     "@expo/webpack-config": "npm:^19.0.1"
     "@gorhom/bottom-sheet": "npm:^5.1.1"
-    "@instantdb/react-native": "npm:^0.17.24"
+    "@instantdb/react-native": "npm:^0.17.27"
     "@react-native-async-storage/async-storage": "npm:^2.1.2"
     "@react-native-community/hooks": "npm:^3.1.0"
     "@react-native-community/netinfo": "npm:^11.4.1"
@@ -129,7 +129,7 @@ __metadata:
     react-native-draggable-flatlist: "https://gitpkg.vercel.app/api/pkg.tgz?url=outaTiME/react-native-draggable-flatlist&commit=main"
     react-native-gesture-handler: "npm:^2.24.0"
     react-native-get-random-values: "npm:^1.11.0"
-    react-native-purchases: "npm:^8.7.0"
+    react-native-purchases: "npm:^8.8.0"
     react-native-reanimated: "npm:^3.17.1"
     react-native-redash: "npm:^18.1.3"
     react-native-safe-area-context: "npm:^5.3.0"
@@ -147,7 +147,7 @@ __metadata:
     reselect: "npm:^5.1.1"
     semver: "npm:^7.7.1"
     styled-components: "npm:^6.1.15"
-    swr: "npm:^2.3.2"
+    swr: "npm:^2.3.3"
     use-state-with-callback: "npm:^3.0.2"
     victory: "npm:^37.3.6"
     victory-native: "npm:^36.9.2"
@@ -6642,49 +6642,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@instantdb/admin@npm:^0.17.24":
-  version: 0.17.24
-  resolution: "@instantdb/admin@npm:0.17.24"
+"@instantdb/admin@npm:^0.17.27":
+  version: 0.17.27
+  resolution: "@instantdb/admin@npm:0.17.27"
   dependencies:
-    "@instantdb/core": "npm:v0.17.24"
-  checksum: 10/7fe7cca1c34cb71d208c2e9e4973e5e6d06b4c4494100bc2c8db5e08f44bbb8dbcb9c1479aaa24bda3c748b5b6d530a2cffe23a6c4539fd46382fb0f83be8ea2
+    "@instantdb/core": "npm:v0.17.27"
+  checksum: 10/ff0d644c2a023025fd024f4c9c0df2bdd89cf5d23a826989dc0ed28fd2936a89b6dc780535d0912ad6b97665863decfe53fac1bd7f227509a6fcefb54a984812
   languageName: node
   linkType: hard
 
-"@instantdb/core@npm:v0.17.24":
-  version: 0.17.24
-  resolution: "@instantdb/core@npm:0.17.24"
+"@instantdb/core@npm:v0.17.27":
+  version: 0.17.27
+  resolution: "@instantdb/core@npm:0.17.27"
   dependencies:
     mutative: "npm:^1.0.10"
     uuid: "npm:^9.0.0"
-  checksum: 10/bddfac991ad479f164f47278ccac25120c772aa480c04c2b1906048bfb70a1547298ec62f24789f799ee6462bf093a04cc91e9943a4763d79f84b6147d96b521
+  checksum: 10/d13ae89cc7c686d1f9dbfa2dcc31e87b0394ae2f697ef40bc2561b135c5a321af21f2164c9b3f0367ee7a81bc113aee54489f38737e706e3e8c348b50dd62261
   languageName: node
   linkType: hard
 
-"@instantdb/react-native@npm:^0.17.24":
-  version: 0.17.24
-  resolution: "@instantdb/react-native@npm:0.17.24"
+"@instantdb/react-native@npm:^0.17.27":
+  version: 0.17.27
+  resolution: "@instantdb/react-native@npm:0.17.27"
   dependencies:
-    "@instantdb/core": "npm:v0.17.24"
-    "@instantdb/react": "npm:v0.17.24"
+    "@instantdb/core": "npm:v0.17.27"
+    "@instantdb/react": "npm:v0.17.27"
   peerDependencies:
     "@react-native-async-storage/async-storage": ">=1.15"
     "@react-native-community/netinfo": ">=7.1"
     react: ">=16"
     react-native: ">=0.56"
     react-native-get-random-values: ">=1.5"
-  checksum: 10/47cf3745a0866f07bf2b6c1da60fff7dcf9840396de722d683b678baddaca06cf59e0d75bc5cfce3df980509cd8dade28822d803f1370e27ac1c3fd815f5168d
+  checksum: 10/d6f47dc4fc89dd5512d60684822fb5476ee43dcd519468e5a15dcc4ce69193b2d50ee74b03dac429495ec98f1a35eeb0f438c6dabcf70ddf2e7671ebd6182d86
   languageName: node
   linkType: hard
 
-"@instantdb/react@npm:v0.17.24":
-  version: 0.17.24
-  resolution: "@instantdb/react@npm:0.17.24"
+"@instantdb/react@npm:v0.17.27":
+  version: 0.17.27
+  resolution: "@instantdb/react@npm:0.17.27"
   dependencies:
-    "@instantdb/core": "npm:v0.17.24"
+    "@instantdb/core": "npm:v0.17.27"
   peerDependencies:
     react: ">=16"
-  checksum: 10/f6290eb5401bf1eeab9cdb6e35c30754701404044fd0881514e3742245f74be0de6626a9a653dfa7dd9730c2ec9b6e022ae0c073c25030fe4302ffd1473890bd
+  checksum: 10/e258c28ec6b7472a0d6cd5be9576a5e007b412235b494129b7894f95ee5c538747ebcf87d69cb363526c87f50503f5788bb3b0b019663b82272c00685b359d45
   languageName: node
   linkType: hard
 
@@ -9796,10 +9796,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@revenuecat/purchases-typescript-internal@npm:13.21.0":
-  version: 13.21.0
-  resolution: "@revenuecat/purchases-typescript-internal@npm:13.21.0"
-  checksum: 10/6d70259acc85969ba9f3e5c2aa76bf9978d0ce7a71fbe5195f7ba24f88a4c64697eca8f9f1b184cb9d11b86fc39bf7780651b07fcbae2c68c7a443c98973f372
+"@revenuecat/purchases-typescript-internal@npm:13.22.0":
+  version: 13.22.0
+  resolution: "@revenuecat/purchases-typescript-internal@npm:13.22.0"
+  checksum: 10/b04a8ff067e18ac8bd714219edb1310f1b4042d8a6266566c498ef26185490b0961a71705c3781cf9fd36c22fc0f4682406dd2b1306f62b196b29e8305a2b520
   languageName: node
   linkType: hard
 
@@ -31142,15 +31142,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-purchases@npm:^8.7.0":
-  version: 8.7.0
-  resolution: "react-native-purchases@npm:8.7.0"
+"react-native-purchases@npm:^8.8.0":
+  version: 8.8.0
+  resolution: "react-native-purchases@npm:8.8.0"
   dependencies:
-    "@revenuecat/purchases-typescript-internal": "npm:13.21.0"
+    "@revenuecat/purchases-typescript-internal": "npm:13.22.0"
   peerDependencies:
     react: ">= 16.6.3"
     react-native: "*"
-  checksum: 10/98b9b5d12b6dd117be9a182e6c62b835eb536406f2267e34664585b49cc6ff33c0c4459940f0f7a38c30ed98246db08272607dcf7815f1ca9cf248e948ff7cf1
+  checksum: 10/4dd0acf665c9b47bfc37130aa456d04cc48880ec16e8e442c8b17de5d66f585c98091dac872ef0915c716c075298ada391d4a1ff2ee4280f5f59b8d4d1887b79
   languageName: node
   linkType: hard
 
@@ -34460,15 +34460,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swr@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "swr@npm:2.3.2"
+"swr@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "swr@npm:2.3.3"
   dependencies:
     dequal: "npm:^2.0.3"
     use-sync-external-store: "npm:^1.4.0"
   peerDependencies:
     react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10/7cf40fe33a05abff4b07eda8465d260432c901e91097ec245a478eb059ce8724810574e369fd0fb2f59fd09c81a8b2da5b76bc43bf97a62698cb2436033df579
+  checksum: 10/11cd5d1acbc62cf0e092e0d19f1d67b2e6ecb542602250f3277eb235750cd3285291bae9a8264c1f5b3973890f75234c104a0baf1ac6059aadc700ecba100fcc
   languageName: node
   linkType: hard
 

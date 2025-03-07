@@ -362,7 +362,7 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - PurchasesHybridCommon (13.21.0):
+  - PurchasesHybridCommon (13.22.0):
     - RevenueCat (= 5.18.0)
   - RCT-Folly (2024.01.01.00):
     - boost
@@ -1930,8 +1930,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNPurchases (8.7.0):
-    - PurchasesHybridCommon (= 13.21.0)
+  - RNPurchases (8.8.0):
+    - PurchasesHybridCommon (= 13.22.0)
     - React-Core
   - RNReanimated (3.17.1):
     - DoubleConversion
@@ -2517,7 +2517,7 @@ SPEC CHECKSUMS:
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  PurchasesHybridCommon: 9691d74a051f30858360d78936d59dc14575014e
+  PurchasesHybridCommon: 16367f792481e8e2d61101ecb607b566937aa67f
   RCT-Folly: 4464f4d875961fce86008d45f4ecf6cef6de0740
   RCTDeprecation: 3abf1129f54dbf292986302277f62ad01f7af1b2
   RCTRequired: 67f606e1be40dbb827898c23d9eaee3562b087d1
@@ -2583,7 +2583,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: addfc2cb6511dbe199c56c6b26ede383b6c38919
   RNFlashList: 249427fe3bd3bd5401387148f3fbe997a068c6aa
   RNGestureHandler: 2e4971181218718ab9c5871ea5ef855ec5c389fe
-  RNPurchases: 3b35539c86769ad8a8f838060559cf13d0a8fcb1
+  RNPurchases: e1e324abbdca8d207d3c829225a9407a35fd3501
   RNReanimated: 8b36a458b255be4d4b2e02bacc3e06e18254db9a
   RNScreens: 274d7cc1d2abb2497b8c20561cc9e3a344a19095
   RNSentry: 5011c04ed149cf6f0599b52dcd7991b960188e49

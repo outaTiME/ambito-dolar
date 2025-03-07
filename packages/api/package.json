@@ -10,7 +10,7 @@
     "@aws-sdk/client-sns": "^3.758.0",
     "@aws-sdk/lib-dynamodb": "^3.758.0",
     "@aws-sdk/util-dynamodb": "^3.758.0",
-    "@instantdb/admin": "^0.17.24",
+    "@instantdb/admin": "^0.17.27",
     "@sentry/aws-serverless": "8.54.0",
     "@shelf/dynamodb-parallel-scan": "^3.9.2",
     "@smithy/node-http-handler": "^4.0.3",
