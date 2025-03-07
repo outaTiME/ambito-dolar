@@ -183,23 +183,24 @@ struct SimpleEntry: TimelineEntry {
 }
 
 extension View {
+  @ViewBuilder
   func widgetBackground(backgroundView: some View = Color.black) -> some View {
     if #available(iOSApplicationExtension 17.0, *) {
-      return containerBackground(for: .widget) {
+      containerBackground(for: .widget) {
         backgroundView
       }
     } else {
-      return background(backgroundView)
+      background(backgroundView)
     }
   }
   @ViewBuilder
   func conditionalContentTransition(value: Double? = nil) -> some View {
-    if #available(iOS 17.0, *), (value != nil) {
-      self.contentTransition(.numericText(value: value!))
+    if #available(iOS 17.0, *), let value = value {
+      self.contentTransition(.numericText(value: value))
     } else if #available(iOS 16.0, *) {
       self.contentTransition(.numericText())
     } else {
-      // ignore
+      self
     }
   }
 }
