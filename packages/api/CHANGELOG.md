@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.1.2...@ambito-dolar/api@4.2.0) (2025-03-07)
+
+### Features
+
+- add parameter to force rates processing for delayed auto-detection ([b15bc5d](https://github.com/outaTiME/ambito-dolar/commit/b15bc5de365a989f2df2c30d1fecea82b5d8b0a5))
+
 ## [4.1.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.1.1...@ambito-dolar/api@4.1.2) (2025-03-07)
 
 **Note:** Version bump only for package @ambito-dolar/api
