@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.2.0...@ambito-dolar/client@8.2.1) (2025-03-07)
+
+### Bug Fixes
+
+- show transition values on widgets for iOS versions below 16 ([7839428](https://github.com/outaTiME/ambito-dolar/commit/78394289f6a757596a1d6eb249581d9d78c9f758))
+
 # [8.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.1.0...@ambito-dolar/client@8.2.0) (2025-03-04)
 
 ### Features
