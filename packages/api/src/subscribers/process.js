@@ -356,14 +356,17 @@ const notify = (
 const REALTIME_PROCESSING_INTERVAL = 15;
 
 export const handler = Shared.wrapHandler(async (event) => {
-  const { notify: trigger_notification, close: close_day } = JSON.parse(
-    event.Records[0].Sns.Message,
-  );
+  const {
+    notify: trigger_notification,
+    close: close_day,
+    force,
+  } = JSON.parse(event.Records[0].Sns.Message);
   console.info(
     'Message received',
     JSON.stringify({
       trigger_notification,
       close_day,
+      force,
     }),
   );
   // at this point to avoid fetch delays
@@ -384,7 +387,7 @@ export const handler = Shared.wrapHandler(async (event) => {
   // leave new rates only (for realtime too)
   const new_rates = await getRates(rates);
   const is_opening = !has_rates_from_today && !_.isEmpty(new_rates);
-  if (is_opening || has_rates_from_today) {
+  if (is_opening || has_rates_from_today || force) {
     const realtime = is_opening || in_time;
     const new_business_day_rates = await getBusinessDayRates(rates, realtime);
     Object.assign(new_rates, new_business_day_rates);
