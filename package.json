@@ -14,14 +14,14 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
-    "aws-cdk-lib": "2.171.1",
+    "aws-cdk-lib": "2.179.0",
     "constructs": "10.3.0",
     "eslint": "^8.57.1",
     "eslint-config-universe": "^14.0.0",
     "husky": "^9.1.7",
     "lerna": "^8.2.1",
     "prettier": "^3.5.3",
-    "sst": "2.47.3"
+    "sst": "2.48.1"
   },
   "scripts": {
     "test": "lerna run test",

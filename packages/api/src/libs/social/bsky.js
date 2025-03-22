@@ -1,9 +1,9 @@
-import { BskyAgent, RichText } from '@atproto/api';
+import { AtpAgent, RichText } from '@atproto/api';
 
 export const publish = async (caption, file) => {
   try {
     // const start_time = Date.now();
-    const agent = new BskyAgent({ service: 'https://bsky.social' });
+    const agent = new AtpAgent({ service: 'https://bsky.social' });
     await agent.login({
       identifier: process.env.BSKY_USERNAME,
       password: process.env.BSKY_PASSWORD,
