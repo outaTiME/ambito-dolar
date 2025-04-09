@@ -17,11 +17,11 @@
     "aws-cdk-lib": "2.179.0",
     "constructs": "10.3.0",
     "eslint": "^8.57.1",
-    "eslint-config-universe": "^14.0.0",
+    "eslint-config-universe": "^14.2.0",
     "husky": "^9.1.7",
     "lerna": "^8.2.1",
     "prettier": "^3.5.3",
-    "sst": "2.48.1"
+    "sst": "2.48.4"
   },
   "scripts": {
     "test": "lerna run test",
