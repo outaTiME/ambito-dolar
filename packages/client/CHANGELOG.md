@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.2.1...@ambito-dolar/client@8.2.2) (2025-04-09)
+
+### Bug Fixes
+
+- improve gesture interaction on installation identifier ([672b002](https://github.com/outaTiME/ambito-dolar/commit/672b002b8ac75efd9f7f35acab09aa1bf95387a5))
+
 ## [8.2.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.2.0...@ambito-dolar/client@8.2.1) (2025-03-07)
 
 ### Bug Fixes
