@@ -73,3 +73,6 @@ packages/client/ios/.xcode.env.local
 /sst.config.js
 README.md
 CHANGELOG.md
+
+# https://github.com/expo/eas-cli/issues/2875
+.git
