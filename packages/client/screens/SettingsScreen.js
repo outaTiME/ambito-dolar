@@ -152,7 +152,7 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
       });
   }, [purchaseProduct]);
   const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
-  const onDoubleTapIdentifier = React.useCallback(
+  const handleIdentifierInteraction = React.useCallback(
     () =>
       Clipboard.setStringAsync(
         [installationId].concat(pushToken ?? []).join(),
@@ -279,7 +279,7 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
       {installationId && (
         <TextCardView
           text={`${I18n.t('installation_id')}: ${installationId}`}
-          onDoubleTap={onDoubleTapIdentifier}
+          onLongPress={handleIdentifierInteraction}
         />
       )}
     </FixedScrollView>
