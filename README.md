@@ -29,11 +29,31 @@
 
 ## Development
 
-This project is built with [Expo](https://expo.io/) under the **Managed Workflow**, you can run it locally (with limitations) as follows:
+To run the project locally (with limitations), follow these steps:
 
-```sh
+1. Set up your [Expo development environment](https://docs.expo.dev/guides/local-app-development/).
+
+2. Clone the repository:
+
+```shell
+git clone https://github.com/outaTiME/ambito-dolar.git
+cd ambito-dolar
+```
+
+3. Install project dependencies:
+
+```shell
 yarn install
-yarn run client:start
+```
+
+4. Build and launch the app:
+
+```shell
+# Run for iOS
+yarn run client:run:ios
+
+# Run for Android
+yarn run client:run:android
 ```
 
 ## Contributing
