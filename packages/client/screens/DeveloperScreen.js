@@ -13,7 +13,7 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
+const DeveloperScreen = ({ headerHeight, tabBarHeight, navigation }) => {
   const dispatch = useDispatch();
   const [, setAppDonationModal] = Helper.useSharedState('appDonationModal');
   const showActivityToast = Helper.useActivityToast();
@@ -21,7 +21,7 @@ const DeveloperScreen = ({ headerHeight, tabBarheight, navigation }) => {
     <FixedScrollView
       {...{
         headerHeight,
-        tabBarheight,
+        tabBarHeight,
       }}
     >
       <CardView title="Acciones" plain>

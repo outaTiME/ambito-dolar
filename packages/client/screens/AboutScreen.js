@@ -43,7 +43,7 @@ const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
 const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
 const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
 
-const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
+const AboutScreen = ({ headerHeight, tabBarHeight, navigation }) => {
   const { theme, fonts } = Helper.useTheme();
   const onPressAppIcon = React.useCallback(() => {
     Haptics.notificationAsync();
@@ -147,7 +147,7 @@ const AboutScreen = ({ headerHeight, tabBarheight, navigation }) => {
       <FixedScrollView
         {...{
           headerHeight,
-          tabBarheight,
+          tabBarHeight,
         }}
       >
         <View

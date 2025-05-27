@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
-import { Dimensions, Platform } from 'react-native';
+import { Platform, Dimensions } from 'react-native';
 import { human, iOSColors } from 'react-native-typography';
 
 const PADDING = 16;
@@ -12,18 +12,9 @@ const IS_HANDSET = DEVICE_TYPE === Device.DeviceType.PHONE;
 const IS_IPAD = Platform.OS === 'ios' && IS_TABLET;
 const HAPTICS_ENABLED = Platform.OS === 'ios';
 
-// const HEADER_HEIGHT = 54 + Constants.statusBarHeight;
-const windowDimensions = Dimensions.get('window');
-const { height: DEVICE_HEIGHT, width: DEVICE_WIDTH } = windowDimensions;
 // FIXME: check use width on tablets ?
 // const SMALL_DISPLAY_HEIGHT = Math.round(IS_HANDSET ? DEVICE_HEIGHT : DEVICE_WIDTH) <= 731; // 5.0"
-const SMALL_DISPLAY_HEIGHT = Math.round(DEVICE_HEIGHT) <= 731; // 5.0"
 const EXTRA_MARGIN_ON_LARGE_DISPLAY = true;
-const CARD_PADDING =
-  Platform.OS === 'web' ||
-  (!SMALL_DISPLAY_HEIGHT && EXTRA_MARGIN_ON_LARGE_DISPLAY)
-    ? 10
-    : PADDING / 2;
 const BORDER_RADIUS = PADDING / 2;
 // const BORDER_RADIUS = 12;
 const BORDER_WIDTH = 1;
@@ -91,24 +82,9 @@ const HIT_SLOP = {
 const CHART_STROKE_WIDTH = 3 - 0.5;
 const MAIN_ROUTE_NAME = 'Main';
 
-// use 50% of landscape viewing area on tablets
-const MAX_CONTENT_WIDTH = IS_HANDSET ? DEVICE_WIDTH : DEVICE_WIDTH * 0.5;
-const CONTENT_WIDTH = Math.min(DEVICE_WIDTH, MAX_CONTENT_WIDTH);
-
-// https://github.com/nirsky/react-native-size-matters/blob/master/lib/scaling-utils.js#L7
-const guidelineBaseWidth = 350;
-const scale = (size) => (CONTENT_WIDTH / guidelineBaseWidth) * size;
-const moderateScale = (size, factor = 0.5) =>
-  size + (scale(size) - size) * factor;
-
-export default {
+const Settings = {
   PADDING,
   SMALL_PADDING,
-  // HEADER_HEIGHT,
-  DEVICE_HEIGHT,
-  DEVICE_WIDTH,
-  SMALL_DISPLAY_HEIGHT,
-  CARD_PADDING,
   BORDER_RADIUS,
   BORDER_WIDTH,
   MAX_FONT_SIZE_MULTIPLIER,
@@ -147,7 +123,6 @@ export default {
   CAFECITO_URL,
   HIT_SLOP,
   CHART_STROKE_WIDTH,
-  CONTENT_WIDTH,
   INITIAL_ROUTE_NAME: MAIN_ROUTE_NAME,
   IS_TABLET,
   IS_HANDSET,
@@ -264,6 +239,33 @@ export default {
       letterSpacing: undefined,
     };
   },
-  moderateScale,
-  windowDimensions,
 };
+
+export function updateSettings({ width, height } = Dimensions.get('window')) {
+  const SMALL_DISPLAY_HEIGHT = Math.round(height) <= 731; // ej: menos de 5.0"
+  // use 50% of landscape viewing area on tablets
+  const MAX_CONTENT_WIDTH = IS_HANDSET ? width : width * 0.5;
+  const CONTENT_WIDTH = Math.min(width, MAX_CONTENT_WIDTH);
+  const CARD_PADDING =
+    Platform.OS === 'web' ||
+    (!SMALL_DISPLAY_HEIGHT && EXTRA_MARGIN_ON_LARGE_DISPLAY)
+      ? 10
+      : PADDING / 2;
+  // https://github.com/nirsky/react-native-size-matters/blob/master/lib/scaling-utils.js#L7
+  const guidelineBaseWidth = 350;
+  const scale = (size) => (CONTENT_WIDTH / guidelineBaseWidth) * size;
+  const moderateScale = (size, factor = 0.5) =>
+    size + (scale(size) - size) * factor;
+  // set global layout values before UI mounts
+  Object.assign(Settings, {
+    DEVICE_WIDTH: width,
+    CONTENT_WIDTH,
+    CARD_PADDING,
+    moderateScale,
+  });
+}
+
+// update layout defaults at module load time
+updateSettings();
+
+export default Settings;

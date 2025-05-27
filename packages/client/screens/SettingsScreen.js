@@ -20,7 +20,7 @@ import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 import Sentry from '../utilities/Sentry';
 
-const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
+const SettingsScreen = ({ headerHeight, tabBarHeight, navigation }) => {
   const { updatedAt, pushToken, appearance, showUpdateToast, installationId } =
     useSelector(
       ({
@@ -167,7 +167,7 @@ const SettingsScreen = ({ headerHeight, tabBarheight, navigation }) => {
     <FixedScrollView
       {...{
         headerHeight,
-        tabBarheight,
+        tabBarHeight,
       }}
     >
       <CardView

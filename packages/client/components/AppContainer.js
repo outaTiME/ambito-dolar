@@ -1,15 +1,20 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import MaterialCommunityIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialCommunityIcons';
-import BottomSheet, {
+import {
   BottomSheetBackdrop,
   BottomSheetView,
+  BottomSheetModal,
 } from '@gorhom/bottom-sheet';
 import {
   createBottomTabNavigator,
   BottomTabBar,
 } from '@react-navigation/bottom-tabs';
-import { HeaderShownContext } from '@react-navigation/elements';
-import { NavigationContainer, useTheme } from '@react-navigation/native';
+import { Header } from '@react-navigation/elements';
+import {
+  DefaultTheme,
+  NavigationContainer,
+  useTheme,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { compose } from '@reduxjs/toolkit';
 import { BlurView } from 'expo-blur';
@@ -20,21 +25,19 @@ import * as Localization from 'expo-localization';
 import * as Notifications from 'expo-notifications';
 import { useQuickAction } from 'expo-quick-actions/hooks';
 import * as StoreReview from 'expo-store-review';
-// import { initializeApp } from 'firebase/app';
-// import { getDatabase, ref, onValue } from 'firebase/database';
 import * as _ from 'lodash';
 import React from 'react';
 import { StyleSheet, Platform, View, Text, Alert } from 'react-native';
+import { Pressable } from 'react-native-gesture-handler';
 import Purchases from 'react-native-purchases';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 
 import ActionButton from './ActionButton';
-import { MaterialHeaderButtons, Item } from './HeaderButtons';
+import HeaderButton from './HeaderButton';
 import Toast from './Toast';
 import ToastPositionContainer from './ToastPositionContainer';
-import withContainer from './withContainer';
 import withRates from './withRates';
 import * as actions from '../actions';
 import I18n from '../config/I18n';
@@ -64,61 +67,26 @@ import Sentry from '../utilities/Sentry';
 import { reloadWidgets } from '../widgets';
 
 const BackButton = ({ navigation, popToTop = false }) => (
-  <MaterialHeaderButtons>
-    <Item
-      title="Atras"
-      iconName="arrow-back"
-      onPress={popToTop === true ? navigation.popToTop : navigation.goBack}
-    />
-  </MaterialHeaderButtons>
+  <HeaderButton.Icon
+    iconName="arrow-back"
+    onPress={popToTop === true ? navigation.popToTop : navigation.goBack}
+  />
 );
 
-const DoneButton = ({ navigation, popToTop = false }) => {
-  const { fonts } = Helper.useTheme();
-  return (
-    <MaterialHeaderButtons>
-      <Item
-        title="Listo"
-        onPress={popToTop === true ? navigation.popToTop : navigation.goBack}
-        buttonStyle={{
-          ...fonts.body,
-        }}
-      />
-    </MaterialHeaderButtons>
-  );
-};
+const DoneButton = ({ navigation, popToTop = false }) => (
+  <HeaderButton.Text
+    title="Listo"
+    onPress={popToTop === true ? navigation.popToTop : navigation.goBack}
+  />
+);
 
 // for android market capture purposes
 const BLUR_EFFECT_ON_NAVIGATION_BARS = true;
 
-const NavigatorBackgroundView = ({ style }) => {
-  const { theme } = Helper.useTheme();
-  const { colors } = useTheme();
-  if (!BLUR_EFFECT_ON_NAVIGATION_BARS || Platform.OS === 'android') {
-    return (
-      <View
-        style={[
-          StyleSheet.absoluteFill,
-          {
-            backgroundColor: colors.card,
-          },
-          style,
-        ]}
-      />
-    );
-  }
-  return (
-    <BlurView
-      tint={theme}
-      intensity={100}
-      style={[StyleSheet.absoluteFill, style]}
-    />
-  );
-};
-
 const useNavigatorScreenOptions = (modal = false) => {
   const { theme, fonts } = Helper.useTheme();
   const { colors } = useTheme();
+  const headerHeight = Helper.usePreciseHeaderHeight(modal);
   return {
     headerBackVisible: false,
     headerShadowVisible: false,
@@ -138,7 +106,22 @@ const useNavigatorScreenOptions = (modal = false) => {
         headerTransparent: true,
       },
       android: {
-        // pass
+        // https://reactnavigation.org/docs/elements#header
+        header: ({ navigation, route, options, back }) => (
+          <Header
+            {...options}
+            // avoids jumps and keeps header consistent across devices
+            headerStyle={{
+              height: headerHeight,
+            }}
+            headerLeftContainerStyle={{
+              paddingHorizontal: Settings.PADDING,
+            }}
+            headerRightContainerStyle={{
+              paddingHorizontal: Settings.PADDING,
+            }}
+          />
+        ),
       },
     }),
   };
@@ -332,10 +315,6 @@ const ToastBottomTabBar = (props) => {
 const Tab = createBottomTabNavigator();
 const MainStackScreen = () => {
   const { theme } = Helper.useTheme();
-  const tabBarBackground = React.useCallback(
-    () => <NavigatorBackgroundView />,
-    [],
-  );
   return (
     <Tab.Navigator
       screenOptions={{
@@ -347,18 +326,39 @@ const MainStackScreen = () => {
           ...(Platform.OS === 'ios' && {
             position: 'absolute',
           }),
-          // https://github.com/react-navigation/react-navigation/blob/6.x/packages/bottom-tabs/src/views/BottomTabBar.tsx#L385
+          // https://github.com/react-navigation/react-navigation/blob/main/packages/bottom-tabs/src/views/BottomTabBar.tsx#L331
           borderTopWidth: 0,
+          // https://github.com/react-navigation/react-navigation/blob/main/packages/bottom-tabs/src/views/BottomTabBar.tsx#L504
           elevation: 0,
         },
         ...Platform.select({
           ios: {
-            tabBarBackground,
+            tabBarBackground: () => (
+              <BlurView
+                tint={theme}
+                intensity={100}
+                style={StyleSheet.absoluteFill}
+              />
+            ),
           },
           android: {
             // pass
           },
         }),
+        tabBarButton: (props) => (
+          <Pressable
+            {...props}
+            // disable ripple effect on Android
+            android_ripple={false}
+            style={[
+              props.style,
+              {
+                // https://github.com/react-navigation/react-navigation/blob/main/packages/bottom-tabs/src/views/BottomTabItem.tsx#L386
+                justifyContent: 'center',
+              },
+            ]}
+          />
+        ),
       }}
       tabBar={(props) => <ToastBottomTabBar {...props} />}
     >
@@ -459,7 +459,52 @@ const ModalsStackScreen = () => {
 };
 
 const RootStack = createNativeStackNavigator();
-const AppContainer = ({ rates, rateTypes, stillLoading }) => {
+const AppNavigator = ({ rates, stillLoading, hasRates }) => {
+  const { colors } = useTheme();
+  const navigationBarColor = colors.card;
+  const { theme } = Helper.useTheme();
+  const statusBarStyle = Helper.getInvertedTheme(theme);
+  return (
+    <RootStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        navigationBarColor,
+        statusBarStyle,
+      }}
+    >
+      {!hasRates ? (
+        <RootStack.Screen name={Settings.INITIAL_ROUTE_NAME}>
+          {(props) => (
+            <InitialScreen
+              {...{
+                ...props,
+                rates,
+                stillLoading,
+              }}
+            />
+          )}
+        </RootStack.Screen>
+      ) : (
+        <>
+          <RootStack.Screen
+            name={Settings.INITIAL_ROUTE_NAME}
+            component={MainStackScreen}
+          />
+          <RootStack.Screen
+            name="Modals"
+            component={ModalsStackScreen}
+            options={{
+              // works only on iOS
+              gestureEnabled: false,
+              presentation: 'modal',
+            }}
+          />
+        </>
+      )}
+    </RootStack.Navigator>
+  );
+};
+const AppContainer = ({ rates, rateTypes, stillLoading, ...props }) => {
   const { theme } = Helper.useTheme();
   // https://reactnavigation.org/docs/navigating-without-navigation-prop/#handling-initialization
   const navigationRef = Helper.getNavigationContainerRef();
@@ -544,13 +589,11 @@ const AppContainer = ({ rates, rateTypes, stillLoading }) => {
           : Settings.getContentColor(theme),
         border: Settings.getSeparatorColor(theme),
       },
+      fonts: DefaultTheme.fonts,
     }),
     [theme, hasRates],
   );
-  const navigatorScreenOptions = useNavigatorScreenOptions();
-  const navigationBarColor = navigationTheme.colors.card;
-  const statusBarStyle = Helper.getInvertedTheme(theme);
-  let content = (
+  return (
     <NavigationContainer
       {...{
         ref: navigationRef,
@@ -560,65 +603,9 @@ const AppContainer = ({ rates, rateTypes, stillLoading }) => {
         theme: navigationTheme,
       }}
     >
-      <RootStack.Navigator
-        screenOptions={{
-          ...navigatorScreenOptions,
-          headerShown: false,
-          navigationBarColor,
-          statusBarStyle,
-          statusBarTranslucent: true,
-        }}
-      >
-        {!hasRates ? (
-          <RootStack.Screen name={Settings.INITIAL_ROUTE_NAME}>
-            {(props) => (
-              <InitialScreen
-                {...{
-                  ...props,
-                  rates,
-                  stillLoading,
-                }}
-              />
-            )}
-          </RootStack.Screen>
-        ) : (
-          <>
-            <RootStack.Screen
-              name={Settings.INITIAL_ROUTE_NAME}
-              component={MainStackScreen}
-            />
-            <RootStack.Screen
-              name="Modals"
-              component={ModalsStackScreen}
-              options={{
-                // works only on iOS
-                gestureEnabled: false,
-                presentation: 'modal',
-              }}
-            />
-          </>
-        )}
-      </RootStack.Navigator>
+      <AppNavigator {...{ rates, stillLoading, hasRates }} />
     </NavigationContainer>
   );
-  // https://github.com/react-navigation/react-navigation/issues/11353#issuecomment-1588570491
-  const insets = useSafeAreaInsets();
-  if (Platform.OS === 'android') {
-    content = (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: navigationBarColor,
-          paddingTop: insets.top,
-        }}
-      >
-        <HeaderShownContext.Provider value>
-          {content}
-        </HeaderShownContext.Provider>
-      </View>
-    );
-  }
-  return content;
 };
 
 const withAppIdentifier = (Component) => (props) => {
@@ -921,10 +908,7 @@ const withUserActivity = (Component) => (props) => {
         }
       }
     }
-  }, [
-    dispatch,
-    isActiveAppState /* , appUpdated, lastVersionReviewed, version */,
-  ]);
+  }, [dispatch, isActiveAppState]);
   // HANDLE ERRORS AND SUPPORT
   const installationId = props.installationId;
   React.useEffect(() => {
@@ -993,14 +977,7 @@ const withLocalization = (Component) => (props) => {
     }
   }, [isActiveAppState]);
   if (reloadKey) {
-    return (
-      <Component
-        {...{
-          ...props,
-          key: reloadKey,
-        }}
-      />
-    );
+    return <Component {...props} key={reloadKey} />;
   }
 };
 
@@ -1094,7 +1071,7 @@ const withAppDonation = (Component) => (props) => {
             setPurchaseProduct(product, (product) => {
               // run after modal re-rendering
               if (product) {
-                bottomSheetRef.current?.expand();
+                bottomSheetRef.current?.present();
               }
             });
           });
@@ -1139,19 +1116,19 @@ const withAppDonation = (Component) => (props) => {
   return (
     <>
       <Component {...props} />
-      <BottomSheet
+      <BottomSheetModal
         ref={bottomSheetRef}
-        index={-1}
         detached
-        animateOnMount={false}
+        enablePanDownToClose={false}
         style={{
           marginLeft: (Settings.DEVICE_WIDTH - Settings.CONTENT_WIDTH) / 2,
           width: Settings.CONTENT_WIDTH,
         }}
         backgroundStyle={{
           marginHorizontal: Settings.CARD_PADDING * 2,
+          // borderRadius: Settings.BORDER_RADIUS,
         }}
-        bottomInset={safeAreaInsets.bottom || Settings.CARD_PADDING * 2}
+        bottomInset={safeAreaInsets.bottom + Settings.CARD_PADDING * 2}
         onChange={handleSheetChanges}
         handleComponent={null}
         backdropComponent={renderBackdrop}
@@ -1185,7 +1162,7 @@ const withAppDonation = (Component) => (props) => {
                 setDonateLoading(true);
                 try {
                   await Purchases.purchaseStoreProduct(purchaseProduct);
-                  bottomSheetRef.current?.close();
+                  bottomSheetRef.current?.dismiss();
                 } catch (e) {
                   if (!e.userCancelled) {
                     Sentry.captureException(
@@ -1222,19 +1199,18 @@ const withAppDonation = (Component) => (props) => {
               borderless
               title="Ahora no"
               handleOnPress={() => {
-                bottomSheetRef.current?.close();
+                bottomSheetRef.current?.dismiss();
               }}
               colorScheme
             />
           </View>
         </BottomSheetView>
-      </BottomSheet>
+      </BottomSheetModal>
     </>
   );
 };
 
 export default compose(
-  withContainer,
   withRates(),
   withAppIdentifier,
   withRealtime,

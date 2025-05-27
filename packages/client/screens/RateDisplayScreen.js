@@ -9,7 +9,7 @@ import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import Helper from '../utilities/Helper';
 
-const RateDisplayScreen = ({ isModal, headerHeight, tabBarheight }) => {
+const RateDisplayScreen = ({ isModal, headerHeight, tabBarHeight }) => {
   const { rate_display: selectedDisplay } = useSelector(
     ({ application: { rate_display } }) => ({
       rate_display,
@@ -21,7 +21,7 @@ const RateDisplayScreen = ({ isModal, headerHeight, tabBarheight }) => {
     <FixedScrollView
       {...{
         headerHeight,
-        tabBarheight,
+        tabBarHeight,
       }}
     >
       <CardView {...{ plain: true, isModal }}>

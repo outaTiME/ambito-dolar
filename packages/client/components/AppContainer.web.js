@@ -340,13 +340,13 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
     (type) => (
       <RateView
         {...{
-          key: type,
           type,
           stats: rates[type].stats,
           large: true,
           condensed,
           smallPadding,
         }}
+        key={type}
       />
     ),
     [rates, condensed, smallPadding],

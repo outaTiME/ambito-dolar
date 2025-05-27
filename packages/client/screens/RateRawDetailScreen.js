@@ -46,7 +46,7 @@ const RateRawDetailItem = ({ timestamp, value, change }) => {
 
 const RateRawDetailScreen = ({
   headerHeight,
-  tabBarheight,
+  tabBarHeight,
   rates,
   route: { params },
 }) => {
@@ -121,7 +121,7 @@ const RateRawDetailScreen = ({
         data,
         itemHeight: ITEM_HEIGHT,
         headerHeight,
-        tabBarheight,
+        tabBarHeight,
       }}
     />
   );

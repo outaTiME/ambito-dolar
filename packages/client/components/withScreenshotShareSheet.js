@@ -14,13 +14,14 @@ import {
   // ActionSheetIOS,
   // Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import { useSelector, useDispatch } from 'react-redux';
 
 import AppIconView from './AppIconView';
 import DividerView from './DividerView';
 import FixedScrollView from './FixedScrollView';
-import { MaterialHeaderButtons, Item } from './HeaderButtons';
+import HeaderButton from './HeaderButton';
 import SocialView from './SocialView';
 import WatermarkOverlayView from './WatermarkOverlayView';
 import * as actions from '../actions';
@@ -39,7 +40,7 @@ const withScreenshotShareSheet =
       showActionSheetWithOptions,
       backgroundColor,
       headerHeight,
-      tabBarheight,
+      tabBarHeight,
       rateTypes,
     } = props;
     const { theme, fonts } = Helper.useTheme();
@@ -49,115 +50,96 @@ const withScreenshotShareSheet =
     const shareViewGeneratedContainerRef = React.useRef();
     const [sharingAvailable] = Helper.useSharedState('sharingAvailable');
     const anchorRef = React.useRef();
+    const safeAreaInsets = useSafeAreaInsets();
     React.useLayoutEffect(() => {
       navigation.setOptions({
         headerRight:
           rateTypes.length > 0 &&
           ((sharingAvailable && Settings.IS_HANDSET) || action_opts?.length > 0)
             ? () => (
-                <MaterialHeaderButtons>
-                  <View ref={anchorRef}>
-                    <Item
-                      title="more"
-                      iconName="more-horiz"
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        // required by ConvertionScreen when the TextInput has focus
-                        setTimeout(() => {
-                          const share_opt = I18n.t('share');
-                          const crash_opt = 'Forzar crash';
-                          const action_sheet_opts = [].concat(
-                            action_opts ?? [],
-                          );
-                          if (sharingAvailable && Settings.IS_HANDSET) {
-                            action_sheet_opts.push(share_opt);
-                          }
-                          const options = [
-                            ...action_sheet_opts,
-                            I18n.t('cancel'),
-                          ];
-                          const cancelButtonIndex = options.length - 1;
-                          showActionSheetWithOptions(
-                            {
-                              options,
-                              cancelButtonIndex,
-                              // ios
-                              anchor: findNodeHandle(anchorRef.current),
-                              userInterfaceStyle: theme,
-                              // android / web
-                              textStyle: {
-                                color: Settings.getForegroundColor(theme),
-                              },
-                              containerStyle: {
-                                backgroundColor:
-                                  Settings.getContentColor(theme),
-                              },
-                              separatorStyle: {
-                                height: StyleSheet.hairlineWidth,
-                                backgroundColor: Settings.getStrokeColor(theme),
-                              },
+                <View ref={anchorRef}>
+                  <HeaderButton.Icon
+                    iconName="more-horiz"
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      // required by ConvertionScreen when the TextInput has focus
+                      setTimeout(() => {
+                        const share_opt = I18n.t('share');
+                        const crash_opt = 'Forzar crash';
+                        const action_sheet_opts = [].concat(action_opts ?? []);
+                        if (sharingAvailable && Settings.IS_HANDSET) {
+                          action_sheet_opts.push(share_opt);
+                        }
+                        const options = [
+                          ...action_sheet_opts,
+                          I18n.t('cancel'),
+                        ];
+                        const cancelButtonIndex = options.length - 1;
+                        showActionSheetWithOptions(
+                          {
+                            options,
+                            cancelButtonIndex,
+                            // ios
+                            anchor: findNodeHandle(anchorRef.current),
+                            userInterfaceStyle: theme,
+                            // android / web
+                            textStyle: {
+                              color: Settings.getForegroundColor(theme),
                             },
-                            (button_index) => {
-                              const button_name =
-                                action_sheet_opts[button_index];
-                              if (button_name === I18n.t('edit')) {
-                                navigation.navigate('Modals', {
-                                  screen: 'CustomizeRates',
-                                  params: {
-                                    modal: true,
-                                  },
-                                  // https://reactnavigation.org/docs/nesting-navigators/#rendering-initial-route-defined-in-the-navigator
-                                  // initial: false,
-                                });
-                                /*
-                            navigation.navigate('CustomizeRates', {
-                              modal: true,
-                            }); */
-                                /* navigation.navigate('SettingsTab', {
-                              screen: 'CustomizeRates',
-                              // https://reactnavigation.org/docs/nesting-navigators/#rendering-initial-route-defined-in-the-navigator
-                              initial: false,
-                            }); */
-                              } else if (button_name === share_opt) {
-                                Amplitude.track('Share rates');
-                                captureRef(shareViewContainerRef.current, {
-                                  result: 'data-uri',
-                                }).then(
-                                  (uri) => {
-                                    // Remove line breaks to prevent image component fails on Expo48
-                                    // https://github.com/facebook/react-native/issues/36512
-                                    uri = uri.replace(/[\r\n]+/gm, '');
-                                    Image.getSize(uri, (width, height) => {
-                                      setCapturedImage({
-                                        uri,
-                                        width: Settings.DEVICE_WIDTH,
-                                        // resize according to device width
-                                        height:
-                                          (Settings.DEVICE_WIDTH * height) /
-                                          width,
-                                      });
+                            containerStyle: {
+                              backgroundColor: Settings.getContentColor(theme),
+                              paddingBottom: safeAreaInsets.bottom,
+                            },
+                            separatorStyle: {
+                              height: StyleSheet.hairlineWidth,
+                              backgroundColor: Settings.getStrokeColor(theme),
+                            },
+                          },
+                          (button_index) => {
+                            const button_name = action_sheet_opts[button_index];
+                            if (button_name === I18n.t('edit')) {
+                              navigation.navigate('Modals', {
+                                screen: 'CustomizeRates',
+                                params: {
+                                  modal: true,
+                                },
+                              });
+                            } else if (button_name === share_opt) {
+                              Amplitude.track('Share rates');
+                              captureRef(shareViewContainerRef.current, {
+                                result: 'data-uri',
+                              }).then(
+                                (uri) => {
+                                  Image.getSize(uri, (width, height) => {
+                                    setCapturedImage({
+                                      uri,
+                                      width: Settings.DEVICE_WIDTH,
+                                      // resize according to device width
+                                      height:
+                                        (Settings.DEVICE_WIDTH * height) /
+                                        width,
                                     });
-                                  },
-                                  (error) =>
-                                    console.error(
-                                      'Unable to generate view snapshot',
-                                      error,
-                                    ),
-                                );
-                              } else if (button_name === crash_opt) {
-                                throw new Error('Force application crash');
-                              }
-                            },
-                          );
-                        });
-                      }}
-                    />
-                  </View>
-                </MaterialHeaderButtons>
+                                  });
+                                },
+                                (error) =>
+                                  console.error(
+                                    'Unable to generate view snapshot',
+                                    error,
+                                  ),
+                              );
+                            } else if (button_name === crash_opt) {
+                              throw new Error('Force application crash');
+                            }
+                          },
+                        );
+                      });
+                    }}
+                  />
+                </View>
               )
             : undefined,
       });
-    }, [navigation, rateTypes, sharingAvailable, theme]);
+    }, [navigation, rateTypes, sharingAvailable, theme, safeAreaInsets]);
     const dispatch = useDispatch();
     // screen capture customization
     const [appIconLoaded, setAppIconLoaded] = React.useState(false);
@@ -179,22 +161,6 @@ const withScreenshotShareSheet =
                 { compress: 1, format: ImageManipulator.SaveFormat.PNG },
               );
               Helper.debug('Snapshot for sharing', new_uri);
-              /* if (Settings.IS_IPAD) {
-              ActionSheetIOS.showShareActionSheetWithOptions(
-                {
-                  url: new_uri,
-                  anchor: findNodeHandle(anchorRef.current),
-                },
-                () => {
-                  // failure
-                },
-                (success, shareMethod) => {
-                  if (success) {
-                    dispatch(actions.registerApplicationShareRates());
-                  }
-                }
-              );
-            } */
               // https://github.com/expo/expo/issues/6920#issuecomment-580966657
               Sharing.shareAsync(new_uri, {
                 // pass
@@ -355,7 +321,7 @@ const withScreenshotShareSheet =
             backgroundColor,
             contentContainerRef: shareViewContainerRef,
             headerHeight,
-            tabBarheight,
+            tabBarHeight,
             // containerRef: scrollViewRef,
             handleContentChangeSize,
           }}

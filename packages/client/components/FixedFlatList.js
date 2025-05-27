@@ -79,7 +79,7 @@ const FixedFlatList = ({
   data,
   itemHeight,
   headerHeight,
-  tabBarheight,
+  tabBarHeight,
   note,
   ListHeaderComponent,
   ListFooterComponent,
@@ -160,14 +160,14 @@ const FixedFlatList = ({
       // automaticallyAdjustContentInsets={false}
       scrollIndicatorInsets={{
         top: headerHeight,
-        bottom: tabBarheight,
+        bottom: tabBarHeight,
       }}
       automaticallyAdjustsScrollIndicatorInsets={false}
       contentContainerStyle={{
         // required when translucent bars
         ...(Platform.OS === 'ios' && {
           paddingTop: headerHeight,
-          paddingBottom: tabBarheight,
+          paddingBottom: tabBarHeight,
         }),
       }}
       // contentInsetAdjustmentBehavior="automatic"

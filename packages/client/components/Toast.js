@@ -19,11 +19,11 @@ const springConfig = {
   restDisplacementThreshold: 0.001,
   restSpeedThreshold: 0.001,
 };
-const targetTranslate = -Settings.CARD_PADDING * 2;
-// subhead lineHeight
-const distance = 20 / 2 + Settings.PADDING / 2;
 
 export default ({ isVisible, text, onCompleted }) => {
+  const targetTranslate = -Settings.CARD_PADDING * 2;
+  // subhead lineHeight
+  const distance = 20 / 2 + Settings.PADDING / 2;
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: withTiming(

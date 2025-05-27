@@ -9,7 +9,7 @@ import FixedScrollView from '../components/FixedScrollView';
 import withContainer from '../components/withContainer';
 import Helper from '../utilities/Helper';
 
-const RateOrderScreen = ({ isModal, headerHeight, tabBarheight }) => {
+const RateOrderScreen = ({ isModal, headerHeight, tabBarHeight }) => {
   const {
     rate_order: selectedOrder,
     rate_order_direction: selectedOrderDirection,
@@ -25,7 +25,7 @@ const RateOrderScreen = ({ isModal, headerHeight, tabBarheight }) => {
     <FixedScrollView
       {...{
         headerHeight,
-        tabBarheight,
+        tabBarHeight,
       }}
     >
       <CardView {...{ plain: true, isModal }}>

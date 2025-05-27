@@ -34,7 +34,7 @@ const DEFAULT_NUMBER = 1;
 const ConversionScreen = ({
   navigation,
   headerHeight,
-  tabBarheight,
+  tabBarHeight,
   rates,
   rateTypes,
   shoudStretch,
@@ -208,7 +208,7 @@ const ConversionScreen = ({
       <ScrollView
         // automaticallyAdjustContentInsets={false}
         scrollIndicatorInsets={{
-          bottom: tabBarheight,
+          bottom: tabBarHeight,
         }}
         automaticallyAdjustsScrollIndicatorInsets={false}
         contentContainerStyle={[
@@ -216,7 +216,7 @@ const ConversionScreen = ({
             flexGrow: 1,
             // required when translucent bars
             ...(Platform.OS === 'ios' && {
-              paddingBottom: tabBarheight,
+              paddingBottom: tabBarHeight,
             }),
           },
         ]}

@@ -18,7 +18,7 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
+const NotificationsScreen = ({ headerHeight, tabBarHeight, navigation }) => {
   const dispatch = useDispatch();
   const notification_settings = useSelector(
     Helper.getNotificationSettingsSelector,
@@ -76,7 +76,7 @@ const NotificationsScreen = ({ headerHeight, tabBarheight, navigation }) => {
         <FixedScrollView
           {...{
             headerHeight,
-            tabBarheight,
+            tabBarHeight,
           }}
         >
           <CardView plain>

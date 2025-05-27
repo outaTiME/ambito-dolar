@@ -9,14 +9,14 @@ const FixedScrollView = ({
   backgroundColor,
   contentContainerRef,
   headerHeight,
-  tabBarheight,
+  tabBarHeight,
   ...extra
 }) => (
   <ScrollView
     // automaticallyAdjustContentInsets={false}
     scrollIndicatorInsets={{
       top: headerHeight,
-      bottom: tabBarheight,
+      bottom: tabBarHeight,
     }}
     automaticallyAdjustsScrollIndicatorInsets={false}
     contentContainerStyle={[
@@ -25,7 +25,7 @@ const FixedScrollView = ({
         // required when translucent bars
         ...(Platform.OS === 'ios' && {
           paddingTop: headerHeight,
-          paddingBottom: tabBarheight,
+          paddingBottom: tabBarHeight,
         }),
       },
     ]}

@@ -102,11 +102,11 @@ const Spreads = withRates(true)(({ type, stat, rates, rateTypes }) => {
             return (
               <SpreadCardItemView
                 {...{
-                  key: itemType,
                   rateType: itemType,
                   nominalValue: rateChange,
                   percentageValue: rateChangePercent,
                 }}
+                key={itemType}
               />
             );
           }

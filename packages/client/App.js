@@ -1,11 +1,10 @@
 // https://docs.expo.dev/develop/development-builds/use-development-builds/#add-error-handling
 import 'expo-dev-client';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
-import { reloadAppAsync } from 'expo';
 // import * as BackgroundFetch from 'expo-background-fetch';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
-import * as _ from 'lodash';
 // import * as TaskManager from 'expo-task-manager';
 import React from 'react';
 import {
@@ -14,6 +13,7 @@ import {
   Platform,
   LogBox,
   useWindowDimensions,
+  View,
 } from 'react-native';
 // import { requestWidgetUpdate } from 'react-native-android-widget';
 import AnimateableText from 'react-native-animateable-text';
@@ -22,13 +22,12 @@ import {
   initialWindowMetrics,
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
-import { HeaderButtonsProvider } from 'react-navigation-header-buttons';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components';
 
 import AppContainer from './components/AppContainer';
-import Settings from './config/settings';
+import Settings, { updateSettings } from './config/settings';
 import useColorScheme from './hooks/useColorScheme';
 import { store, persistor } from './store';
 import Helper from './utilities/Helper';
@@ -39,6 +38,10 @@ import Sentry from './utilities/Sentry';
 
 const start_time = Date.now();
 SplashScreen.preventAutoHideAsync().catch(console.warn);
+SplashScreen.setOptions({
+  // duration: 1000,
+  fade: true,
+});
 
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.maxFontSizeMultiplier = Settings.MAX_FONT_SIZE_MULTIPLIER;
@@ -106,7 +109,9 @@ if (Platform.OS === 'android') {
 
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
-  const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+  const theme = { colorScheme };
+  const windowDimensions = useWindowDimensions();
+  const [layoutKey, setLayoutKey] = React.useState(null);
   React.useEffect(() => {
     // hide splash screen after storage restore
     Helper.debug(
@@ -115,23 +120,32 @@ const ThemedApp = () => {
     );
     SplashScreen.hideAsync().catch(console.warn);
   }, []);
-  const windowDimensions = useWindowDimensions();
   React.useEffect(() => {
-    if (!_.isEqual(windowDimensions, Settings.windowDimensions)) {
-      // handle screen size or font scale changes
-      Helper.debug('🌀 Screen size or scales were updated');
-      // FIXME: should stop using fixed sizes to avoid application reloading
-      reloadAppAsync();
-    }
+    // recalculate layout and update global settings when dimensions change
+    Helper.debug(
+      '🌀 Layout change detected, resetting app layout',
+      windowDimensions,
+    );
+    updateSettings(windowDimensions);
+    // trigger a full remount by updating layoutKey
+    requestAnimationFrame(() => {
+      setLayoutKey(Helper.getHashId(windowDimensions));
+    });
   }, [windowDimensions]);
+  // set background color early to avoid white flash on Android
+  const backgroundColor = Settings.getBackgroundColor(colorScheme, true);
   return (
-    <ThemeProvider theme={theme}>
-      <ActionSheetProvider>
-        <HeaderButtonsProvider stackType="native">
-          <AppContainer />
-        </HeaderButtonsProvider>
-      </ActionSheetProvider>
-    </ThemeProvider>
+    <View style={{ flex: 1, backgroundColor }}>
+      {layoutKey && (
+        <ThemeProvider theme={theme}>
+          <ActionSheetProvider>
+            <BottomSheetModalProvider>
+              <AppContainer key={layoutKey} />
+            </BottomSheetModalProvider>
+          </ActionSheetProvider>
+        </ThemeProvider>
+      )}
+    </View>
   );
 };
 
@@ -155,12 +169,7 @@ const App = () => {
     return null;
   }
   return (
-    <SafeAreaProvider
-      // https://github.com/software-mansion/react-native-screens/issues/1276#issuecomment-1156710669
-      {...(Platform.OS === 'ios' && {
-        initialMetrics: initialWindowMetrics,
-      })}
-    >
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <GestureHandlerRootView>

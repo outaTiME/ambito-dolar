@@ -1,6 +1,5 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { init } from '@instantdb/react-native';
-import { HeaderHeightContext } from '@react-navigation/elements';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import rgba from 'color-rgba';
 import * as d3Array from 'd3-array';
@@ -8,16 +7,22 @@ import * as Application from 'expo-application';
 import * as MailComposer from 'expo-mail-composer';
 import * as Sharing from 'expo-sharing';
 import * as _ from 'lodash';
+import hash from 'object-hash';
 import React from 'react';
-import { Platform, Linking, PixelRatio, StyleSheet } from 'react-native';
-import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
+import { Platform, Linking, StyleSheet, PixelRatio } from 'react-native';
+import {
+  SafeAreaInsetsContext,
+  SafeAreaFrameContext,
+  useSafeAreaInsets,
+  useSafeAreaFrame,
+} from 'react-native-safe-area-context';
 import { useSelector, shallowEqual } from 'react-redux';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
 import semverDiff from 'semver/functions/diff';
 import semverGt from 'semver/functions/gt';
 import semverValid from 'semver/functions/valid';
-import { ThemeContext } from 'styled-components';
+import { ThemeContext } from 'styled-components/native';
 import useSWR from 'swr';
 
 import rates from '../assets/rates.json';
@@ -63,10 +68,6 @@ const getJson = (url, opts = {}) => {
     },
     ...opts,
   }).then((response) => response.json());
-  /* .then((data) => {
-      console.log('>>> data', data);
-      return data;
-    }); */
 };
 
 const FRACTION_DIGITS = AmbitoDolar.FRACTION_DIGITS;
@@ -121,11 +122,11 @@ const navigationRef = createNavigationContainerRef();
 const instatDB =
   Settings.INSTANT_APP_ID && init({ appId: Settings.INSTANT_APP_ID });
 
-// https://github.com/react-navigation/react-navigation/blob/6.x/packages/bottom-tabs/src/views/BottomTabBar.tsx#L32
-const DEFAULT_TABBAR_HEIGHT = 49;
+// https://github.com/react-navigation/react-navigation/blob/main/packages/bottom-tabs/src/views/BottomTabBar.tsx#L40
+const TABBAR_HEIGHT_UIKIT = 49;
 
-const getPaddingBottom = (insets) =>
-  Math.max(insets.bottom - Platform.select({ ios: 4, default: 0 }), 0);
+// https://github.com/react-navigation/react-navigation/blob/main/packages/native-stack/src/views/NativeStackView.native.tsx#L50
+const ANDROID_DEFAULT_HEADER_HEIGHT = 56;
 
 export default {
   getCurrency(str, include_symbol = false, usd = false) {
@@ -215,21 +216,9 @@ export default {
       order ?? (order = 'default');
       orderDirection ?? (orderDirection = 'asc');
       rateTypes ?? (rateTypes = Object.keys(rates));
-      // Unexpected token: operator (?) on expo with hermes
-      // order ??= 'default';
-      // orderDirection ??= 'asc';
-      /* console.log(
-      '>>> getSortedRates',
-      order,
-      orderDirection,
-      excludedRates,
-      rateTypes
-    ); */
       let chain = _.chain(rates).omit(excludedRates).toPairs();
       if (order === 'default' && orderDirection === 'desc') {
-        chain = chain
-          // .orderBy(1, 'desc')
-          .reverse();
+        chain = chain.reverse();
       } else if (order === 'name') {
         chain = chain.orderBy(([type]) => {
           const title = AmbitoDolar.getRateTitle(type);
@@ -483,35 +472,6 @@ export default {
     const { theme } = this.useTheme();
     return theme === 'light' ? 'black' : 'white';
   },
-  useHeaderHeight: (modal = false) => {
-    const headerHeight = React.useContext(HeaderHeightContext);
-    return React.useMemo(() => {
-      if (headerHeight) {
-        if (Platform.OS === 'ios') {
-          if (modal === true) {
-            // https://github.com/react-navigation/react-navigation/blob/6.x/packages/elements/src/Header/getDefaultHeaderHeight.tsx#L26
-            return 56;
-          }
-          const offset = 1 / PixelRatio.get();
-          // https://github.com/react-navigation/react-navigation/issues/11655#issuecomment-1781782125
-          // https://github.com/react-navigation/react-navigation/commit/4c521b5c865f2c46d58abb2e9e7fd1b0d2074215
-          if (headerHeight === 98) {
-            // iPhone 15 / iPhone 15 Pro / iPhone 15 Pro Max / iPhone 16
-            return headerHeight - offset;
-          } else if (headerHeight === 100) {
-            // iPhone 16 Pro
-            return headerHeight - (1 + offset);
-          } else if (headerHeight === 101) {
-            // iPhone 16 Pro Max
-            return headerHeight - (1 / 2 + offset);
-          }
-        }
-        return headerHeight;
-      } else {
-        // header height unavailable outside navigator
-      }
-    }, [headerHeight, modal]);
-  },
   useActivityToast() {
     const [, setActivityToast] = this.useSharedState('activityToast');
     const showToast = React.useCallback((message, feedback = false) => {
@@ -537,18 +497,101 @@ export default {
   forceException(message) {
     throw new Error(message ?? 'Forced exception signal');
   },
-  getTabBarHeight: (insets) => {
-    const paddingBottom = getPaddingBottom(insets);
-    const tabBarHeight = DEFAULT_TABBAR_HEIGHT + paddingBottom;
-    return tabBarHeight;
+  // https://github.com/react-navigation/react-navigation/blob/main/packages/elements/src/Header/getDefaultHeaderHeight.tsx
+  getDefaultHeaderHeight(layout, modalPresentation, topInset) {
+    let headerHeight;
+    let statusBarHeight = topInset;
+    // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
+    const hasDynamicIsland = Platform.OS === 'ios' && topInset > 50;
+    if (hasDynamicIsland) {
+      statusBarHeight -= 5;
+      const offset = 1 / PixelRatio.get();
+      // https://github.com/devym-37/react-native-safearea-height?tab=readme-ov-file#usage-getstatusbarheightskipandroid-boolean--false
+      if (topInset === 59) {
+        // iPhone 14 Pro, 14 Pro Max, 15 series, 16, 16 Plus
+        statusBarHeight -= offset;
+      } else if (topInset === 62) {
+        // iPhone 16 Pro, 16 Pro Max
+        statusBarHeight -= 0.5 + offset;
+      }
+    }
+    /* console.log('>>> getDefaultHeaderHeight', {
+      hasDynamicIsland,
+      topInset,
+      statusBarHeight,
+    }); */
+    const isLandscape = layout.width > layout.height;
+    if (Platform.OS === 'ios') {
+      if (Platform.isPad || Platform.isTV) {
+        if (modalPresentation) {
+          headerHeight = 56;
+        } else {
+          headerHeight = 50;
+        }
+      } else {
+        if (isLandscape) {
+          headerHeight = 32;
+        } else {
+          if (modalPresentation) {
+            headerHeight = 56;
+          } else {
+            headerHeight = 44;
+          }
+        }
+      }
+    } else {
+      headerHeight = 64;
+    }
+    return headerHeight + statusBarHeight;
+  },
+  // https://github.com/software-mansion/react-native-screens/issues/2536
+  usePreciseHeaderHeight(isModal = false) {
+    const insets = useSafeAreaInsets();
+    const frame = useSafeAreaFrame();
+    // Modals are fullscreen in landscape only on iPhone
+    const isIPhone =
+      Platform.OS === 'ios' && !(Platform.isPad || Platform.isTV);
+    const isLandscape = frame.width > frame.height;
+    const isParentHeaderShown = false;
+    const topInset =
+      isParentHeaderShown ||
+      (Platform.OS === 'ios' && isModal) ||
+      (isIPhone && isLandscape)
+        ? 0
+        : insets.top;
+    // https://github.com/react-navigation/react-navigation/blob/main/packages/native-stack/src/views/NativeStackView.native.tsx#L196
+    const defaultHeaderHeight = Platform.select({
+      // FIXME: Currently screens isn't using Material 3
+      // So our `getDefaultHeaderHeight` doesn't return the correct value
+      // So we hardcode the value here for now until screens is updated
+      android: ANDROID_DEFAULT_HEADER_HEIGHT + topInset,
+      default: this.getDefaultHeaderHeight(frame, isModal, topInset),
+    });
+    return defaultHeaderHeight;
+  },
+  // https://github.com/react-navigation/react-navigation/blob/main/packages/bottom-tabs/src/views/BottomTabBar.tsx#L125
+  getTabBarHeight(insets) {
+    if (insets) {
+      const inset = insets.bottom;
+      return TABBAR_HEIGHT_UIKIT + inset;
+    }
+  },
+  useWindowHeight: () => {
+    const frame = React.useContext(SafeAreaFrameContext);
+    if (frame) {
+      return frame.height;
+    }
   },
   useContentMetrics(isModal) {
     const safeAreaInsets = React.useContext(SafeAreaInsetsContext);
-    const headerHeight = this.useHeaderHeight(isModal);
+    const headerHeight = this.usePreciseHeaderHeight(isModal);
+    // console.log('>>> useContentMetrics', { headerHeight });
+    const bottomTabBarHeight = this.getTabBarHeight(safeAreaInsets);
+    const deviceHeight = this.useWindowHeight();
     return React.useMemo(() => {
       if (safeAreaInsets && headerHeight) {
-        const tabBarheight = !isModal // ? useBottomTabBarHeight()
-          ? this.getTabBarHeight(safeAreaInsets)
+        const tabBarHeight = !isModal
+          ? bottomTabBarHeight
           : Platform.OS === 'ios'
             ? Settings.IS_TABLET ||
               (Settings.IS_HANDSET && safeAreaInsets.bottom === 0)
@@ -556,25 +599,21 @@ export default {
               : safeAreaInsets.bottom + 15
             : safeAreaInsets.bottom;
         const dividerHeight = StyleSheet.hairlineWidth;
-        const headerHeightWithDivider = headerHeight + dividerHeight;
-        const tabBarheightWithDivider =
-          tabBarheight + (!isModal ? dividerHeight : 0);
-        const contentHeight = Math.round(
-          Settings.DEVICE_HEIGHT -
-            headerHeightWithDivider -
-            tabBarheightWithDivider -
-            safeAreaInsets.top,
-        );
+        const contentHeight = deviceHeight - headerHeight - tabBarHeight;
         return {
           headerHeight,
-          tabBarheight,
+          tabBarHeight,
           dividerHeight,
-          headerHeightWithDivider,
-          tabBarheightWithDivider,
           contentHeight,
         };
       }
-    }, [isModal, safeAreaInsets, headerHeight]);
+    }, [
+      safeAreaInsets,
+      headerHeight,
+      isModal,
+      bottomTabBarHeight,
+      deviceHeight,
+    ]);
   },
   useSelectorRef(selector) {
     const select = useSelector(selector);
@@ -583,5 +622,8 @@ export default {
       ref.current = select;
     }, [select]);
     return ref;
+  },
+  getHashId(input, length = 10) {
+    return hash(input, { algorithm: 'md5' }).slice(0, length);
   },
 };

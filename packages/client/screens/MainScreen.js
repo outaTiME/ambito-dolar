@@ -26,12 +26,12 @@ const MainScreen = ({ navigation, rates, rateTypes, shoudStretch }) => {
     (type) => (
       <RateView
         {...{
-          key: type,
           type,
           stats: rates[type].stats,
           onSelected: onRateSelected,
           shoudStretch,
         }}
+        key={type}
       />
     ),
     [rates, shoudStretch],

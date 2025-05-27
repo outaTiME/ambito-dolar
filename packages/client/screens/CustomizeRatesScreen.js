@@ -24,7 +24,7 @@ const CustomizeRatesScreen = ({
   navigation,
   isModal,
   headerHeight,
-  tabBarheight,
+  tabBarHeight,
   rates,
 }) => {
   const { rate_order, rate_display, excluded_rates, rate_types } = useSelector(
@@ -97,7 +97,7 @@ const CustomizeRatesScreen = ({
           data,
           itemHeight: ITEM_HEIGHT,
           headerHeight,
-          tabBarheight,
+          tabBarHeight,
           note: I18n.t('customize_rates_note'),
           title: 'Orden y visualización',
           ListHeaderComponent: (

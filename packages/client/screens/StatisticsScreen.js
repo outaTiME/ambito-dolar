@@ -11,7 +11,7 @@ import I18n from '../config/I18n';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
+const StatisticsScreen = ({ headerHeight, tabBarHeight }) => {
   const [installationTime] = Helper.useSharedState('installationTime');
   const {
     lastReview,
@@ -76,7 +76,7 @@ const StatisticsScreen = ({ headerHeight, tabBarheight }) => {
     <FixedScrollView
       {...{
         headerHeight,
-        tabBarheight,
+        tabBarHeight,
       }}
     >
       <CardView title={I18n.t('opts_app')} plain>

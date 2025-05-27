@@ -4,6 +4,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  initialWindowMetrics,
+  SafeAreaProvider,
+} from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components';
 
 import AppContainer from './components/AppContainer';
@@ -15,9 +19,9 @@ SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 const ThemedApp = () => {
   const colorScheme = useColorScheme();
-  const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+  const theme = { colorScheme };
   React.useEffect(() => {
-    // hide splash screen after storage restore
+    // hide splash screen
     Helper.debug(
       '👌 Application loading is completed',
       Date.now() - start_time,
@@ -56,9 +60,11 @@ const App = () => {
     return null;
   }
   return (
-    <GestureHandlerRootView>
-      <ThemedApp />
-    </GestureHandlerRootView>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <GestureHandlerRootView>
+        <ThemedApp />
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 };
 

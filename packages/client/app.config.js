@@ -1,53 +1,25 @@
-const version = '8.2.2';
-const buildNumber = 161;
-
-const LIGHT_SPLASH = {
-  image: './assets/splash-light.png',
-  backgroundColor: '#FFFFFF',
-};
-
-const DARK_SPLASH = {
-  image: './assets/splash-dark.png',
-  backgroundColor: '#000000',
-  // same color as android navigation bar
-  // backgroundColor: '#1C1C1E',
-};
-
-const SHARED_SPLASH = {
-  splash: {
-    ...LIGHT_SPLASH,
-    dark: {
-      ...DARK_SPLASH,
-    },
-  },
-};
+const version = '9.0.0';
+const buildNumber = 168;
 
 const IS_NEW_ARCH_ENABLED = false;
 
 export default {
   name: 'Ámbito Dólar',
   slug: 'ambito-dolar',
-  privacy: 'hidden',
   runtimeVersion: version,
   version,
   platforms: ['android', 'ios', 'web'],
   githubUrl:
     'https://github.com/outaTiME/ambito-dolar/tree/master/packages/client',
+  // orientation: 'portrait',
   userInterfaceStyle: 'automatic',
   icon: './assets/icon.png',
-  notification: {
-    icon: './assets/icon.notification.png',
-    color: '#00AE6B',
-  },
-  // https://github.com/expo/expo/issues/11604#issuecomment-1018355394
   androidStatusBar: {
     barStyle: 'light-content',
-    backgroundColor: '#00000000',
   },
-  // https://github.com/bluesky-social/social-app/blob/main/app.config.js#L132
+  // Dark nav bar in light mode is better than light nav bar in dark mode
   androidNavigationBar: {
     barStyle: 'light-content',
-    backgroundColor: DARK_SPLASH.backgroundColor,
   },
   scheme: 'ambito-dolar',
   extra: {
@@ -85,17 +57,6 @@ export default {
   },
   plugins: [
     'expo-localization',
-    [
-      'expo-build-properties',
-      {
-        ios: {
-          newArchEnabled: IS_NEW_ARCH_ENABLED,
-        },
-        android: {
-          newArchEnabled: IS_NEW_ARCH_ENABLED,
-        },
-      },
-    ],
     [
       'expo-font',
       {
@@ -152,12 +113,35 @@ export default {
         ],
       },
     ],
-    './plugins/withAndroidManifest.js',
-    './plugins/withAndroidStylesWindowBackground.js',
-    // https://www.aronberezkin.com/posts/a-step-by-step-guide-to-writing-your-first-expo-config-plugin
-    './plugins/withAndroidSplashScreen.js',
+    [
+      'expo-splash-screen',
+      {
+        backgroundColor: '#FFFFFF',
+        image: './assets/splash-icon.png',
+        dark: {
+          backgroundColor: '#000000',
+          image: './assets/splash-icon-dark.png',
+        },
+      },
+    ],
+    [
+      'expo-notifications',
+      {
+        icon: './assets/icon.notification.png',
+        color: '#00AE6B',
+      },
+    ],
+    [
+      'react-native-edge-to-edge',
+      {
+        android: {
+          parentTheme: 'Light',
+          enforceNavigationBarContrast: false,
+        },
+      },
+    ],
   ].filter(Boolean),
-  splash: LIGHT_SPLASH,
+  newArchEnabled: IS_NEW_ARCH_ENABLED,
   ios: {
     bundleIdentifier: 'im.outa.AmbitoDolar',
     buildNumber: buildNumber.toString(),
@@ -196,7 +180,6 @@ export default {
       UIViewControllerBasedStatusBarAppearance: true,
       // optimizes ProMotion refresh rates
       CADisableMinimumFrameDurationOnPhone: true,
-      LSMinimumSystemVersion: '12.0',
     },
     privacyManifests: {
       // https://docs.sentry.io/platforms/react-native/data-management/apple-privacy-manifest/#create-privacy-manifest-in-expo
@@ -249,7 +232,6 @@ export default {
         },
       ],
     },
-    ...SHARED_SPLASH,
   },
   android: {
     package: 'im.outa.AmbitoDolar',
@@ -267,9 +249,7 @@ export default {
     ...(process.env.GOOGLE_SERVICES_FILE && {
       googleServicesFile: process.env.GOOGLE_SERVICES_FILE,
     }),
-    ...SHARED_SPLASH,
     // prevents restore of auto-generated IDs
     allowBackup: false,
-    softwareKeyboardLayoutMode: 'pan',
   },
 };

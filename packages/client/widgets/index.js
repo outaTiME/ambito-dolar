@@ -8,14 +8,13 @@ import { View, ScrollView, useColorScheme } from 'react-native';
 import { requestWidgetUpdate } from 'react-native-android-widget';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { HeaderButtonsProvider } from 'react-navigation-header-buttons';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components/native';
 
 import RateWidget from './RateWidget';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
 import ContentView from '../components/ContentView';
-import { MaterialHeaderButtons, Item } from '../components/HeaderButtons';
+import HeaderButton from '../components/HeaderButton';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -123,7 +122,7 @@ export async function taskHandler(props) {
 // TODO: same maxFontSizeMultiplier as defined in the app ???
 export const ConfigurationScreen = Sentry.wrap((props) => {
   const colorScheme = useColorScheme();
-  const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
+  const theme = { colorScheme };
   React.useEffect(() => {
     async function prepare() {
       try {
@@ -186,75 +185,63 @@ export const ConfigurationScreen = Sentry.wrap((props) => {
       <GestureHandlerRootView>
         <SafeAreaProvider>
           <ThemeProvider theme={theme}>
-            <HeaderButtonsProvider stackType="native">
-              <ScrollView>
-                <ContentView contentContainerStyle={{ flex: 1 }}>
-                  <View
-                    style={{
-                      // backgroundColor: 'red',
-                      paddingVertical: Settings.CARD_PADDING,
-                      // marginHorizontal: -(Settings.CARD_PADDING * 2),
-                      marginHorizontal: Settings.CARD_PADDING,
-                      // paddingHorizontal: Settings.PADDING,
-                      flexDirection: 'row',
-                      ...(true && {
-                        marginBottom: -Settings.CARD_PADDING,
-                        justifyContent: 'flex-end',
-                      }),
+            <ScrollView>
+              <ContentView contentContainerStyle={{ flex: 1 }}>
+                <View
+                  style={{
+                    // backgroundColor: 'red',
+                    paddingVertical: Settings.CARD_PADDING,
+                    // marginHorizontal: -(Settings.CARD_PADDING * 2),
+                    marginHorizontal: Settings.CARD_PADDING,
+                    // paddingHorizontal: Settings.PADDING,
+                    flexDirection: 'row',
+                    ...(true && {
+                      marginBottom: -Settings.CARD_PADDING,
+                      justifyContent: 'flex-end',
+                    }),
+                  }}
+                >
+                  <HeaderButton.Icon
+                    iconName="close"
+                    onPress={() => {
+                      props.setResult('ok');
                     }}
-                  >
-                    <MaterialHeaderButtons>
-                      <Item
-                        title="Cerrar"
-                        iconName="close"
-                        // title="Atras"
-                        // iconName="arrow-back"
-                        onPress={() => {
-                          props.setResult('ok');
-                        }}
-                        buttonStyle={{
-                          marginHorizontal: Settings.PADDING,
-                        }}
-                        // community
-                      />
-                    </MaterialHeaderButtons>
-                  </View>
-                  <CardView title="Cotización" plain>
-                    {rateTypes.map((type, index) => (
-                      <CardItemView
-                        key={type}
-                        title={AmbitoDolar.getRateTitle(type)}
-                        useSwitch={false}
-                        chevron={false}
-                        check={
-                          config.rate === type || (!config.rate && index === 0)
-                        }
-                        onAction={() => {
-                          saveSetting('rate', type);
-                        }}
-                      />
-                    ))}
-                  </CardView>
-                  <CardView title="Mostrar" plain>
-                    {['buy', 'average', 'sell'].map((type, index) => (
-                      <CardItemView
-                        key={type}
-                        title={I18n.t(type)}
-                        useSwitch={false}
-                        chevron={false}
-                        check={
-                          config.value === type ||
-                          (!config.value && index === 2)
-                        }
-                        onAction={() => {
-                          saveSetting('value', type);
-                        }}
-                      />
-                    ))}
-                  </CardView>
-                </ContentView>
-              </ScrollView>
-            </HeaderButtonsProvider>
+                  />
+                </View>
+                <CardView title="Cotización" plain>
+                  {rateTypes.map((type, index) => (
+                    <CardItemView
+                      key={type}
+                      title={AmbitoDolar.getRateTitle(type)}
+                      useSwitch={false}
+                      chevron={false}
+                      check={
+                        config.rate === type || (!config.rate && index === 0)
+                      }
+                      onAction={() => {
+                        saveSetting('rate', type);
+                      }}
+                    />
+                  ))}
+                </CardView>
+                <CardView title="Mostrar" plain>
+                  {['buy', 'average', 'sell'].map((type, index) => (
+                    <CardItemView
+                      key={type}
+                      title={I18n.t(type)}
+                      useSwitch={false}
+                      chevron={false}
+                      check={
+                        config.value === type || (!config.value && index === 2)
+                      }
+                      onAction={() => {
+                        saveSetting('value', type);
+                      }}
+                    />
+                  ))}
+                </CardView>
+              </ContentView>
+            </ScrollView>
           </ThemeProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>

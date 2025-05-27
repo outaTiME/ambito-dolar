@@ -51,6 +51,8 @@ const Cursor = ({ length, point, width, color }) => {
       ],
     };
   });
+  // avoid accessing Settings inside gesture worklet (prevents reanimated warning)
+  const hapticsEnabled = Settings.HAPTICS_ENABLED;
   const dragOnLongPressGesture = React.useMemo(
     () =>
       Gesture.Pan()
@@ -59,7 +61,7 @@ const Cursor = ({ length, point, width, color }) => {
         .averageTouches(true)
         .onStart((event) => {
           if (!isActive.value) {
-            Settings.HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
+            hapticsEnabled && runOnJS(Haptics.selectionAsync)();
           }
           isActive.value = true;
           length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
@@ -69,7 +71,7 @@ const Cursor = ({ length, point, width, color }) => {
         })
         .onEnd(() => {
           length.value = width;
-          Settings.HAPTICS_ENABLED && runOnJS(Haptics.selectionAsync)();
+          hapticsEnabled && runOnJS(Haptics.selectionAsync)();
           isActive.value = false;
         }),
     [width],

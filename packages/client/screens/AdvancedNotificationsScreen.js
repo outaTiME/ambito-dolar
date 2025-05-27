@@ -14,7 +14,7 @@ import Helper from '../utilities/Helper';
 
 const AdvancedNotificationsScreen = ({
   headerHeight,
-  tabBarheight,
+  tabBarHeight,
   // rates,
   rateTypes,
   route: { params },
@@ -64,7 +64,7 @@ const AdvancedNotificationsScreen = ({
     <FixedScrollView
       {...{
         headerHeight,
-        tabBarheight,
+        tabBarHeight,
       }}
     >
       <CardView
