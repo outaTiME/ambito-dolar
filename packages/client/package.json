@@ -13,7 +13,7 @@
     "check": "expo install --check"
   },
   "dependencies": {
-    "@ambito-dolar/core": "^4.0.4",
+    "@ambito-dolar/core": "^4.0.5",
     "@amplitude/analytics-react-native": "^1.4.13",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^14.1.0",
@@ -97,7 +97,7 @@
     "@babel/core": "^7.27.1",
     "@expo/webpack-config": "^19.0.1"
   },
-  "version": "8.2.2",
+  "version": "9.0.0",
   "installConfig": {
     "hoistingLimits": "workspaces"
   },

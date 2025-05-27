@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.2.2...@ambito-dolar/api@4.3.0) (2025-05-27)
+
+### Features
+
+- reduce rate hash size ([045d83c](https://github.com/outaTiME/ambito-dolar/commit/045d83c193d3b76b5cc76a18c5cb37c8eae03e00))
+
 ## [4.2.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.2.1...@ambito-dolar/api@4.2.2) (2025-04-09)
 
 **Note:** Version bump only for package @ambito-dolar/api
