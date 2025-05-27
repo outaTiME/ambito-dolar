@@ -6,8 +6,9 @@ export default {
     region: 'us-east-1',
   }),
   stacks: (app) => {
-    // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_lambda.FunctionOptions.html
+    // https://v2.sst.dev/constructs/Function#setting-default-props
     app.setDefaultFunctionProps({
+      architecture: 'x86_64',
       environment: {
         S3_BUCKET: process.env.S3_BUCKET,
         SECRET_KEY: process.env.SECRET_KEY,
@@ -47,20 +48,11 @@ export default {
         WHAPI_TOKEN: process.env.WHAPI_TOKEN,
         INSTANT_APP_ID: process.env.INSTANT_APP_ID,
         INSTANT_ADMIN_TOKEN: process.env.INSTANT_ADMIN_TOKEN,
-        NODE_OPTIONS: [
-          // https://aws.amazon.com/es/blogs/compute/node-js-18-x-runtime-now-available-in-aws-lambda/
-          // '--no-experimental-fetch',
-          // prevents experimental warnings from buffer.File
-          '--no-warnings',
-          '--trace-deprecation',
-        ].join(' '),
-        // NODE_NO_WARNINGS: 1,
       },
-      // runtime: 'nodejs18.x',
-      tracing: 'disabled',
-      // https://docs.serverless-stack.com/constructs/Function#setting-additional-props
       logRetention: 'one_day',
       runtime: 'nodejs22.x',
+      tracing: 'disabled',
+      // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_lambda.FunctionOptions.html#retryattempts
       retryAttempts: 0,
     });
     app.setDefaultRemovalPolicy('destroy');
