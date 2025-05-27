@@ -15,7 +15,14 @@ module.exports = {
         },
       },
     },
-    'gatsby-plugin-sass',
+    {
+      resolve: 'gatsby-plugin-sass',
+      options: {
+        sassOptions: {
+          silenceDeprecations: ['legacy-js-api', 'import'],
+        },
+      },
+    },
     {
       resolve: 'gatsby-omni-font-loader',
       options: {
