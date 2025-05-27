@@ -8,7 +8,7 @@ import { View, ScrollView, useColorScheme } from 'react-native';
 import { requestWidgetUpdate } from 'react-native-android-widget';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemeProvider } from 'styled-components/native';
+import { ThemeProvider } from 'styled-components';
 
 import RateWidget from './RateWidget';
 import CardItemView from '../components/CardItemView';

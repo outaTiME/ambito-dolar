@@ -22,7 +22,7 @@ import semverCoerce from 'semver/functions/coerce';
 import semverDiff from 'semver/functions/diff';
 import semverGt from 'semver/functions/gt';
 import semverValid from 'semver/functions/valid';
-import { ThemeContext } from 'styled-components/native';
+import { ThemeContext } from 'styled-components';
 import useSWR from 'swr';
 
 import rates from '../assets/rates.json';
