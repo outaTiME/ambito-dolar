@@ -159,7 +159,8 @@ const getObjectRates = (arr) =>
     return obj;
   }, {});
 
-const getRateHash = (rate) => hash(rate, { algorithm: 'md5' });
+const getRateHash = (rate, length = 10) =>
+  hash(rate, { algorithm: 'md5' }).slice(0, length);
 
 const getNewRates = (rates, new_rates) =>
   Object.entries(new_rates).reduce((obj, [type, [identity, rate_last]]) => {
