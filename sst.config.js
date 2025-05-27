@@ -60,6 +60,7 @@ export default {
       tracing: 'disabled',
       // https://docs.serverless-stack.com/constructs/Function#setting-additional-props
       logRetention: 'one_day',
+      runtime: 'nodejs22.x',
       retryAttempts: 0,
     });
     app.setDefaultRemovalPolicy('destroy');

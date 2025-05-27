@@ -48,5 +48,8 @@
     "eslint": "^8.9.0",
     "promise": "^8.3.0",
     "react-native": "patch:react-native@npm%3A0.75.5#~/.yarn/patches/react-native-npm-0.75.5-9fccf87ffa.patch"
+  },
+  "engines": {
+    "node": "^22.0.0"
   }
 }
