@@ -45,7 +45,9 @@
   },
   "packageManager": "yarn@4.9.1",
   "resolutions": {
-    "eslint": "^8.9.0"
+    "eslint": "^8.9.0",
+    "whatwg-url": "^12.0.0",
+    "tough-cookie": "^4.1.0"
   },
   "engines": {
     "node": "^22.0.0"
