@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@9.0.0...@ambito-dolar/client@9.0.1) (2025-05-28)
+
+### Bug Fixes
+
+- resolve incorrect theme on web ([88b8554](https://github.com/outaTiME/ambito-dolar/commit/88b8554fa93ed59514a18fd1d04e07c21950940b))
+
 # [9.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@8.2.2...@ambito-dolar/client@9.0.0) (2025-05-27)
 
 ### Features
