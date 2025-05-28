@@ -38,8 +38,8 @@ __metadata:
     "@aws-sdk/client-sns": "npm:^3.817.0"
     "@aws-sdk/lib-dynamodb": "npm:^3.817.0"
     "@aws-sdk/util-dynamodb": "npm:^3.817.0"
-    "@instantdb/admin": "npm:^0.19.9"
-    "@sentry/aws-serverless": "npm:9.22.0"
+    "@instantdb/admin": "npm:^0.19.10"
+    "@sentry/aws-serverless": "npm:9.23.0"
     "@shelf/dynamodb-parallel-scan": "npm:^3.9.2"
     "@smithy/node-http-handler": "npm:^4.0.5"
     "@sparticuz/chromium": "npm:~133.0.0"
@@ -70,14 +70,14 @@ __metadata:
   dependencies:
     "@ambito-dolar/core": "npm:^4.0.5"
     "@amplitude/analytics-react-native": "npm:^1.4.13"
-    "@babel/core": "npm:^7.27.1"
+    "@babel/core": "npm:^7.27.3"
     "@expo/react-native-action-sheet": "npm:^4.1.1"
     "@expo/vector-icons": "npm:^14.1.0"
     "@expo/webpack-config": "npm:^19.0.1"
     "@gorhom/bottom-sheet": "npm:^5.1.5"
-    "@instantdb/react-native": "npm:^0.19.9"
+    "@instantdb/react-native": "npm:^0.19.10"
     "@react-native-async-storage/async-storage": "npm:^2.1.2"
-    "@react-native-community/hooks": "npm:^3.1.0"
+    "@react-native-community/hooks": "npm:^100.1.0"
     "@react-native-community/netinfo": "npm:^11.4.1"
     "@react-navigation/bottom-tabs": "npm:^7.3.13"
     "@react-navigation/elements": "npm:^2.4.2"
@@ -133,7 +133,7 @@ __metadata:
     react-native-reanimated: "npm:^3.17.5"
     react-native-redash: "npm:^18.1.3"
     react-native-safe-area-context: "npm:~5.4.1"
-    react-native-screens: "npm:^4.10.0"
+    react-native-screens: "npm:^4.11.1"
     react-native-svg: "npm:^15.12.0"
     react-native-typography: "npm:^1.4.1"
     react-native-view-shot: "npm:^4.0.3"
@@ -2503,7 +2503,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.0.0-0, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.16, @babel/core@npm:^7.14.0, @babel/core@npm:^7.20.0, @babel/core@npm:^7.20.12, @babel/core@npm:^7.20.2, @babel/core@npm:^7.23.9, @babel/core@npm:^7.24.7, @babel/core@npm:^7.25.2, @babel/core@npm:^7.27.1":
+"@babel/core@npm:^7.0.0-0, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.16, @babel/core@npm:^7.14.0, @babel/core@npm:^7.20.0, @babel/core@npm:^7.20.12, @babel/core@npm:^7.20.2, @babel/core@npm:^7.23.9, @babel/core@npm:^7.24.7, @babel/core@npm:^7.25.2, @babel/core@npm:^7.27.3":
   version: 7.27.3
   resolution: "@babel/core@npm:7.27.3"
   dependencies:
@@ -5682,7 +5682,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@instantdb/admin@npm:^0.19.9":
+"@instantdb/admin@npm:^0.19.10":
   version: 0.19.10
   resolution: "@instantdb/admin@npm:0.19.10"
   dependencies:
@@ -5701,7 +5701,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@instantdb/react-native@npm:^0.19.9":
+"@instantdb/react-native@npm:^0.19.10":
   version: 0.19.10
   resolution: "@instantdb/react-native@npm:0.19.10"
   dependencies:
@@ -7402,7 +7402,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/semantic-conventions@npm:^1.27.0, @opentelemetry/semantic-conventions@npm:^1.30.0":
+"@opentelemetry/semantic-conventions@npm:^1.27.0, @opentelemetry/semantic-conventions@npm:^1.34.0":
   version: 1.34.0
   resolution: "@opentelemetry/semantic-conventions@npm:1.34.0"
   checksum: 10/1892b4cc69c9e00456c809604a980e32696563e96463ff5f9d07e72d5aca73836a7378090509f28f54445ac6e072d2343a888c9d64d9ce287198e899082ff7aa
@@ -8036,14 +8036,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/instrumentation@npm:6.7.0":
-  version: 6.7.0
-  resolution: "@prisma/instrumentation@npm:6.7.0"
+"@prisma/instrumentation@npm:6.8.2":
+  version: 6.8.2
+  resolution: "@prisma/instrumentation@npm:6.8.2"
   dependencies:
     "@opentelemetry/instrumentation": "npm:^0.52.0 || ^0.53.0 || ^0.54.0 || ^0.55.0 || ^0.56.0 || ^0.57.0"
   peerDependencies:
     "@opentelemetry/api": ^1.8
-  checksum: 10/515cb754fa91a740e285bd6ee74011dee6eedc50788eeee3bf3d6c7c88f4c2bbce003f65899e597c570d430edf1cfe763a973f51e8a45c6c37c79defba55c393
+  checksum: 10/560ba939296ee4e285ba957d3d77d655c16ff3b3befb95f23bbf16fafef7b5f7e6fa5ee6884e3044458c456cb29e27d719f179dcc3c277640056ff7bb0dbce0f
   languageName: node
   linkType: hard
 
@@ -8086,13 +8086,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/hooks@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@react-native-community/hooks@npm:3.1.0"
+"@react-native-community/hooks@npm:^100.1.0":
+  version: 100.1.0
+  resolution: "@react-native-community/hooks@npm:100.1.0"
   peerDependencies:
-    react: ">=17.0.2"
-    react-native: ">=0.65"
-  checksum: 10/0c98f52786f1a83532fbe85b27437f415a3c049ed72671c750e8c9d73249649eb558f39d36eec30ebe10f8c34f2acfcb7889db00d09df44bb90d43faa68c481f
+    react: ">=18.0.0"
+    react-native: ">=0.70"
+  checksum: 10/3a797732d2f4bbb1bbbe07ac6d98cc9b4b1d6e97f0ccbb7247b711bb8c294dd7c5eb17cd6d277744642418bef806c3b4e98819f4ba2854bdfb2d2832ff3e5126
   languageName: node
   linkType: hard
 
@@ -8639,18 +8639,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/aws-serverless@npm:9.22.0":
-  version: 9.22.0
-  resolution: "@sentry/aws-serverless@npm:9.22.0"
+"@sentry/aws-serverless@npm:9.23.0":
+  version: 9.23.0
+  resolution: "@sentry/aws-serverless@npm:9.23.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.9.0"
     "@opentelemetry/instrumentation": "npm:^0.57.2"
     "@opentelemetry/instrumentation-aws-lambda": "npm:0.50.3"
     "@opentelemetry/instrumentation-aws-sdk": "npm:0.49.1"
-    "@sentry/core": "npm:9.22.0"
-    "@sentry/node": "npm:9.22.0"
+    "@sentry/core": "npm:9.23.0"
+    "@sentry/node": "npm:9.23.0"
     "@types/aws-lambda": "npm:^8.10.62"
-  checksum: 10/5cef87a750b48acb980afaf9b2e659909f3981e24d37ffa7393b64d78aaf2cd41c8ec22667c26447130e75be0e0680351b5d379bb5ae4b097de32c6eb60d2eee
+  checksum: 10/a5c295c4ec0289cb2321e84eabb295a44cbfd6f7733d58c2218a29e8312bbe52eb1873d8cc8756831d66a00e74021c328e2ebd25723779c824747947dd2e8325
   languageName: node
   linkType: hard
 
@@ -8777,16 +8777,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:9.22.0":
-  version: 9.22.0
-  resolution: "@sentry/core@npm:9.22.0"
-  checksum: 10/5bf5d6b5402dca90c6ed1d6e8834c00067806f9710f1cbcd0dff3004c3f3b6ffae8e43d56592d5378fdbddb3d196eb60d8850ea50ca6eca8e31870608109df3d
+"@sentry/core@npm:9.23.0":
+  version: 9.23.0
+  resolution: "@sentry/core@npm:9.23.0"
+  checksum: 10/4ee771098d4ce4f4d2f7bd62cacb41ee2993780f4cab0eea600e73de3a3803cb953ac47ac015c23bcd7a9919e2220fd6cdc5a9a22a3663440296336d8df959b7
   languageName: node
   linkType: hard
 
-"@sentry/node@npm:9.22.0":
-  version: 9.22.0
-  resolution: "@sentry/node@npm:9.22.0"
+"@sentry/node@npm:9.23.0":
+  version: 9.23.0
+  resolution: "@sentry/node@npm:9.23.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.9.0"
     "@opentelemetry/context-async-hooks": "npm:^1.30.1"
@@ -8816,29 +8816,29 @@ __metadata:
     "@opentelemetry/instrumentation-undici": "npm:0.10.1"
     "@opentelemetry/resources": "npm:^1.30.1"
     "@opentelemetry/sdk-trace-base": "npm:^1.30.1"
-    "@opentelemetry/semantic-conventions": "npm:^1.30.0"
-    "@prisma/instrumentation": "npm:6.7.0"
-    "@sentry/core": "npm:9.22.0"
-    "@sentry/opentelemetry": "npm:9.22.0"
+    "@opentelemetry/semantic-conventions": "npm:^1.34.0"
+    "@prisma/instrumentation": "npm:6.8.2"
+    "@sentry/core": "npm:9.23.0"
+    "@sentry/opentelemetry": "npm:9.23.0"
     import-in-the-middle: "npm:^1.13.1"
     minimatch: "npm:^9.0.0"
-  checksum: 10/85d67c3459dbe13ee2170d5cf7f6c697eaa2e8267a3160d4efe9ff35263cdaa470fbc169ded3d50db6860226cdfcb3c849f57d143f0299196cca37f23c0ec79f
+  checksum: 10/641a8691313fea49d5685ffa22f6481c38cf466ddd053ab134ae2e4cf56265198d34f819433fc8144154329aba58ff2b3995567d2082ec16c23e590a9557850f
   languageName: node
   linkType: hard
 
-"@sentry/opentelemetry@npm:9.22.0":
-  version: 9.22.0
-  resolution: "@sentry/opentelemetry@npm:9.22.0"
+"@sentry/opentelemetry@npm:9.23.0":
+  version: 9.23.0
+  resolution: "@sentry/opentelemetry@npm:9.23.0"
   dependencies:
-    "@sentry/core": "npm:9.22.0"
+    "@sentry/core": "npm:9.23.0"
   peerDependencies:
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/context-async-hooks": ^1.30.1 || ^2.0.0
     "@opentelemetry/core": ^1.30.1 || ^2.0.0
     "@opentelemetry/instrumentation": ^0.57.1 || ^0.200.0
     "@opentelemetry/sdk-trace-base": ^1.30.1 || ^2.0.0
-    "@opentelemetry/semantic-conventions": ^1.30.0
-  checksum: 10/90171280dbf24ad0bd5814da3408c07909edee1f7d348a75826cc4064141c542746a19b54dee552b00a888f0a691282767bc5f4037f18b585dd02edc72d1a9b1
+    "@opentelemetry/semantic-conventions": ^1.34.0
+  checksum: 10/8512f6dac401fc6daeaa0dbe0a0eeb9c9124573e3030605fff8cc14832c501e5abd4409404f4ced57e861fedec4acb560697e93cf0ef73f17b1e5e664d482dc9
   languageName: node
   linkType: hard
 
@@ -29535,9 +29535,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-screens@npm:^4.10.0":
-  version: 4.11.0
-  resolution: "react-native-screens@npm:4.11.0"
+"react-native-screens@npm:^4.11.1":
+  version: 4.11.1
+  resolution: "react-native-screens@npm:4.11.1"
   dependencies:
     react-freeze: "npm:^1.0.0"
     react-native-is-edge-to-edge: "npm:^1.1.7"
@@ -29545,7 +29545,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/80aee0874059848009f2d2f669499ba480e26a4dde67e1f15cb3d262fdff1b01b2c6cda7d923aec0635bbaf2ed425d204f8c408b48ab6cfafb458cf633307335
+  checksum: 10/d17778b386840c0dc1899e197e901e71430c36c9d935e06f9074fe95e03275dd8c077a83e0ef219159dc8ef0eba6589aca5d1a9feb884a971d34881431b4035c
   languageName: node
   linkType: hard
 
