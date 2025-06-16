@@ -346,8 +346,8 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - PurchasesHybridCommon (13.32.0):
-    - RevenueCat (= 5.24.0)
+  - PurchasesHybridCommon (13.36.0):
+    - RevenueCat (= 5.28.1)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -1887,10 +1887,10 @@ PODS:
     - React-logger (= 0.77.2)
     - React-perflogger (= 0.77.2)
     - React-utils (= 0.77.2)
-  - RevenueCat (5.24.0)
-  - RNCAsyncStorage (2.1.2):
+  - RevenueCat (5.28.1)
+  - RNCAsyncStorage (2.2.0):
     - React-Core
-  - RNFlashList (1.8.1):
+  - RNFlashList (1.8.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1911,7 +1911,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNGestureHandler (2.25.0):
+  - RNGestureHandler (2.26.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1932,35 +1932,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNPurchases (8.10.1):
-    - PurchasesHybridCommon (= 13.32.0)
+  - RNPurchases (8.11.4):
+    - PurchasesHybridCommon (= 13.36.0)
     - React-Core
-  - RNReanimated (3.17.5):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.11.18.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.17.5)
-    - RNReanimated/worklets (= 3.17.5)
-    - Yoga
-  - RNReanimated/reanimated (3.17.5):
+  - RNReanimated (3.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1982,9 +1957,34 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.17.5)
+    - RNReanimated/reanimated (= 3.18.0)
+    - RNReanimated/worklets (= 3.18.0)
     - Yoga
-  - RNReanimated/reanimated/apple (3.17.5):
+  - RNReanimated/reanimated (3.18.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNReanimated/reanimated/apple (= 3.18.0)
+    - Yoga
+  - RNReanimated/reanimated/apple (3.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2007,7 +2007,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.17.5):
+  - RNReanimated/worklets (3.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2029,9 +2029,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/worklets/apple (= 3.17.5)
+    - RNReanimated/worklets/apple (= 3.18.0)
     - Yoga
-  - RNReanimated/worklets/apple (3.17.5):
+  - RNReanimated/worklets/apple (3.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2076,7 +2076,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (6.14.0):
+  - RNSentry (6.15.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2097,7 +2097,7 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Sentry/HybridSDK (= 8.50.2)
+    - Sentry/HybridSDK (= 8.52.1)
     - Yoga
   - RNSVG (15.12.0):
     - React-Core
@@ -2112,7 +2112,7 @@ PODS:
   - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
-  - Sentry/HybridSDK (8.50.2)
+  - Sentry/HybridSDK (8.52.1)
   - SocketRocket (0.7.1)
   - UMAppLoader (5.0.1)
   - Yoga (0.0.0)
@@ -2533,7 +2533,7 @@ SPEC CHECKSUMS:
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  PurchasesHybridCommon: 662aa1f4769ff4ef594e35adf1a5d0ad7b3d08b7
+  PurchasesHybridCommon: 27d71a65d486bbfd6822a58c9802f7191e438c05
   RCT-Folly: 36fe2295e44b10d831836cc0d1daec5f8abcf809
   RCTDeprecation: 85b72250b63cfb54f29ca96ceb108cb9ef3c2079
   RCTRequired: 567cb8f5d42b990331bfd93faad1d8999b1c1736
@@ -2597,20 +2597,20 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 8955603808eb24bbfde3511d2bcc8362d1d5860e
   ReactCodegen: 29ce81e823688a8dc66e1d2cf081b97216718fa8
   ReactCommon: ad39e4549e2920b3b065a28603921a75619d0639
-  RevenueCat: 2d3639d30b8a71cbfe3d99cef8243c602793e0ec
-  RNCAsyncStorage: addfc2cb6511dbe199c56c6b26ede383b6c38919
-  RNFlashList: 818b86935022e4c84d78ef868f9a3a5fbac98073
-  RNGestureHandler: 0573a746155b37786d57d89951f71433c90f80a5
-  RNPurchases: 5633b8493fde5c2bcc5fe3edae46e8f141e419fc
-  RNReanimated: 519388a0c8025050bd4ea2b8635592b3924c8856
+  RevenueCat: 3fafcf295834118ed6e6ec9388a20a4c9092b1e6
+  RNCAsyncStorage: 23e56519cc41d3bade3c8d4479f7760cb1c11996
+  RNFlashList: ba60e5bd75c17f5033ed6fe865fe93c6dcbf6d39
+  RNGestureHandler: aef4f72b1458ad9c8f89fd4612904181aa1e0164
+  RNPurchases: 7ef1aa5fbb22e9a55658c075d6902b8ac417d2bc
+  RNReanimated: 3a9b62c33897d1df2e8c47311f559b3ef4b6acc9
   RNScreens: abb9bbff8f1594862e5a85df829f329942e32501
-  RNSentry: 54e22cf9e34b92e3376607643ca3ed9f66a921f0
+  RNSentry: 7a25d6cf83cffbde25f01d9131b8d9f0d75a87f6
   RNSVG: 51e8be88d13d66a375a4eb6a2e794abdd651ea4f
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
-  Sentry: d95f5f3b32d01324b3e27d3c52747005302cc026
+  Sentry: 2cbbe3592f30050c60e916c63c7f5a2fa584005e
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   UMAppLoader: 7e7e0eaa7854ffd652c00a68c443afb28c3bedba
   Yoga: 23fb98904c6937028692aa0e5bb63624ff41c4a1
