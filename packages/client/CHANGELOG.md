@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@9.0.1...@ambito-dolar/client@9.0.2) (2025-06-17)
+
+### Bug Fixes
+
+- bump version and build number ([6c2db42](https://github.com/outaTiME/ambito-dolar/commit/6c2db423c1ec17e63b1c53b90946243fa994ca93))
+
 ## [9.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@9.0.0...@ambito-dolar/client@9.0.1) (2025-05-28)
 
 ### Bug Fixes
