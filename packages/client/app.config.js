@@ -13,13 +13,6 @@ export default {
     'https://github.com/outaTiME/ambito-dolar/tree/master/packages/client',
   userInterfaceStyle: 'automatic',
   icon: './assets/icon.png',
-  androidStatusBar: {
-    barStyle: 'light-content',
-  },
-  // Dark nav bar in light mode is better than light nav bar in dark mode
-  androidNavigationBar: {
-    barStyle: 'light-content',
-  },
   scheme: 'ambito-dolar',
   extra: {
     ratesUri: process.env.RATES_URI,
