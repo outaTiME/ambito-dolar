@@ -10,7 +10,6 @@ body {
   color: #797283;
 
   h1, h2, h3, h4, h5, h6 {
-    // font-family: PT Serif;
     line-height: 43px;
     color: #1E1C21;
   }
@@ -56,12 +55,10 @@ body {
         justify-content: center;
         display: flex;
         flex-direction: column;
-        // margin-right: 30px;
 
         h2 {
           font-size: 36px;
           line-height: 54px;
-          // font-weight: bold;
           margin-top: 30px;
           margin-bottom: 15px;
           color: #1E1C21;
@@ -75,23 +72,19 @@ body {
 
         .social {
           margin: 30px 0;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          gap: 1.25em;
 
           .icon {
-            // height: 30px;
             transition: 0.1s ease-in;
             color: #797283;
-            margin-right: 1.25em;
           }
 
           .icon:hover {
-            // transform: scale(1.5);
             color: #1E1C21;
           }
-
-          .icon:last-child {
-            margin-right: 0
-          }
-
         }
 
         p.donation {
@@ -105,10 +98,8 @@ body {
           }
 
           a:hover {
-            // transform: scale(1.5);
             color: #1E1C21;
           }
-
         }
       }
 
@@ -125,29 +116,6 @@ body {
         }
       }
     }
-
-    @media screen and (max-width: $break-small) {
-      .col-6.first {
-        order: 1;
-        display: none !important;
-      }
-
-      .col-6 {
-        order: 2;
-      }
-
-      .feature__icon .gatsby-image-wrapper {
-        margin: 0 auto;
-      }
-
-      /* .feature__content {
-        margin: 0 !important;
-      } */
-
-      .feature__action {
-        justify-content: center;
-      }
-    }
   }
 
   .app-icon, .app-store, .play-store {
@@ -156,7 +124,30 @@ body {
 
   @media screen and (max-width: $break-small) {
     .container {
-      text-align: center
+      text-align: center;
+    }
+
+    .col-6.first {
+      order: 1;
+      display: none !important;
+    }
+
+    .col-6 {
+      order: 2;
+    }
+
+    .feature__icon .gatsby-image-wrapper {
+      margin: 0 auto;
+    }
+
+    .feature__content {
+      .social {
+        justify-content: center !important;
+      }
+    }
+
+    .feature__action {
+      justify-content: center;
     }
   }
 }
