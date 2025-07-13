@@ -521,6 +521,8 @@ const AppContainer = ({ rates, rateTypes, stillLoading, ...props }) => {
       navigationRef.navigate('RatesTab', {
         screen: Settings.INITIAL_ROUTE_NAME,
       });
+      // prevent re-trigger on remount
+      Notifications.clearLastNotificationResponseAsync();
     }
   }, [lastNotificationResponse]);
   // QUICK ACTIONS
