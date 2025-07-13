@@ -132,6 +132,8 @@ export default {
         },
       },
     ],
+    // remove next comment when CNG is supported on iOS
+    // '@bacons/apple-targets',
   ].filter(Boolean),
   newArchEnabled: IS_NEW_ARCH_ENABLED,
   ios: {
