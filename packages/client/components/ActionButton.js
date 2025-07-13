@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { RectButton, BorderlessButton } from 'react-native-gesture-handler';
 

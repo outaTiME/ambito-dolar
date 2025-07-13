@@ -1,7 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialIcons';
 import { HeaderButton } from '@react-navigation/elements';
-import React from 'react';
 import { Text } from 'react-native';
 
 import Settings from '../config/settings';

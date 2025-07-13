@@ -1,4 +1,3 @@
-import React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import Svg, { Defs, Pattern, Rect, Text as SvgText } from 'react-native-svg';
 

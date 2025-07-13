@@ -1,5 +1,4 @@
 import { useTheme } from '@react-navigation/native';
-import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
 export default ({ height = StyleSheet.hairlineWidth, style = {} }) => {

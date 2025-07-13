@@ -1,5 +1,4 @@
 import { Image } from 'expo-image';
-import React from 'react';
 import { Platform, View } from 'react-native';
 
 import Settings from '../config/settings';

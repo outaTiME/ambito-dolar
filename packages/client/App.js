@@ -11,7 +11,6 @@ import {
   Text,
   TextInput,
   Platform,
-  LogBox,
   useWindowDimensions,
   View,
 } from 'react-native';
@@ -51,13 +50,6 @@ TextInput.defaultProps.maxFontSizeMultiplier =
 AnimateableText.defaultProps = AnimateableText.defaultProps || {};
 AnimateableText.defaultProps.maxFontSizeMultiplier =
   Settings.MAX_FONT_SIZE_MULTIPLIER;
-
-if (__DEV__) {
-  LogBox.ignoreLogs([
-    '[Reanimated] Tried to modify key `current` of an object which has been already passed to a worklet.',
-    'There was a problem with the store.',
-  ]);
-}
 
 if (Platform.OS === 'android') {
   // update widgets every 5 minutes

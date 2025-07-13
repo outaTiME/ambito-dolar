@@ -1,5 +1,4 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import React from 'react';
 import { FlexWidget, SvgWidget, TextWidget } from 'react-native-android-widget';
 
 import Settings from '../config/settings';

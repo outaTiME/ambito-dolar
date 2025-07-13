@@ -1,6 +1,5 @@
 import { tx, id } from '@instantdb/react-native';
 import { compose } from '@reduxjs/toolkit';
-import React from 'react';
 import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 

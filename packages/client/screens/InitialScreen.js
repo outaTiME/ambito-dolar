@@ -1,5 +1,4 @@
 import { compose } from '@reduxjs/toolkit';
-import React from 'react';
 import { ActivityIndicator } from 'react-native';
 
 import ContentView from '../components/ContentView';

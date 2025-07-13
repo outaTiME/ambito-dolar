@@ -1,5 +1,4 @@
 import { compose } from '@reduxjs/toolkit';
-import React from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 import * as actions from '../actions';

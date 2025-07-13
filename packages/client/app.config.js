@@ -11,7 +11,6 @@ export default {
   platforms: ['android', 'ios', 'web'],
   githubUrl:
     'https://github.com/outaTiME/ambito-dolar/tree/master/packages/client',
-  // orientation: 'portrait',
   userInterfaceStyle: 'automatic',
   icon: './assets/icon.png',
   androidStatusBar: {
