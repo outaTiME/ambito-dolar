@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@9.0.2...@ambito-dolar/client@9.0.3) (2025-07-13)
+
+### Bug Fixes
+
+- bump version and build number ([ab5a25d](https://github.com/outaTiME/ambito-dolar/commit/ab5a25dff715dc5af884630386a3dcf83f837095))
+- improve Android navigation bar contrast ([4d7ff12](https://github.com/outaTiME/ambito-dolar/commit/4d7ff12f6b7ab4c8852cf69cdc3b58d3826c695b))
+- prevent re-triggering notification response on remount ([e568e47](https://github.com/outaTiME/ambito-dolar/commit/e568e47e8c4dcd2a7999d77094bcbb5d03aab55c))
+
 ## [9.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@9.0.1...@ambito-dolar/client@9.0.2) (2025-06-17)
 
 ### Bug Fixes

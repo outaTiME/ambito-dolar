@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.14.3...@ambito-dolar/website@1.14.4) (2025-07-13)
+
+### Bug Fixes
+
+- improve layout of social icons on landing ([0331608](https://github.com/outaTiME/ambito-dolar/commit/0331608e564bf957d7356c512a88fff1e43fa07e))
+
 ## [1.14.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.14.2...@ambito-dolar/website@1.14.3) (2025-06-17)
 
 **Note:** Version bump only for package @ambito-dolar/website
