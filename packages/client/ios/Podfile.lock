@@ -1,5 +1,5 @@
 PODS:
-  - amplitude-react-native (1.4.13):
+  - amplitude-react-native (1.4.14):
     - React-Core
   - boost (1.84.0)
   - DoubleConversion (1.1.6)
@@ -15,7 +15,7 @@ PODS:
     - ExpoModulesCore
   - EXNotifications (0.29.14):
     - ExpoModulesCore
-  - Expo (52.0.46):
+  - Expo (52.0.47):
     - ExpoModulesCore
   - expo-dev-client (5.0.20):
     - EXManifests
@@ -320,6 +320,8 @@ PODS:
   - EXTaskManager (12.0.6):
     - ExpoModulesCore
     - UMAppLoader
+  - ExtensionStorage (1.0.0):
+    - ExpoModulesCore
   - EXUpdatesInterface (1.0.0):
     - ExpoModulesCore
   - fast_float (6.1.4)
@@ -346,8 +348,8 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - PurchasesHybridCommon (13.36.0):
-    - RevenueCat (= 5.28.1)
+  - PurchasesHybridCommon (14.2.0):
+    - RevenueCat (= 5.32.0)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -1575,7 +1577,7 @@ PODS:
     - React-Core
   - react-native-netinfo (11.4.1):
     - React-Core
-  - react-native-safe-area-context (5.4.1):
+  - react-native-safe-area-context (5.5.2):
     - React-Core
   - react-native-view-shot (4.0.3):
     - DoubleConversion
@@ -1887,10 +1889,10 @@ PODS:
     - React-logger (= 0.77.2)
     - React-perflogger (= 0.77.2)
     - React-utils (= 0.77.2)
-  - RevenueCat (5.28.1)
+  - RevenueCat (5.32.0)
   - RNCAsyncStorage (2.2.0):
     - React-Core
-  - RNFlashList (1.8.2):
+  - RNFlashList (1.8.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1911,7 +1913,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNGestureHandler (2.26.0):
+  - RNGestureHandler (2.25.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1932,8 +1934,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNPurchases (8.11.4):
-    - PurchasesHybridCommon (= 13.36.0)
+  - RNPurchases (8.11.9):
+    - PurchasesHybridCommon (= 14.2.0)
     - React-Core
   - RNReanimated (3.18.0):
     - DoubleConversion
@@ -2076,7 +2078,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (6.15.1):
+  - RNSentry (6.17.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2097,7 +2099,7 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Sentry/HybridSDK (= 8.52.1)
+    - Sentry/HybridSDK (= 8.53.1)
     - Yoga
   - RNSVG (15.12.0):
     - React-Core
@@ -2112,7 +2114,7 @@ PODS:
   - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
-  - Sentry/HybridSDK (8.52.1)
+  - Sentry/HybridSDK (8.53.1)
   - SocketRocket (0.7.1)
   - UMAppLoader (5.0.1)
   - Yoga (0.0.0)
@@ -2155,6 +2157,7 @@ DEPENDENCIES:
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - ExpoWidgetKit (from `../modules/widgetkit/ios`)
   - EXTaskManager (from `../node_modules/expo-task-manager/ios`)
+  - "ExtensionStorage (from `../node_modules/@bacons/apple-targets/ios`)"
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - fast_float (from `../node_modules/react-native/third-party-podspecs/fast_float.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -2326,6 +2329,8 @@ EXTERNAL SOURCES:
     :path: "../modules/widgetkit/ios"
   EXTaskManager:
     :path: "../node_modules/expo-task-manager/ios"
+  ExtensionStorage:
+    :path: "../node_modules/@bacons/apple-targets/ios"
   EXUpdatesInterface:
     :path: "../node_modules/expo-updates-interface/ios"
   fast_float:
@@ -2487,7 +2492,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amplitude-react-native: ee5dc7fd064fc4456d662eb483b02afa27e3dbae
+  amplitude-react-native: e298392e2ff50d72d739840cbd97ea0a0d691e31
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXApplication: 27a524f5c3e671c6218220fba04752629466a1a9
@@ -2496,7 +2501,7 @@ SPEC CHECKSUMS:
   EXJSONUtils: 01fc7492b66c234e395dcffdd5f53439c5c29c93
   EXManifests: 77e77c283c4c53a50b9bddebed25abe93f0b48f1
   EXNotifications: c024b19d69d31fbc22ed63682559cef38523da9e
-  Expo: 3e53243e3281214a7d613f8a875c0b732d7512c2
+  Expo: 3ddf0d76db6b3eef5d1d9f869676d3b69d95305f
   expo-dev-client: ca3ebc270cb0d3f26e6d9c3e1da19957ef4fcac1
   expo-dev-launcher: 5898af05f72c563c35efc8a5f82979b321bcfbab
   expo-dev-menu: 4e4fc72161aa9087b5a560461fa8ce0404c2959a
@@ -2524,6 +2529,7 @@ SPEC CHECKSUMS:
   ExpoSystemUI: fb8213e39d19e0861320fa69eb60cad7a839c080
   ExpoWidgetKit: 07ec6a3ad726d5ed6f07be972e07a35ce6cec374
   EXTaskManager: e9e20f65855cbe0a38d6e2dc2e895e5928b30923
+  ExtensionStorage: 158434def6cd14146ecacf5ac2db6345f8644c2d
   EXUpdatesInterface: 1dcebac98ac5dad4289e6ff2bd5616822e894397
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 4c16dde959a9d6b24f2aa32cb87cb919a1ace3f3
@@ -2533,7 +2539,7 @@ SPEC CHECKSUMS:
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  PurchasesHybridCommon: 27d71a65d486bbfd6822a58c9802f7191e438c05
+  PurchasesHybridCommon: f1650b33e9a1dd04d5e8a40dfe757f39e63f935c
   RCT-Folly: 36fe2295e44b10d831836cc0d1daec5f8abcf809
   RCTDeprecation: 85b72250b63cfb54f29ca96ceb108cb9ef3c2079
   RCTRequired: 567cb8f5d42b990331bfd93faad1d8999b1c1736
@@ -2566,7 +2572,7 @@ SPEC CHECKSUMS:
   react-native-animateable-text: c067d3fa630e07de1e6e1c13f6a35424f721f624
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
-  react-native-safe-area-context: 583e6d44b8500e4d4738119118d1fc01d754bfc0
+  react-native-safe-area-context: 63c9a6def15e6f6377e59cea51566148a2774d62
   react-native-view-shot: a446294679f92d2235ae1ef69e2ecd541ec8cfeb
   React-nativeconfig: 75658bde8f977492f668e94ae8eb9c0dfef7ed94
   React-NativeModulesApple: 1bd9fa09c40204ac489acbe7da239efa4aa47244
@@ -2597,24 +2603,24 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 8955603808eb24bbfde3511d2bcc8362d1d5860e
   ReactCodegen: 29ce81e823688a8dc66e1d2cf081b97216718fa8
   ReactCommon: ad39e4549e2920b3b065a28603921a75619d0639
-  RevenueCat: 3fafcf295834118ed6e6ec9388a20a4c9092b1e6
+  RevenueCat: 7e1d0768fb287c9983173c9b28e39ccbeeb828a9
   RNCAsyncStorage: 23e56519cc41d3bade3c8d4479f7760cb1c11996
-  RNFlashList: ba60e5bd75c17f5033ed6fe865fe93c6dcbf6d39
-  RNGestureHandler: aef4f72b1458ad9c8f89fd4612904181aa1e0164
-  RNPurchases: 7ef1aa5fbb22e9a55658c075d6902b8ac417d2bc
+  RNFlashList: 60375e8dd2ed7a7db03162b4adf5373997fdaedc
+  RNGestureHandler: 0573a746155b37786d57d89951f71433c90f80a5
+  RNPurchases: eacca3299dd586b6c64e7fca8f768a20c6dffe76
   RNReanimated: 3a9b62c33897d1df2e8c47311f559b3ef4b6acc9
   RNScreens: abb9bbff8f1594862e5a85df829f329942e32501
-  RNSentry: 7a25d6cf83cffbde25f01d9131b8d9f0d75a87f6
+  RNSentry: 5a1a5394585f30b693afea4cd4479d0315e2adaf
   RNSVG: 51e8be88d13d66a375a4eb6a2e794abdd651ea4f
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
-  Sentry: 2cbbe3592f30050c60e916c63c7f5a2fa584005e
+  Sentry: 1e4e974d45f09d153af4b30b42acfb1c79e957d3
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   UMAppLoader: 7e7e0eaa7854ffd652c00a68c443afb28c3bedba
   Yoga: 23fb98904c6937028692aa0e5bb63624ff41c4a1
 
 PODFILE CHECKSUM: 2d6ff60f2c1c1d65df962eb9edccd44ee40ebc10
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
