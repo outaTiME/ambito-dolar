@@ -32,6 +32,9 @@ const QATAR_TYPE = 'qatar';
 const LUXURY_TYPE = 'lujo';
 const CULTURAL_TYPE = 'cultural';
 const BNA_TYPE = 'bna';
+const EURO_TYPE = 'euro';
+const EURO_INFORMAL_TYPE = 'euro_informal';
+const REAL_TYPE = 'real';
 
 const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
@@ -202,6 +205,9 @@ const getAvailableRateTypes = () => [
   MEP_TYPE,
   CCB_TYPE,
   WHOLESALER_TYPE,
+  // EURO_TYPE,
+  // EURO_INFORMAL_TYPE,
+  // REAL_TYPE,
 ];
 
 const getAvailableRates = (rates, check = false) => {
@@ -245,6 +251,12 @@ const getRateTitle = (type) => {
     return 'Cripto';
   } else if (type === WHOLESALER_TYPE) {
     return 'Mayorista';
+  } else if (type === EURO_TYPE) {
+    return 'Euro';
+  } else if (type === EURO_INFORMAL_TYPE) {
+    return 'Euro Blue';
+  } else if (type === REAL_TYPE) {
+    return 'Real';
   }
 };
 
@@ -339,6 +351,9 @@ export default {
   LUXURY_TYPE,
   CULTURAL_TYPE,
   BNA_TYPE,
+  EURO_TYPE,
+  EURO_INFORMAL_TYPE,
+  REAL_TYPE,
   NOTIFICATION_OPEN_TYPE,
   NOTIFICATION_CLOSE_TYPE,
   NOTIFICATION_VARIATION_TYPE,

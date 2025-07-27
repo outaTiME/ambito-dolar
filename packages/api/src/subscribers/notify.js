@@ -11,6 +11,7 @@ import Shared, {
   MIN_CLIENT_VERSION_FOR_SAVING,
   MIN_CLIENT_VERSION_FOR_QATAR,
   MIN_CLIENT_VERSION_FOR_BNA,
+  MIN_CLIENT_VERSION_FOR_EURO_AND_REAL,
 } from '../libs/shared';
 
 const ddbClient = Shared.getDynamoDBClient();
@@ -118,6 +119,13 @@ const getMessagesFromCurrentRate = (items, type, rates) => {
         }
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_BNA)) {
           delete rates_for_settings[AmbitoDolar.BNA_TYPE];
+        }
+        if (
+          Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_EURO_AND_REAL)
+        ) {
+          delete rates_for_settings[AmbitoDolar.EURO_TYPE];
+          delete rates_for_settings[AmbitoDolar.EURO_INFORMAL_TYPE];
+          delete rates_for_settings[AmbitoDolar.REAL_TYPE];
         }
         const body = getBodyMessage(rates_for_settings);
         if (body) {

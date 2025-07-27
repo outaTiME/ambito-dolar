@@ -241,6 +241,9 @@ const getRates = (rates) =>
     // getRate(AmbitoDolar.LUXURY_TYPE),
     // getRate(AmbitoDolar.CULTURAL_TYPE),
     getRate(AmbitoDolar.WHOLESALER_TYPE),
+    // getRate(AmbitoDolar.EURO_TYPE),
+    // getRate(AmbitoDolar.EURO_INFORMAL_TYPE),
+    // getRate(AmbitoDolar.REAL_TYPE),
   ])
     .then(getObjectRates)
     .then((new_rates) => getNewRates(rates, new_rates));
