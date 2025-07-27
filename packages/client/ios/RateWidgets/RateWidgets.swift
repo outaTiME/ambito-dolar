@@ -716,6 +716,21 @@ struct SpreadWidget: Widget {
   }
 }
 
+@available(iOS 18.0, *)
+struct LaunchControlWidget: ControlWidget {
+  static let kind: String = "com.ambitodolar.controlwidget.launch"
+  var body: some ControlWidgetConfiguration {
+    StaticControlConfiguration(kind: Self.kind) {
+      ControlWidgetButton(action: LaunchAppIntent()) {
+        Label("Ámbito Dólar", image: "AppWidgetIcon")
+          // .controlWidgetActionHint("Abrir Ámbito Dólar")
+      }
+    }
+    .displayName("Ámbito Dólar")
+    .description("Control para abrir la app desde el Centro de Control.")
+  }
+}
+
 @main
 struct RateWidgets: WidgetBundle {
   @WidgetBundleBuilder
@@ -723,6 +738,9 @@ struct RateWidgets: WidgetBundle {
     RateWidget()
     ListRatesWidget()
     SpreadWidget()
+    if #available(iOS 18.0, *) {
+      LaunchControlWidget()
+    }
   }
 }
 
