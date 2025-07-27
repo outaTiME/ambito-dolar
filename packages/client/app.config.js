@@ -1,5 +1,5 @@
-const version = '9.1.0';
-const buildNumber = 174;
+const version = '10.0.0';
+const buildNumber = 175;
 
 const IS_NEW_ARCH_ENABLED = false;
 
@@ -123,6 +123,7 @@ export default {
         color: '#00AE6B',
       },
     ],
+    // https://expo.dev/blog/edge-to-edge-display-now-streamlined-for-android#additional-edge-to-edge-configuration-options
     [
       'react-native-edge-to-edge',
       {
@@ -132,6 +133,7 @@ export default {
         },
       },
     ],
+    'expo-mail-composer',
     // remove next comment when CNG is supported on iOS
     // '@bacons/apple-targets',
   ].filter(Boolean),
@@ -227,7 +229,10 @@ export default {
         },
       ],
     },
-    associatedDomains: ['applinks:ambito-dolar.app'],
+    associatedDomains: [
+      'applinks:ambito-dolar.app',
+      'applinks:www.ambito-dolar.app',
+    ],
   },
   android: {
     package: 'im.outa.AmbitoDolar',
@@ -247,5 +252,6 @@ export default {
     }),
     // prevents restore of auto-generated IDs
     allowBackup: false,
+    edgeToEdgeEnabled: true,
   },
 };

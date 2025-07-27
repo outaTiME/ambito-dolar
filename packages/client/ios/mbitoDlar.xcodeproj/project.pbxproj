@@ -7,16 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		14BA483FBD1E58C08A4920DF /* Pods_mbitoDlar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDC40884CB9BC1734E0262FA /* Pods_mbitoDlar.framework */; };
 		251C9388E0E24532A8F7CD2F /* FiraGO-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = A04DF8652DD8418698C27697 /* FiraGO-Regular.otf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		4A089B2BFE5641F496727F86 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 36E8B31293DB47E4A48232DA /* MaterialCommunityIcons.ttf */; };
 		6E53C14613A94F62A00928A8 /* FontAwesome6_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E26710A49ACF4E92AC585051 /* FontAwesome6_Brands.ttf */; };
 		8D2F0A11A7BA4B549B713389 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 239E92F02F0F4433B1864755 /* MaterialIcons.ttf */; };
-		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
+		A00F06DAD457A6C357CF3A98 /* Pods_mbitoDlar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E3449281102AA8F44CC566A /* Pods_mbitoDlar.framework */; };
+		B58A0A011B1B3B15882ED2E7 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634D5BBE560F4DE955F1838C /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		C21E45B42A7876B700DE33BF /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C21E45B32A7876B700DE33BF /* WidgetKit.framework */; };
 		C21E45B62A7876B700DE33BF /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C21E45B52A7876B700DE33BF /* SwiftUI.framework */; };
@@ -35,7 +33,7 @@
 		C2368EAB2E24B1B300A8244D /* LaunchAppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2368EA92E24B16C00A8244D /* LaunchAppIntent.swift */; };
 		C25107832C40ED1C00FAC065 /* FiraGO-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = A04DF8652DD8418698C27697 /* FiraGO-Regular.otf */; };
 		DCB153073B1F454FBBECA750 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4B5CDA403543420095BF8A27 /* PrivacyInfo.xcprivacy */; };
-		E320CBB8C349412EB326DBC9 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655084A5E5B94E5AA67AB50A /* noop-file.swift */; };
+		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		F1DC1F381AF74CD5B32EC54D /* FontAwesome6_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9284434E925443BB90AD7CF0 /* FontAwesome6_Solid.ttf */; };
 /* End PBXBuildFile section */
 
@@ -73,17 +71,15 @@
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* mbitoDlar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mbitoDlar.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = mbitoDlar/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = mbitoDlar/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mbitoDlar/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mbitoDlar/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mbitoDlar/main.m; sourceTree = "<group>"; };
+		1CCE50C0D0EE9A98BFF032C0 /* Pods-mbitoDlar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.release.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.release.xcconfig"; sourceTree = "<group>"; };
 		239E92F02F0F4433B1864755 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		36E8B31293DB47E4A48232DA /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		4B5CDA403543420095BF8A27 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = mbitoDlar/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		655084A5E5B94E5AA67AB50A /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "mbitoDlar/noop-file.swift"; sourceTree = "<group>"; };
-		6C2E3173556A471DD304B334 /* Pods-mbitoDlar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.debug.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.debug.xcconfig"; sourceTree = "<group>"; };
-		7A4D352CD337FB3A3BF06240 /* Pods-mbitoDlar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.release.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.release.xcconfig"; sourceTree = "<group>"; };
+		54EBFC0F0E4C6830218E9C73 /* Pods-mbitoDlar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mbitoDlar.debug.xcconfig"; path = "Target Support Files/Pods-mbitoDlar/Pods-mbitoDlar.debug.xcconfig"; sourceTree = "<group>"; };
+		634D5BBE560F4DE955F1838C /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-mbitoDlar/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		8E3449281102AA8F44CC566A /* Pods_mbitoDlar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_mbitoDlar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9284434E925443BB90AD7CF0 /* FontAwesome6_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Solid.ttf; path = "../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Solid.ttf"; sourceTree = "<group>"; };
 		A04DF8652DD8418698C27697 /* FiraGO-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "FiraGO-Regular.otf"; path = "../assets/fonts/FiraGO-Regular.otf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = mbitoDlar/SplashScreen.storyboard; sourceTree = "<group>"; };
@@ -102,11 +98,10 @@
 		C21E45E52A787AB600DE33BF /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		C2368EA92E24B16C00A8244D /* LaunchAppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAppIntent.swift; sourceTree = "<group>"; };
 		C28DC3622CAB55AA00F19252 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/RateWidgets.strings"; sourceTree = "<group>"; };
-		DDC40884CB9BC1734E0262FA /* Pods_mbitoDlar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_mbitoDlar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E26710A49ACF4E92AC585051 /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Brands.ttf; path = "../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Brands.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F3D86AC280A943AB944FE020 /* mbitoDlar-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "mbitoDlar-Bridging-Header.h"; path = "mbitoDlar/mbitoDlar-Bridging-Header.h"; sourceTree = "<group>"; };
-		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-mbitoDlar/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = mbitoDlar/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* mbitoDlar-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "mbitoDlar-Bridging-Header.h"; path = "mbitoDlar/mbitoDlar-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,7 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14BA483FBD1E58C08A4920DF /* Pods_mbitoDlar.framework in Frameworks */,
+				A00F06DAD457A6C357CF3A98 /* Pods_mbitoDlar.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,18 +145,23 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		0CD7E61E6EF44B7CAED2086B /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				88714CA73D1A7486A445894D /* mbitoDlar */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
 		13B07FAE1A68108700A75B9A /* mbitoDlar */ = {
 			isa = PBXGroup;
 			children = (
+				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
+				F11748442D0722820044C1D9 /* mbitoDlar-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				655084A5E5B94E5AA67AB50A /* noop-file.swift */,
-				F3D86AC280A943AB944FE020 /* mbitoDlar-Bridging-Header.h */,
 				4B5CDA403543420095BF8A27 /* PrivacyInfo.xcprivacy */,
 			);
 			name = mbitoDlar;
@@ -174,7 +174,7 @@
 				C21E45B32A7876B700DE33BF /* WidgetKit.framework */,
 				C21E45B52A7876B700DE33BF /* SwiftUI.framework */,
 				C21E45D72A787A2E00DE33BF /* Intents.framework */,
-				DDC40884CB9BC1734E0262FA /* Pods_mbitoDlar.framework */,
+				8E3449281102AA8F44CC566A /* Pods_mbitoDlar.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -195,9 +195,9 @@
 				C21E45D92A787A2E00DE33BF /* RateIntents */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				D65327D7A22EEC0BE12398D9 /* Pods */,
-				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
 				0131A0AA6D824D88B2ACF4AA /* Resources */,
+				F2EA900A5128EFA1DFF67B97 /* Pods */,
+				0CD7E61E6EF44B7CAED2086B /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -214,10 +214,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		92DBD88DE9BF7D494EA9DA96 /* mbitoDlar */ = {
+		88714CA73D1A7486A445894D /* mbitoDlar */ = {
 			isa = PBXGroup;
 			children = (
-				FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */,
+				634D5BBE560F4DE955F1838C /* ExpoModulesProvider.swift */,
 			);
 			name = mbitoDlar;
 			sourceTree = "<group>";
@@ -261,21 +261,14 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		D65327D7A22EEC0BE12398D9 /* Pods */ = {
+		F2EA900A5128EFA1DFF67B97 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6C2E3173556A471DD304B334 /* Pods-mbitoDlar.debug.xcconfig */,
-				7A4D352CD337FB3A3BF06240 /* Pods-mbitoDlar.release.xcconfig */,
+				54EBFC0F0E4C6830218E9C73 /* Pods-mbitoDlar.debug.xcconfig */,
+				1CCE50C0D0EE9A98BFF032C0 /* Pods-mbitoDlar.release.xcconfig */,
 			);
+			name = Pods;
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				92DBD88DE9BF7D494EA9DA96 /* mbitoDlar */,
-			);
-			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -579,12 +572,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				C2368EAB2E24B1B300A8244D /* LaunchAppIntent.swift in Sources */,
 				C21E45C92A78791100DE33BF /* RateWidgets.intentdefinition in Sources */,
-				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				E320CBB8C349412EB326DBC9 /* noop-file.swift in Sources */,
+				B58A0A011B1B3B15882ED2E7 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -639,7 +630,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6C2E3173556A471DD304B334 /* Pods-mbitoDlar.debug.xcconfig */;
+			baseConfigurationReference = 54EBFC0F0E4C6830218E9C73 /* Pods-mbitoDlar.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -667,7 +658,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = im.outa.AmbitoDolar;
-				PRODUCT_NAME = mbitoDlar;
+				PRODUCT_NAME = "mbitoDlar";
 				SWIFT_OBJC_BRIDGING_HEADER = "mbitoDlar/mbitoDlar-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -678,7 +669,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7A4D352CD337FB3A3BF06240 /* Pods-mbitoDlar.release.xcconfig */;
+			baseConfigurationReference = 1CCE50C0D0EE9A98BFF032C0 /* Pods-mbitoDlar.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -701,7 +692,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = im.outa.AmbitoDolar;
-				PRODUCT_NAME = mbitoDlar;
+				PRODUCT_NAME = "mbitoDlar";
 				SWIFT_OBJC_BRIDGING_HEADER = "mbitoDlar/mbitoDlar-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
