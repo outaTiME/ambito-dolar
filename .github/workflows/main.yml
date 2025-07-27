@@ -18,7 +18,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Enable Corepack
         run: corepack enable
-      - name: Install dependencies
-        run: yarn
+      # - name: Install dependencies
+      #   run: yarn
+      - name: Install dependencies (immutable)
+        run: yarn install --inline-builds --immutable
       - name: Run tests
         run: yarn test
