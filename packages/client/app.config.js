@@ -137,6 +137,7 @@ export default {
   ].filter(Boolean),
   newArchEnabled: IS_NEW_ARCH_ENABLED,
   ios: {
+    appleTeamId: 'F3XMLHHGWP',
     bundleIdentifier: 'im.outa.AmbitoDolar',
     buildNumber: buildNumber.toString(),
     appStoreUrl: 'https://apps.apple.com/app/id1485120819',
@@ -226,6 +227,7 @@ export default {
         },
       ],
     },
+    associatedDomains: ['applinks:ambito-dolar.app'],
   },
   android: {
     package: 'im.outa.AmbitoDolar',

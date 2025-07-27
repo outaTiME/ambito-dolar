@@ -275,6 +275,14 @@ export function MainStack({ stack }) {
   });
   // landing page with accesss to legacy api
   const landingSite = new StaticSite(stack, 'LandingSite', {
+    assets: {
+      fileOptions: [
+        {
+          files: '.well-known/apple-app-site-association',
+          contentType: 'application/json',
+        },
+      ],
+    },
     buildCommand: 'yarn build',
     buildOutput: 'public',
     errorPage: 'redirect_to_index_page',

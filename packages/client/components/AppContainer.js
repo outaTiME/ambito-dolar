@@ -545,9 +545,9 @@ const AppContainer = ({ rates, rateTypes, stillLoading, ...props }) => {
   // DEEP LINK
   const onDeepLink = React.useCallback((url) => {
     if (url) {
-      const { hostname: route, queryParams: params } = Linking.parse(url);
-      Helper.debug('🎯 Deep link received', url, route, params);
-      if (/^rates?$/i.test(route)) {
+      const { path, queryParams: params } = Linking.parse(url);
+      Helper.debug('🎯 Deep link received', url, path, params);
+      if (/^rates?$/i.test(path)) {
         navigationRef.navigate('RatesTab', {
           screen:
             !params.type || !rateTypes.includes(params.type)

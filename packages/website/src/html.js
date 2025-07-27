@@ -11,6 +11,7 @@ export default function HTML(props) {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
         />
+        {/* <meta name="apple-itunes-app" content="app-id=1485120819" /> */}
         {props.headComponents}
       </head>
       <body {...props.bodyAttributes}>
