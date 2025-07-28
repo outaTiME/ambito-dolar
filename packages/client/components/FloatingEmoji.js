@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { useLayoutEffect } from 'react';
 import { Text } from 'react-native';
 import Animated, {
@@ -41,7 +40,7 @@ const FloatingEmoji = ({
 
     const opacity = interpolate(
       progress,
-      [0, distance * (opacityThreshold ?? 0.5), distance - size],
+      [0, distance * (opacityThreshold ?? 0.5), distance - Number(size)],
       [1, fadeOut ? 0.89 : 1, fadeOut ? 0 : 1],
     );
 
@@ -60,21 +59,24 @@ const FloatingEmoji = ({
 
     const everyThirdEmojiMultiplier = index % 3 === 0 ? 3 : 2;
     const everySecondEmojiMultiplier = index % 2 === 0 ? -1 : 1;
+
+    // Horizontal movement
     const translateXComponentA =
       animation.value *
-      size *
+      Number(size) *
       everySecondEmojiMultiplier *
       everyThirdEmojiMultiplier;
 
-    /*
-    We don't really know why these concrete numbers are used there.
-    Original Author of these numbers: Mike Demarais
-     */
+    // "Wiggle" calculations
     const wiggleMultiplierA = Math.sin(progress * (distance / 23.3));
     const wiggleMultiplierB = interpolate(
       progress,
       [0, distance / 10, distance],
-      [10 * wiggleFactor, 6.9 * wiggleFactor, 4.2137 * wiggleFactor],
+      [
+        10 * (wiggleFactor ?? 1),
+        6.9 * (wiggleFactor ?? 1),
+        4.2137 * (wiggleFactor ?? 1),
+      ],
     );
     const translateXComponentB = wiggleMultiplierA * wiggleMultiplierB;
 
@@ -82,6 +84,7 @@ const FloatingEmoji = ({
       ? 0
       : translateXComponentA + translateXComponentB;
 
+    // Vertical movement
     const translateY = disableVerticalMovement ? 0 : -progress;
 
     return {
@@ -97,7 +100,7 @@ const FloatingEmoji = ({
           left,
           marginTop,
           position: 'absolute',
-          top: centerVertically ? null : top || size * -0.5,
+          top: centerVertically ? undefined : (top ?? size * -0.5),
         },
         animatedStyle,
       ]}
@@ -106,29 +109,16 @@ const FloatingEmoji = ({
         style={{
           fontSize: size,
           includeFontPadding: false,
+          // solid color for android to avoid translucent text
+          color: '#000',
         }}
         letterSpacing="zero"
+        lineHeight="none"
       >
         {emoji}
       </Text>
     </Animated.View>
   );
-};
-FloatingEmoji.propTypes = {
-  centerVertically: PropTypes.bool,
-  disableHorizontalMovement: PropTypes.bool,
-  disableVerticalMovement: PropTypes.bool,
-  distance: PropTypes.number.isRequired,
-  duration: PropTypes.number.isRequired,
-  emoji: PropTypes.string.isRequired,
-  fadeOut: PropTypes.bool,
-  left: PropTypes.number.isRequired,
-  marginTop: PropTypes.number,
-  opacityThreshold: PropTypes.number,
-  scaleTo: PropTypes.number.isRequired,
-  size: PropTypes.number.isRequired,
-  top: PropTypes.number,
-  wiggleFactor: PropTypes.number,
 };
 
 const neverRerender = () => true;

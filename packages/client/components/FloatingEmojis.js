@@ -1,11 +1,4 @@
-import PropTypes from 'prop-types';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Animated, View, StyleSheet, Platform } from 'react-native';
 
 import FloatingEmoji from './FloatingEmoji';
@@ -40,11 +33,12 @@ const FloatingEmojis = ({
   marginTop,
   opacity = 1,
   opacityThreshold,
-  range = [0, 80],
+  range: [rangeMin, rangeMax] = [0, 80],
   scaleTo = 1,
   setOnNewEmoji,
   size = 30,
   wiggleFactor = 0.5,
+  style,
   disableMoneyMouthFace,
   ...props
 }) => {
@@ -80,8 +74,11 @@ const FloatingEmojis = ({
               : emojisArray.length === 1
                 ? emojisArray[0]
                 : emojisArray[getEmoji(emojisArray)],
-          x: x - getRandomNumber(-20, 20),
-          y,
+          x:
+            x !== undefined
+              ? x - getRandomNumber(-20, 20)
+              : getRandomNumber(rangeMin, rangeMax),
+          y: y || 0,
         };
         return [...existingEmojis, newEmoji];
       });
@@ -91,7 +88,8 @@ const FloatingEmojis = ({
       disableMoneyMouthFace,
       duration,
       emojisArray,
-      range,
+      rangeMin,
+      rangeMax,
       startTimeout,
       stopTimeout,
     ],
@@ -103,7 +101,7 @@ const FloatingEmojis = ({
   }, [setOnNewEmoji, onNewEmoji]);
 
   return (
-    <View zIndex={1} {...props}>
+    <View style={[{ zIndex: 1 }, style]} {...props}>
       {typeof children === 'function' ? children({ onNewEmoji }) : children}
       <Animated.View
         pointerEvents="none"
@@ -135,26 +133,6 @@ const FloatingEmojis = ({
       </Animated.View>
     </View>
   );
-};
-
-FloatingEmojis.propTypes = {
-  centerVertically: PropTypes.bool,
-  children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-  disableHorizontalMovement: PropTypes.bool,
-  disableVerticalMovement: PropTypes.bool,
-  distance: PropTypes.number,
-  duration: PropTypes.number,
-  emojis: PropTypes.arrayOf(PropTypes.string),
-  fadeOut: PropTypes.bool,
-  marginTop: PropTypes.number,
-  opacity: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
-  opacityThreshold: PropTypes.number,
-  range: PropTypes.arrayOf(PropTypes.number),
-  scaleTo: PropTypes.number,
-  setOnNewEmoji: PropTypes.func,
-  size: PropTypes.number,
-  wiggleFactor: PropTypes.number,
-  disableMoneyMouthFace: PropTypes.bool,
 };
 
 export default FloatingEmojis;

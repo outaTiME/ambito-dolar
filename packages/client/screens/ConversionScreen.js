@@ -178,6 +178,8 @@ const ConversionScreen = ({
                   {
                     lineHeight: undefined,
                     includeFontPadding: false,
+                    // required for Android on Expo 53
+                    padding: 0,
                   },
                 ]}
                 underlineColorAndroid="transparent"
