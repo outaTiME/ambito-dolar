@@ -6,7 +6,6 @@
     <string>development</string>
     <key>com.apple.developer.associated-domains</key>
     <array>
-      <string>applinks:ambito-dolar.app</string>
       <string>applinks:www.ambito-dolar.app</string>
     </array>
   </dict>

@@ -37,10 +37,6 @@ struct RateValue: Identifiable, Equatable {
 }
 
 private func getRates() -> [String: Any]? {
-  // TODO: export fetch uri to env
-  if let fetchRatesUri = ProcessInfo.processInfo.environment["FETCH_RATES_URI"] {
-    print("fetchRatesUri: \(fetchRatesUri)")
-  }
   let url = URL(string: "https://api.ambito-dolar.app/fetch")!
   let semaphore = DispatchSemaphore(value: 0)
   var rates: [String: Any]?
@@ -98,9 +94,9 @@ private func getChangeColor(num: Double) -> Color {
 
 private func getWidgetUrl(id: String? = nil) -> URL? {
   if let id = id {
-    return URL(string: "https://ambito-dolar.app/rate?type=" + id)
+    return URL(string: "https://www.ambito-dolar.app/rate?type=" + id)
   }
-  return URL(string: "https://ambito-dolar.app/rates")
+  return URL(string: "https://www.ambito-dolar.app/rates")
 }
 
 extension ValueType {

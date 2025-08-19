@@ -19,7 +19,7 @@ struct LaunchAppIntent: ControlConfigurationIntent {
     // https://stackoverflow.com/a/78978941
     // EnvironmentValues().openURL(URL(string: "ambito-dolar://rates")!)
     // return .result(opensIntent: OpenURLIntent(URL(string: "ambito-dolar://rates")!))
-    return .result(opensIntent: OpenURLIntent(URL(string: "https://ambito-dolar.app/rates")!))
+    return .result(opensIntent: OpenURLIntent(URL(string: "https://www.ambito-dolar.app/rates")!))
   }
 }
 

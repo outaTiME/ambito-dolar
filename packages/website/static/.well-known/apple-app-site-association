@@ -7,8 +7,13 @@
         ],
         "components": [
           {
-            "/": "*",
-            "comment": "Matches all routes"
+            "/": "/rates"
+          },
+          {
+            "/": "/rate",
+            "?": {
+              "type": "*"
+            }
           }
         ]
       }

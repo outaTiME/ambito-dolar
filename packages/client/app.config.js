@@ -229,10 +229,7 @@ export default {
         },
       ],
     },
-    associatedDomains: [
-      'applinks:ambito-dolar.app',
-      'applinks:www.ambito-dolar.app',
-    ],
+    associatedDomains: ['applinks:www.ambito-dolar.app'],
   },
   android: {
     package: 'im.outa.AmbitoDolar',
