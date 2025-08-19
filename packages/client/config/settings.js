@@ -47,7 +47,6 @@ const {
       historicalRatesUri: HISTORICAL_RATES_URI,
       sentryDsn: SENTRY_DSN,
       amplitudeKey: AMPLITUDE_KEY,
-      firebaseConfigJson: FIREBASE_CONFIG_JSON,
       isProduction: IS_PRODUCTION,
       apiUrl: API_URL,
       revenueCat: {
@@ -92,7 +91,6 @@ const Settings = {
   HISTORICAL_RATES_URI,
   SENTRY_DSN,
   AMPLITUDE_KEY,
-  FIREBASE_CONFIG_JSON,
   IS_PRODUCTION: Platform.OS === 'web' ? IS_PRODUCTION : !__DEV__,
   API_URL,
   REVENUECAT_API_KEY: Platform.select({

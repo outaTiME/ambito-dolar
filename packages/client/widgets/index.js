@@ -50,8 +50,7 @@ export const getWidgetProps = async (
     const rateTypes = AmbitoDolar.getAvailableRateTypes();
     const type = config?.rate ?? rateTypes[0];
     if (!rates) {
-      // TODO: export fetch uri to env
-      rates = await Helper.getJson('https://api.ambito-dolar.app/fetch');
+      rates = await Helper.getJson(Settings.API_URL + '/fetch');
     } else {
       // use store data to avoid service call (same as fetch service)
       rates = Object.entries(rates).reduce((obj, [type, rate]) => {

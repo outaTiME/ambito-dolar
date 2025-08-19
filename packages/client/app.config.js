@@ -19,7 +19,6 @@ export default {
     historicalRatesUri: process.env.HISTORICAL_RATES_URI,
     sentryDsn: process.env.SENTRY_DSN,
     amplitudeKey: process.env.AMPLITUDE_KEY,
-    firebaseConfigJson: process.env.FIREBASE_CONFIG_JSON,
     isProduction: process.env.IS_PRODUCTION === 'true',
     apiUrl: process.env.SST_API_URL ?? process.env.API_URL,
     revenueCat: {
@@ -243,7 +242,6 @@ export default {
     playStoreUrl:
       'https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar',
     permissions: [],
-    // permissions: ['com.google.android.gms.permission.AD_ID'],
     ...(process.env.GOOGLE_SERVICES_FILE && {
       googleServicesFile: process.env.GOOGLE_SERVICES_FILE,
     }),
