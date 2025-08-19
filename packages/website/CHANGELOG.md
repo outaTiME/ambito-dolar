@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.14.4...@ambito-dolar/website@1.15.0) (2025-08-19)
+
+### Features
+
+- add support for universal links on iOS ([7e81d54](https://github.com/outaTiME/ambito-dolar/commit/7e81d54d6e957a1c13a6e8d30dc2759553a82bdc))
+
 ## [1.14.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.14.3...@ambito-dolar/website@1.14.4) (2025-07-13)
 
 ### Bug Fixes

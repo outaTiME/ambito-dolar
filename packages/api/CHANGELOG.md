@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.3.3...@ambito-dolar/api@4.3.4) (2025-08-19)
+
+**Note:** Version bump only for package @ambito-dolar/api
+
 ## [4.3.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.3.2...@ambito-dolar/api@4.3.3) (2025-07-13)
 
 **Note:** Version bump only for package @ambito-dolar/api

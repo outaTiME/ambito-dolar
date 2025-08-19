@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@9.0.3...@ambito-dolar/client@10.0.0) (2025-08-19)
+
+### Bug Fixes
+
+- build number ([b125db3](https://github.com/outaTiME/ambito-dolar/commit/b125db32c9e9cd7ed07cc8543033c2046091167c))
+- build number ([78d4384](https://github.com/outaTiME/ambito-dolar/commit/78d4384cdebf591ad47cff8ad2575b6670d7533e))
+- bump version and build number ([b75fa9b](https://github.com/outaTiME/ambito-dolar/commit/b75fa9b33119e9797e1fd371e6bd393d037f6653))
+- resolve text rendering and layout issues on Android for Expo SDK 53 ([a0731e1](https://github.com/outaTiME/ambito-dolar/commit/a0731e1632ac2adf6d8f8d3d5f935686a26d574f))
+
+### Features
+
+- add control widget to launch app from control center ([92a2939](https://github.com/outaTiME/ambito-dolar/commit/92a293978da3c7cf70e50a549e640723c612eacc))
+- add support for universal links on iOS ([7e81d54](https://github.com/outaTiME/ambito-dolar/commit/7e81d54d6e957a1c13a6e8d30dc2759553a82bdc))
+- update to Expo SDK 53 ([5d46264](https://github.com/outaTiME/ambito-dolar/commit/5d46264af8312322d2375e3a56620b6f798914f9))
+
+### BREAKING CHANGES
+
+- upgraded to React Native 0.79
+
 ## [9.0.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@9.0.2...@ambito-dolar/client@9.0.3) (2025-07-13)
 
 ### Bug Fixes

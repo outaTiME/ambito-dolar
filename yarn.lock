@@ -31,7 +31,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ambito-dolar/api@workspace:packages/api"
   dependencies:
-    "@ambito-dolar/core": "npm:^4.0.7"
+    "@ambito-dolar/core": "npm:^4.0.8"
     "@atproto/api": "npm:^0.16.2"
     "@aws-sdk/client-dynamodb": "npm:^3.868.0"
     "@aws-sdk/client-s3": "npm:^3.864.0"
@@ -68,7 +68,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ambito-dolar/client@workspace:packages/client"
   dependencies:
-    "@ambito-dolar/core": "npm:^4.0.7"
+    "@ambito-dolar/core": "npm:^4.0.8"
     "@amplitude/analytics-react-native": "npm:^1.5.3"
     "@babel/core": "npm:^7.28.3"
     "@bacons/apple-targets": "npm:^3.0.2"
@@ -153,7 +153,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ambito-dolar/core@npm:^4.0.7, @ambito-dolar/core@workspace:packages/core":
+"@ambito-dolar/core@npm:^4.0.8, @ambito-dolar/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@ambito-dolar/core@workspace:packages/core"
   dependencies:
