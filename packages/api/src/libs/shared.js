@@ -27,7 +27,6 @@ import { publish as publishToBsky } from './social/bsky';
 import { publish as publishToInstagram } from './social/instagram';
 import { publish as publishToMastodon } from './social/mastodon';
 import { publish as publishToReddit } from './social/reddit';
-// import { publish as publishToTwitter } from './social/twitter';
 import { publish as publishToWhatsapp } from './social/whatsapp';
 
 // defaults
@@ -673,7 +672,6 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
       'instagram',
       'mastodon',
       'reddit',
-      // 'twitter',
       'bsky',
       // 'whatsapp',
     ],
@@ -695,9 +693,6 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
         case 'reddit':
           promise = publishToReddit(caption, url);
           break;
-        /* case 'twitter':
-          promise = publishToTwitter(caption, file);
-          break; */
         case 'bsky':
           promise = publishToBsky(caption, file);
           break;
