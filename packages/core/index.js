@@ -178,12 +178,21 @@ const formatRateChange = (num, percentage = true, compact = false) => {
   return formatted;
 };
 
-const formatCurrency = (num, usd) => {
+const formatCurrency = (num, usd, type = null) => {
   const formatted = formatRateCurrency(num);
-  if (formatted) {
-    return (usd === true ? 'US$' : '$') + formatted;
+  if (!formatted) {
+    return formatted;
   }
-  return formatted;
+  if (usd !== true) {
+    return '$' + formatted;
+  }
+  if (type === EURO_TYPE || type === EURO_INFORMAL_TYPE) {
+    return '€' + formatted;
+  }
+  if (type === REAL_TYPE) {
+    return 'R$' + formatted;
+  }
+  return 'US$' + formatted;
 };
 
 const isRateFromToday = (rate) => {
@@ -209,6 +218,9 @@ const getAvailableRateTypes = () => [
   MEP_TYPE,
   CCB_TYPE,
   WHOLESALE_TYPE,
+  EURO_TYPE,
+  EURO_INFORMAL_TYPE,
+  REAL_TYPE,
 ];
 
 const getAvailableRates = (rates, check = false) => {

@@ -42,7 +42,10 @@ const i18n = new I18n({
     // conversion
     conversion: 'Conversor',
     dolar: 'Dólar',
+    currency: 'Divisa',
     peso: 'Peso',
+    // currency: 'USD/EUR/BRL',
+    // peso: 'ARS',
     buy: 'Compra',
     average: 'Promedio',
     sell: 'Venta',

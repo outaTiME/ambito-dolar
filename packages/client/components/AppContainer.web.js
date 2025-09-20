@@ -32,7 +32,7 @@ const SocialPortraitView = ({
       <View
         style={[
           {
-            padding: Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
+            padding: Settings.CARD_PADDING * (condensed === true ? 0.9 : 1.5),
             alignSelf: 'center',
             // fixed size required by social notifier
             width: AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH,
@@ -355,9 +355,9 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
     <SocialPortraitView {...{ condensed }}>
       <View
         style={{
-          marginVertical: Settings.CARD_PADDING,
-          marginHorizontal:
-            Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
+          margin: Settings.CARD_PADDING * (condensed === true ? 0.9 : 1.5),
+          /* marginVertical:
+            Settings.CARD_PADDING * (condensed === true ? 0.9 / 1.5 : 1), */
           flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
@@ -370,29 +370,42 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
         >
           <Text
             style={[
-              Settings.getFontObject(theme, 'largeTitle'),
-              {
-                // pass
-              },
+              condensed === true ? fonts.largeTitle : fonts.extraLargeTitle,
             ]}
             numberOfLines={1}
           >
             {title || Settings.APP_NAME}
+
+            {condensed && (
+              <Text
+                style={[
+                  fonts.body,
+                  {
+                    color: Settings.getGrayColor(theme),
+                    marginLeft: Settings.CARD_PADDING,
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {DateUtils.humanize(processedAt, 5)}
+              </Text>
+            )}
           </Text>
-          <Text
-            style={[
-              fonts.title,
-              {
-                color: Settings.getGrayColor(theme),
-                marginTop:
-                  Settings.SMALL_PADDING *
-                  (condensed === true || smallPadding === true ? 1 : 2),
-              },
-            ]}
-            numberOfLines={1}
-          >
-            {DateUtils.humanize(processedAt, 2)}
-          </Text>
+          {!condensed && (
+            <Text
+              style={[
+                fonts.title,
+                {
+                  color: Settings.getGrayColor(theme),
+                  marginTop:
+                    Settings.SMALL_PADDING * (smallPadding === true ? 1 : 2),
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {DateUtils.humanize(processedAt, 2)}
+            </Text>
+          )}
         </View>
         {false && <AppIconView />}
       </View>
@@ -414,7 +427,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
                 style={{
                   flex: 1,
                   margin:
-                    Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
+                    Settings.CARD_PADDING * (condensed === true ? 0.9 : 1.5),
                 }}
               >
                 <View
@@ -422,7 +435,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
                     flex: 1,
                     alignItems: 'center',
                     justifyContent: 'space-evenly',
-                    margin: Settings.CARD_PADDING,
+                    padding: Settings.PADDING * (condensed === true ? 0.9 : 1),
                   }}
                 >
                   <View
@@ -431,9 +444,9 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
                       justifyContent: 'center',
                     }}
                   >
-                    <SocialView />
+                    <SocialView {...{ condensed }} />
                   </View>
-                  <FundingView />
+                  <FundingView {...{ condensed }} />
                 </View>
               </View>
             )}
@@ -445,14 +458,14 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
           style={{
             flexDirection: 'row',
             justifyContent: 'flex-end',
-            marginVertical: Settings.CARD_PADDING,
-            marginHorizontal:
-              Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
+            margin: Settings.CARD_PADDING * (condensed === true ? 0.9 : 1.5),
+            /* marginVertical:
+              Settings.CARD_PADDING * (condensed === true ? 0.9 / 1.5 : 1), */
             alignItems: 'center',
           }}
         >
-          <SocialView extraSpace />
-          <FundingView />
+          <SocialView {...{ extraSpace: true, condensed }} />
+          <FundingView {...{ condensed }} />
         </View>
       )}
     </SocialPortraitView>

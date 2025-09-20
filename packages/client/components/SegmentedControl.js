@@ -4,7 +4,13 @@ import ReanimatedSegmentedControl from './AnimatedSegmentedControl';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-export default ({ values, selectedIndex, onTabPress, enabled }) => {
+export default ({
+  values,
+  selectedIndex,
+  onTabPress,
+  enabled,
+  showDirectionalArrow,
+}) => {
   const { theme, fonts } = Helper.useTheme();
   return (
     <View
@@ -23,24 +29,15 @@ export default ({ values, selectedIndex, onTabPress, enabled }) => {
           segments={values}
           onChange={onTabPress}
           currentIndex={selectedIndex}
-          // containerMargin={Settings.CARD_PADDING * 2 - Settings.BORDER_WIDTH}
-          // containerMargin={Settings.CARD_PADDING * 2 + Settings.BORDER_WIDTH}
           containerMargin={Settings.CARD_PADDING * 2}
           segmentedControlWrapper={{
             borderRadius: Settings.BORDER_RADIUS,
-            // padding: 2,
             backgroundColor:
               theme === 'dark'
                 ? // systemGray6
                   Settings.getContentColor(theme)
                 : // systemGray4
                   Settings.getStrokeColor(theme, true),
-            // backgroundColor: 'transparent',
-            // borderWidth: Settings.BORDER_WIDTH,
-            // borderColor: Settings.getStrokeColor(theme),
-            // borderColor: 'red',
-            // margin: -Settings.BORDER_WIDTH,
-            // backgroundColor: 'red',
           }}
           pressableWrapper={{
             elevation: 0,
@@ -53,20 +50,16 @@ export default ({ values, selectedIndex, onTabPress, enabled }) => {
           }}
           inactiveTextStyle={{
             ...fonts.subhead,
-            // color: Settings.getGrayColor(theme),
             color: Settings.getForegroundColor(theme),
             textTransform: 'uppercase',
           }}
           tileStyle={{
-            // backgroundColor: Settings.getBackgroundColor(theme, false, false),
             backgroundColor:
               theme === 'dark'
                 ? // systemGray4
                   Settings.getStrokeColor(theme)
                 : // systemGray6
                   Settings.getLightColor(true),
-            // marginVertical: Settings.BORDER_WIDTH,
-            // marginHorizontal: Settings.BORDER_WIDTH,
             marginVertical: 2,
             marginHorizontal: 2,
             // remove margin from default border
@@ -74,6 +67,13 @@ export default ({ values, selectedIndex, onTabPress, enabled }) => {
             // remove shadow
             shadowOpacity: 0,
             elevation: 0,
+          }}
+          showDirectionalArrow={showDirectionalArrow}
+          arrowTextStyle={{
+            // ...fonts.body,
+            ...fonts.subhead,
+            color: Settings.getForegroundColor(theme),
+            textTransform: 'uppercase',
           }}
         />
       </View>

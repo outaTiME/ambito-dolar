@@ -1,25 +1,16 @@
-import React, { useEffect } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View, PixelRatio } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
+  withSequence,
 } from 'react-native-reanimated';
 
 import Settings from '../config/settings';
 
-const defaultShadowStyle = {
-  shadowColor: '#000',
-  shadowOffset: {
-    width: 1,
-    height: 1,
-  },
-  shadowOpacity: 0.025,
-  shadowRadius: 1,
-  elevation: 1,
-};
-
-const DEFAULT_SPRING_CONFIG = {
+const SPRING = {
   stiffness: 150,
   damping: 20,
   mass: 1,
@@ -28,178 +19,248 @@ const DEFAULT_SPRING_CONFIG = {
   restDisplacementThreshold: 0.001,
 };
 
-// https://github.com/Karthik-B-06/react-native-segmented-control/pull/74
-export default ({
-  segments,
-  currentIndex,
-  onChange,
-  badgeValues = [],
+const rp = (n) => {
+  const s = PixelRatio.get();
+  return Math.round((n ?? 0) * s) / s;
+};
+
+export default function AnimatedSegmentedControl({
+  segments = [],
+  currentIndex = 0,
+  onChange = () => {},
   isRTL = false,
   containerMargin = 0,
-  activeTextStyle,
-  inactiveTextStyle,
   segmentedControlWrapper,
   pressableWrapper,
   tileStyle,
-  activeBadgeStyle,
-  inactiveBadgeStyle,
-  badgeTextStyle,
-}) => {
-  const width = Settings.CONTENT_WIDTH - containerMargin * 2;
-  const translateValue = width / segments.length;
-  const tabTranslateValue = useSharedValue(currentIndex);
-  // If phone is set to RTL, make sure the animation does the correct transition.
-  const transitionMultiplier = isRTL ? -1 : 1;
+  activeTextStyle,
+  inactiveTextStyle,
+  arrowWrapperStyle,
+  arrowTextStyle,
+  showDirectionalArrow = false,
+  arrowGapWidth = 30,
+  gutter = 1,
+  endInset = 2,
+  selectorRadius = 6,
+}) {
+  const count = Array.isArray(segments) ? segments.length : 0;
+  const hasSegments = count > 0;
+  const safeIndex = hasSegments
+    ? Math.min(Math.max(0, currentIndex), count - 1)
+    : 0;
+  const arrowMode = showDirectionalArrow && count === 2;
 
-  // useCallBack with an empty array as input, which will call inner lambda only once and memoize the reference for future calls
-  const memoizedTabPressCallback = React.useCallback(
-    (index) => {
-      onChange(index);
-    },
-    [onChange],
+  const baseWidth = rp((Settings?.CONTENT_WIDTH ?? 0) - containerMargin * 2);
+  const innerWidth = rp(baseWidth - gutter * 2);
+  const gap = arrowMode ? rp(arrowGapWidth) : 0;
+  const availableWidth = rp(Math.max(0, innerWidth - gap));
+  const cols = arrowMode ? 2 : Math.max(1, count);
+  const segmentWidth = hasSegments ? rp(availableWidth / cols) : 0;
+  const tileWidth = segmentWidth;
+
+  const startInset = 0;
+  const travelRange = rp(
+    Math.max(0, innerWidth - tileWidth - startInset - endInset),
   );
-  useEffect(() => {
-    tabTranslateValue.value = currentIndex;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex]);
+  const maxX = travelRange;
+  const step = !arrowMode && cols > 1 ? rp(travelRange / (cols - 1)) : 0;
+  const posA = startInset;
+  const posB = startInset + maxX;
+  const arrowLeft = rp(baseWidth / 2 - 12);
+  const epsilon = 1 / PixelRatio.get();
 
-  const tabTranslateAnimatedStyles = useAnimatedStyle(() => {
-    const translateX = withSpring(
-      tabTranslateValue.value * (translateValue * transitionMultiplier),
-      DEFAULT_SPRING_CONFIG,
+  const idxSV = useSharedValue(safeIndex);
+  React.useEffect(() => {
+    idxSV.value = safeIndex;
+  }, [safeIndex]);
+
+  const arrowScale = useSharedValue(1);
+  const arrowOpacity = useSharedValue(1);
+  React.useEffect(() => {
+    arrowScale.value = withSequence(
+      withTiming(0.9, { duration: 110 }),
+      withTiming(1, { duration: 160 }),
+    );
+    arrowOpacity.value = withSequence(
+      withTiming(0.7, { duration: 110 }),
+      withTiming(1, { duration: 160 }),
+    );
+  }, [safeIndex]);
+
+  const arrowAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: arrowOpacity.value,
+    transform: [{ scale: arrowScale.value }],
+  }));
+
+  const tileAnimatedStyle = useAnimatedStyle(() => {
+    'worklet';
+    if (!hasSegments) {
+      return {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        width: 0,
+        borderRadius: selectorRadius,
+        transform: [{ translateX: 0 }],
+      };
+    }
+    const idx = idxSV.value;
+    let x = 0;
+    if (arrowMode) {
+      x = !isRTL ? (idx === 0 ? posA : posB) : idx === 0 ? posB : posA;
+    } else {
+      x = !isRTL
+        ? startInset + step * idx
+        : startInset + step * (cols - 1 - idx);
+    }
+    const clamped = Math.max(
+      startInset,
+      Math.min(x, startInset + maxX - epsilon),
     );
     return {
-      transform: [{ translateX }],
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: undefined,
+      bottom: 0,
+      width: tileWidth,
+      borderRadius: selectorRadius,
+      transform: [{ translateX: withSpring(clamped, SPRING) }],
     };
-  }, [translateValue, transitionMultiplier]);
+  }, [
+    hasSegments,
+    arrowMode,
+    isRTL,
+    cols,
+    tileWidth,
+    step,
+    posA,
+    posB,
+    startInset,
+    maxX,
+    travelRange,
+    epsilon,
+    selectorRadius,
+  ]);
 
-  const finalisedActiveTextStyle = {
+  const activeText = {
     fontSize: 15,
     fontWeight: '600',
     textAlign: 'center',
     color: '#111827',
     ...activeTextStyle,
   };
-
-  const finalisedInActiveTextStyle = {
+  const inactiveText = {
     fontSize: 15,
     textAlign: 'center',
     color: '#4b5563',
     ...inactiveTextStyle,
   };
 
-  const finalisedActiveBadgeStyle = {
-    backgroundColor: '#27272a',
-    marginLeft: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...activeBadgeStyle,
-  };
+  const renderSegment = (label, i) => (
+    <Pressable
+      key={i}
+      onPress={() => onChange(i)}
+      style={[
+        arrowMode ? styles.segmentFixed : styles.segmentFlex,
+        arrowMode && { width: segmentWidth },
+        pressableWrapper,
+      ]}
+    >
+      <View style={styles.textWrapper}>
+        <Text
+          style={[safeIndex === i ? activeText : inactiveText]}
+          numberOfLines={1}
+        >
+          {label}
+        </Text>
+      </View>
+    </Pressable>
+  );
 
-  const finalisedInActiveBadgeStyle = {
-    backgroundColor: '#6b7280',
-    marginLeft: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...inactiveBadgeStyle,
-  };
+  if (!hasSegments) return null;
 
-  const finalisedBadgeTextStyle = {
-    fontSize: 11,
-    fontWeight: '500',
-    textAlign: 'center',
-    color: '#FFFFFF',
-    ...badgeTextStyle,
-  };
+  const arrowChar = isRTL
+    ? safeIndex === 0
+      ? '←'
+      : '→'
+    : safeIndex === 0
+      ? '→'
+      : '←';
 
   return (
     <Animated.View
-      style={[styles.defaultSegmentedControlWrapper, segmentedControlWrapper]}
+      style={[
+        styles.wrapper,
+        { width: baseWidth, paddingHorizontal: gutter },
+        segmentedControlWrapper,
+      ]}
     >
       <Animated.View
         style={[
-          styles.movingSegmentStyle,
-          defaultShadowStyle,
+          tileAnimatedStyle,
+          { backgroundColor: 'transparent' },
           tileStyle,
-          StyleSheet.absoluteFill,
-          {
-            width: width / segments.length - 4,
-          },
-          tabTranslateAnimatedStyles,
         ]}
       />
-      {segments.map((segment, index) => {
-        return (
-          <Pressable
-            onPress={() => memoizedTabPressCallback(index)}
-            key={index}
-            style={[styles.touchableContainer, pressableWrapper]}
-          >
-            <View style={styles.textWrapper}>
-              <Text
-                style={[
-                  currentIndex === index
-                    ? finalisedActiveTextStyle
-                    : finalisedInActiveTextStyle,
-                ]}
-              >
-                {segment}
-              </Text>
-              {badgeValues[index] && (
-                <View
-                  style={[
-                    styles.defaultBadgeContainerStyle,
-                    currentIndex === index
-                      ? finalisedActiveBadgeStyle
-                      : finalisedInActiveBadgeStyle,
-                  ]}
-                >
-                  <Text style={finalisedBadgeTextStyle}>
-                    {badgeValues[index]}
-                  </Text>
-                </View>
-              )}
-            </View>
-          </Pressable>
-        );
-      })}
+      {arrowMode && (
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.arrowWrapper,
+            { left: arrowLeft },
+            arrowAnimatedStyle,
+            arrowWrapperStyle,
+          ]}
+        >
+          <Text style={[styles.arrowText, arrowTextStyle]}>{arrowChar}</Text>
+        </Animated.View>
+      )}
+      {arrowMode ? (
+        <>
+          {renderSegment(segments[0], 0)}
+          <View style={{ width: gap }} />
+          {renderSegment(segments[1], 1)}
+        </>
+      ) : (
+        segments.map((s, i) => renderSegment(s, i))
+      )}
     </Animated.View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  defaultSegmentedControlWrapper: {
+  wrapper: {
     position: 'relative',
-    display: 'flex',
+    overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 8,
     backgroundColor: '#f3f4f6',
   },
-  touchableContainer: {
-    flex: 1,
-    elevation: 9,
-    paddingVertical: 12,
-  },
+  segmentFlex: { flex: 1, elevation: 9, paddingVertical: 12 },
+  segmentFixed: { elevation: 9, paddingVertical: 12 },
   textWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  movingSegmentStyle: {
+  arrowWrapper: {
+    position: 'absolute',
+    zIndex: 10,
     top: 0,
-    marginVertical: 2,
-    marginHorizontal: 2,
-    borderRadius: 6,
-    backgroundColor: '#FFFFFF',
-  },
-  // Badge Styles
-  defaultBadgeContainerStyle: {
-    alignItems: 'center',
+    bottom: 0,
+    width: 24,
     justifyContent: 'center',
-    height: 16,
-    width: 16,
-    borderRadius: 9999,
-    alignContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  arrowText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#111827',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
 });

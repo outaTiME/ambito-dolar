@@ -62,7 +62,7 @@ export default {
       // rate all-time_high (DEPRECATED)
       // return date.format('dddd, D [de] MMM [de] YYYY');
     } else if (style === 5) {
-      // rate raw detail, all-time_high rate
+      // rate raw detail, all-time_high rate, timestamp on web (condensed)
       return date.format('ddd, D MMM YYYY H:mm');
     } else if (style === 6) {
       // screenshot (DEPRECATED)

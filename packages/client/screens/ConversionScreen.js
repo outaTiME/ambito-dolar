@@ -26,7 +26,7 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const CURRENCY_TYPES = [I18n.t('dolar'), I18n.t('peso')];
+const CURRENCY_TYPES = [I18n.t('currency'), I18n.t('peso')];
 const CONVERSION_TYPES = [I18n.t('buy'), I18n.t('average'), I18n.t('sell')];
 
 const DEFAULT_NUMBER = 1;
@@ -117,6 +117,7 @@ const ConversionScreen = ({
               : numberValue / rate_value,
             true,
             currencyIndex === 1,
+            type,
           )}
           valueStyle={fonts.title}
           selectable
@@ -196,6 +197,7 @@ const ConversionScreen = ({
               selectedIndex={currencyIndex}
               onTabPress={handleCurrencyTypeChange}
               animated
+              showDirectionalArrow
             />
             <SegmentedControlTab
               values={CONVERSION_TYPES}

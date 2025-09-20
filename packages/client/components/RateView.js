@@ -9,7 +9,7 @@ import Settings from '../config/settings';
 import DateUtils from '../utilities/Date';
 import Helper from '../utilities/Helper';
 
-const InlineRateView = ({ type, value, onSelected }) => {
+const InlineRateView = ({ type, value, onSelected, condensed }) => {
   const { theme, fonts } = Helper.useTheme();
   const title_font = fonts.title;
   return (
@@ -114,10 +114,8 @@ const InlineRateDetailView = ({
         <View
           style={{
             flex: 1,
-            marginTop: Settings.SMALL_PADDING,
-            marginLeft: -Settings.PADDING,
-            marginRight: -Settings.PADDING,
-            marginBottom: -(Settings.PADDING - Settings.SMALL_PADDING),
+            margin: -Settings.PADDING * (condensed === true ? 0.9 : 1),
+            marginTop: 0,
           }}
         >
           <MiniRateChartView {...{ stats, color, borderless: true }} />
@@ -224,11 +222,17 @@ export default ({
         highlight === false && {
           opacity: 0.3,
         },
+        // same as marginHorizontal from title
         Platform.OS === 'web' && {
-          margin: Settings.CARD_PADDING * (condensed === true ? 1 : 1.5),
+          margin: Settings.CARD_PADDING * (condensed === true ? 0.9 : 1.5),
         },
       ]}
       {...(onSelected && { onPress })}
+      {...(Platform.OS === 'web' && {
+        containerStyle: {
+          padding: Settings.CARD_PADDING + Settings.SMALL_PADDING,
+        },
+      })}
     >
       <>
         <InlineRateView
@@ -236,6 +240,7 @@ export default ({
             type,
             value: value_fmt,
             onSelected,
+            condensed,
           }}
         />
         <InlineRateDetailView

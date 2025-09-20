@@ -129,12 +129,9 @@ const TABBAR_HEIGHT_UIKIT = 49;
 const ANDROID_DEFAULT_HEADER_HEIGHT = 56;
 
 export default {
-  getCurrency(str, include_symbol = false, usd = false) {
+  getCurrency(str, include_symbol = false, usd = false, type) {
     if (include_symbol === true) {
-      if (usd === true) {
-        return formatCurrency(str, true);
-      }
-      return formatCurrency(str);
+      return formatCurrency(str, usd === true, type);
     }
     return formatRateCurrency(str);
   },

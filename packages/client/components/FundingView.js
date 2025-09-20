@@ -3,12 +3,12 @@ import { Text } from 'react-native';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-export default ({ style }) => {
+export default ({ style, condensed }) => {
   const { theme, fonts } = Helper.useTheme();
   return (
     <Text
       style={[
-        fonts.body,
+        condensed === true ? fonts.subhead : fonts.body,
         {
           color: Settings.getGrayColor(theme),
         },

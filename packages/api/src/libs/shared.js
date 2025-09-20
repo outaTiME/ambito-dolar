@@ -63,7 +63,7 @@ export const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
 export const MIN_CLIENT_VERSION_FOR_SAVING = '6.1.0';
 export const MIN_CLIENT_VERSION_FOR_QATAR = '6.4.0';
 export const MIN_CLIENT_VERSION_FOR_BNA = '6.11.0';
-export const MIN_CLIENT_VERSION_FOR_EURO_AND_REAL = '9.1.0';
+export const MIN_CLIENT_VERSION_FOR_EURO_AND_REAL = '10.1.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
 export const S3_BUCKET = process.env.S3_BUCKET;
 // 2.1.x

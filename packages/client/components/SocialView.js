@@ -7,8 +7,13 @@ export default ({
   // same size as "fonts.body" of FundingView
   size = Settings.SOCIAL_ICON_SIZE,
   extraSpace = false,
+  condensed = false,
 }) => {
   const { theme } = Helper.useTheme();
+  if (condensed === true) {
+    // same size as "fonts.subhead" of FundingView
+    size = 15;
+  }
   return (
     <>
       <FontAwesome6
