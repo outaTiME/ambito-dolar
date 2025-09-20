@@ -1,5 +1,5 @@
 PODS:
-  - amplitude-react-native (1.5.3):
+  - amplitude-react-native (1.5.11):
     - React-Core
   - boost (1.84.0)
   - DoubleConversion (1.1.6)
@@ -15,7 +15,7 @@ PODS:
     - ExpoModulesCore
   - EXNotifications (0.31.4):
     - ExpoModulesCore
-  - Expo (53.0.20):
+  - Expo (53.0.22):
     - DoubleConversion
     - ExpoModulesCore
     - glog
@@ -311,7 +311,7 @@ PODS:
     - ExpoModulesCore
   - ExpoLocalization (16.1.6):
     - ExpoModulesCore
-  - ExpoMailComposer (14.1.5):
+  - ExpoMailComposer (14.1.6):
     - ExpoModulesCore
   - ExpoModulesCore (2.5.0):
     - DoubleConversion
@@ -371,7 +371,7 @@ PODS:
     - ExpoModulesCore
   - ExpoStoreReview (8.1.5):
     - ExpoModulesCore
-  - ExpoSystemUI (5.0.10):
+  - ExpoSystemUI (5.0.11):
     - ExpoModulesCore
   - ExpoWidgetKit (1.0.0):
     - ExpoModulesCore
@@ -406,8 +406,8 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - PurchasesHybridCommon (16.2.2):
-    - RevenueCat (= 5.34.0)
+  - PurchasesHybridCommon (17.7.0):
+    - RevenueCat (= 5.39.0)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -1760,7 +1760,7 @@ PODS:
     - React-Core
   - react-native-netinfo (11.4.1):
     - React-Core
-  - react-native-safe-area-context (5.6.0):
+  - react-native-safe-area-context (5.6.1):
     - React-Core
   - react-native-view-shot (4.0.3):
     - DoubleConversion
@@ -2108,7 +2108,7 @@ PODS:
     - React-logger (= 0.79.6)
     - React-perflogger (= 0.79.6)
     - React-utils (= 0.79.6)
-  - RevenueCat (5.34.0)
+  - RevenueCat (5.39.0)
   - RNCAsyncStorage (2.2.0):
     - React-Core
   - RNFlashList (1.8.3):
@@ -2159,8 +2159,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNPurchases (9.2.2):
-    - PurchasesHybridCommon (= 16.2.2)
+  - RNPurchases (9.5.0):
+    - PurchasesHybridCommon (= 17.7.0)
     - React-Core
   - RNReanimated (3.19.1):
     - DoubleConversion
@@ -2286,7 +2286,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (4.14.1):
+  - RNScreens (4.16.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2311,7 +2311,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (6.20.0):
+  - RNSentry (7.1.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2334,14 +2334,14 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Sentry/HybridSDK (= 8.53.2)
+    - Sentry/HybridSDK (= 8.56.0)
     - Yoga
-  - RNSVG (15.12.1):
+  - RNSVG (15.13.0):
     - React-Core
-  - SDWebImage (5.21.1):
-    - SDWebImage/Core (= 5.21.1)
-  - SDWebImage/Core (5.21.1)
-  - SDWebImageAVIFCoder (0.11.0):
+  - SDWebImage (5.21.2):
+    - SDWebImage/Core (= 5.21.2)
+  - SDWebImage/Core (5.21.2)
+  - SDWebImageAVIFCoder (0.11.1):
     - libavif/core (>= 0.11.0)
     - SDWebImage (~> 5.10)
   - SDWebImageSVGCoder (1.7.0):
@@ -2349,7 +2349,7 @@ PODS:
   - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
-  - Sentry/HybridSDK (8.53.2)
+  - Sentry/HybridSDK (8.56.0)
   - SocketRocket (0.7.1)
   - UMAppLoader (5.1.3)
   - Yoga (0.0.0)
@@ -2739,7 +2739,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amplitude-react-native: b83af719340712d6c4d71ef2fde338e8d797a423
+  amplitude-react-native: 0eed9901effe1c27b2201e59760d06b6a77dc8b8
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXApplication: 50cc8ea58c138da6e3f25cd789634219c86b90d5
@@ -2748,7 +2748,7 @@ SPEC CHECKSUMS:
   EXJSONUtils: 1d3e4590438c3ee593684186007028a14b3686cd
   EXManifests: f4cc4a62ee4f1c8a9cf2bb79d325eac6cb9f5684
   EXNotifications: d0a50a5490845c702f2c605e94533ae5ddf1aadb
-  Expo: 747bd796823458706e206f6d7510e0585bb9dd7f
+  Expo: 2a8d20c4498052d30c3b198e98cf8c19a137ecd7
   expo-dev-client: f1b99dfea0c9174d2e4ec96c2c5461587dda1e86
   expo-dev-launcher: 73e0cc1a270486501011fd8bed4cb096cc431a43
   expo-dev-menu: b2554d3971b251b2c1f0f5c9c3da50855150f195
@@ -2766,14 +2766,14 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: e8dedc115d9f6f24b153ccd2d1d8efcdfd68a527
   ExpoLinking: 343a89ea864a851831fd4495e8aea01cf0f6a36f
   ExpoLocalization: 677e45c2536bf918119962f78d7ffeeea317e07d
-  ExpoMailComposer: cf969df7c0e50637f376d67c85101511517a2d5e
+  ExpoMailComposer: e87acc088d5129aeca9b69cf73a5a56386dc50f8
   ExpoModulesCore: 8030601b6028c50a3adf8864dabf43c84c913f43
   ExpoQuickActions: 5f8b794e9c69b19bd85dd51d78a9cfb9f32d61b8
   ExpoScreenOrientation: c76bf9617467a6e2b694b901a94bcaf9e7a94189
   ExpoSharing: 04b346bdd7c8ea1fa87047ac7bba65c37bde4f51
   ExpoSplashScreen: 5c26d329872db34aec14c5fc14931d30821bd4b5
   ExpoStoreReview: bed43bea90a5876a6a480504f95fea1521dacaa7
-  ExpoSystemUI: ecb2b2e8ee9468295e7c33fa10eb4e73e581389a
+  ExpoSystemUI: 46c8903a9c8d78232ebd7b82c4d14175700231e5
   ExpoWidgetKit: 07ec6a3ad726d5ed6f07be972e07a35ce6cec374
   EXTaskManager: 2b246319ee42b15142caa0b9a168d52979821700
   ExtensionStorage: 158434def6cd14146ecacf5ac2db6345f8644c2d
@@ -2786,7 +2786,7 @@ SPEC CHECKSUMS:
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  PurchasesHybridCommon: 62f852419aae7041792217593998f7ac3f8b567d
+  PurchasesHybridCommon: 6bc96162fb0c061e1980f474be618c088cfd1428
   RCT-Folly: 36fe2295e44b10d831836cc0d1daec5f8abcf809
   RCTDeprecation: 9bc64754b40b86fa5e32f293ab3ea8eea2248339
   RCTRequired: ee36c1ce9a5e65a3f629c13f38a85308eb8eebda
@@ -2821,7 +2821,7 @@ SPEC CHECKSUMS:
   react-native-animateable-text: 60dba3425f0a02342f48532c0c983e79cd13863b
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
-  react-native-safe-area-context: 8e0068b78eb531d8ba5c113cc0d1e516a5313be6
+  react-native-safe-area-context: aac2745e96999c8633d2f6119e4e39b499c2ac8b
   react-native-view-shot: 384ff4a06cd0781e32910ca61fbf72ac60e0c94f
   React-NativeModulesApple: 9fbc2bba5acd30d55ecb84a7589b7865ff94a000
   React-oscompat: 56b4766e96b06843a3af49a6763ef40992e720aa
@@ -2854,20 +2854,20 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: d3b706769c10ab0a19199a4d39b73544fffdc549
   ReactCodegen: 27ddd2e7dbecc1a2d44344ffe1a4dd7caefb7287
   ReactCommon: 0ea944f3323bb7dcbd1c9b5ada3b4d81d276ea2a
-  RevenueCat: eb2aa042789d9c99ad5172bd96e28b96286d6ada
+  RevenueCat: 4743a5eee0004e1c03eabeb3498818f902a5d622
   RNCAsyncStorage: 23e56519cc41d3bade3c8d4479f7760cb1c11996
   RNFlashList: 6214720a4f22186af245c5885281aba87a6b3ce3
   RNGestureHandler: f1ae5fe600c464b1b89efd5a8ac51a1b157b30af
-  RNPurchases: c2246c06491b0a739d5ea2e963433203bec1ef0f
+  RNPurchases: 7b447c685ba8e2e7e67d5357abf1e34467891b3b
   RNReanimated: 995ef98c8ba083b8f381d8f0b2ac40b8dc36b964
-  RNScreens: 0c9d622785048ce51c4e657e260e4f1797fb81f0
-  RNSentry: b704c248118e41f8f16511671cf60a7c9a0e0795
-  RNSVG: b7952b201d7bb7bc54a2bea5c095a71eb08687d5
-  SDWebImage: f29024626962457f3470184232766516dee8dfea
-  SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
+  RNScreens: 12dbbab0ce62b2209f6c4c44c6f1223e5296557c
+  RNSentry: 36d4ab4a5c4b5bdcfa616089654c40b677e85450
+  RNSVG: 204b068da3a7416d22840cd3233bcf745443a455
+  SDWebImage: 9f177d83116802728e122410fb25ad88f5c7608a
+  SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
-  Sentry: 59993bffde4a1ac297ba6d268dc4bbce068d7c1b
+  Sentry: 3d82977434c80381cae856c40b99c39e4be6bc11
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   UMAppLoader: 55159b69750129faa7a51c493cb8ea55a7b64eb9
   Yoga: c0ce6ae14686223fe24e3cf8ae86a46d7617b728
