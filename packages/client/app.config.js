@@ -1,5 +1,5 @@
-const version = '10.0.0';
-const buildNumber = 179;
+const version = '10.1.0';
+const buildNumber = 184;
 
 const IS_NEW_ARCH_ENABLED = false;
 
