@@ -35,6 +35,7 @@ const BNA_TYPE = 'bna';
 const EURO_TYPE = 'euro';
 const EURO_INFORMAL_TYPE = 'euro_informal';
 const REAL_TYPE = 'real';
+const FUTURES_TYPE = 'futuros';
 
 const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
@@ -221,6 +222,7 @@ const getAvailableRateTypes = () => [
   EURO_TYPE,
   EURO_INFORMAL_TYPE,
   REAL_TYPE,
+  // FUTURES_TYPE,
 ];
 
 const getAvailableRates = (rates, check = false) => {
@@ -270,6 +272,8 @@ const getRateTitle = (type) => {
     return 'Euro Blue';
   } else if (type === REAL_TYPE) {
     return 'Real';
+  } else if (type === FUTURES_TYPE) {
+    return 'Futuros';
   }
 };
 
@@ -367,6 +371,7 @@ export default {
   EURO_TYPE,
   EURO_INFORMAL_TYPE,
   REAL_TYPE,
+  FUTURES_TYPE,
   NOTIFICATION_OPEN_TYPE,
   NOTIFICATION_CLOSE_TYPE,
   NOTIFICATION_VARIATION_TYPE,

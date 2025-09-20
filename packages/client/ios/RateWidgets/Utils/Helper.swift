@@ -23,6 +23,7 @@ struct Helper {
       RateType(identifier: "euro", display: "Euro"),
       RateType(identifier: "euro_informal", display: "Euro Blue"),
       RateType(identifier: "real", display: "Real"),
+      // RateType(identifier: "futuros", display: "Futuros")
     ]
   }
   static func getDefaultRateType() -> RateType {
