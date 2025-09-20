@@ -22,7 +22,7 @@ export default function RateWidget(props) {
   const widgetSize = props.size || DEFAULT_WIDGET_SIZE;
   const adaptativeFactor = widgetSize / DEFAULT_WIDGET_SIZE;
   const getAdaptiveSize = (size) => size * adaptativeFactor;
-  const padding = getAdaptiveSize(14);
+  const padding = getAdaptiveSize(12);
   // https://stackoverflow.com/questions/2105289/iphone-app-icons-exact-radius#:~:text=Apple%20starts%20with%20the%2057px,radius%20for%20a%20114px%20icon
   // const borderRadius = Math.round((10 / 57) * size);
   const borderRadius = getAdaptiveSize(20);
@@ -73,7 +73,7 @@ export default function RateWidget(props) {
           <TextWidget
             text={AmbitoDolar.getRateTitle(type)}
             style={{
-              fontSize: getAdaptiveSize(18),
+              fontSize: getAdaptiveSize(17),
               fontFamily: 'FiraGO-Regular',
               color: '#FFF',
             }}
@@ -97,7 +97,7 @@ export default function RateWidget(props) {
             <TextWidget
               text={Helper.getInlineRateValue(value)}
               style={{
-                fontSize: getAdaptiveSize(24),
+                fontSize: getAdaptiveSize(22),
                 fontFamily: 'FiraGO-Regular',
                 color: '#FFF',
               }}
@@ -110,7 +110,7 @@ export default function RateWidget(props) {
                 fontSize: getAdaptiveSize(10),
                 fontFamily: 'FiraGO-Regular',
                 color: Helper.getRgbaColor(Settings.getGrayColor(theme)),
-                marginTop: getAdaptiveSize(5),
+                // marginTop: getAdaptiveSize(5),
               }}
               maxLines={1}
               allowFontScaling={false}

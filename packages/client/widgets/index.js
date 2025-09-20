@@ -1,5 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
 import * as StatusBar from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import * as _ from 'lodash';
@@ -7,7 +8,11 @@ import React from 'react';
 import { View, ScrollView, useColorScheme } from 'react-native';
 import { requestWidgetUpdate } from 'react-native-android-widget';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components';
 
 import RateWidget from './RateWidget';
@@ -118,6 +123,34 @@ export async function taskHandler(props) {
   }
 }
 
+const CloseButton = (props) => {
+  const safeAreaInsets = useSafeAreaInsets();
+  return (
+    <View
+      style={{
+        // backgroundColor: 'red',
+        marginTop: safeAreaInsets.top,
+        paddingVertical: Settings.CARD_PADDING,
+        // marginHorizontal: -(Settings.CARD_PADDING * 2),
+        marginHorizontal: Settings.CARD_PADDING,
+        // paddingHorizontal: Settings.PADDING,
+        flexDirection: 'row',
+        ...(true && {
+          marginBottom: -Settings.CARD_PADDING,
+          justifyContent: 'flex-end',
+        }),
+      }}
+    >
+      <HeaderButton.Icon
+        iconName="close"
+        onPress={() => {
+          props.setResult('ok');
+        }}
+      />
+    </View>
+  );
+};
+
 // TODO: same maxFontSizeMultiplier as defined in the app ???
 export const ConfigurationScreen = Sentry.wrap((props) => {
   const colorScheme = useColorScheme();
@@ -182,65 +215,54 @@ export const ConfigurationScreen = Sentry.wrap((props) => {
   if (appIsLoading === false) {
     return (
       <GestureHandlerRootView>
-        <SafeAreaProvider>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
           <ThemeProvider theme={theme}>
-            <ScrollView>
-              <ContentView contentContainerStyle={{ flex: 1 }}>
-                <View
-                  style={{
-                    // backgroundColor: 'red',
-                    paddingVertical: Settings.CARD_PADDING,
-                    // marginHorizontal: -(Settings.CARD_PADDING * 2),
-                    marginHorizontal: Settings.CARD_PADDING,
-                    // paddingHorizontal: Settings.PADDING,
-                    flexDirection: 'row',
-                    ...(true && {
-                      marginBottom: -Settings.CARD_PADDING,
-                      justifyContent: 'flex-end',
-                    }),
-                  }}
-                >
-                  <HeaderButton.Icon
-                    iconName="close"
-                    onPress={() => {
-                      props.setResult('ok');
-                    }}
-                  />
-                </View>
-                <CardView title="Cotización" plain>
-                  {rateTypes.map((type, index) => (
-                    <CardItemView
-                      key={type}
-                      title={AmbitoDolar.getRateTitle(type)}
-                      useSwitch={false}
-                      chevron={false}
-                      check={
-                        config.rate === type || (!config.rate && index === 0)
-                      }
-                      onAction={() => {
-                        saveSetting('rate', type);
-                      }}
-                    />
-                  ))}
-                </CardView>
-                <CardView title="Mostrar" plain>
-                  {['buy', 'average', 'sell'].map((type, index) => (
-                    <CardItemView
-                      key={type}
-                      title={I18n.t(type)}
-                      useSwitch={false}
-                      chevron={false}
-                      check={
-                        config.value === type || (!config.value && index === 2)
-                      }
-                      onAction={() => {
-                        saveSetting('value', type);
-                      }}
-                    />
-                  ))}
-                </CardView>
-              </ContentView>
-            </ScrollView>
+            <NavigationContainer
+              {...{
+                theme: {
+                  dark: colorScheme === 'dark',
+                },
+              }}
+            >
+              <ScrollView>
+                <ContentView contentContainerStyle={{ flex: 1 }}>
+                  <CloseButton {...props} />
+                  <CardView title="Cotización" plain>
+                    {rateTypes.map((type, index) => (
+                      <CardItemView
+                        key={type}
+                        title={AmbitoDolar.getRateTitle(type)}
+                        useSwitch={false}
+                        chevron={false}
+                        check={
+                          config.rate === type || (!config.rate && index === 0)
+                        }
+                        onAction={() => {
+                          saveSetting('rate', type);
+                        }}
+                      />
+                    ))}
+                  </CardView>
+                  <CardView title="Mostrar" plain>
+                    {['buy', 'average', 'sell'].map((type, index) => (
+                      <CardItemView
+                        key={type}
+                        title={I18n.t(type)}
+                        useSwitch={false}
+                        chevron={false}
+                        check={
+                          config.value === type ||
+                          (!config.value && index === 2)
+                        }
+                        onAction={() => {
+                          saveSetting('value', type);
+                        }}
+                      />
+                    ))}
+                  </CardView>
+                </ContentView>
+              </ScrollView>
+            </NavigationContainer>
           </ThemeProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
