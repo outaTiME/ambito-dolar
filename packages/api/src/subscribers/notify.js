@@ -6,7 +6,7 @@ import prettyMilliseconds from 'pretty-ms';
 
 import Shared, {
   MIN_CLIENT_VERSION_FOR_MEP,
-  MIN_CLIENT_VERSION_FOR_WHOLESALER,
+  MIN_CLIENT_VERSION_FOR_WHOLESALE,
   MIN_CLIENT_VERSION_FOR_CCB,
   MIN_CLIENT_VERSION_FOR_SAVING,
   MIN_CLIENT_VERSION_FOR_QATAR,
@@ -82,7 +82,7 @@ const getMessagesFromCurrentRate = (items, type, rates) => {
         )[type];
         const rates_for_settings = Object.entries(rates).reduce(
           (obj, [type, value]) => {
-            // legacy support for settings < MIN_CLIENT_VERSION_FOR_WHOLESALER
+            // legacy support for settings < MIN_CLIENT_VERSION_FOR_WHOLESALE
             if (type === AmbitoDolar.CCL_TYPE) {
               if (
                 settings.rates[AmbitoDolar.CCL_LEGACY_TYPE] !== false &&
@@ -103,8 +103,8 @@ const getMessagesFromCurrentRate = (items, type, rates) => {
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_MEP)) {
           delete rates_for_settings[AmbitoDolar.MEP_TYPE];
         }
-        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_WHOLESALER)) {
-          delete rates_for_settings[AmbitoDolar.WHOLESALER_TYPE];
+        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_WHOLESALE)) {
+          delete rates_for_settings[AmbitoDolar.WHOLESALE_TYPE];
         }
         if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_CCB)) {
           delete rates_for_settings[AmbitoDolar.CCB_TYPE];

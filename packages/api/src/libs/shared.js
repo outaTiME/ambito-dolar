@@ -58,7 +58,7 @@ const snsClient = new SNSClient({
 // constants
 
 export const MIN_CLIENT_VERSION_FOR_MEP = '2.0.0';
-export const MIN_CLIENT_VERSION_FOR_WHOLESALER = '5.0.0';
+export const MIN_CLIENT_VERSION_FOR_WHOLESALE = '5.0.0';
 export const MIN_CLIENT_VERSION_FOR_CCB = '6.0.0';
 export const MIN_CLIENT_VERSION_FOR_SAVING = '6.1.0';
 export const MIN_CLIENT_VERSION_FOR_QATAR = '6.4.0';
@@ -316,7 +316,7 @@ const storeRateStats = (rates) => {
     (obj, [type, { stats }]) => {
       // ignore
       if (
-        type === AmbitoDolar.WHOLESALER_TYPE ||
+        type === AmbitoDolar.WHOLESALE_TYPE ||
         type === AmbitoDolar.CCB_TYPE ||
         type === AmbitoDolar.SAVING_TYPE ||
         type === AmbitoDolar.QATAR_TYPE ||
@@ -402,7 +402,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
     (obj, [type, rate]) => {
       // ignore
       if (
-        type === AmbitoDolar.WHOLESALER_TYPE ||
+        type === AmbitoDolar.WHOLESALE_TYPE ||
         type === AmbitoDolar.CCB_TYPE ||
         type === AmbitoDolar.SAVING_TYPE ||
         type === AmbitoDolar.QATAR_TYPE ||
@@ -449,7 +449,7 @@ const storeRatesJsonObject = (rates, is_updated) => {
     (obj, [type, rate]) => {
       // ignore
       if (
-        type === AmbitoDolar.WHOLESALER_TYPE ||
+        type === AmbitoDolar.WHOLESALE_TYPE ||
         type === AmbitoDolar.CCB_TYPE ||
         type === AmbitoDolar.SAVING_TYPE ||
         type === AmbitoDolar.QATAR_TYPE ||

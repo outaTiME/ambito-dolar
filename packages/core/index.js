@@ -27,7 +27,7 @@ const CCL_TYPE = 'ccl';
 const CCL_LEGACY_TYPE = 'cl';
 const MEP_TYPE = 'mep';
 const CCB_TYPE = 'ccb';
-const WHOLESALER_TYPE = 'mayorista';
+const WHOLESALE_TYPE = 'mayorista';
 const QATAR_TYPE = 'qatar';
 const LUXURY_TYPE = 'lujo';
 const CULTURAL_TYPE = 'cultural';
@@ -204,10 +204,7 @@ const getAvailableRateTypes = () => [
   CCL_TYPE,
   MEP_TYPE,
   CCB_TYPE,
-  WHOLESALER_TYPE,
-  // EURO_TYPE,
-  // EURO_INFORMAL_TYPE,
-  // REAL_TYPE,
+  WHOLESALE_TYPE,
 ];
 
 const getAvailableRates = (rates, check = false) => {
@@ -249,7 +246,7 @@ const getRateTitle = (type) => {
     return 'MEP';
   } else if (type === CCB_TYPE) {
     return 'Cripto';
-  } else if (type === WHOLESALER_TYPE) {
+  } else if (type === WHOLESALE_TYPE) {
     return 'Mayorista';
   } else if (type === EURO_TYPE) {
     return 'Euro';
@@ -346,7 +343,7 @@ export default {
   CCL_LEGACY_TYPE,
   MEP_TYPE,
   CCB_TYPE,
-  WHOLESALER_TYPE,
+  WHOLESALE_TYPE,
   QATAR_TYPE,
   LUXURY_TYPE,
   CULTURAL_TYPE,
