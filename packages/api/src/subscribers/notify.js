@@ -18,19 +18,13 @@ const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 const getChangeMessage = (rate) => {
-  const body = [];
-  const value = rate[1];
+  const value = AmbitoDolar.getRateValue(rate);
+  const body = [AmbitoDolar.formatRateCurrency(value, true)];
   const change = rate[2];
-  if (Array.isArray(value)) {
-    body.push(
-      `${AmbitoDolar.formatRateCurrency(
-        value[0],
-      )}–${AmbitoDolar.formatRateCurrency(value[1])}`,
-    );
-  } else {
-    body.push(AmbitoDolar.formatRateCurrency(value));
+  const formattedChange = AmbitoDolar.formatRateChange(change, true, true);
+  if (formattedChange) {
+    body.push(` (${formattedChange})`);
   }
-  body.push(` (${AmbitoDolar.formatRateChange(change)})`);
   return body.join('');
 };
 
@@ -404,24 +398,28 @@ export const handler = Shared.wrapHandler(async (event) => {
         const notification_rates = _.omit(current_rates, [
           // rates to exclude on notifications
         ]);
-        promises.push(
-          sendPushNotifications(items, {
-            type,
-            rates: notification_rates,
-          }),
-        );
+        if (!_.isEmpty(notification_rates)) {
+          promises.push(
+            sendPushNotifications(items, {
+              type,
+              rates: notification_rates,
+            }),
+          );
+        }
       }
       if (social && !push_token && !process.env.IS_LOCAL) {
         const social_rates = _.omit(current_rates, [
           // rates to exclude on socials
         ]);
-        promises.push(
-          Shared.triggerSocialNotifyEvent({
-            type,
-            title: AmbitoDolar.getNotificationTitle(type),
-            caption: getSocialCaption(type, social_rates),
-          }),
-        );
+        if (!_.isEmpty(social_rates)) {
+          promises.push(
+            Shared.triggerSocialNotifyEvent({
+              type,
+              title: AmbitoDolar.getNotificationTitle(type),
+              caption: getSocialCaption(type, social_rates),
+            }),
+          );
+        }
       }
     } else {
       console.info('No daily rates for notification');

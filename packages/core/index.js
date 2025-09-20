@@ -135,10 +135,10 @@ const formatNumber = (
   num = getNumber(num, maxDigits);
   if (typeof num === 'number' && !isNaN(num)) {
     const decimal_digits = '0'.repeat(maxDigits);
-    let fmt = '0,0.' + decimal_digits;
-    if (forceFractionDigits !== true) {
-      fmt = '0,0[.][' + decimal_digits + ']';
-    }
+    const fmt = forceFractionDigits
+      ? '0,0.' + decimal_digits
+      : '0,0[.][' + decimal_digits + ']';
+
     return numeral(num).format(fmt);
   }
   return num;
@@ -164,11 +164,15 @@ const formatNumberHumanized = (num, maxDigits = FRACTION_DIGITS) => {
   }).format(num);
 };
 
-const formatRateCurrency = (num) => formatNumber(num);
+const formatRateCurrency = (num, compact = false) =>
+  formatNumber(num, FRACTION_DIGITS, !compact);
 
-const formatRateChange = (num, percentage = true) => {
-  const formatted = formatRateCurrency(num);
+const formatRateChange = (num, percentage = true, compact = false) => {
+  const formatted = formatRateCurrency(num, compact);
   if (formatted) {
+    if (compact && num === 0) {
+      return '';
+    }
     return (num > 0 ? '+' : '') + formatted + (percentage === true ? '%' : '');
   }
   return formatted;

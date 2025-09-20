@@ -94,6 +94,10 @@ test('Number should be formatted as a percentage', (t) => {
   t.is(AmbitoDolar.getRateChange(1, true), '+1,00% ↑');
   t.is(AmbitoDolar.getRateChange([, 208.89, 0.14, 208.58]), '+0,30 (+0,14%)');
   t.is(AmbitoDolar.getRateChange([, [201, 205], 0, 205]), '0,00 (0,00%)');
+  // compact
+  t.is(AmbitoDolar.formatRateChange(1.5, true, true), '+1,5%');
+  t.is(AmbitoDolar.formatRateChange(0, true, true), '');
+  t.is(AmbitoDolar.formatRateChange('', true, true), null);
 });
 
 test('Number should be formatted as currency', (t) => {
@@ -103,6 +107,9 @@ test('Number should be formatted as currency', (t) => {
   t.is(AmbitoDolar.formatRateCurrency(''), null);
   t.is(AmbitoDolar.formatCurrency(0), '$0,00');
   t.is(AmbitoDolar.formatCurrency(''), null);
+  // compact
+  t.is(AmbitoDolar.formatRateCurrency(1000.5, true), '1.000,5');
+  t.is(AmbitoDolar.formatRateCurrency(1000, true), '1.000');
 });
 
 test('Number should be truncated without rounding', (t) => {
