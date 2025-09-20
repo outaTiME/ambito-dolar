@@ -3,13 +3,13 @@ import { compose } from '@reduxjs/toolkit';
 import * as Device from 'expo-device';
 import * as Linking from 'expo-linking';
 import React from 'react';
-import Collapsible from 'react-native-collapsible';
 import { useSelector, useDispatch } from 'react-redux';
 
 import * as actions from '../actions';
 import ActionButton from '../components/ActionButton';
 import CardItemView from '../components/CardItemView';
 import CardView from '../components/CardView';
+import Collapsible from '../components/Collapsible';
 import ContentView from '../components/ContentView';
 import FixedScrollView from '../components/FixedScrollView';
 import MessageView from '../components/MessageView';
@@ -89,8 +89,8 @@ const NotificationsScreen = ({ headerHeight, tabBarHeight, navigation }) => {
             />
           </CardView>
           <Collapsible
-            duration={Settings.ANIMATION_DURATION}
             collapsed={notification_settings.enabled !== true}
+            duration={Settings.ANIMATION_DURATION}
           >
             {[
               AmbitoDolar.NOTIFICATION_OPEN_TYPE,

@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, Switch, TouchableOpacity } from 'react-native';
-import Collapsible from 'react-native-collapsible';
+import { View, Text, Switch } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
+import Sortable from 'react-native-sortables';
 
 import ActionView from './ActionView';
 import { Separator } from '../components/CardView';
+import Collapsible from '../components/Collapsible';
 import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
@@ -36,7 +37,7 @@ export default ({
   selectable = false,
   chevron = true,
   check = false,
-  drag,
+  draggable,
   isActive,
   disableSwitch = false,
   isModal,
@@ -63,34 +64,8 @@ export default ({
         underlayColor={Settings.getStrokeColor(theme, true, isModal)}
       >
         <>
-          {drag && (
-            <TouchableOpacity
-              activeOpacity={1}
-              onLongPress={drag}
-              // delayLongPress={0}
-              // delayLongPress={185}
-              // half from longPress default
-              // delayLongPress={185}
-              delayLongPress={Settings.INTERACTION_DELAY}
-              // onPressIn={drag}
-              // delayPressIn={60}
-              disabled={isActive}
-              /* style={{
-                borderWidth: 1,
-                borderColor: 'red',
-                padding: Settings.PADDING,
-                margin: -Settings.PADDING,
-              }} */
-              // hitSlop={Settings.SMALL_PADDING}
-              // hitSlop={Settings.PADDING}
-              /* hitSlop={{
-                top: Settings.PADDING,
-                left: Settings.PADDING,
-                bottom: Settings.PADDING,
-                right: Settings.PADDING,
-              }} */
-              hitSlop={Settings.PADDING}
-            >
+          {draggable && (
+            <Sortable.Handle>
               <ActionView
                 community
                 iconName="drag-horizontal-variant"
@@ -101,7 +76,7 @@ export default ({
                 }}
                 isModal={isModal}
               />
-            </TouchableOpacity>
+            </Sortable.Handle>
           )}
           <View
             style={[
@@ -113,7 +88,7 @@ export default ({
                 paddingVertical: Settings.CARD_PADDING + Settings.SMALL_PADDING,
                 // gap: Settings.PADDING,
               },
-              drag && {
+              draggable && {
                 marginLeft: Settings.PADDING,
               },
               extra.titleContainerStyle,
@@ -197,8 +172,8 @@ export default ({
       </CardContainer>
       {customization === true && (
         <Collapsible
-          duration={Settings.ANIMATION_DURATION}
           collapsed={value !== true}
+          duration={Settings.ANIMATION_DURATION}
         >
           <Separator isModal={isModal} />
           <RectButton

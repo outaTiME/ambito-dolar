@@ -61,7 +61,8 @@ const Cursor = ({ length, point, width, color }) => {
         .averageTouches(true)
         .onStart((event) => {
           if (!isActive.value) {
-            hapticsEnabled && runOnJS(Haptics.selectionAsync)();
+            hapticsEnabled &&
+              runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
           }
           isActive.value = true;
           length.value = clamp(event.x - EXTRA_OFFSET, 0, width);
@@ -71,7 +72,8 @@ const Cursor = ({ length, point, width, color }) => {
         })
         .onEnd(() => {
           length.value = width;
-          hapticsEnabled && runOnJS(Haptics.selectionAsync)();
+          hapticsEnabled &&
+            runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
           isActive.value = false;
         }),
     [width],

@@ -7,7 +7,7 @@ import FlatList from './FlatList';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const HeaderComponent = ({ ListHeaderComponent, title }) => {
+export const HeaderComponent = ({ ListHeaderComponent, title }) => {
   const { theme, fonts } = Helper.useTheme();
   const contents = title ? (
     <ContentView
@@ -41,7 +41,7 @@ const HeaderComponent = ({ ListHeaderComponent, title }) => {
   );
 };
 
-const FooterComponent = ({ ListFooterComponent, note }) => {
+export const FooterComponent = ({ ListFooterComponent, note }) => {
   const { theme, fonts } = Helper.useTheme();
   const contents = note ? (
     <ContentView

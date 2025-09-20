@@ -46,7 +46,7 @@ const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
 const AboutScreen = ({ headerHeight, tabBarHeight, navigation }) => {
   const { theme, fonts } = Helper.useTheme();
   const onPressAppIcon = React.useCallback(() => {
-    Haptics.notificationAsync();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   }, []);
   const onPressWebsite = React.useCallback(() => {
     Linking.openURL(Settings.WEBSITE_URL).catch(console.warn);
