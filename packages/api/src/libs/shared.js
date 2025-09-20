@@ -665,7 +665,7 @@ const promiseRetry = (fn, opts) =>
     ...opts,
   });
 
-const triggerSocials = (targets, caption, url, file, story_file) => {
+const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
   const promises = _.chain(
     targets ?? [
       'ifttt',
@@ -683,8 +683,8 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
           promise = triggerSendSocialNotificationsEvent(caption, url);
           break;
         case 'instagram':
-          if (file) {
-            promise = publishToInstagram(file, caption, story_file);
+          if (url) {
+            promise = publishToInstagram(url, caption, story_url);
           }
           break;
         case 'mastodon':
@@ -712,21 +712,12 @@ const triggerSocials = (targets, caption, url, file, story_file) => {
       const start_time = Date.now();
       return promiseRetry((retry, attempt) =>
         promise
-          .then((/* response */) => {
+          .then((response) => {
             const duration = prettyMilliseconds(Date.now() - start_time);
-            console.info(
-              'Social trigger completed',
-              JSON.stringify({
-                target,
-                duration,
-                // response,
-                attempt,
-              }),
-            );
             return {
               target,
               duration,
-              // response,
+              response,
               attempt,
             };
           })

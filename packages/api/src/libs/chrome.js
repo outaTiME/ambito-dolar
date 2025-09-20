@@ -55,43 +55,45 @@ export const generateScreenshot = async (url, opts) => {
     })
     .toBuffer();
   // parellelize image processing
-  const [target_url, ig_sharp_file, ig_sharp_story_file] = await Promise.all([
-    // image hosting service
-    Shared.storeImgurFile(sharp_file.toString('base64')),
-    // Shared.storeImgbbFile(sharp_file.toString('base64')),
-    // ig feed image
-    sharp(sharp_file)
-      // jpeg format required by instagram-private-api
-      .jpeg({
-        quality: 100,
-        chromaSubsampling: '4:4:4',
-      })
-      .toBuffer(),
-    // ig story image
-    sharp(story_file)
-      .resize({
-        width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
-        height: AmbitoDolar.SOCIAL_STORY_IMAGE_HEIGHT,
-      })
-      // jpeg format required by instagram-private-api
-      .jpeg({
-        quality: 100,
-        chromaSubsampling: '4:4:4',
-      })
-      .toBuffer(),
-  ]);
+  const [target_url, target_story_url, ig_sharp_file, ig_sharp_story_file] =
+    await Promise.all([
+      // image hosting service
+      Shared.storeImgurFile(sharp_file.toString('base64')),
+      Shared.storeImgurFile(story_file.toString('base64')),
+      // Shared.storeImgbbFile(sharp_file.toString('base64')),
+      // ig feed image
+      sharp(sharp_file)
+        .jpeg({
+          quality: 100,
+          chromaSubsampling: '4:4:4',
+        })
+        .toBuffer(),
+      // ig story image
+      sharp(story_file)
+        .resize({
+          width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
+          height: AmbitoDolar.SOCIAL_STORY_IMAGE_HEIGHT,
+        })
+        .jpeg({
+          quality: 100,
+          chromaSubsampling: '4:4:4',
+        })
+        .toBuffer(),
+    ]);
   const duration = prettyMilliseconds(Date.now() - start_time);
   console.info(
     'Screenshot completed',
     JSON.stringify({
       url,
       target_url,
+      target_story_url,
       duration,
     }),
   );
   return {
     file: sharp_file,
     target_url,
+    target_story_url,
     ig_file: ig_sharp_file,
     ig_story_file: ig_sharp_story_file,
   };

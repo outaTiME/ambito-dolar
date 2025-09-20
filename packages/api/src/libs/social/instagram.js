@@ -1,90 +1,47 @@
-import { IgApiClient } from 'instagram-private-api';
+import AmbitoDolar from '@ambito-dolar/core';
 
-import Shared from '../shared';
+const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
+const IG_USER_ID = process.env.IG_USER_ID;
 
-// https://github.com/dilame/instagram-private-api/blob/3e1605831996c19e59f7b91461eea3539cd3521f/examples/story-upload.example.ts#L89
-const centeredSticker = (width, height) => ({
-  x: 0.5,
-  y: 0.5,
-  width,
-  height,
-  rotation: 0.0,
-});
+const req = (path, { searchParams = {}, ...opts } = {}) =>
+  AmbitoDolar.fetch(`https://graph.facebook.com/v23.0${path}`, {
+    ...opts,
+    searchParams: { access_token: IG_PAGE_TOKEN, ...searchParams },
+  }).json();
 
-const loadSession = async (ig, serialized_session) => {
-  if (serialized_session) {
-    try {
-      await ig.state.deserialize(serialized_session);
-      // try any request to check if the session is still valid
-      return await ig.account.currentUser();
-    } catch {
-      return false;
-    }
-  }
-  return false;
-};
+const createAndPublish = (searchParams) =>
+  req(`/${IG_USER_ID}/media`, { method: 'POST', searchParams })
+    .then(({ id }) =>
+      req(`/${IG_USER_ID}/media_publish`, {
+        method: 'POST',
+        searchParams: { creation_id: id },
+      }),
+    )
+    .then(({ id: media_id }) => media_id);
 
-// https://github.com/dilame/instagram-private-api/blob/master/examples/session.example.ts
-export const publish = async (file, caption, story_file) => {
-  try {
-    const IG_SESSION_KEY = 'instagram-session';
-    const IG_USERNAME = process.env.IG_USERNAME;
-    const IG_PASSWORD = process.env.IG_PASSWORD;
-    // const start_time = Date.now();
-    const ig = new IgApiClient();
-    ig.state.generateDevice(IG_USERNAME);
-    const serialized_session = await Shared.getJsonObject(IG_SESSION_KEY).catch(
-      (error) => {
-        console.warn(
-          'Unable to get instagram session from bucket',
-          JSON.stringify({ error: error.message }),
-        );
-        // ignore
-      },
-    );
-    const current_session = await loadSession(ig, serialized_session);
-    if (!current_session) {
-      ig.request.end$.subscribe(async () => {
-        const serialized = await ig.state.serialize();
-        // this deletes the version info, so you'll always use the version provided by the library
-        delete serialized.constants;
-        await Shared.storeJsonObject(IG_SESSION_KEY, serialized);
-      });
-      await ig.account.login(IG_USERNAME, IG_PASSWORD);
-      console.info('Session created');
-    } else {
-      console.info('Session restored');
-    }
-    const {
-      status,
-      upload_id,
-      media: { pk: media_id } = {},
-    } = await ig.publish.photo({
-      file,
-      caption,
+const fetchPermalink = (media_id) =>
+  req(`/${media_id}`, { searchParams: { fields: 'permalink' } })
+    .then(({ permalink }) => permalink)
+    .catch(() => {
+      console.warn('Unable to fetch permalink');
     });
-    if (media_id && story_file) {
-      await ig.publish.story({
-        file: story_file,
-        media: {
-          ...centeredSticker(0.8, 0.8),
-          is_sticker: true,
-          media_id,
-        },
-        // link: 'https://cafecito.app/ambitodolar',
-      });
-    }
-    return {
-      status,
-      upload_id,
-      media_id,
-    };
-  } catch (error) {
-    /* console.error(
-      'Unable to publish to instagram',
-      JSON.stringify({ error: error.message })
-    ); */
-    // unhandled error
-    throw error;
+
+export const publish = async (url, caption, storyUrl) => {
+  const tasks = [
+    createAndPublish({ image_url: url, ...(caption && { caption }) }).then(
+      (media_id) =>
+        fetchPermalink(media_id).then((permalink) => ({ media_id, permalink })),
+    ),
+  ];
+  if (storyUrl) {
+    tasks.push(
+      createAndPublish({ media_type: 'STORIES', image_url: storyUrl })
+        .then((media_id) => ({ media_id }))
+        .catch(() => {
+          console.warn('Story publish failed');
+        }),
+    );
   }
+  const [feed, story] = await Promise.all(tasks);
+  return { feed, story };
 };

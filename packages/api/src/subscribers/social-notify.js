@@ -37,16 +37,18 @@ export const handler = Shared.wrapHandler(async (event) => {
     try {
       const {
         target_url: image_url,
+        target_story_url: image_story_url,
         ig_file: file,
         ig_story_file: story_file,
       } = await generateScreenshot(screenshot_url);
       if (generate_only === true) {
-        return { image_url };
+        return { image_url, image_story_url };
       }
       results = await Shared.triggerSocials(
         targets,
         caption,
         image_url,
+        image_story_url,
         file,
         story_file,
       );
