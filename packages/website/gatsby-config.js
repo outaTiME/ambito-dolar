@@ -1,7 +1,8 @@
 module.exports = {
   siteMetadata: {
     title: 'Ámbito Dólar',
-    description: 'Cotizaciones del dólar en Argentina al instante.',
+    description:
+      'Cotizaciones de las principales divisas en Argentina al instante.',
     twitterUsername: '@outa7iME',
     siteUrl: 'https://ambito-dolar.app',
   },
