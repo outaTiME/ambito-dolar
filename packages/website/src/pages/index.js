@@ -60,9 +60,9 @@ const IndexPage = () => {
                     </div>
                     <h2>{title}</h2>
                     <p>
-                      Conocé las distintas cotizaciones de la divisa
-                      norteamericana en la Argentina de manera simple, elegante
-                      y efectiva.
+                      Conocé las distintas cotizaciones de las principales
+                      divisas en la Argentina de manera simple, elegante y
+                      efectiva.
                     </p>
                     <p className="social">
                       <a
