@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.3.4...@ambito-dolar/api@4.4.0) (2025-09-21)
+
+### Features
+
+- enable support for euro, euro blue and real ([ff54dc8](https://github.com/outaTiME/ambito-dolar/commit/ff54dc8e7dbfe3292727d7ccdc1fd1e19aa2278c))
+- new social trigger for Instagram ([4423a9c](https://github.com/outaTiME/ambito-dolar/commit/4423a9cfa3ee3f3f1f90f2f5c74598b4d5de73a9))
+
 ## [4.3.4](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.3.3...@ambito-dolar/api@4.3.4) (2025-08-19)
 
 **Note:** Version bump only for package @ambito-dolar/api

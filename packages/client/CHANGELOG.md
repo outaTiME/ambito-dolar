@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.0.0...@ambito-dolar/client@10.1.0) (2025-09-21)
+
+### Bug Fixes
+
+- bump version and build number ([971e13b](https://github.com/outaTiME/ambito-dolar/commit/971e13bf4b1adad4f7134a9d5c0b2e138db524b3))
+
+### Features
+
+- enable support for euro, euro blue and real ([ff54dc8](https://github.com/outaTiME/ambito-dolar/commit/ff54dc8e7dbfe3292727d7ccdc1fd1e19aa2278c))
+- improve control over rate visibility and order ([e606d66](https://github.com/outaTiME/ambito-dolar/commit/e606d6693694725b3f5f75dbde45740e336c3601))
+
 # [10.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@9.0.3...@ambito-dolar/client@10.0.0) (2025-08-19)
 
 ### Bug Fixes
