@@ -28,7 +28,7 @@
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-icons": "^5.5.0",
-    "sass": "^1.93.0"
+    "sass": "^1.93.2"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
