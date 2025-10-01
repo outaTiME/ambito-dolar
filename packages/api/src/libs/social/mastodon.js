@@ -1,5 +1,4 @@
 import { createRestAPIClient } from 'masto';
-import { Blob } from 'node:buffer';
 
 // https://github.com/neet/masto.js/blob/main/examples/create-new-status-with-image.ts
 export const publish = async (caption, file) => {
