@@ -18,6 +18,7 @@
     "chrono-node": "^2.9.0",
     "expo-server-sdk": "^4.0.0",
     "google-auth-library": "^10.3.1",
+    "image-type": "^6.0.0",
     "joi": "^18.0.1",
     "lodash": "^4.17.21",
     "masto": "^7.2.0",

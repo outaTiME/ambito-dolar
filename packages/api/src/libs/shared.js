@@ -738,38 +738,6 @@ const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
   return Promise.all(promises).then(_.compact);
 };
 
-const storeImgurFile = (image) =>
-  // AmbitoDolar.fetch('https://api.imgur.com/3/image', {
-  AmbitoDolar.fetch('https://api.imgur.com/3/upload', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
-    },
-    body: JSON.stringify({
-      image,
-      type: 'base64',
-    }),
-  }).then(async (response) => {
-    const { data } = await response.json();
-    return data.link;
-  });
-
-const storeImgbbFile = (image) =>
-  AmbitoDolar.fetch('https://api.imgbb.com/1/upload', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-    },
-    body: new URLSearchParams({
-      key: process.env.IMGBB_KEY,
-      image,
-    }),
-  }).then(async (response) => {
-    const { data } = await response.json();
-    return data.url;
-  });
-
 const fetchImage = (url) =>
   AmbitoDolar.fetch(url).then(async (response) =>
     Buffer.from(await response.arrayBuffer()),
@@ -846,8 +814,6 @@ export default {
   // triggerSendSocialNotificationsEvent,
   promiseRetry,
   triggerSocials,
-  storeImgurFile,
-  storeImgbbFile,
   fetchImage,
   wrapHandler,
   // TODO: update default limit close to 500 ???
