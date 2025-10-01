@@ -19,6 +19,7 @@ const createAndPublish = (searchParams) =>
     )
     .then(({ id: media_id }) => media_id);
 
+// eslint-disable-next-line no-unused-vars
 const fetchPermalink = (media_id) =>
   req(`/${media_id}`, { searchParams: { fields: 'permalink' } })
     .then(({ permalink }) => permalink)
@@ -27,21 +28,31 @@ const fetchPermalink = (media_id) =>
     });
 
 export const publish = async (url, caption, storyUrl) => {
-  const tasks = [
-    createAndPublish({ image_url: url, ...(caption && { caption }) }).then(
-      (media_id) =>
-        fetchPermalink(media_id).then((permalink) => ({ media_id, permalink })),
-    ),
-  ];
+  const feedId = await createAndPublish({
+    image_url: url,
+    ...(caption && { caption }),
+  });
+  // const permalink = await fetchPermalink(feedId);
+  let story;
   if (storyUrl) {
-    tasks.push(
-      createAndPublish({ media_type: 'STORIES', image_url: storyUrl })
-        .then((media_id) => ({ media_id }))
-        .catch(() => {
-          console.warn('Story publish failed');
-        }),
-    );
+    try {
+      const storyId = await createAndPublish({
+        media_type: 'STORIES',
+        image_url: storyUrl,
+      });
+      story = { media_id: storyId };
+    } catch (error) {
+      console.warn(
+        'Story publish failed',
+        JSON.stringify({ error: error.message }),
+      );
+    }
   }
-  const [feed, story] = await Promise.all(tasks);
-  return { feed, story };
+  return {
+    feed: {
+      media_id: feedId,
+      // permalink
+    },
+    story,
+  };
 };
