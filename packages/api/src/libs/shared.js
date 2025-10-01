@@ -677,41 +677,41 @@ const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
     ],
   )
     .map((target) => {
-      let promise;
+      let factory;
       switch (target) {
         case 'ifttt':
-          promise = triggerSendSocialNotificationsEvent(caption, url);
+          factory = () => triggerSendSocialNotificationsEvent(caption, url);
           break;
         case 'instagram':
           if (url) {
-            promise = publishToInstagram(url, caption, story_url);
+            factory = () => publishToInstagram(url, caption, story_url);
           }
           break;
         case 'mastodon':
-          promise = publishToMastodon(caption, file);
+          factory = () => publishToMastodon(caption, file);
           break;
         case 'reddit':
-          promise = publishToReddit(caption, url);
+          factory = () => publishToReddit(caption, url);
           break;
         case 'bsky':
-          promise = publishToBsky(caption, file);
+          factory = () => publishToBsky(caption, file);
           break;
         case 'whatsapp':
           // promise = publishToWhatsapp(caption, url);
-          promise = publishToWhatsapp(caption, file);
+          factory = () => publishToWhatsapp(caption, file);
           break;
       }
-      if (promise) {
-        return [target, promise];
+      if (factory) {
+        return [target, factory];
       }
       // invalid
     })
     // remove falsey
     .compact()
-    .map(([target, promise]) => {
+    .map(([target, factory]) => {
       const start_time = Date.now();
       return promiseRetry((retry, attempt) =>
-        promise
+        factory()
           .then((response) => {
             const duration = prettyMilliseconds(Date.now() - start_time);
             return {
