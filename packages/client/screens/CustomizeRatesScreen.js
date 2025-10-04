@@ -178,7 +178,8 @@ const CustomizeRatesScreen = ({
         // activeItemShadowOpacity={0}
         autoScrollSpeed={0.5}
         data={data}
-        dragActivationDelay={0}
+        dragActivationDelay={Settings.INTERACTION_DELAY}
+        // dragActivationDelay={0}
         // activationAnimationDuration={Settings.ANIMATION_DURATION}
         // dropAnimationDuration={Settings.ANIMATION_DURATION}
         overDrag="vertical"
@@ -203,10 +204,6 @@ const CustomizeRatesScreen = ({
           Settings.HAPTICS_ENABLED &&
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         }}
-        // debug={__DEV__}
-        // strategy="swap"
-        // rowGap={16}
-        // overflow="visible"
       />
       <FooterComponent note={I18n.t('customize_rates_note')} />
       <CardView {...{ plain: true, isModal }}>
