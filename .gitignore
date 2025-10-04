@@ -19,6 +19,7 @@ expo-env.d.ts
 node_modules/
 npm-debug.log
 yarn-error.log
+lerna-debug.log
 
 # Yarn 2
 .pnp.*

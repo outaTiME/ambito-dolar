@@ -6,6 +6,7 @@ const IS_NEW_ARCH_ENABLED = false;
 export default {
   name: 'Ámbito Dólar',
   slug: 'ambito-dolar',
+  owner: 'outatime',
   runtimeVersion: version,
   version,
   platforms: ['android', 'ios', 'web'],
