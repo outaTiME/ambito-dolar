@@ -1,5 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 
+import Shared from '../shared';
+
 const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
 const IG_USER_ID = process.env.IG_USER_ID;
 
@@ -9,22 +11,34 @@ const req = (path, { searchParams = {}, ...opts } = {}) =>
     searchParams: { access_token: IG_PAGE_TOKEN, ...searchParams },
   }).json();
 
-const createAndPublish = (searchParams) =>
-  req(`/${IG_USER_ID}/media`, { method: 'POST', searchParams })
-    .then(({ id }) =>
-      req(`/${IG_USER_ID}/media_publish`, {
+const createAndPublish = async (searchParams) => {
+  const { id: creation_id } = await req(`/${IG_USER_ID}/media`, {
+    method: 'POST',
+    searchParams,
+  });
+  // retry in case the image takes longer to be available
+  const media_id = await Shared.promiseRetry(async (retry, attempt) => {
+    try {
+      const { id } = await req(`/${IG_USER_ID}/media_publish`, {
         method: 'POST',
-        searchParams: { creation_id: id },
-      }),
-    )
-    .then(({ id: media_id }) => media_id);
+        searchParams: { creation_id },
+      });
+      return id;
+    } catch (err) {
+      return retry(err);
+    }
+  });
+  return media_id;
+};
 
-// eslint-disable-next-line no-unused-vars
 const fetchPermalink = (media_id) =>
   req(`/${media_id}`, { searchParams: { fields: 'permalink' } })
     .then(({ permalink }) => permalink)
-    .catch(() => {
-      console.warn('Unable to fetch permalink');
+    .catch((error) => {
+      console.warn(
+        'Unable to fetch permalink',
+        JSON.stringify({ error: error.message }),
+      );
     });
 
 export const publish = async (url, caption, storyUrl) => {
@@ -32,7 +46,7 @@ export const publish = async (url, caption, storyUrl) => {
     image_url: url,
     ...(caption && { caption }),
   });
-  // const permalink = await fetchPermalink(feedId);
+  const permalink = await fetchPermalink(feedId);
   let story;
   if (storyUrl) {
     try {
@@ -49,10 +63,7 @@ export const publish = async (url, caption, storyUrl) => {
     }
   }
   return {
-    feed: {
-      media_id: feedId,
-      // permalink
-    },
+    feed: { media_id: feedId, permalink },
     story,
   };
 };
