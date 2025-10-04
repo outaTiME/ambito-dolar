@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.1.0...@ambito-dolar/client@10.1.1) (2025-10-04)
+
+### Bug Fixes
+
+- avoid unintentional reorder on rate visibility and order screen ([d62b94a](https://github.com/outaTiME/ambito-dolar/commit/d62b94a9aa7ac1273d69819f356122ac369517c6))
+- bump version and build number ([c5ac146](https://github.com/outaTiME/ambito-dolar/commit/c5ac146f9bbd0973079809d7ebfd5d65c2a3e911))
+
 # [10.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.0.0...@ambito-dolar/client@10.1.0) (2025-09-21)
 
 ### Bug Fixes

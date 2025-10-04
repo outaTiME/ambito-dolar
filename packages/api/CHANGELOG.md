@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.4.0...@ambito-dolar/api@4.5.0) (2025-10-04)
+
+### Bug Fixes
+
+- ensure retry attempts run correctly for socials ([d605f38](https://github.com/outaTiME/ambito-dolar/commit/d605f38c6dabe0bac29d6cc7a9af1238e2e8f484))
+- improve Instagram publishing logic with retry and permalink support ([35937a2](https://github.com/outaTiME/ambito-dolar/commit/35937a2262e43e69a98a08fe739d0a0a0c851bef))
+- skip story upload if feed fails and disable permalink fetch ([3e19b13](https://github.com/outaTiME/ambito-dolar/commit/3e19b13523afd09a438b4d8fe807950438ac5f08))
+- switch image storage to Catbox to avoid delivery issues on socials ([043428f](https://github.com/outaTiME/ambito-dolar/commit/043428fdfa8a77161be3d51deca9676c2c21d0dd))
+
+### Features
+
+- update image storage provider due to preview errors on telegram ([efc4ecc](https://github.com/outaTiME/ambito-dolar/commit/efc4ecc8a508ceee9e8ebddd7fd7cfe7e9e85c56))
+
 # [4.4.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.3.4...@ambito-dolar/api@4.4.0) (2025-09-21)
 
 ### Features
