@@ -1,5 +1,5 @@
 PODS:
-  - amplitude-react-native (1.5.11):
+  - amplitude-react-native (1.5.15):
     - React-Core
   - boost (1.84.0)
   - DoubleConversion (1.1.6)
@@ -15,7 +15,7 @@ PODS:
     - ExpoModulesCore
   - EXNotifications (0.31.4):
     - ExpoModulesCore
-  - Expo (53.0.22):
+  - Expo (53.0.23):
     - DoubleConversion
     - ExpoModulesCore
     - glog
@@ -406,8 +406,8 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - PurchasesHybridCommon (17.7.0):
-    - RevenueCat (= 5.39.0)
+  - PurchasesHybridCommon (17.9.0):
+    - RevenueCat (= 5.41.0)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -2108,7 +2108,7 @@ PODS:
     - React-logger (= 0.79.6)
     - React-perflogger (= 0.79.6)
     - React-utils (= 0.79.6)
-  - RevenueCat (5.39.0)
+  - RevenueCat (5.41.0)
   - RNCAsyncStorage (2.2.0):
     - React-Core
   - RNFlashList (1.8.3):
@@ -2159,8 +2159,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNPurchases (9.5.0):
-    - PurchasesHybridCommon (= 17.7.0)
+  - RNPurchases (9.5.3):
+    - PurchasesHybridCommon (= 17.9.0)
     - React-Core
   - RNReanimated (3.19.1):
     - DoubleConversion
@@ -2311,7 +2311,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (7.1.0):
+  - RNSentry (7.2.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2334,7 +2334,7 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Sentry/HybridSDK (= 8.56.0)
+    - Sentry/HybridSDK (= 8.56.1)
     - Yoga
   - RNSVG (15.13.0):
     - React-Core
@@ -2349,7 +2349,7 @@ PODS:
   - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
-  - Sentry/HybridSDK (8.56.0)
+  - Sentry/HybridSDK (8.56.1)
   - SocketRocket (0.7.1)
   - UMAppLoader (5.1.3)
   - Yoga (0.0.0)
@@ -2739,7 +2739,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amplitude-react-native: 0eed9901effe1c27b2201e59760d06b6a77dc8b8
+  amplitude-react-native: f5017f29e6b9cdc8b7a2e8a58cb07895e66449b2
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXApplication: 50cc8ea58c138da6e3f25cd789634219c86b90d5
@@ -2748,7 +2748,7 @@ SPEC CHECKSUMS:
   EXJSONUtils: 1d3e4590438c3ee593684186007028a14b3686cd
   EXManifests: f4cc4a62ee4f1c8a9cf2bb79d325eac6cb9f5684
   EXNotifications: d0a50a5490845c702f2c605e94533ae5ddf1aadb
-  Expo: 2a8d20c4498052d30c3b198e98cf8c19a137ecd7
+  Expo: 46cb6ec4cb91b06eab4137b6358152fd4eb33c36
   expo-dev-client: f1b99dfea0c9174d2e4ec96c2c5461587dda1e86
   expo-dev-launcher: 73e0cc1a270486501011fd8bed4cb096cc431a43
   expo-dev-menu: b2554d3971b251b2c1f0f5c9c3da50855150f195
@@ -2786,7 +2786,7 @@ SPEC CHECKSUMS:
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  PurchasesHybridCommon: 6bc96162fb0c061e1980f474be618c088cfd1428
+  PurchasesHybridCommon: f497ca753fd7dd00fb0fbb1548acc384bd01b86b
   RCT-Folly: 36fe2295e44b10d831836cc0d1daec5f8abcf809
   RCTDeprecation: 9bc64754b40b86fa5e32f293ab3ea8eea2248339
   RCTRequired: ee36c1ce9a5e65a3f629c13f38a85308eb8eebda
@@ -2854,20 +2854,20 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: d3b706769c10ab0a19199a4d39b73544fffdc549
   ReactCodegen: 27ddd2e7dbecc1a2d44344ffe1a4dd7caefb7287
   ReactCommon: 0ea944f3323bb7dcbd1c9b5ada3b4d81d276ea2a
-  RevenueCat: 4743a5eee0004e1c03eabeb3498818f902a5d622
+  RevenueCat: a094ccf2d12c4778144d3a0560a8b9f6bd3a84aa
   RNCAsyncStorage: 23e56519cc41d3bade3c8d4479f7760cb1c11996
   RNFlashList: 6214720a4f22186af245c5885281aba87a6b3ce3
   RNGestureHandler: f1ae5fe600c464b1b89efd5a8ac51a1b157b30af
-  RNPurchases: 7b447c685ba8e2e7e67d5357abf1e34467891b3b
+  RNPurchases: cd5d082e2f6fa5b6a2c8255a1090cd6b891d94ea
   RNReanimated: 995ef98c8ba083b8f381d8f0b2ac40b8dc36b964
   RNScreens: 12dbbab0ce62b2209f6c4c44c6f1223e5296557c
-  RNSentry: 36d4ab4a5c4b5bdcfa616089654c40b677e85450
+  RNSentry: 8b75dd0437f3e0f91308c4fe305277aed4f0e5bc
   RNSVG: 204b068da3a7416d22840cd3233bcf745443a455
   SDWebImage: 9f177d83116802728e122410fb25ad88f5c7608a
   SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
-  Sentry: 3d82977434c80381cae856c40b99c39e4be6bc11
+  Sentry: b3ec44d01708fce73f99b544beb57e890eca4406
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   UMAppLoader: 55159b69750129faa7a51c493cb8ea55a7b64eb9
   Yoga: c0ce6ae14686223fe24e3cf8ae86a46d7617b728
