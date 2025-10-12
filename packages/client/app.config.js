@@ -1,8 +1,6 @@
 const version = '10.1.1';
 const buildNumber = 187;
 
-const IS_NEW_ARCH_ENABLED = false;
-
 export default {
   name: 'Ámbito Dólar',
   slug: 'ambito-dolar',
@@ -137,7 +135,6 @@ export default {
     // remove next comment when CNG is supported on iOS
     // '@bacons/apple-targets',
   ].filter(Boolean),
-  newArchEnabled: IS_NEW_ARCH_ENABLED,
   ios: {
     appleTeamId: 'F3XMLHHGWP',
     bundleIdentifier: 'im.outa.AmbitoDolar',

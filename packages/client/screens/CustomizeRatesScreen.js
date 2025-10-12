@@ -23,7 +23,10 @@ import I18n from '../config/I18n';
 import Settings from '../config/settings';
 import Helper from '../utilities/Helper';
 
-const GridItem = ({ id, included, isModal }) => {
+const GridItem = ({ id, isModal }) => {
+  const included = useSelector(
+    ({ application: { excluded_rates } }) => !excluded_rates?.includes(id),
+  );
   const { theme } = Helper.useTheme();
   const dispatch = useDispatch();
   const { itemKey, isActive, indexToKey, keyToIndex } = useItemContext();
@@ -91,13 +94,10 @@ const CustomizeRatesScreen = ({
   rates,
 }) => {
   const scrollableRef = useAnimatedRef();
-  const { rate_order, rate_display, excluded_rates, rate_types } = useSelector(
-    ({
-      application: { rate_order, rate_display, excluded_rates, rate_types },
-    }) => ({
+  const { rate_order, rate_display, rate_types } = useSelector(
+    ({ application: { rate_order, rate_display, rate_types } }) => ({
       rate_order,
       rate_display,
-      excluded_rates,
       rate_types,
     }),
     shallowEqual,
@@ -129,12 +129,11 @@ const CustomizeRatesScreen = ({
       <GridItem
         {...{
           id,
-          included: !excluded_rates?.includes(id),
           isModal,
         }}
       />
     ),
-    [excluded_rates, isModal],
+    [isModal],
   );
   return (
     <FixedScrollView

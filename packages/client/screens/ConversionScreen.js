@@ -42,34 +42,31 @@ const ConversionScreen = ({
 }) => {
   const { theme, fonts } = Helper.useTheme();
   const [numberValue, setNumberValue] = React.useState(DEFAULT_NUMBER);
+  const [inputText, setInputText] = React.useState(
+    Helper.formatFloatingPointNumber(DEFAULT_NUMBER),
+  );
   const [currencyIndex, setCurrencyIndex] = React.useState(0);
   const [typeIndex, setTypeIndex] = React.useState(1);
   const inputTextRef = React.useRef();
   const onTextInputFocus = React.useCallback(() => {
-    inputTextRef.current?.setNativeProps({ text: '' });
+    setInputText('');
   }, []);
   const dispatch = useDispatch();
-  const onTextInputBlur = React.useCallback(
-    ({ nativeEvent: { text } }) => {
-      let number = Helper.getNumber(text);
-      if (!number) {
-        // rollback when invalid
-        number = numberValue;
-      } else {
-        // only when value updated
-        dispatch(actions.registerApplicationConversion());
-      }
-      setNumberValue(number);
-      inputTextRef.current?.setNativeProps({
-        text: Helper.formatFloatingPointNumber(number),
-      });
-    },
-    [numberValue],
-  );
+  const onTextInputBlur = React.useCallback(() => {
+    let number = Helper.getNumber(inputText);
+    if (!number) {
+      // rollback when invalid
+      number = numberValue;
+    } else {
+      // only when value updated
+      dispatch(actions.registerApplicationConversion());
+    }
+    setNumberValue(number);
+    setInputText(Helper.formatFloatingPointNumber(number));
+  }, [numberValue, inputText, dispatch]);
   const onTextInputChangeText = React.useCallback((text) => {
-    inputTextRef.current?.setNativeProps({
-      text: Helper.formatFloatingPointNumber(text),
-    });
+    const formatted = Helper.formatFloatingPointNumber(text);
+    setInputText((prev) => (prev === formatted ? prev : formatted));
   }, []);
   const dismissKeyboard = React.useCallback(() => {
     inputTextRef.current?.blur();
@@ -162,22 +159,21 @@ const ConversionScreen = ({
                 borderWidth: Settings.BORDER_WIDTH,
                 borderColor: Settings.getStrokeColor(theme),
                 margin: Settings.CARD_PADDING,
-                // perfect size using diff between the lineHeight and size of font
-                padding: Settings.PADDING - (34 - 28) / 2,
-                // padding: Settings.PADDING - (34 - 28) / 2 - 4,
+                // perfect size using lineHeight-size diff and border width
+                padding:
+                  Settings.PADDING - (34 - 28) / 2 - Settings.BORDER_WIDTH * 2,
                 backgroundColor: Settings.getContentColor(theme),
               }}
             >
               <TextInput
                 ref={inputTextRef}
-                defaultValue={Helper.formatFloatingPointNumber(numberValue)}
+                value={inputText}
                 onFocus={onTextInputFocus}
                 onEndEditing={onTextInputBlur}
                 onChangeText={onTextInputChangeText}
                 style={[
                   fonts.largeTitle,
                   {
-                    lineHeight: undefined,
                     includeFontPadding: false,
                     // required for Android on Expo 53
                     padding: 0,

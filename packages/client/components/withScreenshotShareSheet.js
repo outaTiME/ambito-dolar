@@ -201,6 +201,7 @@ const withScreenshotShareSheet =
                 backgroundColor,
               }}
               ref={shareViewGeneratedContainerRef}
+              collapsable={false}
             >
               <View
                 style={[
