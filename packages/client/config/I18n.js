@@ -21,7 +21,7 @@ const i18n = new I18n({
     developer: 'Desarrollador',
     text_copied: 'Texto copiado al portapapeles',
     generic_error: 'Imposible completar la operación seleccionada.',
-    rates_updated: '􀁣 Actualizado',
+    rates_updated: '􀁣 Actualizado',
     // rate detail
     detail: 'Detalle',
     one_week: `${Settings.MAX_NUMBER_OF_STATS}D`,
