@@ -17,7 +17,7 @@ const createAndPublish = async (searchParams) => {
     searchParams,
   });
   // retry in case the image takes longer to be available
-  const media_id = await Shared.promiseRetry(async (retry, attempt) => {
+  const media_id = await Shared.promiseRetry(async (retry) => {
     try {
       const { id } = await req(`/${IG_USER_ID}/media_publish`, {
         method: 'POST',
