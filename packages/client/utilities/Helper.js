@@ -128,6 +128,8 @@ const TABBAR_HEIGHT_UIKIT = 49;
 // https://github.com/react-navigation/react-navigation/blob/main/packages/native-stack/src/views/NativeStackView.native.tsx#L50
 const ANDROID_DEFAULT_HEADER_HEIGHT = 56;
 
+const promiseRetry = AmbitoDolar.promiseRetry;
+
 export default {
   getCurrency(str, include_symbol = false, usd = false, type) {
     if (include_symbol === true) {
@@ -154,15 +156,6 @@ export default {
         resolve();
       }, ms);
     }),
-  timeout: (p, ms = AmbitoDolar.FETCH_TIMEOUT) =>
-    Promise.race([
-      p,
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          reject(new Error('Promise execution timed out.'));
-        }, ms);
-      }),
-    ]),
   getJson,
   registerDevice: (data = {}) =>
     getJson(Settings.API_URL + '/register-device', {
@@ -623,4 +616,5 @@ export default {
   getHashId(input, length = 10) {
     return hash(input, { algorithm: 'md5' }).slice(0, length);
   },
+  promiseRetry,
 };

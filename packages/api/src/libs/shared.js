@@ -17,7 +17,6 @@ import https from 'https';
 import * as _ from 'lodash';
 import prettyMilliseconds from 'pretty-ms';
 import pLimit from 'promise-limit';
-import pRetry from 'promise-retry';
 import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
 import yn from 'yn';
@@ -656,14 +655,7 @@ const triggerSendSocialNotificationsEvent = (caption, image_url) =>
     ...(image_url && { value2: image_url }),
   });
 
-const promiseRetry = (fn, opts) =>
-  pRetry(fn, {
-    // https://github.com/vercel/fetch-retry/blob/master/index.js#L5
-    retries: 5,
-    // factor: 6,
-    // minTimeout: 10,
-    ...opts,
-  });
+const promiseRetry = AmbitoDolar.promiseRetry;
 
 const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
   const promises = _.chain(

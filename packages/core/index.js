@@ -3,6 +3,7 @@ import ky from 'ky';
 import * as _ from 'lodash';
 import moment from 'moment-timezone';
 import numeral from 'numeral';
+import pRetry from 'promise-retry';
 
 // locales
 
@@ -353,6 +354,15 @@ const fetchData = (url, opts = {}) =>
     ...opts,
   });
 
+const promiseRetry = (fn, opts) =>
+  pRetry(fn, {
+    retries: 5,
+    factor: 2,
+    minTimeout: 100,
+    randomize: true,
+    ...opts,
+  });
+
 export default {
   TIMEZONE,
   OFFICIAL_TYPE,
@@ -406,4 +416,5 @@ export default {
   crushJson: (obj) => JsonURL.stringify(obj, { AQF: true }),
   uncrushJson: (str) => JsonURL.parse(str, { AQF: true }),
   fetch: fetchData,
+  promiseRetry,
 };
