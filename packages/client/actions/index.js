@@ -72,12 +72,17 @@ const doRegisterDevice = (dispatch, state, value = {}) => {
 };
 
 const doRegisterDeviceForNotifications = (dispatch, current_state) =>
-  Notifications.getExpoPushTokenAsync({
-    projectId: Constants.expoConfig.extra.eas.projectId,
-  }).then(({ data: push_token }) =>
-    doRegisterDevice(dispatch, current_state, { push_token }).then(
-      () => push_token,
-    ),
+  // retry to handle keychain or network issues
+  Helper.promiseRetry((retry) =>
+    Notifications.getExpoPushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId,
+    })
+      .then(({ data: push_token }) =>
+        doRegisterDevice(dispatch, current_state, { push_token }).then(
+          () => push_token,
+        ),
+      )
+      .catch(retry),
   );
 
 export const registerDeviceForNotifications =

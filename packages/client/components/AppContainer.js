@@ -1034,7 +1034,7 @@ const withAppDonation = (Component) => (props) => {
       }
       shouldShowModal = appDonationModal || shouldShowModal;
       if (shouldShowModal) {
-        Purchases.getCustomerInfo()
+        Helper.promiseRetry((retry) => Purchases.getCustomerInfo().catch(retry))
           .then(async (customerInfo) => {
             const lastPurchaseDate = _.last(
               customerInfo?.nonSubscriptionTransactions,
@@ -1050,12 +1050,14 @@ const withAppDonation = (Component) => (props) => {
               // ask for donation once a year (since last donation)
               monthsSinceLastPurchase >= 12
             ) {
-              product = await Helper.timeout(
+              product = await Helper.promiseRetry((retry) =>
                 Purchases.getProducts(
                   ['small_contribution'],
                   Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
-                ),
-              ).then((products) => products?.[0]);
+                )
+                  .then((products) => products?.[0])
+                  .catch(retry),
+              );
               // .then((product) => product ?? (__DEV__ && { price: 1 }));
             }
             return [lastPurchaseDate, monthsSinceLastPurchase, product];
@@ -1163,7 +1165,17 @@ const withAppDonation = (Component) => (props) => {
               handleOnPress={async () => {
                 setDonateLoading(true);
                 try {
-                  await Purchases.purchaseStoreProduct(purchaseProduct);
+                  await Helper.promiseRetry((retry) =>
+                    Purchases.purchaseStoreProduct(purchaseProduct).catch(
+                      (e) => {
+                        // do not retry if user cancelled
+                        if (e?.userCancelled) {
+                          throw e;
+                        }
+                        retry(e);
+                      },
+                    ),
+                  );
                   bottomSheetRef.current?.dismiss();
                 } catch (e) {
                   if (!e.userCancelled) {

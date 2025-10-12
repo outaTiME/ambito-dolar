@@ -49,7 +49,7 @@ const StatisticsScreen = ({ headerHeight, tabBarHeight }) => {
   const [Loading, setLoading] = React.useState(true);
   const [donations, setDonations] = React.useState('N/D');
   React.useEffect(() => {
-    Helper.timeout(Purchases.getCustomerInfo())
+    Helper.promiseRetry((retry) => Purchases.getCustomerInfo().catch(retry))
       .then((customerInfo) => {
         setDonations(
           customerInfo.nonSubscriptionTransactions.length.toString(),

@@ -85,14 +85,14 @@ const SettingsScreen = ({ headerHeight, tabBarHeight, navigation }) => {
   // donate
   const getPurchaseProduct = React.useCallback(
     () =>
-      Helper.timeout(
+      Helper.promiseRetry((retry) =>
         Purchases.getProducts(
           ['small_contribution'],
           Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
-        ),
-      )
-        .then((products) => products?.[0])
-        .catch(console.warn),
+        )
+          .then((products) => products?.[0])
+          .catch(retry),
+      ).catch(console.warn),
     [],
   );
   const [purchaseProduct, setPurchaseProduct] = React.useState();
@@ -111,7 +111,7 @@ const SettingsScreen = ({ headerHeight, tabBarHeight, navigation }) => {
           }
         });
       }
-    }, [purchaseProduct]),
+    }, [purchaseProduct, getPurchaseProduct]),
   );
   const [donateLoading, setDonateLoading] = React.useState(false);
   const onPressDonate = React.useCallback(() => {
@@ -122,7 +122,15 @@ const SettingsScreen = ({ headerHeight, tabBarHeight, navigation }) => {
         if (product) {
           // force an update in case the product changes
           setPurchaseProduct(product);
-          return Purchases.purchaseStoreProduct(product);
+          return Helper.promiseRetry((retry) =>
+            Purchases.purchaseStoreProduct(product).catch((e) => {
+              // do not retry if user cancelled
+              if (e?.userCancelled) {
+                throw e;
+              }
+              retry(e);
+            }),
+          );
         }
         throw new Error('No products available');
       })
@@ -150,7 +158,7 @@ const SettingsScreen = ({ headerHeight, tabBarHeight, navigation }) => {
       .finally(() => {
         setDonateLoading(false);
       });
-  }, [purchaseProduct]);
+  }, [purchaseProduct, getPurchaseProduct]);
   const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
   const handleIdentifierInteraction = React.useCallback(
     () =>
