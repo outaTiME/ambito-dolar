@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.1.1...@ambito-dolar/client@10.2.0) (2025-10-19)
+
+### Bug Fixes
+
+- add retry logic to push token and donation flows ([e174303](https://github.com/outaTiME/ambito-dolar/commit/e1743031cb5442660e08f66693dba285c3bf7c19))
+- bump version and build number ([81f67a2](https://github.com/outaTiME/ambito-dolar/commit/81f67a256dda8d32aa55e83e4d974948729cbc5b))
+- bump version and build number ([09f1d6e](https://github.com/outaTiME/ambito-dolar/commit/09f1d6e9232481500c951648f4fcf7203cd1b984))
+
+### Features
+
+- support new architecture in Expo SDK 53 ([c8c6324](https://github.com/outaTiME/ambito-dolar/commit/c8c63245fed99e7668cb979bee95c73a201ae4c3))
+- update app donation messages for improved user engagement ([1ade9d3](https://github.com/outaTiME/ambito-dolar/commit/1ade9d3343862c8322696a65f4977299bf3fa9a5))
+
 ## [10.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.1.0...@ambito-dolar/client@10.1.1) (2025-10-04)
 
 ### Bug Fixes

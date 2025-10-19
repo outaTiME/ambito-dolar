@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.5.0...@ambito-dolar/api@4.5.1) (2025-10-19)
+
+### Bug Fixes
+
+- exclude euro and real from opening due to off-hour updates ([64bdb2f](https://github.com/outaTiME/ambito-dolar/commit/64bdb2f8488172cdc85eadc00e3a9656961c30fc))
+
 # [4.5.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.4.0...@ambito-dolar/api@4.5.0) (2025-10-04)
 
 ### Bug Fixes
