@@ -1000,15 +1000,17 @@ const withAppDonation = (Component) => (props) => {
   const purchaseSlug = React.useMemo(() => {
     const slugs = [
       '¡Wow, usás {APP_NAME} un montón!',
-      '¡Increíble cómo usás {APP_NAME}!',
-      '¡No parás de usar {APP_NAME}!',
-      '¡{APP_NAME} es parte de tu rutina diaria!',
-      '¡Estás todo el tiempo en {APP_NAME}!',
+      '¡Increíble lo fiel que sos a {APP_NAME}!',
+      '¡Wow, no parás de entrar a {APP_NAME}!',
+      '¡{APP_NAME} ya es parte de tu rutina diaria!',
+      '¡Siempre con {APP_NAME} a mano!',
       '¡Sos inseparable de {APP_NAME}!',
-      '¡No hay día sin {APP_NAME}!',
-      '¡Wow, usás {APP_NAME} sin parar!',
-      '¡No te despegás de {APP_NAME} ni un segundo!',
+      '¡No pasás un día sin mirar {APP_NAME}!',
       '¡Wow, abrís {APP_NAME} a cada rato!',
+      '¡No te despegás de {APP_NAME} ni un segundo!',
+      '¡Wow, no hay descanso entre vos y {APP_NAME}!',
+      '¡Ya sos usuario nivel experto de {APP_NAME}!',
+      '¡No hay quien te gane usando {APP_NAME}!',
     ];
     return _.replace(
       slugs[daysUsed % slugs.length],
