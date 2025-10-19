@@ -1,5 +1,5 @@
 const version = '10.2.0';
-const buildNumber = 188;
+const buildNumber = 189;
 
 export default {
   name: 'Ámbito Dólar',
