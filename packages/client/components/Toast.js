@@ -21,8 +21,8 @@ const springConfig = {
 
 export default ({ isVisible, text, onCompleted }) => {
   const targetTranslate = -Settings.CARD_PADDING * 2;
-  // subhead lineHeight
-  const distance = 20 / 2 + Settings.PADDING / 2;
+  // subhead lineHeight + vertical padding
+  const distance = (20 + Settings.PADDING) / 2;
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: withTiming(
@@ -50,12 +50,12 @@ export default ({ isVisible, text, onCompleted }) => {
       <View
         style={{
           alignSelf: 'center',
-          padding: 8,
-          paddingHorizontal: 12,
+          padding: Settings.PADDING / 2,
+          paddingHorizontal: 14,
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: Settings.getBackgroundColor(invertedTheme, true),
-          borderRadius: 20,
+          borderRadius: distance,
           bottom: 0,
           maxWidth: Settings.CONTENT_WIDTH - 38,
           position: 'absolute',
