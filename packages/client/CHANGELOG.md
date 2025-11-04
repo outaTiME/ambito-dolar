@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.2.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.2.0...@ambito-dolar/client@10.2.1) (2025-11-04)
+
+### Bug Fixes
+
+- adjust status bar offset for iPhone Air on iOS 26.1 ([f97068c](https://github.com/outaTiME/ambito-dolar/commit/f97068c4032573a9c3ff8f9ac87f424c216757a1))
+- bump version and build number ([542ad17](https://github.com/outaTiME/ambito-dolar/commit/542ad1705238a3560c14c03bddaa186ec18e6c67))
+
 # [10.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.1.1...@ambito-dolar/client@10.2.0) (2025-10-19)
 
 ### Bug Fixes

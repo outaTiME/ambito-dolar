@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.3](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@4.1.2...@ambito-dolar/core@4.1.3) (2025-11-04)
+
+### Bug Fixes
+
+- switch image storage to freeimage.host to avoid delivery issues on socials ([7580767](https://github.com/outaTiME/ambito-dolar/commit/75807673006e2d9e5189225d07f44b5f1ac92236))
+
 ## [4.1.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@4.1.1...@ambito-dolar/core@4.1.2) (2025-10-19)
 
 **Note:** Version bump only for package @ambito-dolar/core
