@@ -5,6 +5,8 @@ import prettyMilliseconds from 'pretty-ms';
 import puppeteer from 'puppeteer-core';
 import sharp from 'sharp';
 
+import Shared from './shared';
+
 /* eslint-disable no-unused-vars */
 
 // not working in telegram
@@ -41,30 +43,76 @@ const storeImgbbFile = (imageBase64) =>
     return data.url;
   });
 
-/* eslint-enable no-unused-vars */
+// not supported in instagram
+const storeImghippoFile = async (buffer) => {
+  const type = await imageType(buffer);
+  if (!type) {
+    throw new Error('Unsupported or unknown image type');
+  }
+  const form = new FormData();
+  form.append(
+    'file',
+    new Blob([buffer], { type: type.mime }),
+    `upload.${type.ext}`,
+  );
+  form.append('api_key', process.env.IMGHIPPO_API_KEY);
+  const response = await AmbitoDolar.fetch(
+    'https://api.imghippo.com/v1/upload',
+    {
+      method: 'POST',
+      body: form,
+    },
+  );
+  const { data } = await response.json();
+  return data.url || data.view_url;
+};
 
 const storeCatboxFile = async (buffer) => {
   const type = await imageType(buffer);
   if (!type) {
     throw new Error('Unsupported or unknown image type');
   }
+  return Shared.promiseRetry(async (retry) => {
+    const form = new FormData();
+    form.append('reqtype', 'fileupload');
+    form.append(
+      'fileToUpload',
+      new Blob([buffer], { type: type.mime }),
+      `upload.${type.ext}`,
+    );
+    const res = await AmbitoDolar.fetch('https://catbox.moe/user/api.php', {
+      method: 'POST',
+      body: form,
+    });
+    const url = (await res.text()).trim();
+    if (!url.startsWith('http')) {
+      return retry(new Error('Invalid Catbox response'));
+    }
+    return url;
+  });
+};
+
+const storeFreeimageFile = async (buffer) => {
+  const type = await imageType(buffer);
+  if (!type) {
+    throw new Error('Unsupported or unknown image type');
+  }
   const form = new FormData();
-  form.append('reqtype', 'fileupload');
+  form.append('key', process.env.FREEIMAGE_API_KEY);
   form.append(
-    'fileToUpload',
+    'source',
     new Blob([buffer], { type: type.mime }),
     `upload.${type.ext}`,
   );
-  const res = await AmbitoDolar.fetch('https://catbox.moe/user/api.php', {
+  const res = await AmbitoDolar.fetch('https://freeimage.host/api/1/upload', {
     method: 'POST',
     body: form,
   });
-  const url = (await res.text()).trim();
-  if (!url.startsWith('http')) {
-    throw new Error(`Catbox upload failed: ${url}`);
-  }
-  return url;
+  const { image } = await res.json();
+  return image.url;
 };
+
+/* eslint-enable no-unused-vars */
 
 export const generateScreenshot = async (url, opts) => {
   const start_time = Date.now();
@@ -135,8 +183,12 @@ export const generateScreenshot = async (url, opts) => {
       // storeImgurFile(sharp_story_file.toString('base64')),
       // storeImgbbFile(sharp_file.toString('base64')),
       // storeImgbbFile(sharp_story_file.toString('base64')),
-      storeCatboxFile(sharp_file),
-      storeCatboxFile(sharp_story_file),
+      // storeImghippoFile(sharp_file),
+      // storeImghippoFile(sharp_story_file),
+      // storeCatboxFile(sharp_file),
+      // storeCatboxFile(sharp_story_file),
+      storeFreeimageFile(sharp_file),
+      storeFreeimageFile(sharp_story_file),
       sharp_file,
       sharp_story_file,
     ]);

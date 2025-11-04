@@ -44,6 +44,8 @@ export default {
         INSTANT_ADMIN_TOKEN: process.env.INSTANT_ADMIN_TOKEN,
         IG_PAGE_TOKEN: process.env.IG_PAGE_TOKEN,
         IG_USER_ID: process.env.IG_USER_ID,
+        IMGHIPPO_API_KEY: process.env.IMGHIPPO_API_KEY,
+        FREEIMAGE_API_KEY: process.env.FREEIMAGE_API_KEY,
       },
       logRetention: 'one_day',
       runtime: 'nodejs22.x',

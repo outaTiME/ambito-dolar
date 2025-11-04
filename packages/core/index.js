@@ -347,12 +347,10 @@ const getRateChange = (stat, include_symbol = false) => {
   return str.join('');
 };
 
-const fetchData = (url, opts = {}) =>
-  ky(url, {
-    // https://github.com/sindresorhus/ky?tab=readme-ov-file#timeout
-    timeout: FETCH_TIMEOUT,
-    ...opts,
-  });
+const fetcher = ky.create({
+  // https://github.com/sindresorhus/ky?tab=readme-ov-file#timeout
+  timeout: FETCH_TIMEOUT,
+});
 
 const promiseRetry = (fn, opts) =>
   pRetry(fn, {
@@ -415,6 +413,6 @@ export default {
   getRateChange,
   crushJson: (obj) => JsonURL.stringify(obj, { AQF: true }),
   uncrushJson: (str) => JsonURL.parse(str, { AQF: true }),
-  fetch: fetchData,
+  fetch: fetcher,
   promiseRetry,
 };
