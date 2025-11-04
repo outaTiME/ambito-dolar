@@ -501,8 +501,11 @@ export default {
         // iPhone 14 Pro, 14 Pro Max, 15 series, 16, 16 Plus
         statusBarHeight -= offset;
       } else if (topInset === 62) {
-        // iPhone 16 Pro, 16 Pro Max
+        // iPhone 16 Pro, 16 Pro Max, 17, 17 Pro, 17 Pro Max
         statusBarHeight -= 0.5 + offset;
+      } else if (topInset === 65) {
+        // iPhone Air (iOS 26.1)
+        statusBarHeight -= 1.5 + offset;
       }
     }
     /* console.log('>>> getDefaultHeaderHeight', {
