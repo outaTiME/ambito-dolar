@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "@jsonurl/jsonurl": "^1.1.8",
-    "ky": "^1.12.0",
+    "ky": "^1.14.0",
     "lodash": "^4.17.21",
     "moment-timezone": "^0.6.0",
     "numeral": "^2.0.6",
