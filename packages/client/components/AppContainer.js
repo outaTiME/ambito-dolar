@@ -554,8 +554,8 @@ const AppContainer = ({ rates, rateTypes, stillLoading, ...props }) => {
               ? Settings.INITIAL_ROUTE_NAME
               : 'RateDetail',
           params,
-          // https://reactnavigation.org/docs/nesting-navigators/#rendering-initial-route-defined-in-the-navigator
-          initial: false,
+          // https://reactnavigation.org/docs/upgrading-from-6.x#the-navigate-method-no-longer-goes-back-use-popto-instead
+          pop: true,
         });
       }
     }

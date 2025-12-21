@@ -47,6 +47,8 @@ const DeveloperScreen = ({ headerHeight, tabBarHeight, navigation }) => {
           onAction={() => {
             navigation.navigate('RatesTab', {
               screen: Settings.INITIAL_ROUTE_NAME,
+              // https://reactnavigation.org/docs/upgrading-from-6.x#the-navigate-method-no-longer-goes-back-use-popto-instead
+              pop: true,
             });
           }}
         />
