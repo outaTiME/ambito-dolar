@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [11.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.2.1...@ambito-dolar/client@11.0.0) (2025-12-21)
+
+### Bug Fixes
+
+- avoid pushing screens that already exist in stack ([acae789](https://github.com/outaTiME/ambito-dolar/commit/acae7897208ab2e746eda7ae4ab9bbf1bd22a325))
+- bump version and build number ([7b1f7a6](https://github.com/outaTiME/ambito-dolar/commit/7b1f7a62160915559c58f988f1b8b0a374083112))
+
+### Features
+
+- update to Expo SDK 54 ([1b433ed](https://github.com/outaTiME/ambito-dolar/commit/1b433ed618fc3dbd780c8a18406f3143931a09fe))
+
+### BREAKING CHANGES
+
+- upgraded to React Native 0.81
+
 ## [10.2.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.2.0...@ambito-dolar/client@10.2.1) (2025-11-04)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.5.2...@ambito-dolar/api@4.6.0) (2025-12-21)
+
+### Features
+
+- enhance image upload handling and optimize JPEG settings for Instagram ([3a3ea32](https://github.com/outaTiME/ambito-dolar/commit/3a3ea32d1a9245073354ea55d6dc9cea907927ee))
+
 ## [4.5.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.5.1...@ambito-dolar/api@4.5.2) (2025-11-04)
 
 ### Bug Fixes
