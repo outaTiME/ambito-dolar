@@ -1,6 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import chromium from '@sparticuz/chromium';
 import imageType from 'image-type';
+import prettyBytes from 'pretty-bytes';
 import prettyMilliseconds from 'pretty-ms';
 import puppeteer from 'puppeteer-core';
 import sharp from 'sharp';
@@ -9,7 +10,7 @@ import Shared from './shared';
 
 /* eslint-disable no-unused-vars */
 
-// not working in telegram
+// imgur blocks telegram
 const storeImgurFile = (imageBase64) =>
   // AmbitoDolar.fetch('https://api.imgur.com/3/image', {
   AmbitoDolar.fetch('https://api.imgur.com/3/upload', {
@@ -27,7 +28,6 @@ const storeImgurFile = (imageBase64) =>
     return data.link;
   });
 
-// not supported in instagram
 const storeImgbbFile = (imageBase64) =>
   AmbitoDolar.fetch('https://api.imgbb.com/1/upload', {
     method: 'POST',
@@ -43,7 +43,7 @@ const storeImgbbFile = (imageBase64) =>
     return data.url;
   });
 
-// not supported in instagram
+// instagram does not accept imghippo links
 const storeImghippoFile = async (buffer) => {
   const type = await imageType(buffer);
   if (!type) {
@@ -67,6 +67,7 @@ const storeImghippoFile = async (buffer) => {
   return data.url || data.view_url;
 };
 
+// service is unstable
 const storeCatboxFile = async (buffer) => {
   const type = await imageType(buffer);
   if (!type) {
@@ -92,6 +93,7 @@ const storeCatboxFile = async (buffer) => {
   });
 };
 
+// reddit does not accept freeimage links
 const storeFreeimageFile = async (buffer) => {
   const type = await imageType(buffer);
   if (!type) {
@@ -113,6 +115,13 @@ const storeFreeimageFile = async (buffer) => {
 };
 
 /* eslint-enable no-unused-vars */
+
+// jpeg compression settings optimized for instagram
+const JPEG_OPTIONS = {
+  quality: 92,
+  chromaSubsampling: '4:4:4',
+  mozjpeg: true,
+};
 
 export const generateScreenshot = async (url, opts) => {
   const start_time = Date.now();
@@ -158,41 +167,38 @@ export const generateScreenshot = async (url, opts) => {
         ? AmbitoDolar.SOCIAL_IMAGE_WIDTH
         : AmbitoDolar.SOCIAL_IMAGE_HEIGHT,
     })
-    // required by instagram
-    .jpeg({
-      quality: 100,
-      chromaSubsampling: '4:4:4',
-    })
+    .jpeg(JPEG_OPTIONS)
     .toBuffer();
+
   const sharp_story_file = await sharp(story_file)
     .resize({
       width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
       height: AmbitoDolar.SOCIAL_STORY_IMAGE_HEIGHT,
     })
-    // required by instagram
-    .jpeg({
-      quality: 100,
-      chromaSubsampling: '4:4:4',
-    })
+    .jpeg(JPEG_OPTIONS)
     .toBuffer();
-  // parellelize image processing
+  // parallelize image upload
   const [target_url, target_story_url, ig_sharp_file, ig_sharp_story_file] =
     await Promise.all([
       // image hosting service
       // storeImgurFile(sharp_file.toString('base64')),
       // storeImgurFile(sharp_story_file.toString('base64')),
-      // storeImgbbFile(sharp_file.toString('base64')),
-      // storeImgbbFile(sharp_story_file.toString('base64')),
+      storeImgbbFile(sharp_file.toString('base64')),
+      storeImgbbFile(sharp_story_file.toString('base64')),
       // storeImghippoFile(sharp_file),
       // storeImghippoFile(sharp_story_file),
       // storeCatboxFile(sharp_file),
       // storeCatboxFile(sharp_story_file),
-      storeFreeimageFile(sharp_file),
-      storeFreeimageFile(sharp_story_file),
+      // storeFreeimageFile(sharp_file),
+      // storeFreeimageFile(sharp_story_file),
       sharp_file,
       sharp_story_file,
     ]);
   const duration = prettyMilliseconds(Date.now() - start_time);
+  const file_size = prettyBytes(sharp_file.length, { space: false });
+  const story_file_size = prettyBytes(sharp_story_file.length, {
+    space: false,
+  });
   console.info(
     'Screenshot completed',
     JSON.stringify({
@@ -200,6 +206,8 @@ export const generateScreenshot = async (url, opts) => {
       target_url,
       target_story_url,
       duration,
+      file_size,
+      story_file_size,
     }),
   );
   return {
