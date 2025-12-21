@@ -174,6 +174,8 @@ export default {
       UIViewControllerBasedStatusBarAppearance: true,
       // optimizes ProMotion refresh rates
       CADisableMinimumFrameDurationOnPhone: true,
+      // disables liquid glass
+      UIDesignRequiresCompatibility: true,
     },
     privacyManifests: {
       // https://docs.sentry.io/platforms/react-native/data-management/apple-privacy-manifest/#create-privacy-manifest-in-expo

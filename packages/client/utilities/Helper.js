@@ -497,15 +497,14 @@ export default {
       statusBarHeight -= 5;
       const offset = 1 / PixelRatio.get();
       // https://github.com/devym-37/react-native-safearea-height?tab=readme-ov-file#usage-getstatusbarheightskipandroid-boolean--false
-      if (topInset === 59) {
-        // iPhone 14 Pro, 14 Pro Max, 15 series, 16, 16 Plus
-        statusBarHeight -= offset;
-      } else if (topInset === 62) {
-        // iPhone 16 Pro, 16 Pro Max, 17, 17 Pro, 17 Pro Max
-        statusBarHeight -= 0.5 + offset;
-      } else if (topInset === 65) {
-        // iPhone Air (iOS 26.1)
-        statusBarHeight -= 1.5 + offset;
+      switch (topInset) {
+        case 59: // 14 Pro / 14 Pro Max / 15 series / 16 / 16 Plus
+          statusBarHeight -= offset;
+          break;
+        case 62: // 16 Pro / 16 Pro Max / 17 / 17 Pro / 17 Pro Max
+        case 68: // Air
+          statusBarHeight -= 0.5 + offset;
+          break;
       }
     }
     /* console.log('>>> getDefaultHeaderHeight', {

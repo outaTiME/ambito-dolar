@@ -157,6 +157,11 @@ export default ({
               value={value === true}
               onValueChange={onValueChange}
               disabled={disableSwitch}
+              //
+              style={{
+                // required by iOS 26
+                alignSelf: 'center',
+              }}
             />
           )}
           {!loading &&
