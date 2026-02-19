@@ -131,6 +131,7 @@ export function MainStack({ stack }) {
       'POST /update-rates': 'packages/api/src/routes/update-rates.handler',
       'POST /update-historical-rates':
         'packages/api/src/routes/update-historical-rates.handler',
+      'GET /fetch-rate': 'packages/api/src/routes/fetch-rate.handler',
       // maintenance (private)
       'GET /invalidate-receipts':
         'packages/api/src/routes/invalidate-receipts.handler',

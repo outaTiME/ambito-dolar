@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import hash from 'object-hash';
 import prettyMilliseconds from 'pretty-ms';
 
-import Shared, { MAX_NUMBER_OF_STATS } from '../libs/shared';
+import Shared, { MAX_NUMBER_OF_STATS, USER_AGENT } from '../libs/shared';
 
 const numberValidator = (value, helpers) => {
   // convert to number and truncate
@@ -23,6 +23,9 @@ const getRate = (type) => {
   return AmbitoDolar.fetch(url, {
     // 15 over default of 30 secs
     timeout: 45 * 1000,
+    headers: {
+      'user-agent': USER_AGENT,
+    },
   })
     .then(async (response) => {
       const data = await response.json();

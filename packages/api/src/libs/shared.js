@@ -65,6 +65,9 @@ export const MIN_CLIENT_VERSION_FOR_BNA = '6.11.0';
 export const MIN_CLIENT_VERSION_FOR_EURO_AND_REAL = '10.1.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
 export const S3_BUCKET = process.env.S3_BUCKET;
+// prevents 403 errors when fetching rates
+export const USER_AGENT =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 // 2.1.x
 const RATE_STATS_OBJECT_KEY = process.env.RATE_STATS_OBJECT_KEY;
 // 3.x
