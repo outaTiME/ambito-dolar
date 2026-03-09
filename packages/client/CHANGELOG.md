@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [11.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@11.0.0...@ambito-dolar/client@11.1.0) (2026-03-09)
+
+### Bug Fixes
+
+- bump version and build number ([83f34fb](https://github.com/outaTiME/ambito-dolar/commit/83f34fb080bdeb71af4446ab849f78223f75b154))
+
+### Features
+
+- migrate client to expo router and bootstrap typescript ([3c58f66](https://github.com/outaTiME/ambito-dolar/commit/3c58f6604fe452b0b03469ba1aefde915222a221))
+
 # [11.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@10.2.1...@ambito-dolar/client@11.0.0) (2025-12-21)
 
 ### Bug Fixes

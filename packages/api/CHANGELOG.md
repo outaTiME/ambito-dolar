@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.6.0...@ambito-dolar/api@4.6.1) (2026-03-09)
+
+### Bug Fixes
+
+- add user-agent header for rates provider requirement ([dc9a3d0](https://github.com/outaTiME/ambito-dolar/commit/dc9a3d09645e98680b1c4ac8ad14e35fef084dfc))
+- switch image storage to Amazon S3 to avoid delivery issues on socials ([c39a488](https://github.com/outaTiME/ambito-dolar/commit/c39a4889e98f0f9a62b9bf937434b78172293290))
+
 # [4.6.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.5.2...@ambito-dolar/api@4.6.0) (2025-12-21)
 
 ### Features
