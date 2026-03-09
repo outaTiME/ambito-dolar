@@ -103,6 +103,7 @@
       <string>SelectRateTypeIntent</string>
       <string>SelectRateTypesIntent</string>
       <string>SelectSpreadRateTypesIntent</string>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
     <key>RCTNewArchEnabled</key>
     <true/>

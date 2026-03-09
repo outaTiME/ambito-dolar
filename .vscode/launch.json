@@ -1,15 +1,29 @@
 {
   "version": "0.2.0",
   "configurations": [
-    // https://docs.sst.dev/live-lambda-development#launch-configurations
     {
       "name": "Debug SST Dev",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/sst",
-      "runtimeArgs": ["dev", "--increase-timeout"],
+      "runtimeArgs": [
+        "dev",
+        "--increase-timeout"
+      ],
       "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Radon IDE panel",
+      "type": "radon-ide",
+      "request": "launch",
+      "appRoot": "./packages/client",
+      "env": {},
+      "ios": {},
+      "android": {},
+      "usePrebuild": false
     }
   ]
 }

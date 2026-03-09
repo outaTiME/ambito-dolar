@@ -159,8 +159,8 @@ export function MainStack({ stack }) {
   api.attachPermissions([bucket, devicesTable, notificationsTable, topic]);
   // expo web build
   const screenshotSite = new StaticSite(stack, 'ScreenshotSite', {
-    buildCommand: 'yarn expo export:web',
-    buildOutput: 'web-build',
+    buildCommand: 'yarn expo export -p web',
+    buildOutput: 'dist',
     environment: {
       IS_PRODUCTION: IS_PRODUCTION.toString(),
       // should use API_URL but expo web overwrites it

@@ -42,8 +42,8 @@ packages/client/targets/
 google-services.json
 
 # Gatsby
-.cache/
-public/
+packages/website/.cache/
+packages/website/public/
 
 # SST build output
 .sst/

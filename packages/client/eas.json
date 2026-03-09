@@ -20,5 +20,8 @@
     "production": {
       "extends": "base"
     }
+  },
+  "submit": {
+    "production": {}
   }
 }

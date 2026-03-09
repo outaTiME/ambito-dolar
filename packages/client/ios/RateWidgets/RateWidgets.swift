@@ -94,7 +94,7 @@ private func getChangeColor(num: Double) -> Color {
 
 private func getWidgetUrl(id: String? = nil) -> URL? {
   if let id = id {
-    return URL(string: "https://www.ambito-dolar.app/rate?type=" + id)
+    return URL(string: "https://www.ambito-dolar.app/rates/" + id)
   }
   return URL(string: "https://www.ambito-dolar.app/rates")
 }
