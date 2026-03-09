@@ -6,7 +6,7 @@ import prettyMilliseconds from 'pretty-ms';
 import puppeteer from 'puppeteer-core';
 import sharp from 'sharp';
 
-import Shared from './shared';
+import Shared, { S3_BUCKET } from './shared';
 
 /* eslint-disable no-unused-vars */
 
@@ -114,6 +114,17 @@ const storeFreeimageFile = async (buffer) => {
   return image.url;
 };
 
+const storeS3File = async (buffer, isStory = false, bucket = S3_BUCKET) => {
+  const { ext = 'jpg', mime = 'image/jpeg' } = (await imageType(buffer)) || {};
+  const folder = isStory ? 'social-images/stories' : 'social-images';
+  const key = `${folder}/${crypto.randomUUID()}.${ext}`;
+  return Shared.storeObject(key, buffer, bucket, false, {
+    ContentType: mime,
+    ACL: 'public-read',
+    CacheControl: 'public, max-age=31536000',
+  }).then(() => `https://${bucket}.s3.amazonaws.com/${key}`);
+};
+
 /* eslint-enable no-unused-vars */
 
 // jpeg compression settings optimized for instagram
@@ -169,7 +180,6 @@ export const generateScreenshot = async (url, opts) => {
     })
     .jpeg(JPEG_OPTIONS)
     .toBuffer();
-
   const sharp_story_file = await sharp(story_file)
     .resize({
       width: AmbitoDolar.SOCIAL_IMAGE_WIDTH,
@@ -183,14 +193,16 @@ export const generateScreenshot = async (url, opts) => {
       // image hosting service
       // storeImgurFile(sharp_file.toString('base64')),
       // storeImgurFile(sharp_story_file.toString('base64')),
-      storeImgbbFile(sharp_file.toString('base64')),
-      storeImgbbFile(sharp_story_file.toString('base64')),
+      // storeImgbbFile(sharp_file.toString('base64')),
+      // storeImgbbFile(sharp_story_file.toString('base64')),
       // storeImghippoFile(sharp_file),
       // storeImghippoFile(sharp_story_file),
       // storeCatboxFile(sharp_file),
       // storeCatboxFile(sharp_story_file),
       // storeFreeimageFile(sharp_file),
       // storeFreeimageFile(sharp_story_file),
+      storeS3File(sharp_file),
+      storeS3File(sharp_story_file, true),
       sharp_file,
       sharp_story_file,
     ]);
