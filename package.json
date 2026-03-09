@@ -12,15 +12,15 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^20.2.0",
-    "@commitlint/config-conventional": "^20.2.0",
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
     "aws-cdk-lib": "2.201.0",
     "constructs": "10.3.0",
     "eslint": "^8.57.1",
     "eslint-config-universe": "^15.0.3",
     "husky": "^9.1.7",
-    "lerna": "^9.0.3",
-    "prettier": "^3.7.4",
+    "lerna": "^9.0.5",
+    "prettier": "^3.8.1",
     "sst": "2.49.6"
   },
   "scripts": {
