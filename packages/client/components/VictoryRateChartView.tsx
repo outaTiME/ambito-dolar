@@ -4,7 +4,7 @@ import { useLayout } from '@react-native-community/hooks';
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View, Text } from 'react-native';
-import AnimateableText from 'react-native-animateable-text';
+import AnimateableText from 'react-native-animateable-text/lib/commonjs';
 import {
   useDerivedValue,
   useAnimatedProps,

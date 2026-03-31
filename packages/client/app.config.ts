@@ -51,6 +51,8 @@ export default {
   plugins: [
     'expo-router',
     'expo-localization',
+    'expo-image',
+    'expo-sharing',
     [
       'expo-font',
       {
@@ -251,6 +253,5 @@ export default {
     }),
     // prevents restore of auto-generated IDs
     allowBackup: false,
-    edgeToEdgeEnabled: true,
   },
 };

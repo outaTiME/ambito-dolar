@@ -8,7 +8,12 @@ export default () => {
   const { theme } = Helper.useTheme();
   // https://codepen.io/dudleystorey/pen/PqBLjd/
   return (
-    <Svg style={StyleSheet.absoluteFillObject} width="100%" height="100%">
+    <Svg
+      style={StyleSheet.absoluteFill}
+      width="100%"
+      height="100%"
+      pointerEvents="none"
+    >
       <Defs>
         <Pattern
           id="textstripe"

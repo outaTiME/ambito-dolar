@@ -102,7 +102,7 @@ const FloatingEmojis = ({
         pointerEvents="none"
         style={{
           opacity,
-          ...StyleSheet.absoluteFillObject,
+          ...StyleSheet.absoluteFill,
         }}
       >
         {floatingEmojis.map(({ emojiToRender, x, y }, index) => (

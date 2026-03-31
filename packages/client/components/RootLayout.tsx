@@ -18,7 +18,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import AnimateableText from 'react-native-animateable-text';
+import AnimateableText from 'react-native-animateable-text/lib/commonjs';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   initialWindowMetrics,

@@ -16,14 +16,20 @@
       ]
     },
     {
-      "name": "Radon IDE panel",
+      "name": "Radon IDE (no prebuild)",
       "type": "radon-ide",
       "request": "launch",
       "appRoot": "./packages/client",
       "env": {},
-      "ios": {},
-      "android": {},
       "usePrebuild": false
+    },
+    {
+      "name": "Radon IDE (prebuild)",
+      "type": "radon-ide",
+      "request": "launch",
+      "appRoot": "./packages/client",
+      "env": {},
+      "usePrebuild": true
     }
   ]
 }

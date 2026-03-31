@@ -3,12 +3,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { compose } from '@reduxjs/toolkit';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import {
-  View,
-  InteractionManager,
-  Platform,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { View, Platform, TouchableWithoutFeedback } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import * as actions from '@/actions';
@@ -126,17 +121,16 @@ const ConversionScreen = ({
   );
   useFocusEffect(
     React.useCallback(() => {
-      const task = InteractionManager.runAfterInteractions(() => {
-        if (params?.focus === 'true') {
-          // required to handle the focus on Android
-          setTimeout(() => {
-            inputTextRef.current?.focus();
-            router.setParams({ focus: undefined });
-          });
-        }
-      });
-      return () => task.cancel();
-    }, [params?.focus]),
+      if (params?.focus !== 'true') {
+        return;
+      }
+      // required to handle the focus on Android
+      const timeoutId = setTimeout(() => {
+        inputTextRef.current?.focus();
+        router.setParams({ focus: undefined });
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }, [params?.focus, router]),
   );
   return (
     <>

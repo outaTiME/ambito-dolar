@@ -41,15 +41,23 @@ const SocialPortraitView = ({
               ? AmbitoDolar.VIEWPORT_PORTRAIT_WIDTH
               : AmbitoDolar.VIEWPORT_PORTRAIT_HEIGHT,
           },
-          __DEV__ && {
-            borderColor: Settings.getSeparatorColor(theme),
-            borderStyle: 'dashed',
-            borderRadius: Settings.BORDER_RADIUS,
-            borderWidth: 1,
-          },
         ]}
       >
         {children}
+        {__DEV__ && (
+          <View
+            pointerEvents="none"
+            style={[
+              StyleSheet.absoluteFill,
+              {
+                borderColor: Settings.getSeparatorColor(theme),
+                borderStyle: 'dashed',
+                // borderRadius: Settings.BORDER_RADIUS,
+                borderWidth: 1,
+              },
+            ]}
+          />
+        )}
       </View>
       {watermark === true && <WatermarkOverlayView />}
     </>
