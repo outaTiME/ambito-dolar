@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [12.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@11.1.0...@ambito-dolar/client@12.0.0) (2026-03-31)
+
+### Features
+
+- add app_avg_daily_opens and app_last_donation metrics ([2137483](https://github.com/outaTiME/ambito-dolar/commit/21374835e131004b58c238c1c4795f04877d7313))
+- update to Expo SDK 55 ([b79945c](https://github.com/outaTiME/ambito-dolar/commit/b79945c31d832c77b9afc1197191f9334ef0c93e))
+
+### Performance Improvements
+
+- improve render performance with shallowEqual ([19c1116](https://github.com/outaTiME/ambito-dolar/commit/19c1116cf2b490d669b1aeae9684a5460b7a561e))
+
+### BREAKING CHANGES
+
+- upgraded to React Native 0.83
+
 # [11.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@11.0.0...@ambito-dolar/client@11.1.0) (2026-03-09)
 
 ### Bug Fixes

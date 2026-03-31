@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.6.1...@ambito-dolar/api@4.6.2) (2026-03-31)
+
+### Bug Fixes
+
+- remove deprecated Expo push useFcmV1 flag ([7adff17](https://github.com/outaTiME/ambito-dolar/commit/7adff17b1463148740587ee320956ed94895bd67))
+
 ## [4.6.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.6.0...@ambito-dolar/api@4.6.1) (2026-03-09)
 
 ### Bug Fixes
