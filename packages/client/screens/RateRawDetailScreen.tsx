@@ -4,7 +4,7 @@ import { compose } from '@reduxjs/toolkit';
 import { useLocalSearchParams } from 'expo-router';
 import * as _ from 'lodash';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import CardItemView from '@/components/CardItemView';
 import FixedFlatList from '@/components/FixedFlatList';
@@ -57,6 +57,7 @@ const RateRawDetailScreen = ({ headerHeight, tabBarHeight, rates }) => {
       historical_rates,
       excluded_rates,
     }),
+    shallowEqual,
   );
   React.useEffect(() => {
     if (!type || (excluded_rates || []).includes(type)) {
