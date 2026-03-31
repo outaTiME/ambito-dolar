@@ -32,7 +32,15 @@ yarn depcheck
 
 Important: `yarn g:eslint` runs `eslint .` from `INIT_CWD`.
 Run it from the package directory you want to lint.
-For large changes, prefer scoped lint on touched files (`yarn exec eslint <paths>`) to avoid timeouts; use full-package lint only when needed.
+For large changes, prefer scoped lint on touched files from the repo root using:
+`yarn eslint <paths-or-globs>`.
+Examples:
+`yarn eslint "packages/<workspace>/<path>/SomeFile.js"`
+`yarn eslint "packages/<workspace>/{folderA,folderB}/**/*.{js,ts,tsx}"`
+Avoid broad globs like `packages/<workspace>/**/*.{js,ts,tsx}` because they may traverse heavy folders (e.g. nested `node_modules`, build outputs) and cause timeouts.
+`yarn exec eslint` may fail in this monorepo because `eslint` is only installed at the root.
+If needed, fallback to `yarn node ./node_modules/eslint/bin/eslint.js <paths>`.
+Use full-package lint only when needed.
 
 ```bash
 yarn g:eslint
@@ -44,6 +52,8 @@ Client also has:
 yarn workspace @ambito-dolar/client run lint
 yarn workspace @ambito-dolar/client run check
 ```
+
+If `expo lint` fails with `Couldn't find a script named "eslint"`, use the scoped root command above.
 
 ## Core (`packages/core`)
 
@@ -161,10 +171,11 @@ yarn workspace @ambito-dolar/website run serve
 - Keep commits focused and reversible; avoid mixing unrelated package changes.
 - Lerna is configured with independent versioning and release flow from `master`.
 
-## Cursor/Copilot rule files
+## Agent rule files
 
 Checked in this repository:
 
+- `CLAUDE.md`: present (imports this file via `@AGENTS.md`).
 - `.cursor/rules/`: not present.
 - `.cursorrules`: not present.
 - `.github/copilot-instructions.md`: not present.
