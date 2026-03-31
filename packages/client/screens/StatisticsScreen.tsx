@@ -49,19 +49,34 @@ const StatisticsScreen = ({ headerHeight, tabBarHeight }) => {
   );
   const [Loading, setLoading] = React.useState(true);
   const [donations, setDonations] = React.useState('N/D');
+  const [lastDonation, setLastDonation] = React.useState(null);
+  const avgDailyOpens = React.useMemo(
+    () => (daysUsed > 0 ? usages / daysUsed : 0),
+    [usages, daysUsed],
+  );
   React.useEffect(() => {
     Helper.promiseRetry((retry) => Purchases.getCustomerInfo().catch(retry))
       .then((customerInfo) => {
+        const lastTransaction =
+          customerInfo.nonSubscriptionTransactions[
+            customerInfo.nonSubscriptionTransactions.length - 1
+          ];
         setDonations(
           customerInfo.nonSubscriptionTransactions.length.toString(),
         );
+        setLastDonation(lastTransaction?.purchaseDate ?? null);
       })
       .catch(console.warn)
       .finally(() => setLoading(false));
   }, []);
   React.useEffect(() => {
     const listener = (customerInfo) => {
+      const lastTransaction =
+        customerInfo.nonSubscriptionTransactions[
+          customerInfo.nonSubscriptionTransactions.length - 1
+        ];
       setDonations(customerInfo.nonSubscriptionTransactions.length.toString());
+      setLastDonation(lastTransaction?.purchaseDate ?? null);
     };
     Purchases.addCustomerInfoUpdateListener(listener);
     return () => Purchases.removeCustomerInfoUpdateListener(listener);
@@ -98,6 +113,13 @@ const StatisticsScreen = ({ headerHeight, tabBarHeight }) => {
           useSwitch={false}
           value={Helper.formatIntegerNumber(daysUsed)}
         />
+        {__DEV__ && (
+          <CardItemView
+            title={I18n.t('app_avg_daily_opens')}
+            useSwitch={false}
+            value={Helper.formatFloatingPointNumber(avgDailyOpens)}
+          />
+        )}
         <CardItemView
           title={I18n.t('app_conversions')}
           useSwitch={false}
@@ -113,6 +135,14 @@ const StatisticsScreen = ({ headerHeight, tabBarHeight }) => {
             title={I18n.t('app_donations')}
             useSwitch={false}
             value={donations}
+            loading={Loading}
+          />
+        )}
+        {purchasesConfigured && lastDonation && (
+          <CardItemView
+            title={I18n.t('app_last_donation')}
+            useSwitch={false}
+            value={DateUtils.humanize(lastDonation)}
             loading={Loading}
           />
         )}

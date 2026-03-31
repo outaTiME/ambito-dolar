@@ -101,14 +101,14 @@ export default (state = INITIAL_STATE, action) => {
     case APP_USAGE_DAY: {
       const current_date = DateUtils.get();
       if (
-        !state.last_day_used ||
-        !current_date.isSame(state.last_day_used, 'day')
+        state.last_day_used &&
+        current_date.isSame(state.last_day_used, 'day')
       ) {
-        return increment(state, 'days_used', {
-          last_day_used: { $set: current_date.format() },
-        });
+        return state;
       }
-      return state;
+      return increment(state, 'days_used', {
+        last_day_used: { $set: current_date.format() },
+      });
     }
     case APP_USAGE:
       return increment(state, 'usages');
