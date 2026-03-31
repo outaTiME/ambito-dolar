@@ -7,13 +7,13 @@
     "@jsonurl/jsonurl": "^1.1.8",
     "ky": "^1.14.3",
     "lodash": "^4.17.23",
-    "moment-timezone": "^0.6.0",
+    "moment-timezone": "^0.6.1",
     "numeral": "^2.0.6",
     "promise-retry": "^2.0.1"
   },
   "devDependencies": {
     "ava": "^7.0.0",
-    "undici": "^7.22.0"
+    "undici": "^7.24.6"
   },
   "scripts": {
     "test": "yarn g:eslint && ava"
@@ -21,8 +21,5 @@
   "main": "index.js",
   "files": [
     "index.js"
-  ],
-  "engines": {
-    "node": ">=18"
-  }
+  ]
 }
