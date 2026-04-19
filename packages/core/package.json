@@ -5,15 +5,15 @@
   "type": "module",
   "dependencies": {
     "@jsonurl/jsonurl": "^1.1.8",
-    "ky": "^1.14.3",
-    "lodash": "^4.17.23",
+    "ky": "^2.0.1",
+    "lodash": "^4.18.1",
     "moment-timezone": "^0.6.1",
     "numeral": "^2.0.6",
     "promise-retry": "^2.0.1"
   },
   "devDependencies": {
     "ava": "^7.0.0",
-    "undici": "^7.24.6"
+    "undici": "^7.25.0"
   },
   "scripts": {
     "test": "yarn g:eslint && ava"
