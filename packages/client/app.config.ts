@@ -22,7 +22,7 @@ export default {
     sentryDsn: process.env.SENTRY_DSN,
     amplitudeKey: process.env.AMPLITUDE_KEY,
     isProduction: process.env.IS_PRODUCTION === 'true',
-    apiUrl: process.env.SST_API_URL ?? process.env.API_URL,
+    apiUrl: process.env.API_URL,
     revenueCat: {
       ios: process.env.REVENUECAT_IOS_API_KEY,
       android: process.env.REVENUECAT_ANDROID_API_KEY,
