@@ -14,7 +14,7 @@ Prefer minimal, targeted edits and preserve existing behavior unless explicitly 
 ## Runtime and Tooling
 
 - Node: `22` (`.nvmrc`).
-- Yarn: `4.12.0` (root `packageManager`).
+- Yarn: `4.x` (root `packageManager`).
 - Install: `yarn install`.
 - Yarn linker: `node-modules` (`.yarnrc.yml`).
 
