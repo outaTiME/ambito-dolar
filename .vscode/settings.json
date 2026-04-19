@@ -1,6 +1,18 @@
 {
   "search.exclude": {
-    "**/.build": true,
-    "**/.sst": true
+    "**/.sst": true,
+    "**/dist": true,
+    "**/build": true,
+    "packages/website/.cache": true,
+    "packages/website/public": true,
+    "**/.expo": true
+  },
+  "files.watcherExclude": {
+    "**/.sst/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "packages/website/.cache/**": true,
+    "packages/website/public/**": true,
+    "**/.expo/**": true
   }
 }
