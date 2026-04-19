@@ -43,7 +43,6 @@
   },
   "packageManager": "yarn@4.13.0",
   "resolutions": {
-    "eslint": "^8.9.0",
     "@react-native-async-storage/async-storage": "^2.2.0"
   },
   "engines": {
