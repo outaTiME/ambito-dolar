@@ -84,6 +84,9 @@ packages/website/*
 /sst.config.ts
 README.md
 CHANGELOG.md
+AGENTS.md
+CLAUDE.md
+sst-env.d.ts
 
 # https://github.com/expo/eas-cli/issues/2875
 .git
