@@ -4,8 +4,9 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import * as _ from 'lodash';
 import prettyMilliseconds from 'pretty-ms';
+import { Resource } from 'sst';
 
-import Shared from '../libs/shared';
+import Shared, { IS_LOCAL } from '../libs/shared';
 
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
@@ -26,7 +27,7 @@ const invalidateDevices = async (receipts) => {
   return Promise.all(
     receipt_chunks.map((chunk) => {
       const command = new BatchWriteItemCommand({
-        RequestItems: { [process.env.DEVICES_TABLE_NAME]: chunk },
+        RequestItems: { [Resource.Devices.name]: chunk },
       });
       return ddbDocClient.send(command);
     }),
@@ -93,8 +94,7 @@ const check = async (items = [], readonly) => {
       (receipt) => receipt.details?.error === 'DeviceNotRegistered',
     );
     const trace_errors =
-      process.env.IS_LOCAL ||
-      error_receipts.length !== non_registered_devices.length;
+      IS_LOCAL || error_receipts.length !== non_registered_devices.length;
     if (trace_errors) {
       console.info('Error receipts', JSON.stringify(error_receipts));
     }
@@ -134,7 +134,7 @@ export const handler = Shared.wrapHandler(async (event) => {
         .format(),
   };
   const params = {
-    TableName: process.env.NOTIFICATIONS_TABLE_NAME,
+    TableName: Resource.Notifications.name,
     ProjectionExpression: '#notification_date, #notification_type',
     FilterExpression: filter_expression,
     ExpressionAttributeValues: expression_attribute_values,

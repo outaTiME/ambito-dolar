@@ -19,6 +19,7 @@ import prettyMilliseconds from 'pretty-ms';
 import pLimit from 'promise-limit';
 import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
+import { Resource } from 'sst';
 import yn from 'yn';
 import zlib from 'zlib';
 
@@ -64,7 +65,8 @@ export const MIN_CLIENT_VERSION_FOR_QATAR = '6.4.0';
 export const MIN_CLIENT_VERSION_FOR_BNA = '6.11.0';
 export const MIN_CLIENT_VERSION_FOR_EURO_AND_REAL = '10.1.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
-export const S3_BUCKET = process.env.S3_BUCKET;
+export const IS_LOCAL = process.env.IS_LOCAL === 'true';
+export const IS_PRODUCTION = process.env.IS_PRODUCTION === 'true';
 // prevents 403 errors when fetching rates
 export const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
@@ -169,8 +171,19 @@ const updateInstantData = ({ data } = {}) => {
   // console.warn('No data to update board on instant');
 };
 
-const updateRealtimeData = (payload) =>
-  Promise.all([updateFirebaseData('', payload), updateInstantData(payload)]);
+const updateRealtimeData = (payload) => {
+  if (IS_LOCAL) {
+    console.info('Realtime updates are disabled on local mode');
+    return Promise.resolve({
+      skipped: true,
+      reason: 'IS_LOCAL',
+    });
+  }
+  return Promise.all([
+    updateFirebaseData('', payload),
+    updateInstantData(payload),
+  ]);
+};
 
 const serviceResponse = (res, code, json) => {
   if (res) {
@@ -243,7 +256,8 @@ new Promise((resolve, reject) => {
 }); */
 
 // https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/s3-example-creating-buckets.html#s3-example-creating-buckets-get-object
-const getJsonObject = (key, bucket = S3_BUCKET) => {
+const getJsonObject = (key) => {
+  const bucket = Resource.Bucket.name;
   const client = getS3Client();
   const command = new GetObjectCommand({
     Bucket: bucket,
@@ -279,13 +293,8 @@ const getRates = async (base_rates) => {
   return rates;
 };
 
-const storeObject = (
-  key,
-  content,
-  bucket = S3_BUCKET,
-  compressed = true,
-  opts = {},
-) => {
+const storeObject = (key, content, compressed = true, opts = {}) => {
+  const bucket = Resource.Bucket.name;
   const client = getS3Client();
   const buffer = new Buffer.from(content);
   const command = new PutObjectCommand({
@@ -294,13 +303,16 @@ const storeObject = (
     Body: compressed ? zlib.gzipSync(buffer) : buffer,
     ...opts,
   });
-  return client.send(command);
+  return client.send(command).then((result) => ({
+    key,
+    url: `https://${bucket}.s3.amazonaws.com/${key}`,
+    result,
+  }));
 };
 
-const storeJsonObject = (key, json, bucket = S3_BUCKET, is_public = false) =>
-  storeObject(`${key}.json`, JSON.stringify(json), bucket, true, {
+const storeJsonObject = (key, json) =>
+  storeObject(`${key}.json`, JSON.stringify(json), true, {
     ContentType: 'application/json; charset=utf-8',
-    ...(is_public === true && { ACL: 'public-read' }),
     CacheControl: 'no-cache',
     // brotli-compressed
     // ContentEncoding: 'br',
@@ -310,8 +322,7 @@ const storeJsonObject = (key, json, bucket = S3_BUCKET, is_public = false) =>
 const storeTickets = (date, type, json) =>
   storeJsonObject(`notifications/${date}-${type}`, json);
 
-const storePublicJsonObject = (key, json, bucket) =>
-  storeJsonObject(key, json, bucket, true);
+const storePublicJsonObject = (key, json) => storeJsonObject(key, json);
 
 const storeRateStats = (rates) => {
   const base_rates = Object.entries(rates || {}).reduce(
@@ -584,7 +595,7 @@ const publishMessageToTopic = (event, payload = {}) => {
         StringValue: event,
       },
     },
-    TopicArn: process.env.SNS_TOPIC,
+    TopicArn: Resource.Topic.arn,
   });
   return snsClient
     .send(command)
@@ -659,6 +670,15 @@ const triggerSendSocialNotificationsEvent = (caption, image_url) =>
 const promiseRetry = AmbitoDolar.promiseRetry;
 
 const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
+  if (IS_LOCAL) {
+    console.info('Social publishing is disabled on local mode');
+    return Promise.resolve([
+      {
+        skipped: true,
+        reason: 'IS_LOCAL',
+      },
+    ]);
+  }
   const promises = _.chain(
     targets ?? [
       'ifttt',
@@ -737,7 +757,7 @@ const fetchImage = (url) =>
   );
 
 const wrapHandler = (handler) => {
-  if (!process.env.IS_LOCAL) {
+  if (IS_PRODUCTION) {
     // https://docs.sentry.io/platforms/javascript/guides/aws-lambda/install/esm-npm/#alternative-initialize-the-sdk-in-code
     Sentry.init({
       dsn: process.env.SENTRY_DSN,
@@ -756,7 +776,7 @@ const wrapHandler = (handler) => {
 
 const getActiveDevices = async () => {
   const items = await getAllDataFromDynamoDB({
-    TableName: process.env.DEVICES_TABLE_NAME,
+    TableName: Resource.Devices.name,
     // TODO: invalidated field should be removed
     ProjectionExpression: 'push_token, invalidated',
   });

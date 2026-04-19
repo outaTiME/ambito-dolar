@@ -14,14 +14,12 @@
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
-    "aws-cdk-lib": "2.224.0",
-    "constructs": "10.3.0",
     "eslint": "^8.57.1",
     "eslint-config-universe": "^15.0.3",
     "husky": "^9.1.7",
     "lerna": "^9.0.7",
     "prettier": "^3.8.1",
-    "sst": "2.49.8"
+    "sst": "4.8.0"
   },
   "scripts": {
     "test": "lerna run test",
@@ -33,9 +31,9 @@
     "client:build": "yarn workspace @ambito-dolar/client exec eas build --clear-cache",
     "client:check": "yarn workspace @ambito-dolar/client run check",
     "client:doctor": "yarn workspace @ambito-dolar/client exec npx expo-doctor@latest",
-    "api:start": "yarn sst dev",
-    "api:publish": "yarn sst deploy",
-    "api:remove": "yarn sst remove",
+    "infra:start": "yarn sst dev",
+    "infra:deploy": "yarn sst deploy",
+    "infra:remove": "yarn sst remove",
     "website:start": "yarn workspace @ambito-dolar/website run start",
     "website:clean": "yarn workspace @ambito-dolar/website run clean",
     "publish": "lerna version --conventional-commits --conventional-graduate",

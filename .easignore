@@ -58,9 +58,9 @@ public/
 .vscode/
 /assets/
 packages/*
-!packages/api
-packages/api/*
-!packages/api/package.json
+!packages/backend
+packages/backend/*
+!packages/backend/package.json
 !packages/client
 packages/client/ios/build/
 packages/client/ios/Pods/
@@ -72,7 +72,7 @@ packages/core/*
 !packages/website
 packages/website/*
 !packages/website/package.json
-/stacks/
+/infra/
 .editorconfig
 .eslintrc.js
 .gitattributes
@@ -81,7 +81,7 @@ packages/website/*
 /commitlint.config.js
 /lerna.json
 /scriptable-widget.js
-/sst.config.js
+/sst.config.ts
 README.md
 CHANGELOG.md
 

@@ -1,5 +1,6 @@
 import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import * as _ from 'lodash';
+import { Resource } from 'sst';
 
 import Shared from '../libs/shared';
 
@@ -20,7 +21,7 @@ const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 const pruneDevice = (push_token) => {
   const command = new UpdateCommand({
-    TableName: process.env.DEVICES_TABLE_NAME,
+    TableName: Resource.Devices.name,
     Key: {
       push_token,
     },
@@ -43,7 +44,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       expression_attribute_values[':push_token'] = push_token;
     }
     const params = {
-      TableName: process.env.DEVICES_TABLE_NAME,
+      TableName: Resource.Devices.name,
       ProjectionExpression: 'push_token',
       FilterExpression: filter_expression,
       ...(!_.isEmpty(expression_attribute_values) && {

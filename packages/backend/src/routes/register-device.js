@@ -1,5 +1,6 @@
 import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import * as _ from 'lodash';
+import { Resource } from 'sst';
 
 import Shared from '../libs/shared';
 
@@ -36,7 +37,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       expression_attribute_values[`:${key}`] = payload[key];
     });
     const command = new UpdateCommand({
-      TableName: process.env.DEVICES_TABLE_NAME,
+      TableName: Resource.Devices.name,
       Key: {
         push_token,
       },

@@ -3,8 +3,10 @@ import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import * as _ from 'lodash';
 import pThrottle from 'p-throttle';
 import prettyMilliseconds from 'pretty-ms';
+import { Resource } from 'sst';
 
 import Shared, {
+  IS_LOCAL,
   MIN_CLIENT_VERSION_FOR_MEP,
   MIN_CLIENT_VERSION_FOR_WHOLESALE,
   MIN_CLIENT_VERSION_FOR_CCB,
@@ -168,6 +170,13 @@ const sendPushNotifications = async (
       rates,
     }),
   );
+  if (IS_LOCAL) {
+    console.info('Push notifications are disabled on local mode');
+    return {
+      skipped: true,
+      reason: 'IS_LOCAL',
+    };
+  }
   const tickets = [];
   if (items.length > 0) {
     const messages = [];
@@ -199,12 +208,6 @@ const sendPushNotifications = async (
       items = _.filter(items, ({ notification_settings }) =>
         checkForSetting(notification_settings, type),
       );
-      // leave testing device only for new notifications when development
-      if (process.env.IS_LOCAL && items.length > 1) {
-        throw new Error(
-          'Only single messages can be sent while running in development mode',
-        );
-      }
       messages.push(...(await getMessagesFromCurrentRate(items, type, rates)));
     }
     /* console.info(
@@ -295,7 +298,7 @@ const sendPushNotifications = async (
       // save tickets to aws
       const notification_date = AmbitoDolar.getTimezoneDate().format();
       const command = new PutCommand({
-        TableName: process.env.NOTIFICATIONS_TABLE_NAME,
+        TableName: Resource.Notifications.name,
         // remove nil values
         Item: _.omitBy(
           {
@@ -360,7 +363,7 @@ export const handler = Shared.wrapHandler(async (event) => {
     expression_attribute_values[':push_token'] = push_token;
   }
   const params = {
-    TableName: process.env.DEVICES_TABLE_NAME,
+    TableName: Resource.Devices.name,
     ProjectionExpression: 'push_token, app_version, notification_settings',
     FilterExpression: filter_expression,
     ...(!_.isEmpty(expression_attribute_values) && {
@@ -407,7 +410,7 @@ export const handler = Shared.wrapHandler(async (event) => {
           );
         }
       }
-      if (social && !push_token && !process.env.IS_LOCAL) {
+      if (social && !push_token && !IS_LOCAL) {
         const social_rates = _.omit(current_rates, [
           // rates to exclude on socials
         ]);

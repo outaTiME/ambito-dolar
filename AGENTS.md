@@ -8,7 +8,7 @@ Prefer minimal, targeted edits and preserve existing behavior unless explicitly 
 - Monorepo: Yarn workspaces + Lerna (`packages/*`).
 - `packages/core` (`@ambito-dolar/core`): shared domain utilities (rates, dates, formatting, fetch helpers).
 - `packages/client` (`@ambito-dolar/client`): Expo React Native app (iOS, Android, web).
-- `packages/api` (`@ambito-dolar/api`): SST v2 backend (Lambda handlers).
+- `packages/backend` (`@ambito-dolar/backend`): SST v4 backend (Lambda handlers).
 - `packages/website` (`@ambito-dolar/website`): Gatsby website.
 
 ## Runtime and Tooling
@@ -78,15 +78,15 @@ yarn client:run:android
 yarn client:doctor
 ```
 
-## API (`packages/api`)
+## Backend (`packages/backend`)
 
 ```bash
-yarn api:start
-yarn api:publish
-yarn api:remove
+yarn infra:start
+yarn infra:deploy
+yarn infra:remove
 ```
 
-Note: there is no dedicated package-level test script in `packages/api/package.json`.
+Note: there is no dedicated package-level test script in `packages/backend/package.json`.
 
 ## Website (`packages/website`)
 
@@ -101,7 +101,7 @@ yarn workspace @ambito-dolar/website run serve
 
 - Automated tests currently live in `packages/core` (AVA).
 - `yarn test` runs `lerna run test`, which currently resolves to core tests.
-- `packages/api/src/routes/test.js` is an API endpoint, not a test file.
+- `packages/backend/src/routes/test.js` is an API endpoint, not a test file.
 - If you need fast feedback, run AVA with `--match` rather than full repo tests.
 
 ## Code Style and Conventions
@@ -111,6 +111,7 @@ yarn workspace @ambito-dolar/website run serve
 - Prettier (`.prettierrc.json`): single quotes, semicolons, 2 spaces, bracket spacing.
 - EditorConfig (`.editorconfig`): LF, UTF-8, trim trailing whitespace, final newline.
 - Keep file style consistent with nearby code before applying broad formatting changes.
+- Write new comments in lowercase by default; keep existing uppercase comments untouched unless you are already editing that line.
 - Inside short/medium function bodies, keep contiguous statements compact (declarations, guards, and immediate returns) without extra blank lines.
 - Do not insert blank lines between sequential declarations, memoized values, or closely related assignments unless they form clearly separate logical phases.
 - In render methods/components, avoid visual padding blank lines between local style objects and immediate conditionals; keep the block dense and consistent with surrounding code.

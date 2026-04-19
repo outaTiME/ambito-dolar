@@ -25,9 +25,14 @@ export const handler = Shared.wrapHandler(async (event) => {
       targets,
     }),
   );
+  const hasScreenshotUrl = !!process.env.SOCIAL_SCREENSHOT_URL;
+  if (!hasScreenshotUrl && generate_only === true) {
+    console.warn('SOCIAL_SCREENSHOT_URL is missing', JSON.stringify({ type }));
+    return {};
+  }
   let results;
   if (
-    type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE ||
+    (hasScreenshotUrl && type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) ||
     generate_only === true
   ) {
     const screenshot_url = Shared.getSocialScreenshotUrl({
@@ -62,6 +67,9 @@ export const handler = Shared.wrapHandler(async (event) => {
       }
       // send as plain
     }
+  }
+  if (!hasScreenshotUrl && type !== AmbitoDolar.NOTIFICATION_VARIATION_TYPE) {
+    console.warn('SOCIAL_SCREENSHOT_URL is missing', JSON.stringify({ type }));
   }
   // when NOTIFICATION_VARIATION_TYPE or error
   if (!results) {

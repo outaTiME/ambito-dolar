@@ -6,7 +6,7 @@ import prettyMilliseconds from 'pretty-ms';
 import puppeteer from 'puppeteer-core';
 import sharp from 'sharp';
 
-import Shared, { S3_BUCKET } from './shared';
+import Shared from './shared';
 
 /* eslint-disable no-unused-vars */
 
@@ -114,15 +114,14 @@ const storeFreeimageFile = async (buffer) => {
   return image.url;
 };
 
-const storeS3File = async (buffer, isStory = false, bucket = S3_BUCKET) => {
+const storeS3File = async (buffer, isStory = false) => {
   const { ext = 'jpg', mime = 'image/jpeg' } = (await imageType(buffer)) || {};
   const folder = isStory ? 'social-images/stories' : 'social-images';
   const key = `${folder}/${crypto.randomUUID()}.${ext}`;
-  return Shared.storeObject(key, buffer, bucket, false, {
+  return Shared.storeObject(key, buffer, false, {
     ContentType: mime,
-    ACL: 'public-read',
     CacheControl: 'public, max-age=31536000',
-  }).then(() => `https://${bucket}.s3.amazonaws.com/${key}`);
+  }).then(({ url }) => url);
 };
 
 /* eslint-enable no-unused-vars */

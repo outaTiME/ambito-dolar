@@ -2,6 +2,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import * as _ from 'lodash';
 import prettyMilliseconds from 'pretty-ms';
+import { Resource } from 'sst';
 
 import Shared from '../libs/shared';
 
@@ -20,7 +21,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       expression_attribute_values[':push_token'] = push_token;
     }
     const params = {
-      TableName: process.env.DEVICES_TABLE_NAME,
+      TableName: Resource.Devices.name,
       ProjectionExpression:
         'push_token, app_version, notification_settings, last_update',
       FilterExpression: filter_expression,

@@ -9,7 +9,7 @@ export const handler = Shared.wrapHandler(async (event) => {
       throw new Error('No data available');
     }
     // save json files
-    await Shared.storeHistoricalRatesJsonObject(base_rates, true);
+    await Shared.storeHistoricalRatesJsonObject(base_rates);
     return Shared.serviceResponse(null, 200, {
       status: 'Historical rates updated',
     });

@@ -13,14 +13,22 @@ export const handler = Shared.wrapHandler(async (event) => {
       earlier,
     }),
   );
-  const screenshot_url = Shared.getSocialScreenshotUrl({
-    type: 'funding',
-    earlier,
-  });
   const caption = [
     'Recordá que tu contribución es de suma importancia para el desarrollo y mantenimiento de esta aplicación.',
     'https://cafecito.app/ambitodolar',
   ].join(' ');
+  const hasScreenshotUrl = !!process.env.SOCIAL_SCREENSHOT_URL;
+  if (!hasScreenshotUrl) {
+    console.warn('SOCIAL_SCREENSHOT_URL is missing, skipping funding notify');
+    return {
+      skipped: true,
+      reason: 'MISSING_SOCIAL_SCREENSHOT_URL',
+    };
+  }
+  const screenshot_url = Shared.getSocialScreenshotUrl({
+    type: 'funding',
+    earlier,
+  });
   try {
     const {
       target_url: image_url,
