@@ -19,7 +19,7 @@
     "husky": "^9.1.7",
     "lerna": "^9.0.7",
     "prettier": "^3.8.3",
-    "sst": "4.8.0"
+    "sst": "4.10.0"
   },
   "scripts": {
     "test": "lerna run test",
@@ -41,7 +41,7 @@
     "depcheck": "yarn workspaces foreach --verbose exec npx depcheck",
     "postinstall": "husky"
   },
-  "packageManager": "yarn@4.14.0",
+  "packageManager": "yarn@4.14.1",
   "resolutions": {
     "@react-native-async-storage/async-storage": "^2.2.0"
   },
