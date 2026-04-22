@@ -169,6 +169,10 @@ yarn workspace @ambito-dolar/website run serve
 
 - Conventional commits are enforced (`@commitlint/config-conventional`).
 - Use commit types like `feat`, `fix`, `refactor`, `chore`, `docs`, `test`.
+- Do not use scope in commit subjects (use `feat: ...`, not `feat(scope): ...`).
+- Preserve acronym/product casing in commit messages (for example: `CloudFront`, `S3`, `iOS`).
+- Use `chore: bump build number` for build-number-only changes (platform agnostic).
+- Use `chore: bump dependencies` for dependency updates.
 - Keep commits focused and reversible; avoid mixing unrelated package changes.
 - Lerna is configured with independent versioning and release flow from `master`.
 
