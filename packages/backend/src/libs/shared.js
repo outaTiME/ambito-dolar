@@ -81,6 +81,7 @@ const RATES_OBJECT_KEY = process.env.RATES_OBJECT_KEY;
 const HISTORICAL_RATES_OBJECT_KEY = 'historical-' + RATES_OBJECT_KEY;
 // 6.x
 const QUOTES_OBJECT_KEY = process.env.QUOTES_OBJECT_KEY;
+const FETCH_OBJECT_KEY = process.env.FETCH_OBJECT_KEY;
 const HISTORICAL_QUOTES_OBJECT_KEY = 'historical-' + QUOTES_OBJECT_KEY;
 const FULL_HISTORICAL_QUOTES_OBJECT_KEY =
   'full-historical-' + QUOTES_OBJECT_KEY;
@@ -310,19 +311,35 @@ const storeObject = (key, content, compressed = true, opts = {}) => {
   }));
 };
 
-const storeJsonObject = (key, json) =>
-  storeObject(`${key}.json`, JSON.stringify(json), true, {
+const storeJsonObject = (key, json, opts = {}) => {
+  const { suffix = '.json', ...storeOpts } = opts;
+  return storeObject(`${key}${suffix}`, JSON.stringify(json), true, {
     ContentType: 'application/json; charset=utf-8',
     CacheControl: 'no-cache',
     // brotli-compressed
     // ContentEncoding: 'br',
     ContentEncoding: 'gzip',
+    ...storeOpts,
   });
+};
 
 const storeTickets = (date, type, json) =>
   storeJsonObject(`notifications/${date}-${type}`, json);
 
 const storePublicJsonObject = (key, json) => storeJsonObject(key, json);
+
+const storeFetchJsonObject = (rates) => {
+  const json = Object.entries(rates.rates || {}).reduce((obj, [type, rate]) => {
+    obj[type] = _.last(rate.stats);
+    return obj;
+  }, {});
+  const opts = { suffix: '' };
+  return Promise.all([
+    storeJsonObject(FETCH_OBJECT_KEY, json, opts),
+    // keep a prefixed key to serve GET /api/fetch from legacy api cdn
+    storeJsonObject(`api/${FETCH_OBJECT_KEY}`, json, opts),
+  ]);
+};
 
 const storeRateStats = (rates) => {
   const base_rates = Object.entries(rates || {}).reduce(
@@ -504,6 +521,8 @@ const storeRatesJsonObject = (rates, is_updated) => {
       ]),
     }),
     storePublicJsonObject(QUOTES_OBJECT_KEY, rates),
+    // keep a non-suffixed key to serve GET /fetch from cloudfront+s3
+    is_updated && storeFetchJsonObject(rates),
     // save historical rates
     is_updated && storeHistoricalRatesJsonObject(rates),
   ]);

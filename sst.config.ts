@@ -26,7 +26,7 @@ export default $config({
     const api = createApi(ctx, resources);
     const { landingSite } = createSites(ctx, api);
 
-    createLegacyApi(ctx, api, landingSite);
+    createLegacyApi(ctx, api, landingSite, resources);
     createCrons(ctx, resources);
     createSubscribers(ctx, resources);
   },

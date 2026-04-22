@@ -23,6 +23,7 @@ export function createContext({ app, dev }: ContextInput) {
     RATES_LEGACY_OBJECT_KEY: requiredEnv('RATES_LEGACY_OBJECT_KEY'),
     RATES_OBJECT_KEY: requiredEnv('RATES_OBJECT_KEY'),
     QUOTES_OBJECT_KEY: requiredEnv('QUOTES_OBJECT_KEY'),
+    FETCH_OBJECT_KEY: requiredEnv('FETCH_OBJECT_KEY'),
   };
 
   const realtimeEnv = {

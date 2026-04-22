@@ -3,7 +3,104 @@
 import type { StackContext } from './context';
 import type { StackResources } from './resources';
 
-export function createApi(ctx: StackContext, resources: StackResources) {
+const MANAGED_CACHE_POLICY_CACHING_DISABLED =
+  '4135ea2d-6df8-44a3-9df3-4b5a84be39ad';
+const MANAGED_ORIGIN_REQUEST_POLICY_ALL_VIEWER_EXCEPT_HOST =
+  'b689b0a8-53d0-40ab-baf2-68738e2966ac';
+const FETCH_CACHE_TTL_SECONDS = 300; // 5 minutes
+
+function createApiFetchCdn(
+  ctx: StackContext,
+  api: sst.aws.ApiGatewayV2,
+  bucket: StackResources['bucket'],
+) {
+  if (!ctx.isProduction) {
+    return;
+  }
+
+  const cachePolicy = new aws.cloudfront.CachePolicy('ApiFetchCachePolicy', {
+    defaultTtl: FETCH_CACHE_TTL_SECONDS,
+    maxTtl: FETCH_CACHE_TTL_SECONDS,
+    minTtl: FETCH_CACHE_TTL_SECONDS,
+    parametersInCacheKeyAndForwardedToOrigin: {
+      cookiesConfig: { cookieBehavior: 'none' },
+      headersConfig: { headerBehavior: 'none' },
+      queryStringsConfig: { queryStringBehavior: 'none' },
+    },
+  });
+
+  const apiOriginHostname = api.nodes.api.apiEndpoint.apply(
+    (endpoint) => new URL(endpoint).hostname,
+  );
+
+  // eslint-disable-next-line no-new
+  new aws.cloudfront.Distribution('ApiFetchCdn', {
+    enabled: true,
+    comment: 'ApiFetchCdn',
+    aliases: ['api.ambito-dolar.app'],
+    origins: [
+      {
+        originId: 'api-origin',
+        domainName: apiOriginHostname,
+        customOriginConfig: {
+          httpPort: 80,
+          httpsPort: 443,
+          originProtocolPolicy: 'https-only',
+          originSslProtocols: ['TLSv1.2'],
+        },
+      },
+      {
+        originId: 'fetch-s3-origin',
+        domainName: bucket.nodes.bucket.bucketRegionalDomainName,
+        s3OriginConfig: {
+          originAccessIdentity: '',
+        },
+      },
+    ],
+    defaultCacheBehavior: {
+      targetOriginId: 'api-origin',
+      viewerProtocolPolicy: 'redirect-to-https',
+      allowedMethods: [
+        'GET',
+        'HEAD',
+        'OPTIONS',
+        'PUT',
+        'PATCH',
+        'POST',
+        'DELETE',
+      ],
+      cachedMethods: ['GET', 'HEAD'],
+      cachePolicyId: MANAGED_CACHE_POLICY_CACHING_DISABLED,
+      originRequestPolicyId:
+        MANAGED_ORIGIN_REQUEST_POLICY_ALL_VIEWER_EXCEPT_HOST,
+    },
+    orderedCacheBehaviors: [
+      {
+        pathPattern: '/fetch',
+        targetOriginId: 'fetch-s3-origin',
+        viewerProtocolPolicy: 'redirect-to-https',
+        allowedMethods: ['GET', 'HEAD', 'OPTIONS'],
+        cachedMethods: ['GET', 'HEAD'],
+        cachePolicyId: cachePolicy.id,
+      },
+    ],
+    restrictions: {
+      geoRestriction: {
+        restrictionType: 'none',
+      },
+    },
+    viewerCertificate: {
+      acmCertificateArn: ctx.requiredEnv('DOMAIN_CERTIFICATE_ARN'),
+      sslSupportMethod: 'sni-only',
+      minimumProtocolVersion: 'TLSv1.2_2021',
+    },
+  });
+}
+
+export function createApi(
+  ctx: StackContext,
+  resources: StackResources,
+): sst.aws.ApiGatewayV2 {
   const { baseRuntimeEnv } = ctx;
   const { bucket, topic, devicesTable } = resources;
 
@@ -28,6 +125,8 @@ export function createApi(ctx: StackContext, resources: StackResources) {
     },
   });
 
+  createApiFetchCdn(ctx, api, bucket);
+
   const basicAuthorizer = api.addAuthorizer({
     name: 'basicAuthorizer',
     lambda: {
@@ -49,6 +148,16 @@ export function createApi(ctx: StackContext, resources: StackResources) {
   };
 
   // private
+  api.route(
+    'GET /test',
+    {
+      handler: 'packages/backend/src/routes/test.handler',
+      environment: {
+        ...baseRuntimeEnv,
+      },
+    },
+    privateRouteAuth,
+  );
   api.route(
     'GET /process',
     {
@@ -176,12 +285,6 @@ export function createApi(ctx: StackContext, resources: StackResources) {
   );
 
   // public
-  api.route('GET /test', {
-    handler: 'packages/backend/src/routes/test.handler',
-    environment: {
-      ...baseRuntimeEnv,
-    },
-  });
   api.route('GET /fetch', {
     handler: 'packages/backend/src/routes/fetch.handler',
     link: [bucket],
