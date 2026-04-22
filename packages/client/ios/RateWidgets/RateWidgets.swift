@@ -234,7 +234,7 @@ struct RateProvider: IntentTimelineProvider {
     let rates = lookupRateValues(rateTypes: [configuration.rateType!], valueType: configuration.valueType)
     let entry = SimpleEntry(date: date, rates: rates)
     entries.append(entry)
-    let reloadDate = Calendar.current.date(byAdding: .minute, value: 5, to: date)!
+    let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
     let timeline = Timeline(entries: entries, policy: .after(reloadDate))
     completion(timeline)
   }
@@ -401,7 +401,7 @@ struct ListRatesProvider: IntentTimelineProvider {
     let rates = lookupRateValues(rateTypes: configuration.rateTypes!, valueType: configuration.valueType)
     let entry = SimpleEntry(date: date, rates: rates)
     entries.append(entry)
-    let reloadDate = Calendar.current.date(byAdding: .minute, value: 5, to: date)!
+    let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
     let timeline = Timeline(entries: entries, policy: .after(reloadDate))
     completion(timeline)
   }
@@ -533,7 +533,7 @@ struct SpreadProvider: IntentTimelineProvider {
     let rates = lookupRateValues(rateTypes: configuration.rateTypes!)
     let entry = SimpleEntry(date: date, rates: rates)
     entries.append(entry)
-    let reloadDate = Calendar.current.date(byAdding: .minute, value: 5, to: date)!
+    let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
     let timeline = Timeline(entries: entries, policy: .after(reloadDate))
     completion(timeline)
   }
