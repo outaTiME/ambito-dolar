@@ -19,7 +19,7 @@
     "@bacons/apple-targets": "^4.0.6",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^15.1.1",
-    "@gorhom/bottom-sheet": "^5.2.9",
+    "@gorhom/bottom-sheet": "^5.2.10",
     "@instantdb/react-native": "^1.0.13",
     "@react-native-async-storage/async-storage": "^3.0.2",
     "@react-native-community/hooks": "^100.1.0",
