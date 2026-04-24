@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.15.6...@ambito-dolar/website@2.0.0) (2026-04-24)
+
+### Features
+
+- migrate backend infrastructure from sst v2 to sst v4 ([fd57a7e](https://github.com/outaTiME/ambito-dolar/commit/fd57a7e205128bdc4dc0c4a028b9902fcb2977be))
+
+### BREAKING CHANGES
+
+- migrates to SST v4 and renames @ambito-dolar/api to @ambito-dolar/backend.
+
 ## [1.15.6](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@1.15.5...@ambito-dolar/website@1.15.6) (2026-03-31)
 
 **Note:** Version bump only for package @ambito-dolar/website

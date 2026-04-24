@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [13.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@12.0.0...@ambito-dolar/client@13.0.0) (2026-04-24)
+
+### Bug Fixes
+
+- correct version bump to 13.0.0 ([74a3f51](https://github.com/outaTiME/ambito-dolar/commit/74a3f513e99b6d8fdbd5ada73278486707874e74))
+- remove SST_API_URL fallback now that Expo web export respects API_URL ([6e41e15](https://github.com/outaTiME/ambito-dolar/commit/6e41e159546086416139ec6baa6ce8e3eeeece4c))
+
+### Features
+
+- migrate backend infrastructure from sst v2 to sst v4 ([fd57a7e](https://github.com/outaTiME/ambito-dolar/commit/fd57a7e205128bdc4dc0c4a028b9902fcb2977be))
+
+### Performance Improvements
+
+- reduce iOS widget refresh interval to 15 minutes ([22ebf7e](https://github.com/outaTiME/ambito-dolar/commit/22ebf7ef9de3b8d6fa6319a3363a4d52c9f30f71))
+
+### BREAKING CHANGES
+
+- migrates to SST v4 and renames @ambito-dolar/api to @ambito-dolar/backend.
+
 # [12.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@11.1.0...@ambito-dolar/client@12.0.0) (2026-03-31)
 
 ### Features

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 5.0.0 (2026-04-24)
+
+### Features
+
+- migrate backend infrastructure from sst v2 to sst v4 ([fd57a7e](https://github.com/outaTiME/ambito-dolar/commit/fd57a7e205128bdc4dc0c4a028b9902fcb2977be))
+- optimize fetch delivery through CloudFront and S3 with legacy compatibility ([7b24791](https://github.com/outaTiME/ambito-dolar/commit/7b247917d0ffaec5b5eb98f3290959c2a53d64ce))
+
+### BREAKING CHANGES
+
+- migrates to SST v4 and renames @ambito-dolar/api to @ambito-dolar/backend.
+
 ## [4.6.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/api@4.6.1...@ambito-dolar/api@4.6.2) (2026-03-31)
 
 ### Bug Fixes
