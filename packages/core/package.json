@@ -7,7 +7,7 @@
     "@jsonurl/jsonurl": "^1.1.8",
     "ky": "^2.0.2",
     "lodash": "^4.18.1",
-    "moment-timezone": "^0.6.1",
+    "moment-timezone": "^0.6.2",
     "numeral": "^2.0.6",
     "promise-retry": "^2.0.1"
   },
