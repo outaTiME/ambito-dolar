@@ -156,7 +156,7 @@ export function createApi(
         ...baseRuntimeEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'Test', ...privateRouteAuth },
   );
   api.route(
     'GET /process',
@@ -167,7 +167,7 @@ export function createApi(
         ...baseRuntimeEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'Process', ...privateRouteAuth },
   );
   api.route(
     'GET /active-devices',
@@ -178,7 +178,7 @@ export function createApi(
         ...baseRuntimeEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'ActiveDevices', ...privateRouteAuth },
   );
   api.route(
     'GET /notify',
@@ -189,7 +189,7 @@ export function createApi(
         ...baseRuntimeEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'Notify', ...privateRouteAuth },
   );
   api.route(
     'GET /social-notify',
@@ -200,7 +200,7 @@ export function createApi(
         ...baseRuntimeEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'SocialNotify', ...privateRouteAuth },
   );
   api.route(
     'GET /funding-notify',
@@ -211,7 +211,7 @@ export function createApi(
         ...baseRuntimeEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'FundingNotify', ...privateRouteAuth },
   );
   api.route(
     'POST /update-rates',
@@ -223,7 +223,7 @@ export function createApi(
         ...ctx.ratesObjectEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'UpdateRates', ...privateRouteAuth },
   );
   api.route(
     'POST /update-historical-rates',
@@ -235,7 +235,7 @@ export function createApi(
         ...ctx.ratesObjectEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'UpdateHistoricalRates', ...privateRouteAuth },
   );
   api.route(
     'GET /fetch-rate',
@@ -246,7 +246,7 @@ export function createApi(
         RATE_URL: ctx.requiredEnv('RATE_URL'),
       },
     },
-    privateRouteAuth,
+    { name: 'FetchRate', ...privateRouteAuth },
   );
 
   // maintenance (private)
@@ -259,7 +259,7 @@ export function createApi(
         ...baseRuntimeEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'InvalidateReceipts', ...privateRouteAuth },
   );
   api.route(
     'GET /prune-devices',
@@ -270,7 +270,7 @@ export function createApi(
         ...baseRuntimeEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'PruneDevices', ...privateRouteAuth },
   );
   api.route(
     'GET /export-devices',
@@ -281,34 +281,46 @@ export function createApi(
         ...baseRuntimeEnv,
       },
     },
-    privateRouteAuth,
+    { name: 'ExportDevices', ...privateRouteAuth },
   );
 
   // public
-  api.route('GET /fetch', {
-    handler: 'packages/backend/src/routes/fetch.handler',
-    link: [bucket],
-    environment: {
-      ...baseRuntimeEnv,
-      QUOTES_OBJECT_KEY: ctx.requiredEnv('QUOTES_OBJECT_KEY'),
+  api.route(
+    'GET /fetch',
+    {
+      handler: 'packages/backend/src/routes/fetch.handler',
+      link: [bucket],
+      environment: {
+        ...baseRuntimeEnv,
+        QUOTES_OBJECT_KEY: ctx.requiredEnv('QUOTES_OBJECT_KEY'),
+      },
     },
-  });
-  api.route('POST /register-device', {
-    handler: 'packages/backend/src/routes/register-device.handler',
-    link: [devicesTable],
-    environment: {
-      ...baseRuntimeEnv,
+    { name: 'Fetch' },
+  );
+  api.route(
+    'POST /register-device',
+    {
+      handler: 'packages/backend/src/routes/register-device.handler',
+      link: [devicesTable],
+      environment: {
+        ...baseRuntimeEnv,
+      },
     },
-  });
-  api.route('GET /stats', {
-    handler: 'packages/backend/src/routes/stats.handler',
-    environment: {
-      ...baseRuntimeEnv,
-      AMPLITUDE_API_KEY: ctx.requiredEnv('AMPLITUDE_API_KEY'),
-      AMPLITUDE_SECRET_KEY: ctx.requiredEnv('AMPLITUDE_SECRET_KEY'),
-      AMPLITUDE_USAGE_STATS_URL: ctx.requiredEnv('AMPLITUDE_USAGE_STATS_URL'),
+    { name: 'RegisterDevice' },
+  );
+  api.route(
+    'GET /stats',
+    {
+      handler: 'packages/backend/src/routes/stats.handler',
+      environment: {
+        ...baseRuntimeEnv,
+        AMPLITUDE_API_KEY: ctx.requiredEnv('AMPLITUDE_API_KEY'),
+        AMPLITUDE_SECRET_KEY: ctx.requiredEnv('AMPLITUDE_SECRET_KEY'),
+        AMPLITUDE_USAGE_STATS_URL: ctx.requiredEnv('AMPLITUDE_USAGE_STATS_URL'),
+      },
     },
-  });
+    { name: 'Stats' },
+  );
 
   return api;
 }
