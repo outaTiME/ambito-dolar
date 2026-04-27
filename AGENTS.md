@@ -172,8 +172,11 @@ yarn workspace @ambito-dolar/website run serve
 - Do not use scope in commit subjects (use `feat: ...`, not `feat(scope): ...`).
 - Preserve acronym/product casing in commit messages (for example: `CloudFront`, `S3`, `iOS`).
 - Use `chore: bump build number` for build-number-only changes (platform agnostic).
-- Use `chore: bump dependencies` for dependency updates.
+- Use `chore: bump dependencies` for dependency updates (generic message, no details needed).
+- Use `docs: update AGENTS rules` for AGENTS.md edits (generic message, no details needed).
 - Keep commits focused and reversible; avoid mixing unrelated package changes.
+- Separate commits by type of change (e.g., infra changes, dependency bumps, and feature work should be separate commits).
+- Do not commit experimental or temporary changes (e.g., commented-out code being tested).
 - Lerna is configured with independent versioning and release flow from `master`.
 
 ## Agent rule files
