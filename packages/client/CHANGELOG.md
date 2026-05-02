@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@13.0.0...@ambito-dolar/client@13.0.1) (2026-05-02)
+
+### Bug Fixes
+
+- bump version, build number and dependencies ([9536972](https://github.com/outaTiME/ambito-dolar/commit/953697278e54837394ac56636ceda9f203cf6fab))
+
 # [13.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@12.0.0...@ambito-dolar/client@13.0.0) (2026-04-24)
 
 ### Bug Fixes
