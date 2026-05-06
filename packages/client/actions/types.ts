@@ -2,6 +2,7 @@
 export const NOTIFICATIONS_REGISTER_PENDING = 'notifications_register_pending';
 export const NOTIFICATIONS_REGISTER_SUCCESS = 'notifications_register_success';
 export const NOTIFICATIONS_REGISTER_ERROR = 'notifications_register_error';
+export const REGISTER_DEVICE_SYNCED = 'register_device_synced';
 export const APP_REVIEW = 'app_review';
 export const UPDATE_NOTIFICATION_SETTINGS = 'update_notification_settings';
 export const APP_UPDATE = 'app_update';

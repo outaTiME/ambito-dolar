@@ -1,11 +1,13 @@
 // @ts-nocheck
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
+import * as _ from 'lodash';
 
 import {
   NOTIFICATIONS_REGISTER_PENDING,
   NOTIFICATIONS_REGISTER_SUCCESS,
   NOTIFICATIONS_REGISTER_ERROR,
+  REGISTER_DEVICE_SYNCED,
   APP_REVIEW,
   UPDATE_NOTIFICATION_SETTINGS,
   APP_UPDATE,
@@ -46,13 +48,19 @@ export const updateHistoricalRates = (payload) => ({
 const doRegisterDevice = (dispatch, state, value = {}) => {
   // send notification settings in each call to avoid error handling
   const {
-    application: { notification_settings, push_token },
+    application: { notification_settings, push_token, last_register_hash },
   } = state;
   const data = {
     push_token: value?.push_token ?? push_token,
     app_version: Settings.APP_VERSION,
     notification_settings,
   };
+  // skip when payload matches the last synced one
+  const hash = Helper.getHashId(data);
+  if (last_register_hash === hash) {
+    Helper.debug('Skip register-device, hash unchanged', hash);
+    return Promise.resolve();
+  }
   Helper.debug('Registration or interaction on device', data);
   return Helper.registerDevice(data).then(
     async ({ notificationSettings, statusCode }) => {
@@ -67,6 +75,17 @@ const doRegisterDevice = (dispatch, state, value = {}) => {
           payload: notificationSettings,
         });
       }
+      // hash with server-echoed settings so next call can skip
+      const finalHash = notificationSettings
+        ? Helper.getHashId({
+            ...data,
+            notification_settings: notificationSettings,
+          })
+        : hash;
+      await dispatch({
+        type: REGISTER_DEVICE_SYNCED,
+        payload: finalHash,
+      });
       return Promise.resolve();
     },
   );
@@ -114,19 +133,27 @@ export const registerApplicationReview = (payload) => ({
   payload,
 });
 
+// coalesce rapid toggles into one POST
+const debouncedSyncSettings = _.debounce((dispatch, getState) => {
+  doRegisterDevice(dispatch, getState()).catch((error) => {
+    if (__DEV__) {
+      console.warn('Unable to sync notification settings', error);
+    }
+  });
+}, 500);
+
 export const updateNotificationSettings =
   (settings) => async (dispatch, getState) => {
+    const previous = getState().application.notification_settings;
+    if (_.isEqual(previous, settings)) {
+      Helper.debug('Skip notification settings update, deep-equal');
+      return;
+    }
     await dispatch({
       type: UPDATE_NOTIFICATION_SETTINGS,
       payload: settings,
     });
-    // get state after settings update
-    const current_state = getState();
-    return doRegisterDevice(dispatch, current_state).catch((error) => {
-      if (__DEV__) {
-        console.warn('Unable to update notification settings', settings, error);
-      }
-    });
+    debouncedSyncSettings(dispatch, getState);
   };
 
 export const registerApplicationUpdate = (payload) => ({

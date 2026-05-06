@@ -6,6 +6,7 @@ import {
   NOTIFICATIONS_REGISTER_PENDING,
   NOTIFICATIONS_REGISTER_SUCCESS,
   NOTIFICATIONS_REGISTER_ERROR,
+  REGISTER_DEVICE_SYNCED,
   APP_REVIEW,
   UPDATE_NOTIFICATION_SETTINGS,
   APP_UPDATE,
@@ -36,6 +37,7 @@ const INITIAL_STATE = {
   last_review: null,
   last_version_reviewed: null,
   notification_settings: null,
+  last_register_hash: null,
   // statistics
   last_day_used: null,
   usages: 0,
@@ -83,6 +85,10 @@ export default (state = INITIAL_STATE, action) => {
     case NOTIFICATIONS_REGISTER_ERROR:
       return update(state, {
         sending_push_token: { $set: false },
+      });
+    case REGISTER_DEVICE_SYNCED:
+      return update(state, {
+        last_register_hash: { $set: action.payload },
       });
     case APP_REVIEW:
       return update(state, {
@@ -139,17 +145,16 @@ export default (state = INITIAL_STATE, action) => {
         rate_display: { $set: action.payload },
       });
     case EXCLUDE_RATE: {
+      // value true keeps the rate visible, false excludes it
       const { type, value } = action.payload;
       if (value === true) {
-        return {
-          ...state,
-          excluded_rates: _.without(state.excluded_rates, type),
-        };
+        return update(state, {
+          excluded_rates: { $set: _.without(state.excluded_rates, type) },
+        });
       }
-      return {
-        ...state,
-        excluded_rates: [type].concat(state.excluded_rates ?? []),
-      };
+      return update(state, {
+        excluded_rates: { $set: [type].concat(state.excluded_rates ?? []) },
+      });
     }
     case UPDATE_RATE_TYPES:
       return update(state, {

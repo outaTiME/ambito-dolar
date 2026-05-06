@@ -370,6 +370,7 @@ const withPurchases = (Component) => (props) => {
   const installationId = props.installationId;
   React.useEffect(() => {
     const configure = async () => {
+      Purchases.setLogLevel(Purchases.LOG_LEVEL.WARN);
       Purchases.configure({
         apiKey: Settings.REVENUECAT_API_KEY,
         appUserID: installationId,
