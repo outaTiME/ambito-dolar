@@ -7,6 +7,9 @@ export default $config({
       home: 'aws',
       region: 'us-east-1',
       removal: input?.stage === 'prod' ? 'retain' : 'remove',
+      state: {
+        compress: true,
+      },
     };
   },
   async run() {
