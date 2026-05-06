@@ -15,11 +15,11 @@
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3",
     "eslint": "^8.57.1",
-    "eslint-config-universe": "^15.0.3",
+    "eslint-config-universe": "~15.0.4",
     "husky": "^9.1.7",
     "lerna": "^9.0.7",
     "prettier": "^3.8.3",
-    "sst": "4.12.11"
+    "sst": "4.13.1"
   },
   "scripts": {
     "test": "lerna run test",
