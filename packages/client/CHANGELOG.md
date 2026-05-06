@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [13.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@13.0.1...@ambito-dolar/client@13.1.0) (2026-05-06)
+
+### Features
+
+- skip redundant register-device calls when payload is unchanged ([2d1affa](https://github.com/outaTiME/ambito-dolar/commit/2d1affabc336e710e9dc25a1a2cfd167ec738079))
+
 ## [13.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@13.0.0...@ambito-dolar/client@13.0.1) (2026-05-02)
 
 ### Bug Fixes
