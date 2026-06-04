@@ -12,6 +12,7 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import {
+  Appearance,
   Text,
   TextInput,
   Platform,
@@ -24,7 +25,7 @@ import {
   initialWindowMetrics,
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components';
 
@@ -43,6 +44,13 @@ SplashScreen.preventAutoHideAsync().catch(console.warn);
 SplashScreen.setOptions({
   fade: true,
 });
+
+// leaf component to isolate usePathname subscription away from ThemedLayout
+// prevents the whole app tree from re-rendering on every URL change
+const NavigationTracker = () => {
+  useNavigationTrackingRouter();
+  return null;
+};
 
 const TextComponent = Text as any;
 const TextInputComponent = TextInput as any;
@@ -70,7 +78,7 @@ if (Platform.OS === 'android') {
 
 const ThemedLayout = () => {
   const colorScheme = useColorScheme();
-  const theme = { colorScheme };
+  const theme = React.useMemo(() => ({ colorScheme }), [colorScheme]);
   const navigationTheme = React.useMemo(() => {
     const isDark = colorScheme === 'dark';
     const baseTheme = isDark ? NavigationDarkTheme : NavigationDefaultTheme;
@@ -86,7 +94,6 @@ const ThemedLayout = () => {
   }, [colorScheme]);
   useNotificationTapRouter();
   useQuickActionsRouter();
-  useNavigationTrackingRouter();
   const windowDimensions = useWindowDimensions();
   const [layoutKey, setLayoutKey] = React.useState(null);
   React.useEffect(() => {
@@ -106,8 +113,30 @@ const ThemedLayout = () => {
       setLayoutKey(Helper.getHashId(windowDimensions));
     });
   }, [windowDimensions]);
+  // sync app-level appearance override with UIKit native chrome (iOS only)
+  const appearance = useSelector(
+    (state: any) => state.application.appearance,
+  ) as 'light' | 'dark' | null | undefined;
+  React.useEffect(() => {
+    if (Platform.OS !== 'ios') {
+      return;
+    }
+    Appearance.setColorScheme(appearance ?? 'unspecified');
+  }, [appearance]);
   // set background color early to avoid white flash on Android
   const backgroundColor = Settings.getBackgroundColor(colorScheme, true);
+  const stackScreenOptions = React.useMemo(
+    () => ({
+      headerShown: false,
+      statusBarStyle: Helper.getInvertedTheme(colorScheme) as
+        | 'dark'
+        | 'light'
+        | 'auto'
+        | 'inverted',
+      navigationBarColor: Settings.getContentColor(colorScheme),
+    }),
+    [colorScheme],
+  );
   return (
     <View style={{ flex: 1, backgroundColor }}>
       {layoutKey && (
@@ -118,11 +147,7 @@ const ThemedLayout = () => {
                 <AppContainer>
                   <Stack
                     key={layoutKey}
-                    screenOptions={{
-                      headerShown: false,
-                      statusBarStyle: Helper.getInvertedTheme(colorScheme),
-                      navigationBarColor: Settings.getContentColor(colorScheme),
-                    }}
+                    screenOptions={stackScreenOptions}
                     // initialRouteName="(tabs)"
                   >
                     <Stack.Screen name="(tabs)" />
@@ -152,6 +177,7 @@ const ThemedLayout = () => {
                       }}
                     />
                   </Stack>
+                  <NavigationTracker />
                 </AppContainer>
               </BottomSheetModalProvider>
             </ActionSheetProvider>

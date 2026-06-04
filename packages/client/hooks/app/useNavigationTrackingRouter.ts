@@ -20,8 +20,6 @@ const EXACT_ROUTE_MAP = {
   '/customize-rates': 'CustomizeRates',
   '/settings/customize-rates/order': 'RateOrder',
   '/customize-rates/order': 'RateOrder',
-  '/settings/customize-rates/display': 'RateDisplay',
-  '/customize-rates/display': 'RateDisplay',
   '/settings/statistics': 'Statistics',
   '/settings/about': 'About',
   '/settings/developer': 'Developer',
