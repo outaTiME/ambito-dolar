@@ -9,7 +9,7 @@ export default ({ style, message }) => {
     <View
       style={[
         {
-          marginHorizontal: Settings.CARD_PADDING,
+          marginHorizontal: Settings.CONTENT_MARGIN,
           padding: Settings.PADDING,
         },
         style,

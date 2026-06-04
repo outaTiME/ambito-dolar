@@ -10,19 +10,14 @@ import withContainer from '@/components/withContainer';
 import I18n from '@/config/I18n';
 import Helper from '@/utilities/Helper';
 
-const AppearanceScreen = ({ headerHeight, tabBarHeight }) => {
+const AppearanceScreen = () => {
   const selectedAppearance = useSelector(
     (state) => state.application.appearance,
   );
   const availableAppearances = Helper.getAvailableAppearances();
   const dispatch = useDispatch();
   return (
-    <FixedScrollView
-      {...{
-        headerHeight,
-        tabBarHeight,
-      }}
-    >
+    <FixedScrollView>
       <CardView title={I18n.t('opts_appearance')} plain>
         {availableAppearances.map((appearance, index) => (
           <CardItemView

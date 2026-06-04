@@ -20,7 +20,7 @@ import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 import { goToAdvancedNotifications } from '@/utilities/Navigation';
 
-const NotificationsScreen = ({ headerHeight, tabBarHeight }) => {
+const NotificationsScreen = () => {
   const dispatch = useDispatch();
   const notification_settings = useSelector(
     Helper.getNotificationSettingsSelector,
@@ -34,7 +34,7 @@ const NotificationsScreen = ({ headerHeight, tabBarHeight }) => {
       );
       dispatch(actions.updateNotificationSettings(settings));
     },
-    [notification_settings],
+    [notification_settings, dispatch],
   );
   const getItemView = React.useCallback(
     (type) => (
@@ -73,12 +73,7 @@ const NotificationsScreen = ({ headerHeight, tabBarHeight }) => {
           />
         </ContentView>
       ) : (
-        <FixedScrollView
-          {...{
-            headerHeight,
-            tabBarHeight,
-          }}
-        >
+        <FixedScrollView>
           <CardView plain>
             <CardItemView
               title={I18n.t('allow_notifications')}

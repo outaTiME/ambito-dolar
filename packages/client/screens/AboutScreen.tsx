@@ -12,6 +12,7 @@ import FloatingEmojis from '@/components/FloatingEmojis';
 import IconCardItemView from '@/components/IconCardItemView';
 import TextCardView from '@/components/TextCardView';
 import withContainer from '@/components/withContainer';
+import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
@@ -44,7 +45,7 @@ const GITHUB_URI = 'github.com/outaTiME/ambito-dolar';
 const GITHUB_DEEP_LINK = `github://${GITHUB_URI}`;
 const GITHUB_WEB_URL = `https://${GITHUB_URI}`;
 
-const AboutScreen = ({ headerHeight, tabBarHeight }) => {
+const AboutScreen = () => {
   const { theme, fonts } = Helper.useTheme();
   const onPressAppIcon = React.useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -145,18 +146,13 @@ const AboutScreen = ({ headerHeight, tabBarHeight }) => {
   }, []);
   return (
     <>
-      <FixedScrollView
-        {...{
-          headerHeight,
-          tabBarHeight,
-        }}
-      >
+      <FixedScrollView>
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            margin: Settings.CARD_PADDING,
+            margin: Settings.CONTENT_MARGIN,
             paddingVertical: Settings.PADDING,
           }}
         >
@@ -203,7 +199,7 @@ const AboutScreen = ({ headerHeight, tabBarHeight }) => {
         </View>
         <CardView plain>
           <IconCardItemView
-            title="Sitio web"
+            title={I18n.t('website')}
             iconName="link"
             onAction={onPressWebsite}
           />

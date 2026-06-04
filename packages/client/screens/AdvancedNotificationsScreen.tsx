@@ -15,8 +15,6 @@ import I18n from '@/config/I18n';
 import Helper from '@/utilities/Helper';
 
 const AdvancedNotificationsScreen = ({
-  headerHeight,
-  tabBarHeight,
   // rates,
   rateTypes,
 }) => {
@@ -39,7 +37,7 @@ const AdvancedNotificationsScreen = ({
       );
       dispatch(actions.updateNotificationSettings(settings));
     },
-    [paramType, notification_settings],
+    [paramType, notification_settings, dispatch],
   );
   const getItemView = React.useCallback(
     (type) => {
@@ -61,15 +59,10 @@ const AdvancedNotificationsScreen = ({
         />
       );
     },
-    [paramType, notification_settings],
+    [paramType, notification_settings, onValueChange],
   );
   return (
-    <FixedScrollView
-      {...{
-        headerHeight,
-        tabBarHeight,
-      }}
-    >
+    <FixedScrollView>
       <CardView
         // title={I18n.t('opts_rates')}
         note={I18n.t('notification_choose_rates_note')}

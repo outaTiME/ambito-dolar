@@ -103,6 +103,7 @@ export default function AnimatedSegmentedControl({
         bottom: 0,
         width: 0,
         borderRadius: selectorRadius,
+        borderCurve: 'continuous',
         transform: [{ translateX: 0 }],
       };
     }
@@ -127,6 +128,7 @@ export default function AnimatedSegmentedControl({
       bottom: 0,
       width: tileWidth,
       borderRadius: selectorRadius,
+      borderCurve: 'continuous',
       transform: [{ translateX: withSpring(clamped, SPRING) }],
     };
   }, [
@@ -149,13 +151,11 @@ export default function AnimatedSegmentedControl({
     fontSize: 15,
     fontWeight: '600',
     textAlign: 'center',
-    color: '#111827',
     ...activeTextStyle,
   };
   const inactiveText = {
     fontSize: 15,
     textAlign: 'center',
-    color: '#4b5563',
     ...inactiveTextStyle,
   };
 
@@ -236,8 +236,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 8,
-    backgroundColor: '#f3f4f6',
+    borderCurve: 'continuous',
   },
   segmentFlex: { flex: 1, elevation: 9, paddingVertical: 12 },
   segmentFixed: { elevation: 9, paddingVertical: 12 },
@@ -259,7 +258,6 @@ const styles = StyleSheet.create({
   arrowText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#111827',
     includeFontPadding: false,
     textAlignVertical: 'center',
   },

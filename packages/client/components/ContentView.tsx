@@ -16,7 +16,9 @@ export default React.forwardRef(
       ref={ref}
       collapsable={false}
     >
-      <View style={[{ margin: Settings.CARD_PADDING }, contentContainerStyle]}>
+      <View
+        style={[{ margin: Settings.CONTENT_MARGIN }, contentContainerStyle]}
+      >
         {children}
       </View>
     </View>

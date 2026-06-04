@@ -1,31 +1,32 @@
 // @ts-nocheck
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
+import { isLiquidGlassAvailable } from 'expo-glass-effect';
 import { Platform, Dimensions } from 'react-native';
 import { human, iOSColors } from 'react-native-typography';
 
 const PADDING = 16;
 const SMALL_PADDING = PADDING / 4;
+// inner cell air inside items/rows (fixed; minimum breathing room)
+const CARD_PADDING = 10;
+// outer container margin around content/cards; pair sums PADDING (Apple layout standard)
+const CONTENT_MARGIN = Platform.OS === 'web' ? CARD_PADDING : PADDING / 2;
 
 const DEVICE_TYPE = Device.deviceType;
 const IS_TABLET = DEVICE_TYPE === Device.DeviceType.TABLET;
 const IS_HANDSET = DEVICE_TYPE === Device.DeviceType.PHONE;
-const IS_IPAD = Platform.OS === 'ios' && IS_TABLET;
 const HAPTICS_ENABLED = Platform.OS === 'ios';
 
-// FIXME: check use width on tablets ?
-// const SMALL_DISPLAY_HEIGHT = Math.round(IS_HANDSET ? DEVICE_HEIGHT : DEVICE_WIDTH) <= 731; // 5.0"
-const EXTRA_MARGIN_ON_LARGE_DISPLAY = true;
-const BORDER_RADIUS = PADDING / 2;
-// const BORDER_RADIUS = 12;
+// Liquid Glass availability (iOS 26+ capability check). cached once.
+const IS_LIQUID_GLASS = isLiquidGlassAvailable();
+
+const BORDER_RADIUS = IS_LIQUID_GLASS ? 16 : PADDING / 2;
+// iOS app icon continuous mask ratio (Apple's squircle corner / size)
+const APP_ICON_RADIUS_RATIO = 0.2237;
 const BORDER_WIDTH = 1;
 const MAX_FONT_SIZE_MULTIPLIER = 1.2;
-const FETCH_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 mins
-const BULLET_SEPARATOR = '•';
 const SPACE_SEPARATOR = ' ';
-const FIGURE_SPACE_SEPARATOR = ' ';
 const DASH_SEPARATOR = '‒';
-const EM_DASH_SEPARATOR = '—';
 const MAX_DAYS_FOR_REVIEW = 5;
 // TODO: leave 6 days like "Ámbito Financiero" website?
 const MAX_NUMBER_OF_STATS = 6; // 1 week
@@ -73,20 +74,32 @@ const APP_REVIEW_URI = `${APP_STORE_URI}${
   Platform.OS === 'ios' ? '?action=write-review' : '&showAllReviews=true'
 }`;
 const CAFECITO_URL = 'https://cafecito.app/ambitodolar';
-const HIT_SLOP = {
-  top: PADDING,
-  bottom: PADDING,
-  right: PADDING,
-  left: PADDING,
-};
 const CHART_STROKE_WIDTH = 3 - 0.5;
-const MAIN_ROUTE_NAME = 'Main';
+
+// toggle native formSheet (true) or gorhom bottom-sheet (false) for the donation modal
+const USE_NATIVE_DONATION_SHEET = false;
+// toggle NativeTabs (true, parity with iOS) or classic Tabs (false) on android
+const USE_NATIVE_TABS_ANDROID = false;
+const DONATION_PRODUCT_IDS = [
+  'small_contribution',
+  'medium_contribution',
+  'large_contribution',
+];
 
 const Settings: any = {
   PADDING,
   SMALL_PADDING,
+  CARD_PADDING,
+  CONTENT_MARGIN,
   BORDER_RADIUS,
+  APP_ICON_RADIUS_RATIO,
   BORDER_WIDTH,
+  IS_LIQUID_GLASS,
+  // partial shrink to offset Liquid Glass scrollEdge overhead while keeping
+  // breathing room between header and first content row
+  CONTENT_TOP_SHRINK_STYLE: IS_LIQUID_GLASS
+    ? { marginTop: -CONTENT_MARGIN / 3 }
+    : null,
   MAX_FONT_SIZE_MULTIPLIER,
   RATES_URI,
   HISTORICAL_RATES_URI,
@@ -99,12 +112,8 @@ const Settings: any = {
     android: REVENUECAT_ANDROID_API_KEY,
   }),
   INSTANT_APP_ID,
-  FETCH_REFRESH_INTERVAL,
-  BULLET_SEPARATOR,
   SPACE_SEPARATOR,
-  FIGURE_SPACE_SEPARATOR,
   DASH_SEPARATOR,
-  EM_DASH_SEPARATOR,
   MAX_DAYS_FOR_REVIEW,
   MAX_NUMBER_OF_STATS,
   STILL_LOADING_TIMEOUT,
@@ -120,12 +129,12 @@ const Settings: any = {
   APP_STORE_URI,
   APP_REVIEW_URI,
   CAFECITO_URL,
-  HIT_SLOP,
+  USE_NATIVE_DONATION_SHEET,
+  USE_NATIVE_TABS_ANDROID,
+  DONATION_PRODUCT_IDS,
   CHART_STROKE_WIDTH,
-  INITIAL_ROUTE_NAME: MAIN_ROUTE_NAME,
   IS_TABLET,
   IS_HANDSET,
-  IS_IPAD,
   HAPTICS_ENABLED,
   // https://sarunw.com/posts/dark-color-cheat-sheet/
   // https://noahgilmore.com/blog/dark-mode-uicolor-compatibility/
@@ -240,16 +249,10 @@ const Settings: any = {
   },
 };
 
-export function updateSettings({ width, height } = Dimensions.get('window')) {
-  const SMALL_DISPLAY_HEIGHT = Math.round(height) <= 731; // ej: menos de 5.0"
+export function updateSettings({ width } = Dimensions.get('window')) {
   // use 50% of landscape viewing area on tablets
   const MAX_CONTENT_WIDTH = IS_HANDSET ? width : width * 0.5;
   const CONTENT_WIDTH = Math.min(width, MAX_CONTENT_WIDTH);
-  const CARD_PADDING =
-    Platform.OS === 'web' ||
-    (!SMALL_DISPLAY_HEIGHT && EXTRA_MARGIN_ON_LARGE_DISPLAY)
-      ? 10
-      : PADDING / 2;
   // https://github.com/nirsky/react-native-size-matters/blob/master/lib/scaling-utils.js#L7
   const guidelineBaseWidth = 350;
   const scale = (size) => (CONTENT_WIDTH / guidelineBaseWidth) * size;
@@ -259,7 +262,6 @@ export function updateSettings({ width, height } = Dimensions.get('window')) {
   Object.assign(Settings, {
     DEVICE_WIDTH: width,
     CONTENT_WIDTH,
-    CARD_PADDING,
     moderateScale,
   });
 }

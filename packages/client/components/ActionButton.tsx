@@ -10,7 +10,7 @@ const ButtonText = ({ title, small = false, colorScheme, loading }) => {
     <View
       style={{
         paddingVertical: Settings.PADDING / 2,
-        paddingHorizontal: Settings.PADDING * 2,
+        paddingHorizontal: Settings.PADDING + Settings.CONTENT_MARGIN,
         justifyContent: 'center',
       }}
     >
@@ -73,6 +73,7 @@ export default ({
         {
           alignSelf: 'center',
           borderRadius: Settings.BORDER_RADIUS,
+          borderCurve: 'continuous',
           borderWidth: Settings.BORDER_WIDTH,
           borderColor: Settings.getStrokeColor(theme),
           backgroundColor: Settings.getContentColor(

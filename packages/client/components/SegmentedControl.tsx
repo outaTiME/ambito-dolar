@@ -10,13 +10,13 @@ export default ({
   onTabPress,
   enabled,
   showDirectionalArrow,
-}) => {
+}: any) => {
   const { theme, fonts } = Helper.useTheme();
   return (
     <View
       style={[
         {
-          margin: Settings.CARD_PADDING,
+          margin: Settings.CONTENT_MARGIN,
         },
       ]}
     >
@@ -29,15 +29,15 @@ export default ({
           segments={values}
           onChange={onTabPress}
           currentIndex={selectedIndex}
-          containerMargin={Settings.CARD_PADDING * 2}
+          containerMargin={Settings.CONTENT_MARGIN * 2}
+          selectorRadius={Settings.BORDER_RADIUS - 2}
           segmentedControlWrapper={{
             borderRadius: Settings.BORDER_RADIUS,
+            borderCurve: 'continuous',
             backgroundColor:
               theme === 'dark'
-                ? // systemGray6
-                  Settings.getContentColor(theme)
-                : // systemGray4
-                  Settings.getStrokeColor(theme, true),
+                ? Settings.getContentColor(theme)
+                : Settings.getStrokeColor(theme, true),
           }}
           pressableWrapper={{
             elevation: 0,
@@ -56,22 +56,18 @@ export default ({
           tileStyle={{
             backgroundColor:
               theme === 'dark'
-                ? // systemGray4
-                  Settings.getStrokeColor(theme)
-                : // systemGray6
-                  Settings.getLightColor(true),
+                ? Settings.getStrokeColor(theme)
+                : Settings.getLightColor(true),
             marginVertical: 2,
             marginHorizontal: 2,
-            // remove margin from default border
             borderRadius: Settings.BORDER_RADIUS - 2,
-            // remove shadow
+            borderCurve: 'continuous',
             shadowOpacity: 0,
             elevation: 0,
           }}
           showDirectionalArrow={showDirectionalArrow}
           arrowWrapperStyle={{}}
           arrowTextStyle={{
-            // ...fonts.body,
             ...fonts.subhead,
             color: Settings.getForegroundColor(theme),
             textTransform: 'uppercase',

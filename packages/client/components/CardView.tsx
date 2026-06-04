@@ -61,13 +61,13 @@ export default ({
             ),
           ];
         }),
-    [children, isModal],
+    [children, isModal, separatorStyle],
   );
   return (
     <View
       style={[
         {
-          margin: Settings.CARD_PADDING,
+          margin: Settings.CONTENT_MARGIN,
         },
         style,
       ]}
@@ -77,7 +77,7 @@ export default ({
           style={[
             {
               padding: Settings.PADDING,
-              marginTop: -Settings.CARD_PADDING,
+              marginTop: -Settings.CONTENT_MARGIN,
             },
           ]}
         >
@@ -98,6 +98,7 @@ export default ({
         style={[
           {
             borderRadius: Settings.BORDER_RADIUS,
+            borderCurve: 'continuous',
             ...(transparent !== true && {
               backgroundColor: (Settings as any).getContentColor(
                 theme,
@@ -141,7 +142,7 @@ export default ({
           style={[
             {
               padding: Settings.PADDING,
-              marginBottom: -Settings.CARD_PADDING,
+              marginBottom: -Settings.CONTENT_MARGIN,
             },
           ]}
         >

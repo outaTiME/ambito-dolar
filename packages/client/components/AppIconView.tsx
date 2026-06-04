@@ -13,7 +13,8 @@ export default ({ half = false, ...props }) => {
       style={{
         width: size,
         height: size,
-        borderRadius: Settings.BORDER_RADIUS,
+        borderRadius: size * Settings.APP_ICON_RADIUS_RATIO,
+        borderCurve: 'continuous',
         overflow: 'hidden',
       }}
     >
