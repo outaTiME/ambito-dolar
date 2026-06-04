@@ -15,7 +15,7 @@ export default function useQuickActionsRouter() {
       Helper.debug('🎯 Quick action received', quickAction);
       const type = String(quickAction?.id || '').toLowerCase();
       if (type) {
-        Amplitude.track('Quick action', { type });
+        Amplitude.track('Quick action');
         if (type === 'conversion') {
           goToConversionWithFocus();
         } else {
