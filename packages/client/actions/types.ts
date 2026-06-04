@@ -16,12 +16,12 @@ export const APP_DETAILED_RATES = 'app_detailed_rates';
 export const CHANGE_APPEARANCE = 'change_appearance';
 export const CHANGE_RATE_ORDER = 'change_rate_order';
 export const CHANGE_RATE_ORDER_DIRECTION = 'change_rate_order_direction';
-export const CHANGE_RATE_DISPLAY = 'change_rate_display';
 export const EXCLUDE_RATE = 'exclude_rate';
 export const UPDATE_RATE_TYPES = 'update_rate_types';
 export const RESTORE_CUSTOMIZATION = 'restore_customization';
 export const SHOW_UPDATE_TOAST = 'show_update_toast';
 export const APP_IGNORE_DONATION = 'app_ignore_donation';
+export const APP_REGISTER_DONATION = 'app_register_donation';
 
 // rates
 export const ADD_RATES = 'add_rates';

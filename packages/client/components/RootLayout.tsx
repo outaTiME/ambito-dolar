@@ -133,6 +133,24 @@ const ThemedLayout = () => {
                         gestureEnabled: false,
                       }}
                     />
+                    <Stack.Screen
+                      name="donate"
+                      options={{
+                        presentation: 'formSheet',
+                        headerShown: false,
+                        sheetAllowedDetents: 'fitToContents',
+                        sheetGrabberVisible: true,
+                        gestureEnabled: true,
+                        // forced light to match the prior gorhom modal
+                        // android stays transparent so the inner view corner radius shows
+                        contentStyle: {
+                          backgroundColor:
+                            Platform.OS === 'android'
+                              ? 'transparent'
+                              : Settings.getContentColor('light'),
+                        },
+                      }}
+                    />
                   </Stack>
                 </AppContainer>
               </BottomSheetModalProvider>

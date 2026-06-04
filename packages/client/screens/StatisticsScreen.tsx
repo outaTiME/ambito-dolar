@@ -9,10 +9,12 @@ import CardView from '@/components/CardView';
 import FixedScrollView from '@/components/FixedScrollView';
 import withContainer from '@/components/withContainer';
 import I18n from '@/config/I18n';
+import { useDonationProducts } from '@/hooks/useDonationProducts';
 import DateUtils from '@/utilities/Date';
+import { computeLifetime } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 
-const StatisticsScreen = ({ headerHeight, tabBarHeight }) => {
+const StatisticsScreen = () => {
   const [installationTime] = Helper.useSharedState('installationTime');
   const {
     lastReview,
@@ -47,54 +49,37 @@ const StatisticsScreen = ({ headerHeight, tabBarHeight }) => {
     }),
     shallowEqual,
   );
-  const [Loading, setLoading] = React.useState(true);
-  const [donations, setDonations] = React.useState('N/D');
   const [lastDonation, setLastDonation] = React.useState(null);
+  const [transactions, setTransactions] = React.useState([]);
+  const { priceMap } = useDonationProducts();
+  const lifetimeTotal = React.useMemo(
+    () => computeLifetime(transactions, priceMap),
+    [transactions, priceMap],
+  );
   const avgDailyOpens = React.useMemo(
     () => (daysUsed > 0 ? usages / daysUsed : 0),
     [usages, daysUsed],
   );
-  React.useEffect(() => {
-    Helper.promiseRetry((retry) => Purchases.getCustomerInfo().catch(retry))
-      .then((customerInfo) => {
-        const lastTransaction =
-          customerInfo.nonSubscriptionTransactions[
-            customerInfo.nonSubscriptionTransactions.length - 1
-          ];
-        setDonations(
-          customerInfo.nonSubscriptionTransactions.length.toString(),
-        );
-        setLastDonation(lastTransaction?.purchaseDate ?? null);
-      })
-      .catch(console.warn)
-      .finally(() => setLoading(false));
+  const applyCustomerInfo = React.useCallback((customerInfo) => {
+    const tx = customerInfo?.nonSubscriptionTransactions ?? [];
+    const lastTransaction = tx[tx.length - 1];
+    setTransactions(tx);
+    setLastDonation(lastTransaction?.purchaseDate ?? null);
   }, []);
+  const [purchasesConfigured] = Helper.useSharedState(
+    'purchasesConfigured',
+    false,
+  );
   React.useEffect(() => {
-    const listener = (customerInfo) => {
-      const lastTransaction =
-        customerInfo.nonSubscriptionTransactions[
-          customerInfo.nonSubscriptionTransactions.length - 1
-        ];
-      setDonations(customerInfo.nonSubscriptionTransactions.length.toString());
-      setLastDonation(lastTransaction?.purchaseDate ?? null);
-    };
-    Purchases.addCustomerInfoUpdateListener(listener);
-    return () => Purchases.removeCustomerInfoUpdateListener(listener);
-  }, []);
-  const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
-  // for purchase listener debugging purposes
-  /* const [, setAppDonationModal] = Helper.useSharedState('appDonationModal');
-  React.useEffect(() => {
-    // force open at every change of value
-    setAppDonationModal(Date.now());
-  }, []); */
+    if (!purchasesConfigured) {
+      return;
+    }
+    Purchases.getCustomerInfo().then(applyCustomerInfo).catch(console.warn);
+    Purchases.addCustomerInfoUpdateListener(applyCustomerInfo);
+    return () => Purchases.removeCustomerInfoUpdateListener(applyCustomerInfo);
+  }, [purchasesConfigured, applyCustomerInfo]);
   return (
-    <FixedScrollView
-      {...{
-        headerHeight,
-        tabBarHeight,
-      }}
-    >
+    <FixedScrollView>
       <CardView title={I18n.t('opts_app')} plain>
         {installationTime && (
           <CardItemView
@@ -130,22 +115,6 @@ const StatisticsScreen = ({ headerHeight, tabBarHeight }) => {
           useSwitch={false}
           value={Helper.formatIntegerNumber(sharedRates)}
         />
-        {purchasesConfigured && (
-          <CardItemView
-            title={I18n.t('app_donations')}
-            useSwitch={false}
-            value={donations}
-            loading={Loading}
-          />
-        )}
-        {purchasesConfigured && lastDonation && (
-          <CardItemView
-            title={I18n.t('app_last_donation')}
-            useSwitch={false}
-            value={DateUtils.humanize(lastDonation)}
-            loading={Loading}
-          />
-        )}
         {lastReview && (
           <CardItemView
             title={I18n.t('app_last_review')}
@@ -171,6 +140,27 @@ const StatisticsScreen = ({ headerHeight, tabBarHeight }) => {
           value={Helper.formatIntegerNumber(downloadedHistoricalRates)}
         />
       </CardView>
+      {purchasesConfigured && (
+        <CardView title={I18n.t('app_donations')} plain>
+          <CardItemView
+            title={I18n.t('app_donations_count')}
+            useSwitch={false}
+            value={Helper.formatIntegerNumber(transactions.length)}
+          />
+          <CardItemView
+            title={I18n.t('app_donations_amount')}
+            useSwitch={false}
+            value={Helper.getCurrency(lifetimeTotal, true, true)}
+          />
+          {lastDonation && (
+            <CardItemView
+              title={I18n.t('app_last_donation')}
+              useSwitch={false}
+              value={DateUtils.humanize(lastDonation)}
+            />
+          )}
+        </CardView>
+      )}
     </FixedScrollView>
   );
 };

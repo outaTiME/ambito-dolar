@@ -17,17 +17,12 @@ import {
   goToRateWidgetPreview,
 } from '@/utilities/Navigation';
 
-const DeveloperScreen = ({ headerHeight, tabBarHeight }) => {
+const DeveloperScreen = () => {
   const dispatch = useDispatch();
   const [, setAppDonationModal] = Helper.useSharedState('appDonationModal');
   const showActivityToast = Helper.useActivityToast();
   return (
-    <FixedScrollView
-      {...{
-        headerHeight,
-        tabBarHeight,
-      }}
-    >
+    <FixedScrollView>
       <CardView title="Acciones" plain>
         <CardItemView
           title="Limpiar almacenamiento"

@@ -20,12 +20,12 @@ import {
   CHANGE_APPEARANCE,
   CHANGE_RATE_ORDER,
   CHANGE_RATE_ORDER_DIRECTION,
-  CHANGE_RATE_DISPLAY,
   EXCLUDE_RATE,
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
   SHOW_UPDATE_TOAST,
   APP_IGNORE_DONATION,
+  APP_REGISTER_DONATION,
   PRUNE,
 } from '@/actions/types';
 import DateUtils from '@/utilities/Date';
@@ -50,14 +50,14 @@ const INITIAL_STATE = {
   appearance: null,
   rate_order: null,
   rate_order_direction: null,
-  rate_display: null,
   excluded_rates: null,
   rate_types: null,
   show_update_toast: true,
   // version check
   version: null,
   app_updated: null,
-  ignore_donation: null,
+  ignore_donation_days_used: 0,
+  ignore_donation_count: 0,
   // identifier to handle errors and support
   installation_id: nanoid(),
 };
@@ -140,10 +140,6 @@ export default (state = INITIAL_STATE, action) => {
       return update(state, {
         rate_order_direction: { $set: action.payload },
       });
-    case CHANGE_RATE_DISPLAY:
-      return update(state, {
-        rate_display: { $set: action.payload },
-      });
     case EXCLUDE_RATE: {
       // value true keeps the rate visible, false excludes it
       const { type, value } = action.payload;
@@ -173,7 +169,13 @@ export default (state = INITIAL_STATE, action) => {
       });
     case APP_IGNORE_DONATION:
       return update(state, {
-        ignore_donation: { $set: Date.now() },
+        ignore_donation_days_used: { $set: state.days_used ?? 0 },
+        ignore_donation_count: { $set: (state.ignore_donation_count ?? 0) + 1 },
+      });
+    case APP_REGISTER_DONATION:
+      return update(state, {
+        ignore_donation_days_used: { $set: 0 },
+        ignore_donation_count: { $set: 0 },
       });
     case PRUNE:
       return update(INITIAL_STATE, {

@@ -3,10 +3,8 @@ import { compose } from '@reduxjs/toolkit';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import * as MailComposer from 'expo-mail-composer';
-import { useFocusEffect } from 'expo-router';
 import React from 'react';
-import { Linking, Share, Alert } from 'react-native';
-import Purchases from 'react-native-purchases';
+import { Linking, Share } from 'react-native';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 import * as actions from '@/actions';
@@ -17,19 +15,26 @@ import TextCardView from '@/components/TextCardView';
 import withContainer from '@/components/withContainer';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
+import { useDonationProducts } from '@/hooks/useDonationProducts';
 import DateUtils from '@/utilities/Date';
+import {
+  formatProductPrice,
+  purchaseDonation,
+  showGenericErrorAlert,
+  showPurchaseErrorAlert,
+} from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import {
   goToAbout,
   goToAppearance,
   goToCustomizeRates,
   goToDeveloper,
+  goToDonate,
   goToNotifications,
   goToStatistics,
 } from '@/utilities/Navigation';
-import Sentry from '@/utilities/Sentry';
 
-const SettingsScreen = ({ headerHeight, tabBarHeight }) => {
+const SettingsScreen = () => {
   const { updatedAt, pushToken, appearance, showUpdateToast, installationId } =
     useSelector(
       ({
@@ -61,7 +66,7 @@ const SettingsScreen = ({ headerHeight, tabBarHeight }) => {
         `${I18n.t('installation_id')}: ${installationId}`,
       ].join('\r\n'),
     }).catch(console.warn);
-  }, []);
+  }, [installationId]);
   const onPressReview = React.useCallback(() => {
     Linking.openURL(Settings.APP_REVIEW_URI).catch(console.warn);
   }, []);
@@ -75,100 +80,42 @@ const SettingsScreen = ({ headerHeight, tabBarHeight }) => {
   }, []);
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
-  const [tick, setTick] = React.useState();
-  const updatedAtFromNow = React.useMemo(() => {
-    const lastUpdate = DateUtils.get(updatedAt);
-    /* if (DateUtils.get().isSame(lastUpdate, 'day')) {
-      return lastUpdate.fromNow();
-    } */
-    return lastUpdate.calendar();
-  }, [tick]);
-  const tickCallback = React.useCallback(
-    (tick) => {
-      setTick(tick);
-    },
-    [updatedAt],
-  );
+  // tick state forces a re-render so the relative time string stays fresh
+  const [, setTick] = React.useState(0);
+  const tickCallback = React.useCallback(() => {
+    setTick((value) => value + 1);
+  }, []);
   Helper.useInterval(tickCallback);
+  const updatedAtFromNow = DateUtils.get(updatedAt).calendar();
   const dispatch = useDispatch();
-  // donate
-  const getPurchaseProduct = React.useCallback(
-    () =>
-      Helper.promiseRetry((retry) =>
-        Purchases.getProducts(
-          ['small_contribution'],
-          Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
-        )
-          .then((products) => products?.[0])
-          .catch(retry),
-      ).catch(console.warn),
-    [],
+  const [purchasesConfigured] = Helper.useSharedState(
+    'purchasesConfigured',
+    false,
   );
-  const [purchaseProduct, setPurchaseProduct] = React.useState();
-  React.useEffect(() => {
-    if (__DEV__ && purchaseProduct) {
-      console.log('🎟️ Product to donate updated', purchaseProduct);
-    }
-  }, [purchaseProduct]);
-  useFocusEffect(
-    React.useCallback(() => {
-      // initial product fetch
-      if (!purchaseProduct) {
-        getPurchaseProduct().then((product) => {
-          if (product) {
-            setPurchaseProduct(product);
-          }
-        });
+  const { products: donationProducts, ensureProducts } = useDonationProducts();
+  const [purchaseLoading, setPurchaseLoading] = React.useState(false);
+  const onPressDonate = React.useCallback(async () => {
+    setPurchaseLoading(true);
+    try {
+      const items = await ensureProducts();
+      if (!items.length) {
+        showGenericErrorAlert();
+        return;
       }
-    }, [purchaseProduct, getPurchaseProduct]),
-  );
-  const [donateLoading, setDonateLoading] = React.useState(false);
-  const onPressDonate = React.useCallback(() => {
-    setDonateLoading(true);
-    Promise.resolve(purchaseProduct)
-      .then((product) => product ?? getPurchaseProduct())
-      .then((product) => {
-        if (product) {
-          // force an update in case the product changes
-          setPurchaseProduct(product);
-          return Helper.promiseRetry((retry) =>
-            Purchases.purchaseStoreProduct(product).catch((e) => {
-              // do not retry if user cancelled
-              if (e?.userCancelled) {
-                throw e;
-              }
-              retry(e);
-            }),
-          );
-        }
-        throw new Error('No products available');
-      })
-      .catch((e) => {
-        // silent ignore on user cancellation
-        if (!e.userCancelled) {
-          Sentry.captureException(new Error('Purchase error', { cause: e }));
-          Alert.alert(
-            I18n.t('generic_error'),
-            '',
-            [
-              {
-                text: I18n.t('accept'),
-                onPress: () => {
-                  // pass
-                },
-              },
-            ],
-            {
-              cancelable: false,
-            },
-          );
-        }
-      })
-      .finally(() => {
-        setDonateLoading(false);
-      });
-  }, [purchaseProduct, getPurchaseProduct]);
-  const [purchasesConfigured] = Helper.useSharedState('purchasesConfigured');
+      if (items.length > 1) {
+        goToDonate();
+        return;
+      }
+      try {
+        await purchaseDonation(items[0]);
+        dispatch(actions.registerApplicationDonation());
+      } catch (e) {
+        showPurchaseErrorAlert(e);
+      }
+    } finally {
+      setPurchaseLoading(false);
+    }
+  }, [ensureProducts, dispatch]);
   const handleIdentifierInteraction = React.useCallback(
     () =>
       Clipboard.setStringAsync(
@@ -181,12 +128,7 @@ const SettingsScreen = ({ headerHeight, tabBarHeight }) => {
     [installationId, pushToken],
   );
   return (
-    <FixedScrollView
-      {...{
-        headerHeight,
-        tabBarHeight,
-      }}
-    >
+    <FixedScrollView>
       <CardView
         title={I18n.t('opts_general')}
         note={I18n.t('opts_general_note', {
@@ -251,11 +193,11 @@ const SettingsScreen = ({ headerHeight, tabBarHeight }) => {
           <CardItemView
             title={I18n.t('donate')}
             useSwitch={false}
-            chevron={false}
+            chevron={donationProducts?.length !== 1}
             onAction={onPressDonate}
-            loading={donateLoading}
-            {...(purchaseProduct && {
-              value: `${Helper.getCurrency(purchaseProduct.price, true, true)}`,
+            loading={purchaseLoading}
+            {...(donationProducts?.length === 1 && {
+              value: formatProductPrice(donationProducts[0]),
             })}
           />
         )}

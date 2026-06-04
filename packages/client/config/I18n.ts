@@ -9,18 +9,17 @@ const i18n = new I18n({
     // general
     accept: 'Aceptar',
     cancel: 'Cancelar',
-    search: 'Buscar',
+    done: 'Listo',
+    not_now: 'Ahora no',
     customize: 'Personalizar',
+    website: 'Sitio web',
     no_available_rates: 'Sin cotizaciones disponibles.',
     no_available_stats: 'Sin métricas disponibles.',
-    rates_loading_error: 'Imposible obtener las cotizaciones.',
     // still_loading: 'Conectividad limitada, la carga se reanudará automáticamente.',
     // still_loading: 'Las cotizaciones se mostrarán en cuanto se restablezca tu conexión.',
     still_loading:
       'Conectividad limitada, verás las cotizaciones cuando se recupere la conexión.',
-    retry: 'Reintentar',
     developer: 'Desarrollador',
-    text_copied: 'Texto copiado al portapapeles',
     generic_error: 'Imposible completar la operación seleccionada.',
     rates_updated: '􀁣 Actualizado',
     // rate detail
@@ -42,7 +41,6 @@ const i18n = new I18n({
       'Imposible obtener las cotizaciones para el periodo seleccionado.',
     // conversion
     conversion: 'Conversor',
-    dolar: 'Dólar',
     currency: 'Divisa',
     peso: 'Peso',
     // currency: 'USD/EUR/BRL',
@@ -52,15 +50,10 @@ const i18n = new I18n({
     sell: 'Venta',
     // settings
     settings: 'Ajustes',
-    installation: 'Instalación',
-    app_version: 'Versión',
-    device: 'Dispositivo',
     share_message: `Te recomiendo descargar %{appName}, es la app que uso siempre para seguir el mercado cambiario en la Argentina de forma simple, elegante y efectiva. ¡Está buenísima! %{websiteUrl}`,
     opts_general: 'General',
     opts_general_note:
       'Las cotizaciones se actualizarán automáticamente durante la jornada cambiaria. Última actualización: %{lastUpdate}',
-    device_identifier: 'Identificador',
-    opts_statistics: 'Estadísticas',
     opts_support: 'Soporte y difusión',
     opts_support_note:
       'Tu aporte es fundamental para el mantenimiento y desarrollo continuo de esta aplicación.',
@@ -68,9 +61,15 @@ const i18n = new I18n({
     leave_app_review: 'Dejar una reseña',
     share: 'Compartir',
     donate: 'Donar',
+    donate_choose_title: 'Elegí tu aporte',
+    donate_modal_note:
+      'Elegí tu aporte y acompañá el mantenimiento y desarrollo continuo de esta aplicación.',
+    donate_product_small_contribution: 'Pequeño',
+    donate_product_medium_contribution: 'Mediano',
+    donate_product_large_contribution: 'Grande',
+    donate_unavailable:
+      'No se pudieron cargar las donaciones, verificá tu conexión e intentá nuevamente.',
     installation_id: 'ID',
-    // donate: 'Contribuir',
-    // donate: 'Hacer una donación',
     // notifications
     notifications: 'Notificaciones',
     allow_permissions:
@@ -83,7 +82,6 @@ const i18n = new I18n({
       'Recibirás una notificación cuando cierre la jornada cambiaria.',
     notification_variation_note:
       'Recibirás una notificación cuando varíe alguna cotización durante la jornada cambiaria.',
-    notification_id: 'ID',
     // advanced notifications
     opts_rates: 'Cotizaciones',
     notification_choose_rates_note:
@@ -100,7 +98,9 @@ const i18n = new I18n({
     app_conversions: 'Conversiones',
     app_shared_rates: 'Capturas',
     app_donations: 'Donaciones',
-    app_last_donation: 'Última donación',
+    app_donations_count: 'Cantidad',
+    app_donations_amount: 'Monto total',
+    app_last_donation: 'Última',
     app_downloaded_rates: 'Actualizaciones',
     app_downloaded_historical_rates: 'Históricos',
     app_detailed_rates: 'Detalles',
@@ -124,21 +124,12 @@ const i18n = new I18n({
     change_rate_order: 'Variación',
     update_rate_order: 'Actualización',
     custom_rate_order: 'Manual',
-    rate_display: 'Mostrar',
-    default_rate_display: 'Predeterminado',
-    buy_rate_display: 'Compra',
-    average_rate_display: 'Promedio',
-    sell_rate_display: 'Venta',
     select_rates: 'Seleccionar',
+    rate_order_and_display: 'Orden y visualización',
+    reset: 'Restablecer',
     // no_selected_rates: 'Agregá las cotizaciones que deseas visualizar.',
     no_selected_rates: 'No se han seleccionado cotizaciones a visualizar.',
-    // donate
-    /* purchase_success: '¡Gracias por tu donación!',
-    purchase_success_message:
-      'Tu apoyo impulsa el desarrollo y mantenimiento continuo de la aplicación.', */
     // widgets
-    rate_widget: 'Cotizaciones',
-    list_rates_widget: 'Lista de cotizaciones',
     show_toast: 'Mostrar actualización',
   },
 });

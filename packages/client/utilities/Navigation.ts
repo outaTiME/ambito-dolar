@@ -72,12 +72,6 @@ export const goToRateOrder = (modal = false) => {
   );
 };
 
-export const goToRateDisplay = (modal = false) => {
-  pushRoute(
-    modal ? '/customize-rates/display' : '/settings/customize-rates/display',
-  );
-};
-
 export const goToStatistics = () => {
   pushRoute('/settings/statistics');
 };
@@ -96,4 +90,8 @@ export const goToRateWidgetPreview = () => {
 
 export const goToCustomizeRatesModal = () => {
   goToCustomizeRates(true);
+};
+
+export const goToDonate = () => {
+  pushRoute('/settings/donate');
 };

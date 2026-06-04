@@ -21,18 +21,19 @@ import {
   CHANGE_APPEARANCE,
   CHANGE_RATE_ORDER,
   CHANGE_RATE_ORDER_DIRECTION,
-  CHANGE_RATE_DISPLAY,
   EXCLUDE_RATE,
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
   SHOW_UPDATE_TOAST,
   APP_IGNORE_DONATION,
+  APP_REGISTER_DONATION,
   ADD_RATES,
   UPDATE_HISTORICAL_RATES,
   PRUNE_RATES,
   PRUNE,
 } from '@/actions/types';
 import Settings from '@/config/settings';
+import Amplitude from '@/utilities/Amplitude';
 import Helper from '@/utilities/Helper';
 
 export const addRates = (payload) => ({
@@ -62,33 +63,31 @@ const doRegisterDevice = (dispatch, state, value = {}) => {
     return Promise.resolve();
   }
   Helper.debug('Registration or interaction on device', data);
-  return Helper.registerDevice(data).then(
-    async ({ notificationSettings, statusCode }) => {
-      if (notificationSettings) {
-        Helper.debug(
-          'Update notification settings from remote',
-          notificationSettings,
-        );
-        // update notification settings from server
-        await dispatch({
-          type: UPDATE_NOTIFICATION_SETTINGS,
-          payload: notificationSettings,
-        });
-      }
-      // hash with server-echoed settings so next call can skip
-      const finalHash = notificationSettings
-        ? Helper.getHashId({
-            ...data,
-            notification_settings: notificationSettings,
-          })
-        : hash;
+  return Helper.registerDevice(data).then(async ({ notificationSettings }) => {
+    if (notificationSettings) {
+      Helper.debug(
+        'Update notification settings from remote',
+        notificationSettings,
+      );
+      // update notification settings from server
       await dispatch({
-        type: REGISTER_DEVICE_SYNCED,
-        payload: finalHash,
+        type: UPDATE_NOTIFICATION_SETTINGS,
+        payload: notificationSettings,
       });
-      return Promise.resolve();
-    },
-  );
+    }
+    // hash with server-echoed settings so next call can skip
+    const finalHash = notificationSettings
+      ? Helper.getHashId({
+          ...data,
+          notification_settings: notificationSettings,
+        })
+      : hash;
+    await dispatch({
+      type: REGISTER_DEVICE_SYNCED,
+      payload: finalHash,
+    });
+    return Promise.resolve();
+  });
 };
 
 const doRegisterDeviceForNotifications = (dispatch, current_state) =>
@@ -173,9 +172,10 @@ export const registerApplicationConversion = () => ({
   type: APP_CONVERSION,
 });
 
-export const registerApplicationShareRates = () => ({
-  type: APP_SHARE_RATES,
-});
+export const registerApplicationShareRates = () => (dispatch) => {
+  dispatch({ type: APP_SHARE_RATES });
+  Amplitude.track('Share rates');
+};
 
 export const registerApplicationDownloadRates = () => ({
   type: APP_DOWNLOAD_RATES,
@@ -204,11 +204,6 @@ export const changeRateOrderDirection = (payload) => ({
   payload,
 });
 
-export const changeRateDisplay = (payload) => ({
-  type: CHANGE_RATE_DISPLAY,
-  payload,
-});
-
 export const excludeRate = (type, value) => ({
   type: EXCLUDE_RATE,
   payload: {
@@ -234,6 +229,11 @@ export const showUpdateToast = (payload) => ({
 export const ignoreApplicationDonation = () => ({
   type: APP_IGNORE_DONATION,
 });
+
+export const registerApplicationDonation = () => (dispatch) => {
+  dispatch({ type: APP_REGISTER_DONATION });
+  Amplitude.track('Donation');
+};
 
 export const clearRates = () => ({
   type: PRUNE_RATES,

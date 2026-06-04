@@ -9,14 +9,14 @@ import { compose } from '@reduxjs/toolkit';
 import * as Device from 'expo-device';
 import * as Localization from 'expo-localization';
 import * as Notifications from 'expo-notifications';
+import { router } from 'expo-router';
 import * as StoreReview from 'expo-store-review';
 import * as _ from 'lodash';
 import React from 'react';
-import { View, Text, Alert } from 'react-native';
+import { LogBox, View, Text } from 'react-native';
 import Purchases from 'react-native-purchases';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { useStateWithCallbackLazy } from 'use-state-with-callback';
 
 import * as actions from '@/actions';
 import ActionButton from '@/components/ActionButton';
@@ -24,13 +24,42 @@ import withRates from '@/components/withRates';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import useAppState from '@/hooks/useAppState';
+import { useDonationProducts } from '@/hooks/useDonationProducts';
 import * as WidgetKit from '@/modules/widgetkit';
 import InitialScreen from '@/screens/InitialScreen';
 import Amplitude from '@/utilities/Amplitude';
 import DateUtils from '@/utilities/Date';
+import {
+  computeLifetime,
+  formatProductPrice,
+  getCooldownDays,
+  getReAskMs,
+  purchaseDonation,
+  showPurchaseErrorAlert,
+} from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import Sentry from '@/utilities/Sentry';
 import { reloadWidgets } from '@/widgets';
+
+// suppress RevenueCat dev-overlay banners, errors still print to console
+if (__DEV__) {
+  LogBox.ignoreLogs([/\[RevenueCat\]/]);
+}
+
+const DONATION_PURCHASE_SLUGS = [
+  '¡Wow, usás {APP_NAME} un montón!',
+  '¡Increíble lo fiel que sos a {APP_NAME}!',
+  '¡Wow, no parás de entrar a {APP_NAME}!',
+  '¡{APP_NAME} ya es parte de tu rutina diaria!',
+  '¡Siempre con {APP_NAME} a mano!',
+  '¡Sos inseparable de {APP_NAME}!',
+  '¡No pasás un día sin mirar {APP_NAME}!',
+  '¡Wow, abrís {APP_NAME} a cada rato!',
+  '¡No te despegás de {APP_NAME} ni un segundo!',
+  '¡Wow, no hay descanso entre vos y {APP_NAME}!',
+  '¡Ya sos usuario nivel experto de {APP_NAME}!',
+  '¡No hay quien te gane usando {APP_NAME}!',
+];
 
 const AppContainer = ({ children, rates, stillLoading = false }) => {
   const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
@@ -381,7 +410,7 @@ const withPurchases = (Component) => (props) => {
         setPurchasesConfigured(true);
       })
       .catch(console.warn);
-  }, [installationId]);
+  }, [installationId, setPurchasesConfigured]);
   return <Component {...props} />;
 };
 
@@ -427,123 +456,155 @@ const withAppDonation = (Component) => (props) => {
     'purchasesConfigured',
     false,
   );
-  const { daysUsed, ignoreDonation } = useSelector(
+  const { daysUsed, ignoreDonationDaysUsed, ignoreDonationCount } = useSelector(
     ({
-      application: { days_used: daysUsed, ignore_donation: ignoreDonation },
+      application: {
+        days_used: daysUsed,
+        ignore_donation_days_used: ignoreDonationDaysUsed,
+        ignore_donation_count: ignoreDonationCount,
+      },
     }) => ({
       daysUsed,
-      ignoreDonation,
+      ignoreDonationDaysUsed,
+      ignoreDonationCount,
     }),
     shallowEqual,
   );
-  const THRESHOLD_DAYS_USE = 30;
-  const purchaseSlug = React.useMemo(() => {
-    const slugs = [
-      '¡Wow, usás {APP_NAME} un montón!',
-      '¡Increíble lo fiel que sos a {APP_NAME}!',
-      '¡Wow, no parás de entrar a {APP_NAME}!',
-      '¡{APP_NAME} ya es parte de tu rutina diaria!',
-      '¡Siempre con {APP_NAME} a mano!',
-      '¡Sos inseparable de {APP_NAME}!',
-      '¡No pasás un día sin mirar {APP_NAME}!',
-      '¡Wow, abrís {APP_NAME} a cada rato!',
-      '¡No te despegás de {APP_NAME} ni un segundo!',
-      '¡Wow, no hay descanso entre vos y {APP_NAME}!',
-      '¡Ya sos usuario nivel experto de {APP_NAME}!',
-      '¡No hay quien te gane usando {APP_NAME}!',
-    ];
-    return _.replace(
-      slugs[daysUsed % slugs.length],
-      '{APP_NAME}',
-      Settings.APP_NAME,
-    );
-  }, [daysUsed]);
-  const [purchaseProduct, setPurchaseProduct] = useStateWithCallbackLazy();
+  const { products: donationProducts, priceMap } = useDonationProducts();
+  const purchaseSlug = React.useMemo(
+    () =>
+      _.replace(
+        DONATION_PURCHASE_SLUGS[daysUsed % DONATION_PURCHASE_SLUGS.length],
+        '{APP_NAME}',
+        Settings.APP_NAME,
+      ),
+    [daysUsed],
+  );
   const bottomSheetRef = React.useRef();
   const [appDonationModal, setAppDonationModal] = Helper.useSharedState(
     'appDonationModal',
     false,
   );
+  // shared with native formSheet route (app/donate.tsx)
+  const [, setDonationSlug] = Helper.useSharedState('donationSlug');
   React.useEffect(() => {
-    if (purchasesConfigured) {
-      let shouldShowModal = daysUsed >= THRESHOLD_DAYS_USE;
-      if (ignoreDonation) {
-        // check between THRESHOLD_DAYS_USE
-        shouldShowModal =
-          Date.now() >=
-          ignoreDonation + THRESHOLD_DAYS_USE * 24 * 60 * 60 * 1000;
-      }
-      shouldShowModal = appDonationModal || shouldShowModal;
-      if (shouldShowModal) {
-        Helper.promiseRetry((retry) => Purchases.getCustomerInfo().catch(retry))
-          .then(async (customerInfo) => {
-            const lastPurchaseDate = _.last(
-              customerInfo?.nonSubscriptionTransactions,
-            )?.purchaseDate;
-            const monthsSinceLastPurchase = DateUtils.get().diff(
-              lastPurchaseDate,
-              'months',
-            );
-            let product;
-            if (
-              appDonationModal ||
-              !lastPurchaseDate ||
-              // ask for donation once a year (since last donation)
-              monthsSinceLastPurchase >= 12
-            ) {
-              product = await Helper.promiseRetry((retry) =>
-                Purchases.getProducts(
-                  ['small_contribution'],
-                  Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
-                )
-                  .then((products) => products?.[0])
-                  .catch(retry),
-              );
-              // .then((product) => product ?? (__DEV__ && { price: 1 }));
-            }
-            return [lastPurchaseDate, monthsSinceLastPurchase, product];
-          })
-          .catch(console.warn)
-          .then(([lastPurchaseDate, monthsSinceLastPurchase, product] = []) => {
-            Helper.debug('💖 Donation modal may be required', {
-              daysUsed,
-              ignoreDonation,
-              forced: !!appDonationModal,
-              lastPurchaseDate,
-              monthsSinceLastPurchase,
-              product: !!product,
-            });
-            setPurchaseProduct(product, (product) => {
-              // run after modal re-rendering
-              if (product) {
-                bottomSheetRef.current?.present();
-              }
-            });
-          });
-      } else {
-        Helper.debug('💖 Donation modal not required', {
-          daysUsed,
-          ignoreDonation,
-          forced: !!appDonationModal,
-        });
-      }
+    if (!purchasesConfigured || !donationProducts?.length) {
+      return;
     }
-  }, [purchasesConfigured, daysUsed, ignoreDonation, appDonationModal]);
+    const forced = !!appDonationModal;
+    const now = Date.now();
+    const cooldownDays = getCooldownDays(ignoreDonationCount);
+    const elapsedDays = Math.max(0, daysUsed - (ignoreDonationDaysUsed ?? 0));
+    const remainingDays = Math.max(0, cooldownDays - elapsedDays);
+    const shouldShowModal = forced || elapsedDays >= cooldownDays;
+    if (!shouldShowModal) {
+      Helper.debug('💖 Donation modal not required', {
+        daysUsed,
+        ignoreDonationDaysUsed,
+        ignoreDonationCount,
+        cooldownDays,
+        elapsedDays,
+        remainingDays,
+        forced,
+      });
+      return;
+    }
+    Purchases.getCustomerInfo()
+      .then((customerInfo) => {
+        const transactions = customerInfo?.nonSubscriptionTransactions ?? [];
+        const lastPurchaseDate = _.last(transactions)?.purchaseDate;
+        const lifetimeTotal = computeLifetime(transactions, priceMap);
+        const elapsedSinceLast = lastPurchaseDate
+          ? now - new Date(lastPurchaseDate).getTime()
+          : Infinity;
+        const reAskMs = lastPurchaseDate ? getReAskMs(lifetimeTotal) : null;
+        const reAskRemainingMs = lastPurchaseDate
+          ? Math.max(0, reAskMs - elapsedSinceLast)
+          : null;
+        const reAskExpiresAt = lastPurchaseDate
+          ? new Date(lastPurchaseDate).getTime() + reAskMs
+          : null;
+        const shouldAsk =
+          forced || !lastPurchaseDate || elapsedSinceLast >= reAskMs;
+        return [
+          lastPurchaseDate,
+          lifetimeTotal,
+          shouldAsk,
+          reAskMs,
+          reAskRemainingMs,
+          reAskExpiresAt,
+        ];
+      })
+      .catch(console.warn)
+      .then(
+        ([
+          lastPurchaseDate,
+          lifetimeTotal,
+          shouldAsk,
+          reAskMs,
+          reAskRemainingMs,
+          reAskExpiresAt,
+        ] = []) => {
+          Helper.debug('💖 Donation modal may be required', {
+            daysUsed,
+            ignoreDonationDaysUsed,
+            ignoreDonationCount,
+            cooldownDays,
+            elapsedDays,
+            remainingDays,
+            forced,
+            lastPurchaseAt: Helper.formatTimestamp(lastPurchaseDate),
+            lifetimeTotal,
+            reAsk: AmbitoDolar.formatDuration(reAskMs),
+            reAskRemaining: AmbitoDolar.formatDuration(reAskRemainingMs),
+            reAskExpiresAt: Helper.formatTimestamp(reAskExpiresAt),
+            shouldAsk,
+            native: !!Settings.USE_NATIVE_DONATION_SHEET,
+          });
+          if (!shouldAsk) {
+            return;
+          }
+          if (Settings.USE_NATIVE_DONATION_SHEET) {
+            setDonationSlug(purchaseSlug);
+            router.push('/donate');
+          } else {
+            bottomSheetRef.current?.present();
+          }
+        },
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    purchasesConfigured,
+    donationProducts,
+    daysUsed,
+    ignoreDonationDaysUsed,
+    ignoreDonationCount,
+    appDonationModal,
+  ]);
   const renderBackdrop = React.useCallback(
     (props) => (
       <BottomSheetBackdrop
         {...props}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
-        pressBehavior="none"
+        pressBehavior="close"
       />
     ),
     [],
   );
   const dispatch = useDispatch();
+  // skip ignore dispatch when dismiss follows a successful donation
+  const donatedRef = React.useRef(false);
+  // mirrors loadingProductId so dismiss callbacks see the latest value
+  const loadingRef = React.useRef(false);
   const handleSheetChanges = React.useCallback(
     (index) => {
       if (index === -1) {
+        // purchase in flight resolves on its own, skip ignore dispatch
+        if (donatedRef.current || loadingRef.current) {
+          donatedRef.current = false;
+          return;
+        }
         if (appDonationModal) {
           setAppDonationModal(false);
         } else {
@@ -551,29 +612,51 @@ const withAppDonation = (Component) => (props) => {
         }
       }
     },
-    [appDonationModal],
+    [appDonationModal, setAppDonationModal, dispatch],
   );
   const safeAreaInsets = useSafeAreaInsets();
   // force light
   const colorScheme = 'light';
   const { fonts } = Helper.useTheme(colorScheme);
-  const [donateLoading, setDonateLoading] = React.useState(false);
+  const [loadingProductId, setLoadingProductId] = React.useState(null);
+  const handleDonate = React.useCallback(
+    async (product, productId) => {
+      setLoadingProductId(productId);
+      loadingRef.current = true;
+      try {
+        await purchaseDonation(product);
+        donatedRef.current = true;
+        dispatch(actions.registerApplicationDonation());
+        // prevent the effect from reopening after register reset
+        if (appDonationModal) {
+          setAppDonationModal(false);
+        }
+        bottomSheetRef.current?.dismiss();
+      } catch (e) {
+        showPurchaseErrorAlert(e);
+      } finally {
+        setLoadingProductId(null);
+        loadingRef.current = false;
+      }
+    },
+    [appDonationModal, setAppDonationModal, dispatch],
+  );
   return (
     <>
       <Component {...props} />
       <BottomSheetModal
         ref={bottomSheetRef}
         detached
-        enablePanDownToClose={false}
+        enablePanDownToClose
         style={{
           marginLeft: (Settings.DEVICE_WIDTH - Settings.CONTENT_WIDTH) / 2,
           width: Settings.CONTENT_WIDTH,
         }}
         backgroundStyle={{
-          marginHorizontal: Settings.CARD_PADDING * 2,
+          marginHorizontal: Settings.CONTENT_MARGIN * 2,
           // borderRadius: Settings.BORDER_RADIUS,
         }}
-        bottomInset={safeAreaInsets.bottom + Settings.CARD_PADDING * 2}
+        bottomInset={safeAreaInsets.bottom + Settings.CONTENT_MARGIN * 2}
         onChange={handleSheetChanges}
         handleComponent={null}
         backdropComponent={renderBackdrop}
@@ -581,12 +664,19 @@ const withAppDonation = (Component) => (props) => {
         <BottomSheetView>
           <View
             style={{
-              marginHorizontal: Settings.CARD_PADDING * 2,
+              marginHorizontal: Settings.CONTENT_MARGIN * 2,
               padding: Settings.PADDING * 2,
               alignItems: 'center',
             }}
           >
-            <Text style={[fonts.extraLargeTitle]}>🥰</Text>
+            <Text
+              style={[
+                fonts.extraLargeTitle,
+                { paddingHorizontal: Settings.PADDING / 2 },
+              ]}
+            >
+              🥰
+            </Text>
             <Text
               style={[
                 fonts.body,
@@ -596,67 +686,45 @@ const withAppDonation = (Component) => (props) => {
                 },
               ]}
             >
-              {`${purchaseSlug}\n\n${I18n.t('opts_support_note')}`}
+              {`${purchaseSlug}\n\n${I18n.t('donate_modal_note')}`}
             </Text>
-            <ActionButton
-              title={[
-                I18n.t('donate'),
-                Helper.getCurrency(purchaseProduct?.price, true, true),
-              ].join(' ')}
-              handleOnPress={async () => {
-                setDonateLoading(true);
-                try {
-                  await Helper.promiseRetry((retry) =>
-                    Purchases.purchaseStoreProduct(purchaseProduct).catch(
-                      (e) => {
-                        // do not retry if user cancelled
-                        if (e?.userCancelled) {
-                          throw e;
-                        }
-                        retry(e);
-                      },
-                    ),
-                  );
-                  bottomSheetRef.current?.dismiss();
-                } catch (e) {
-                  if (!e.userCancelled) {
-                    Sentry.captureException(
-                      new Error('Purchase error', { cause: e }),
-                    );
-                    Alert.alert(
-                      I18n.t('generic_error'),
-                      '',
-                      [
-                        {
-                          text: I18n.t('accept'),
-                          onPress: () => {
-                            // pass
-                          },
-                        },
-                      ],
-                      {
-                        cancelable: false,
-                      },
-                    );
-                  }
-                } finally {
-                  setDonateLoading(false);
-                }
-              }}
+            <View
               style={{
-                marginVertical: Settings.PADDING,
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: Settings.PADDING,
               }}
-              alternativeBackground
-              // colorScheme
-              loading={donateLoading}
-            />
+            >
+              {donationProducts.map((product, index) => {
+                const productId = product?.identifier ?? `product_${index}`;
+                return (
+                  <ActionButton
+                    key={productId}
+                    title={formatProductPrice(product)}
+                    handleOnPress={
+                      loadingProductId === null
+                        ? () => handleDonate(product, productId)
+                        : undefined
+                    }
+                    alternativeBackground
+                    loading={loadingProductId === productId}
+                  />
+                );
+              })}
+            </View>
             <ActionButton
               borderless
-              title="Ahora no"
-              handleOnPress={() => {
-                bottomSheetRef.current?.dismiss();
-              }}
+              title={I18n.t('not_now')}
+              handleOnPress={
+                loadingProductId === null
+                  ? () => {
+                      bottomSheetRef.current?.dismiss();
+                    }
+                  : undefined
+              }
               colorScheme
+              style={{ marginTop: Settings.PADDING * 2 }}
             />
           </View>
         </BottomSheetView>
