@@ -342,12 +342,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
     () => _.chunk(rateTypes, LAYOUT_RATE_COLUMNS),
     [rateTypes],
   );
-  // compact: scale factor applied to paddings/margins when grid has 5+ rows.
-  // null means normal layout (factors 1.5 / 1). Number is the factor itself.
-  // Kept binary at 0.9 to preserve the subtle chart bleed alignment with card
-  // padding — dynamic per-row scaling here broke chart visibility (see commit
-  // history). If extra vertical room is needed for 6+ rows, scale the outer
-  // SocialPortraitView padding only (not the per-card layout).
+  // binary 0.9 intentional, dynamic per-row scaling broke chart bleed alignment
   const compact = rows.length > 4 ? 0.9 : null;
   const showFooter = rateTypes.length % LAYOUT_RATE_COLUMNS === 0;
   const smallPadding = showFooter;

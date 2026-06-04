@@ -344,7 +344,7 @@ export default {
   // https://github.com/react-navigation/react-navigation/blob/main/packages/elements/src/Header/getDefaultHeaderHeight.tsx
   getDefaultHeaderHeight({ landscape, modalPresentation, topInset }) {
     let headerHeight;
-    // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
+    // on models with Dynamic Island the status bar height is smaller than the safe area top inset
     const hasDynamicIsland = Platform.OS === 'ios' && topInset > 50;
     const statusBarHeight = Math.max(
       topInset - (hasDynamicIsland ? 5 + 1 / PixelRatio.get() : 0),

@@ -90,8 +90,8 @@ const withScreenshotShareSheet =
       return undefined;
     };
     // iPad pre-iOS 26 crashes presenting UIAlertController.actionSheet via
-    // ExpoScreenOrientation.ScreenOrientationViewController (missing popover anchor);
-    // gate the header button until LG native toolbar path is available.
+    // ExpoScreenOrientation.ScreenOrientationViewController (missing popover anchor)
+    // gate the header button until LG native toolbar path is available
     const supportsActionSheet = Settings.IS_HANDSET || Settings.IS_LIQUID_GLASS;
     const shouldShow =
       rateTypes.length > 0 &&

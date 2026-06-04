@@ -11,8 +11,8 @@ export default function NativeTabsLayout() {
   return (
     <NativeTabs
       minimizeBehavior="never"
-      // keep tab bar opaque at scroll edge (iOS 18 defaults to transparent).
-      // pinned to current react-native-screens; revisit on expo 56 upgrade.
+      // keep tab bar opaque at scroll edge (iOS 18 defaults to transparent)
+      // pinned to current react-native-screens, revisit on expo 56 upgrade
       disableTransparentOnScrollEdge
       {...(!Settings.IS_LIQUID_GLASS && {
         blurEffect: theme,
