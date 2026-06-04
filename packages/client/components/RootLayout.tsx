@@ -30,6 +30,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components';
 
 import AppContainer from '@/components/AppContainer';
+import ToastOverlay from '@/components/ToastOverlay';
 import Settings, { updateSettings } from '@/config/settings';
 import useNavigationTrackingRouter from '@/hooks/app/useNavigationTrackingRouter';
 import useNotificationTapRouter from '@/hooks/app/useNotificationTapRouter';
@@ -178,6 +179,7 @@ const ThemedLayout = () => {
                     />
                   </Stack>
                   <NavigationTracker />
+                  <ToastOverlay />
                 </AppContainer>
               </BottomSheetModalProvider>
             </ActionSheetProvider>

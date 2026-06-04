@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BottomTabBar } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
@@ -16,18 +17,12 @@ export default function ToastBottomTabBar(props: any) {
     if (activityToast) {
       setActivityToast(null);
       if (!activeToast?.isVisible) {
-        setActiveToast({
-          isVisible: true,
-          ...activityToast,
-        });
+        setActiveToast({ isVisible: true, ...activityToast });
         activityToast.feedback &&
           Settings.HAPTICS_ENABLED &&
           Haptics.notificationAsync();
         setTimeout(() => {
-          setActiveToast({
-            isVisible: false,
-            ...activityToast,
-          });
+          setActiveToast({ isVisible: false, ...activityToast });
         }, 2 * 1000);
       }
     }

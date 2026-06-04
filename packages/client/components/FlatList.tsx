@@ -1,12 +1,9 @@
-import { useScrollToTop } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 
 import Helper from '@/utilities/Helper';
 
-export default (props) => {
+export default React.forwardRef<any, any>((props: any, ref: any) => {
   const indicatorStyle = Helper.useIndicatorStyle();
-  const ref = React.useRef(null);
-  useScrollToTop(ref);
-  return <FlashList indicatorStyle={indicatorStyle} ref={ref} {...props} />;
-};
+  return <FlashList ref={ref} indicatorStyle={indicatorStyle} {...props} />;
+});
