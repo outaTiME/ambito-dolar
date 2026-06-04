@@ -10,7 +10,7 @@ import Settings from '@/config/settings';
 import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
 
-const InlineRateView = ({ type, value, onSelected, condensed }) => {
+const InlineRateView = ({ type, value, onSelected, compact }) => {
   const { theme, fonts } = Helper.useTheme();
   const title_font = fonts.title;
   return (
@@ -69,7 +69,7 @@ const InlineRateDetailView = ({
   stats,
   color,
   large,
-  condensed,
+  compact,
   smallPadding,
 }) => {
   const { theme, fonts } = Helper.useTheme();
@@ -83,7 +83,7 @@ const InlineRateDetailView = ({
               alignItems: 'center',
               marginTop:
                 Settings.SMALL_PADDING *
-                (condensed === true || smallPadding ? 1 : 2),
+                (compact != null || smallPadding ? 1 : 2),
             },
           ]}
         >
@@ -111,15 +111,22 @@ const InlineRateDetailView = ({
             {change}
           </Text>
         </View>
-        {/* required by chart */}
+        {/* chart wrapper extends past card padding so the chart drawing area
+            reaches the card edges (compensates the card containerStyle.padding) */}
         <View
           style={{
             flex: 1,
-            margin: -Settings.PADDING * (condensed === true ? 0.9 : 1),
+            margin: -Settings.PADDING * (compact != null ? 0.9 : 1),
             marginTop: 0,
           }}
         >
-          <MiniRateChartView {...{ stats, color, borderless: true }} />
+          <MiniRateChartView
+            {...{
+              stats,
+              color,
+              borderless: true,
+            }}
+          />
         </View>
       </>
     );
@@ -129,7 +136,7 @@ const InlineRateDetailView = ({
       Math.min(PixelRatio.getFontScale(), Settings.MAX_FONT_SIZE_MULTIPLIER),
   );
   const showMiniRateChart =
-    changeWidth + Settings.CARD_PADDING * 2 + Settings.PADDING <=
+    changeWidth + Settings.CONTENT_MARGIN * 2 + Settings.PADDING <=
     Helper.roundToNearestEven(Settings.CONTENT_WIDTH / 2);
   return (
     <View
@@ -182,14 +189,14 @@ const InlineRateDetailView = ({
   );
 };
 
-export default ({
+const RateView = ({
   type,
   stats,
   onSelected,
   large = false,
   highlight = true,
-  condensed = false,
-  shoudStretch = true,
+  compact = null,
+  shouldStretch = true,
   smallPadding = false,
 }) => {
   const { theme } = Helper.useTheme();
@@ -217,7 +224,7 @@ export default ({
   return (
     <CardView
       style={[
-        shoudStretch === true && {
+        shouldStretch === true && {
           flex: 1,
         },
         highlight === false && {
@@ -225,7 +232,7 @@ export default ({
         },
         // same as marginHorizontal from title
         Platform.OS === 'web' && {
-          margin: Settings.CARD_PADDING * (condensed === true ? 0.9 : 1.5),
+          margin: Settings.CONTENT_MARGIN * (compact ?? 1.5),
         },
       ]}
       {...(onSelected && { onPress })}
@@ -241,7 +248,7 @@ export default ({
             type,
             value: value_fmt,
             onSelected,
-            condensed,
+            compact,
           }}
         />
         <InlineRateDetailView
@@ -251,7 +258,7 @@ export default ({
             stats,
             color,
             large,
-            condensed,
+            compact,
             smallPadding,
           }}
         />
@@ -259,3 +266,5 @@ export default ({
     </CardView>
   );
 };
+
+export default React.memo(RateView);

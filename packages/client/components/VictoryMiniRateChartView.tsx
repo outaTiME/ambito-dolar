@@ -12,6 +12,7 @@ const VictoryMiniRateChartView = ({
   stats,
   color,
   borderless,
+  domainPaddingY,
 }) => {
   const data = React.useMemo(
     () =>
@@ -55,9 +56,12 @@ const VictoryMiniRateChartView = ({
       singleQuadrantDomainPadding={false}
       domainPadding={{
         x: Settings.CHART_STROKE_WIDTH,
-        y: borderless === true ? Settings.PADDING : Settings.CHART_STROKE_WIDTH,
+        y:
+          borderless === true
+            ? // default matches the web card containerStyle padding
+              (domainPaddingY ?? Settings.CARD_PADDING + Settings.SMALL_PADDING)
+            : Settings.CHART_STROKE_WIDTH,
       }}
-      // domainPadding={Settings.CHART_STROKE_WIDTH}
       padding={borderless === true ? -Settings.CHART_STROKE_WIDTH : 0}
       domain={domain as any}
       animate={false}
@@ -67,7 +71,7 @@ const VictoryMiniRateChartView = ({
   );
 };
 
-export default ({ stats, color, borderless }) => {
+export default ({ stats, color, borderless, domainPaddingY }) => {
   // layout
   const { onLayout, width, height } = useLayout();
   const hasLayout = React.useMemo(() => width && height, [width, height]);
@@ -81,6 +85,7 @@ export default ({ stats, color, borderless }) => {
             stats,
             color,
             borderless,
+            domainPaddingY,
           }}
         />
       ) : null}

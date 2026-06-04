@@ -9,11 +9,10 @@ import Shared, { MAX_NUMBER_OF_STATS, USER_AGENT } from '../libs/shared';
 const numberValidator = (value, helpers) => {
   // convert to number and truncate
   const number = AmbitoDolar.getNumber(value);
-  if (number > 0) {
-    // replace value with a new value
-    return number;
+  if (number === null) {
+    return helpers.error('any.invalid');
   }
-  return helpers.error('any.invalid');
+  return number;
 };
 
 const getRate = (type) => {
@@ -46,6 +45,13 @@ const getRate = (type) => {
         console.warn(
           'Invalid schema validation on rate',
           JSON.stringify({ type, data, error: error.message }),
+        );
+        return;
+      }
+      if ([value.compra, value.venta, value.valor].some((n) => n <= 0)) {
+        console.info(
+          'Skipping zero or negative rate value',
+          JSON.stringify({ type, data }),
         );
         return;
       }
@@ -260,6 +266,7 @@ const getBusinessDayRates = (rates, realtime) => {
     getRate(AmbitoDolar.EURO_TYPE),
     getRate(AmbitoDolar.EURO_INFORMAL_TYPE),
     getRate(AmbitoDolar.REAL_TYPE),
+    getRate(AmbitoDolar.FUTURE_TYPE),
   ];
   // REVIEW: disabled (for now) for more frequent updates
   realtime = false;

@@ -63,6 +63,7 @@ export const MIN_CLIENT_VERSION_FOR_SAVING = '6.1.0';
 export const MIN_CLIENT_VERSION_FOR_QATAR = '6.4.0';
 export const MIN_CLIENT_VERSION_FOR_BNA = '6.11.0';
 export const MIN_CLIENT_VERSION_FOR_EURO_AND_REAL = '10.1.0';
+export const MIN_CLIENT_VERSION_FOR_FUTURE = '13.2.0';
 export const MAX_NUMBER_OF_STATS = 7; // 1 week
 export const IS_LOCAL = process.env.IS_LOCAL === 'true';
 export const IS_PRODUCTION = process.env.IS_PRODUCTION === 'true';
@@ -229,10 +230,11 @@ const getVariationThreshold = (type, prev_rate, rate) => {
     AmbitoDolar.CCL_TYPE,
     AmbitoDolar.MEP_TYPE,
     AmbitoDolar.CCB_TYPE,
+    AmbitoDolar.FUTURE_TYPE,
   ];
   if (realtime_types.includes(type)) {
-    // flexible variation of 2% between notifications
-    return ((prev_rate + rate) / 2) * 0.02;
+    // flexible variation of 1% between notifications
+    return ((prev_rate + rate) / 2) * 0.01;
   }
   return 0.05;
 };
@@ -354,7 +356,8 @@ const storeRateStats = (rates) => {
         type === AmbitoDolar.BNA_TYPE ||
         type === AmbitoDolar.EURO_TYPE ||
         type === AmbitoDolar.EURO_INFORMAL_TYPE ||
-        type === AmbitoDolar.REAL_TYPE
+        type === AmbitoDolar.REAL_TYPE ||
+        type === AmbitoDolar.FUTURE_TYPE
       ) {
         return obj;
       }
@@ -440,7 +443,8 @@ const storeHistoricalRatesJsonObject = async (rates) => {
         type === AmbitoDolar.BNA_TYPE ||
         type === AmbitoDolar.EURO_TYPE ||
         type === AmbitoDolar.EURO_INFORMAL_TYPE ||
-        type === AmbitoDolar.REAL_TYPE
+        type === AmbitoDolar.REAL_TYPE ||
+        type === AmbitoDolar.FUTURE_TYPE
       ) {
         return obj;
       }
@@ -467,6 +471,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
         AmbitoDolar.EURO_TYPE,
         AmbitoDolar.EURO_INFORMAL_TYPE,
         AmbitoDolar.REAL_TYPE,
+        AmbitoDolar.FUTURE_TYPE,
       ]),
     ),
     storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_year_rates),
@@ -487,7 +492,8 @@ const storeRatesJsonObject = (rates, is_updated) => {
         type === AmbitoDolar.BNA_TYPE ||
         type === AmbitoDolar.EURO_TYPE ||
         type === AmbitoDolar.EURO_INFORMAL_TYPE ||
-        type === AmbitoDolar.REAL_TYPE
+        type === AmbitoDolar.REAL_TYPE ||
+        type === AmbitoDolar.FUTURE_TYPE
       ) {
         return obj;
       }
@@ -517,6 +523,7 @@ const storeRatesJsonObject = (rates, is_updated) => {
         AmbitoDolar.EURO_TYPE,
         AmbitoDolar.EURO_INFORMAL_TYPE,
         AmbitoDolar.REAL_TYPE,
+        AmbitoDolar.FUTURE_TYPE,
       ]),
     }),
     storePublicJsonObject(QUOTES_OBJECT_KEY, rates),
@@ -563,6 +570,8 @@ const getPathForRate = (type) => {
     return 'euro/informal';
   } else if (type === AmbitoDolar.REAL_TYPE) {
     return 'real';
+  } else if (type === AmbitoDolar.FUTURE_TYPE) {
+    return 'dolarfuturo';
   }
   return `dolar/${type}`;
 };
@@ -744,7 +753,9 @@ const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
       return promiseRetry((retry, attempt) =>
         factory()
           .then((response) => {
-            const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
+            const duration = AmbitoDolar.formatDuration(
+              Date.now() - start_time,
+            );
             return {
               target,
               duration,

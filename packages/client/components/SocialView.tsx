@@ -7,11 +7,11 @@ export default ({
   // same size as "fonts.body" of FundingView
   size = Settings.SOCIAL_ICON_SIZE,
   extraSpace = false,
-  condensed = false,
+  compact = null,
 }) => {
   const { theme } = Helper.useTheme();
   const grayColor = (Settings as any).getGrayColor(theme);
-  if (condensed === true) {
+  if (compact != null) {
     // same size as "fonts.subhead" of FundingView
     size = 15;
   }
