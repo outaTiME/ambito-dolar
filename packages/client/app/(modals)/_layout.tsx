@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -20,14 +20,15 @@ export default function ModalsLayout() {
     >
       <Stack.Screen
         name="customize-rates/index"
-        options={({ navigation }) => ({
+        initialParams={{ modal: 'true' }}
+        options={{
           title: Helper.getScreenTitle(I18n.t('customize_rates')),
           ...Platform.select({
             ios: {
               headerRight: () => (
                 <HeaderButton.Text
-                  title="Listo"
-                  onPress={() => navigation.goBack()}
+                  title={I18n.t('done')}
+                  onPress={() => router.back()}
                 />
               ),
             },
@@ -35,36 +36,19 @@ export default function ModalsLayout() {
               headerLeft: () => (
                 <HeaderButton.Icon
                   iconName="arrow-back"
-                  onPress={() => navigation.goBack()}
+                  onPress={() => router.back()}
                 />
               ),
             },
           }),
-        })}
+        }}
       />
       <Stack.Screen
         name="customize-rates/order"
-        options={({ navigation }) => ({
+        initialParams={{ modal: 'true' }}
+        options={{
           title: Helper.getScreenTitle(I18n.t('rate_order')),
-          headerLeft: () => (
-            <HeaderButton.Icon
-              iconName="arrow-back"
-              onPress={() => navigation.goBack()}
-            />
-          ),
-        })}
-      />
-      <Stack.Screen
-        name="customize-rates/display"
-        options={({ navigation }) => ({
-          title: Helper.getScreenTitle(I18n.t('rate_display')),
-          headerLeft: () => (
-            <HeaderButton.Icon
-              iconName="arrow-back"
-              onPress={() => navigation.goBack()}
-            />
-          ),
-        })}
+        }}
       />
     </Stack>
   );
