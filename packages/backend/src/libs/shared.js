@@ -15,7 +15,6 @@ import { Expo } from 'expo-server-sdk';
 import { JWT } from 'google-auth-library';
 import https from 'https';
 import * as _ from 'lodash';
-import prettyMilliseconds from 'pretty-ms';
 import pLimit from 'promise-limit';
 import semverGte from 'semver/functions/gte';
 import semverLt from 'semver/functions/lt';
@@ -619,7 +618,7 @@ const publishMessageToTopic = (event, payload = {}) => {
   return snsClient
     .send(command)
     .then(({ MessageId: id }) => {
-      const duration = prettyMilliseconds(Date.now() - start_time);
+      const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
       console.info(
         'Message published to sns topic',
         JSON.stringify({
@@ -666,7 +665,7 @@ const triggerEvent = (event, payload) =>
       body: JSON.stringify(payload),
     },
   ).then(() => {
-    // const duration = prettyMilliseconds(Date.now() - start_time);
+    // const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
     /* console.info(
         'Event triggered',
         JSON.stringify({
@@ -745,7 +744,7 @@ const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
       return promiseRetry((retry, attempt) =>
         factory()
           .then((response) => {
-            const duration = prettyMilliseconds(Date.now() - start_time);
+            const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
             return {
               target,
               duration,

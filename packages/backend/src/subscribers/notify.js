@@ -2,7 +2,6 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import * as _ from 'lodash';
 import pThrottle from 'p-throttle';
-import prettyMilliseconds from 'pretty-ms';
 import { Resource } from 'sst';
 
 import Shared, {
@@ -283,7 +282,7 @@ const sendPushNotifications = async (
           _.compact(ticketChunks.flat()),
         )),
       );
-      const duration = prettyMilliseconds(Date.now() - expo_start_time);
+      const duration = AmbitoDolar.formatDuration(Date.now() - expo_start_time);
       console.info(
         'Messages sent',
         JSON.stringify({

@@ -3,6 +3,7 @@ import ky from 'ky';
 import * as _ from 'lodash';
 import moment from 'moment-timezone';
 import numeral from 'numeral';
+import prettyMilliseconds from 'pretty-ms';
 import pRetry from 'promise-retry';
 
 // locales
@@ -196,6 +197,8 @@ const formatCurrency = (num, usd, type = null) => {
   }
   return 'US$' + formatted;
 };
+
+const formatDuration = (ms) => (ms == null ? null : prettyMilliseconds(ms));
 
 const isRateFromToday = (rate) => {
   const date = getTimezoneDate(undefined, undefined, true);
@@ -402,6 +405,7 @@ export default {
   formatRateCurrency,
   formatRateChange,
   formatCurrency,
+  formatDuration,
   isRateFromToday,
   hasRatesFromToday,
   getAvailableRateTypes,

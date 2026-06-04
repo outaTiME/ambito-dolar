@@ -25,7 +25,6 @@
     "object-hash": "^3.0.0",
     "p-throttle": "^8.1.0",
     "pretty-bytes": "^7.1.0",
-    "pretty-ms": "^9.3.0",
     "promise-limit": "^2.7.0",
     "puppeteer-core": "~24.43.0",
     "reddit": "^1.2.1",

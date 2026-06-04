@@ -3,7 +3,6 @@ import * as chrono from 'chrono-node/es';
 import Joi from 'joi';
 import * as _ from 'lodash';
 import hash from 'object-hash';
-import prettyMilliseconds from 'pretty-ms';
 
 import Shared, { MAX_NUMBER_OF_STATS, USER_AGENT } from '../libs/shared';
 
@@ -63,7 +62,7 @@ const getRate = (type) => {
         type,
         rate: [identity, rate_last],
       };
-      const duration = prettyMilliseconds(Date.now() - start_time);
+      const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
       console.info(
         'Rate fetch completed',
         JSON.stringify({
@@ -117,7 +116,7 @@ const getRate = (type) => {
           type: target_type,
           rate: [identity, value[type]],
         }));
-        const duration = prettyMilliseconds(Date.now() - start_time);
+        const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
         console.info(
           'Crypto rates fetch completed',
           JSON.stringify({
