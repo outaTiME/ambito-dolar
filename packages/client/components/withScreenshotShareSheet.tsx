@@ -1,19 +1,16 @@
 // @ts-nocheck
-import { connectActionSheet } from '@expo/react-native-action-sheet';
-import { compose } from '@reduxjs/toolkit';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { useNavigation } from 'expo-router';
+import { Stack, useNavigation } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import React from 'react';
 import {
-  StyleSheet,
+  findNodeHandle,
   Keyboard,
+  StyleSheet,
   View,
   Text,
   Image,
-  findNodeHandle,
-  // ActionSheetIOS,
-  // Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
@@ -28,125 +25,141 @@ import SocialView from '@/components/SocialView';
 import WatermarkOverlayView from '@/components/WatermarkOverlayView';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
-import Amplitude from '@/utilities/Amplitude';
 import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
 import { goToCustomizeRatesModal } from '@/utilities/Navigation';
 
 const withScreenshotShareSheet =
-  ({ actions: action_opts, handleContentChangeSize } = {}) =>
+  ({ actions: action_opts } = {}) =>
   (Component) =>
   (props) => {
-    const {
-      showActionSheetWithOptions,
-      backgroundColor,
-      headerHeight,
-      tabBarHeight,
-      rateTypes,
-    } = props;
+    const { backgroundColor, rateTypes } = props;
     const navigation = useNavigation();
     const { theme, fonts } = Helper.useTheme();
+    const safeAreaInsets = useSafeAreaInsets();
+    const { showActionSheetWithOptions } = useActionSheet();
+    const anchorRef = React.useRef();
     const shareViewContainerRef = React.useRef();
     const [capturedImage, setCapturedImage] = React.useState(null);
     const updatedAt = useSelector((state) => state.rates.updated_at);
     const shareViewGeneratedContainerRef = React.useRef();
     const [sharingAvailable] = Helper.useSharedState('sharingAvailable');
-    const anchorRef = React.useRef();
-    const safeAreaInsets = useSafeAreaInsets();
+    const share_opt = I18n.t('share');
+    const handleMenuSelection = React.useCallback(
+      (button_name) => {
+        if (button_name === I18n.t('edit')) {
+          goToCustomizeRatesModal();
+        } else if (button_name === share_opt) {
+          captureRef(shareViewContainerRef.current, {
+            result: 'data-uri',
+          }).then(
+            (uri) => {
+              Image.getSize(uri, (width, height) => {
+                setCapturedImage({
+                  uri,
+                  width: Settings.DEVICE_WIDTH,
+                  // resize according to device width
+                  height: (Settings.DEVICE_WIDTH * height) / width,
+                });
+              });
+            },
+            (error) => {
+              console.error('Unable to generate view snapshot', error);
+            },
+          );
+        } else if (__DEV__ && button_name === 'Forzar crash') {
+          throw new Error('Force application crash');
+        }
+      },
+      [share_opt],
+    );
+    const action_sheet_opts = React.useMemo(() => {
+      const opts = [].concat(action_opts ?? []);
+      if (sharingAvailable && Settings.IS_HANDSET) {
+        opts.push(share_opt);
+      }
+      return opts;
+    }, [action_opts, sharingAvailable, share_opt]);
+    const sfSymbolFor = (opt) => {
+      if (opt === I18n.t('edit')) {
+        return 'pencil';
+      }
+      if (opt === share_opt) {
+        return 'square.and.arrow.up';
+      }
+      return undefined;
+    };
+    // iPad pre-iOS 26 crashes presenting UIAlertController.actionSheet via
+    // ExpoScreenOrientation.ScreenOrientationViewController (missing popover anchor);
+    // gate the header button until LG native toolbar path is available.
+    const supportsActionSheet = Settings.IS_HANDSET || Settings.IS_LIQUID_GLASS;
+    const shouldShow =
+      rateTypes.length > 0 &&
+      supportsActionSheet &&
+      ((sharingAvailable && Settings.IS_HANDSET) || action_opts?.length > 0);
+    // non-Liquid-Glass: custom HeaderButton.Icon + cross-platform action sheet
+    const useNativeToolbar = Settings.IS_LIQUID_GLASS;
     React.useLayoutEffect(() => {
-      if (!navigation?.setOptions) {
+      if (useNativeToolbar) {
+        return;
+      }
+      if (!shouldShow) {
+        navigation.setOptions({ headerRight: undefined });
         return;
       }
       navigation.setOptions({
-        headerRight:
-          rateTypes.length > 0 &&
-          ((sharingAvailable && Settings.IS_HANDSET) || action_opts?.length > 0)
-            ? () => (
-                <View ref={anchorRef}>
-                  <HeaderButton.Icon
-                    iconName="more-horiz"
-                    onPress={() => {
-                      Keyboard.dismiss();
-                      // required by ConvertionScreen when the TextInput has focus
-                      setTimeout(() => {
-                        const share_opt = I18n.t('share');
-                        const crash_opt = 'Forzar crash';
-                        const action_sheet_opts = [].concat(action_opts ?? []);
-                        if (sharingAvailable && Settings.IS_HANDSET) {
-                          action_sheet_opts.push(share_opt);
-                        }
-                        const options = [
-                          ...action_sheet_opts,
-                          I18n.t('cancel'),
-                        ];
-                        const cancelButtonIndex = options.length - 1;
-                        showActionSheetWithOptions(
-                          {
-                            options,
-                            cancelButtonIndex,
-                            // ios
-                            anchor: findNodeHandle(anchorRef.current),
-                            userInterfaceStyle: theme,
-                            // android / web
-                            textStyle: {
-                              color: Settings.getForegroundColor(theme),
-                            },
-                            containerStyle: {
-                              backgroundColor: Settings.getContentColor(theme),
-                              paddingBottom: safeAreaInsets.bottom,
-                            },
-                            separatorStyle: {
-                              height: StyleSheet.hairlineWidth,
-                              backgroundColor: Settings.getStrokeColor(theme),
-                            },
-                          },
-                          (button_index) => {
-                            const button_name = action_sheet_opts[button_index];
-                            if (button_name === I18n.t('edit')) {
-                              goToCustomizeRatesModal();
-                            } else if (button_name === share_opt) {
-                              Amplitude.track('Share rates');
-                              captureRef(shareViewContainerRef.current, {
-                                result: 'data-uri',
-                              }).then(
-                                (uri) => {
-                                  Image.getSize(uri, (width, height) => {
-                                    setCapturedImage({
-                                      uri,
-                                      width: Settings.DEVICE_WIDTH,
-                                      // resize according to device width
-                                      height:
-                                        (Settings.DEVICE_WIDTH * height) /
-                                        width,
-                                    });
-                                  });
-                                },
-                                (error) =>
-                                  console.error(
-                                    'Unable to generate view snapshot',
-                                    error,
-                                  ),
-                              );
-                            } else if (button_name === crash_opt) {
-                              throw new Error('Force application crash');
-                            }
-                          },
-                        );
-                      });
-                    }}
-                  />
-                </View>
-              )
-            : undefined,
+        headerRight: () => (
+          <View ref={anchorRef}>
+            <HeaderButton.Icon
+              iconName="more-horiz"
+              onPress={() => {
+                Keyboard.dismiss();
+                // required by ConversionScreen when the TextInput has focus
+                setTimeout(() => {
+                  const options = [...action_sheet_opts, I18n.t('cancel')];
+                  const cancelButtonIndex = options.length - 1;
+                  showActionSheetWithOptions(
+                    {
+                      options,
+                      cancelButtonIndex,
+                      // ios
+                      anchor: findNodeHandle(anchorRef.current),
+                      userInterfaceStyle: theme,
+                      // android / web
+                      textStyle: {
+                        color: Settings.getForegroundColor(theme),
+                      },
+                      containerStyle: {
+                        backgroundColor: Settings.getContentColor(theme),
+                        paddingBottom: safeAreaInsets.bottom,
+                      },
+                      separatorStyle: {
+                        height: StyleSheet.hairlineWidth,
+                        backgroundColor: Settings.getStrokeColor(theme),
+                      },
+                    },
+                    (selectedIndex) => {
+                      if (selectedIndex === cancelButtonIndex) {
+                        return;
+                      }
+                      handleMenuSelection(action_sheet_opts[selectedIndex]);
+                    },
+                  );
+                });
+              }}
+            />
+          </View>
+        ),
       });
     }, [
+      useNativeToolbar,
+      shouldShow,
+      action_sheet_opts,
+      handleMenuSelection,
       navigation,
-      rateTypes,
-      sharingAvailable,
-      action_opts,
-      theme,
-      safeAreaInsets,
       showActionSheetWithOptions,
+      theme,
+      safeAreaInsets.bottom,
     ]);
     const dispatch = useDispatch();
     // screen capture customization
@@ -191,11 +204,29 @@ const withScreenshotShareSheet =
             setCapturedImageLoaded(false);
           });
       }
-    }, [screenCaptured]);
+    }, [screenCaptured, dispatch]);
     const shareTitle =
       navigation?.getCurrentOptions?.()?.title || Settings.APP_NAME;
     return (
       <>
+        {shouldShow && useNativeToolbar && (
+          <Stack.Toolbar placement="right">
+            <Stack.Toolbar.Menu icon="ellipsis">
+              {action_sheet_opts.map((opt) => {
+                const symbolName = sfSymbolFor(opt);
+                return (
+                  <Stack.Toolbar.MenuAction
+                    key={opt}
+                    {...(symbolName && { icon: symbolName })}
+                    onPress={() => handleMenuSelection(opt)}
+                  >
+                    {opt}
+                  </Stack.Toolbar.MenuAction>
+                );
+              })}
+            </Stack.Toolbar.Menu>
+          </Stack.Toolbar>
+        )}
         {capturedImage && (
           <View
             style={[
@@ -260,30 +291,26 @@ const withScreenshotShareSheet =
                 style={{
                   width: capturedImage.width,
                   height: capturedImage.height,
+                  ...(Settings.CONTENT_TOP_SHRINK_STYLE && {
+                    marginTop:
+                      Settings.CONTENT_MARGIN -
+                      Settings.CONTENT_TOP_SHRINK_STYLE.marginTop,
+                  }),
                 }}
                 fadeDuration={0}
                 onLoadEnd={() => setCapturedImageLoaded(true)}
               />
               <DividerView />
               <View
-                style={[
-                  {
-                    // `fonts.caption1` lineHeight diff
-                    paddingVertical: Settings.CARD_PADDING * 2 - (18 - 12),
-                    // paddingVertical: Settings.CARD_PADDING,
-                    paddingHorizontal: Settings.CARD_PADDING * 2,
-                    backgroundColor: Settings.getContentColor(theme),
-                  },
-                  {
-                    borderColor: 'red',
-                    // borderWidth: 1,
-                  },
-                  {
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  },
-                ]}
+                style={{
+                  // `fonts.caption1` lineHeight diff
+                  paddingVertical: Settings.CARD_PADDING * 2 - (18 - 12),
+                  paddingHorizontal: Settings.CARD_PADDING * 2,
+                  backgroundColor: Settings.getContentColor(theme),
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
                 <Text
                   style={[
@@ -293,26 +320,16 @@ const withScreenshotShareSheet =
                       color: Settings.getGrayColor(theme),
                       marginRight: Settings.PADDING,
                     },
-                    {
-                      borderColor: 'blue',
-                      // borderWidth: 1,
-                    },
                   ]}
                   numberOfLines={1}
                 >
                   {Settings.APP_COPYRIGHT}
                 </Text>
                 <View
-                  style={[
-                    {
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    },
-                    {
-                      borderColor: 'red',
-                      // borderWidth: 1,
-                    },
-                  ]}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
                 >
                   {/* same size as `fonts.caption1` of copyright */}
                   <SocialView size={12} />
@@ -323,15 +340,8 @@ const withScreenshotShareSheet =
           </View>
         )}
         <FixedScrollView
-          {...{
-            // required for better view shot (same as parent)
-            backgroundColor,
-            contentContainerRef: shareViewContainerRef,
-            headerHeight,
-            tabBarHeight,
-            // containerRef: scrollViewRef,
-            handleContentChangeSize,
-          }}
+          backgroundColor={backgroundColor}
+          contentContainerRef={shareViewContainerRef}
         >
           <Component {...props} />
         </FixedScrollView>
@@ -339,7 +349,4 @@ const withScreenshotShareSheet =
     );
   };
 
-export default (opts) =>
-  compose(connectActionSheet, withScreenshotShareSheet(opts));
-
-// export default compose(connectActionSheet, withScreenshotShareSheet);
+export default (opts) => withScreenshotShareSheet(opts);
