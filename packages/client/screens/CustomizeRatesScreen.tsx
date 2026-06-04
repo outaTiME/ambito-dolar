@@ -4,11 +4,13 @@ import { compose } from '@reduxjs/toolkit';
 import * as Haptics from 'expo-haptics';
 import * as _ from 'lodash';
 import React from 'react';
+import { Platform } from 'react-native';
 import Animated, {
   useAnimatedRef,
   useAnimatedStyle,
   useDerivedValue,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Sortable, { useItemContext } from 'react-native-sortables';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
@@ -23,7 +25,7 @@ import withRates from '@/components/withRates';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
-import { goToRateDisplay, goToRateOrder } from '@/utilities/Navigation';
+import { goToRateOrder } from '@/utilities/Navigation';
 
 const GridItem = ({ id, isModal }) => {
   const included = useSelector(
@@ -61,13 +63,14 @@ const GridItem = ({ id, isModal }) => {
     <ContentView
       contentContainerStyle={{
         marginVertical: 0,
-        marginHorizontal: Settings.CARD_PADDING * 2,
+        marginHorizontal: Settings.CONTENT_MARGIN * 2,
       }}
     >
       <Animated.View
         style={[
           {
             backgroundColor: Settings.getContentColor(theme, false, isModal),
+            borderCurve: 'continuous',
           },
           radiusStyle,
         ]}
@@ -88,17 +91,12 @@ const GridItem = ({ id, isModal }) => {
   );
 };
 
-const CustomizeRatesScreen = ({
-  isModal,
-  headerHeight,
-  tabBarHeight,
-  rates,
-}) => {
+const CustomizeRatesScreen = ({ isModal, rates }) => {
   const scrollableRef = useAnimatedRef();
-  const { rate_order, rate_display, rate_types } = useSelector(
-    ({ application: { rate_order, rate_display, rate_types } }) => ({
+  const insets = useSafeAreaInsets();
+  const { rate_order, rate_types } = useSelector(
+    ({ application: { rate_order, rate_types } }) => ({
       rate_order,
-      rate_display,
       rate_types,
     }),
     shallowEqual,
@@ -136,17 +134,19 @@ const CustomizeRatesScreen = ({
     ),
     [isModal],
   );
+  // pad scroll content on android modal because native stack lacks safe-area insets
+  const contentContainerStyle =
+    Platform.OS === 'android' && isModal
+      ? { paddingBottom: insets.bottom }
+      : undefined;
   return (
     <FixedScrollView
-      {...{
-        headerHeight,
-        tabBarHeight,
-      }}
       ref={scrollableRef}
+      contentContainerStyle={contentContainerStyle}
     >
       <CardView {...{ plain: true, isModal }}>
         <CardItemView
-          title="Orden"
+          title={I18n.t('rate_order')}
           useSwitch={false}
           value={Helper.getRateOrderString(rate_order)}
           onAction={() => {
@@ -154,19 +154,8 @@ const CustomizeRatesScreen = ({
           }}
           isModal={isModal}
         />
-        {false && (
-          <CardItemView
-            title="Mostrar"
-            useSwitch={false}
-            value={Helper.getRateDisplayString(rate_display)}
-            onAction={() => {
-              goToRateDisplay(isModal);
-            }}
-            isModal={isModal}
-          />
-        )}
       </CardView>
-      <HeaderComponent title="Orden y visualización" />
+      <HeaderComponent title={I18n.t('rate_order_and_display')} />
       <Sortable.Grid
         activeItemScale={1}
         // activeItemScale={1.03}
@@ -204,7 +193,7 @@ const CustomizeRatesScreen = ({
       <FooterComponent note={I18n.t('customize_rates_note')} />
       <CardView {...{ plain: true, isModal }}>
         <CardItemView
-          title="Restablecer"
+          title={I18n.t('reset')}
           useSwitch={false}
           chevron={false}
           onAction={() => {

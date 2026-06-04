@@ -1,7 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import * as _ from 'lodash';
-import prettyMilliseconds from 'pretty-ms';
 import { Resource } from 'sst';
 
 import Shared from '../libs/shared';
@@ -59,7 +58,7 @@ export const handler = Shared.wrapHandler(async (event) => {
         ),
       ),
     );
-    const duration = prettyMilliseconds(Date.now() - start_time);
+    const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
     return Shared.serviceResponse(null, 200, {
       amount: `${ddb_items.length} / ${items.length}`,
       chunks: chunks.length,

@@ -3,7 +3,6 @@ import { BatchWriteItemCommand } from '@aws-sdk/client-dynamodb'; // ES Modules 
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import * as _ from 'lodash';
-import prettyMilliseconds from 'pretty-ms';
 import { Resource } from 'sst';
 
 import Shared, { IS_LOCAL } from '../libs/shared';
@@ -101,7 +100,7 @@ const check = async (items = [], readonly) => {
     if (!readonly) {
       await invalidateDevices(non_registered_devices);
     }
-    const duration = prettyMilliseconds(Date.now() - start_time);
+    const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
     return {
       // devices: _.map(invalid_receipts, 'push_token'),
       ...(trace_errors && { errors: error_receipts.length }),

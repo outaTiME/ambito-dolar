@@ -17,7 +17,6 @@ const RatesIndexRoute = () => {
     }
     router.setParams({ [POP_TO_TOP_PARAM]: undefined });
   }, [shouldPopToTop]);
-
   return <MainScreen />;
 };
 

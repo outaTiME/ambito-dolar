@@ -81,7 +81,6 @@ const SpreadCardItemView = ({ rateType, nominalValue, percentageValue }) => {
 };
 
 const Spreads = withRates(true)(({ type, stat, rates, rateTypes }) => {
-  const { theme } = Helper.useTheme();
   const getItemView = React.useCallback(
     (itemType) => {
       if (itemType !== type) {
@@ -94,43 +93,24 @@ const Spreads = withRates(true)(({ type, stat, rates, rateTypes }) => {
           const rateChangePercent = AmbitoDolar.getNumber(
             (rateValue / itemRateValue - 1) * 100,
           );
-          const showValueElement = true;
           const rateChange = AmbitoDolar.getRateChange(
-            [
-              null,
-              rateValue,
-              showValueElement === true ? null : rateChangePercent,
-              itemRateValue,
-            ],
+            [null, rateValue, null, itemRateValue],
             true,
           );
-          if (showValueElement === true) {
-            return (
-              <SpreadCardItemView
-                {...{
-                  rateType: itemType,
-                  nominalValue: rateChange,
-                  percentageValue: rateChangePercent,
-                }}
-                key={itemType}
-              />
-            );
-          }
           return (
-            <CardItemView
-              key={itemType}
-              title={AmbitoDolar.getRateTitle(itemType)}
-              useSwitch={false}
-              value={rateChange}
-              valueStyle={{
-                color: Helper.getChangeColor(rateChangePercent, theme),
+            <SpreadCardItemView
+              {...{
+                rateType: itemType,
+                nominalValue: rateChange,
+                percentageValue: rateChangePercent,
               }}
+              key={itemType}
             />
           );
         }
       }
     },
-    [type, rates, stat, theme],
+    [type, rates, stat],
   );
   return (
     <CardView title={I18n.t('spreads')} plain>

@@ -9,7 +9,7 @@ import FixedScrollView from '@/components/FixedScrollView';
 import withContainer from '@/components/withContainer';
 import Helper from '@/utilities/Helper';
 
-const RateOrderScreen = ({ isModal, headerHeight, tabBarHeight }) => {
+const RateOrderScreen = ({ isModal }) => {
   const {
     rate_order: selectedOrder,
     rate_order_direction: selectedOrderDirection,
@@ -22,12 +22,7 @@ const RateOrderScreen = ({ isModal, headerHeight, tabBarHeight }) => {
   );
   const dispatch = useDispatch();
   return (
-    <FixedScrollView
-      {...{
-        headerHeight,
-        tabBarHeight,
-      }}
-    >
+    <FixedScrollView>
       <CardView {...{ plain: true, isModal }}>
         {['default', 'name', 'price', 'change', 'update', 'custom'].map(
           (order) => (

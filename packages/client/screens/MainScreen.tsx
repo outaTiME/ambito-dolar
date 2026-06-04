@@ -18,7 +18,7 @@ import {
   goToCustomizeRatesModal,
 } from '@/utilities/Navigation';
 
-const MainScreen = ({ rates, rateTypes, shoudStretch }) => {
+const MainScreen = ({ rates, rateTypes, shouldStretch }) => {
   const dispatch = useDispatch();
   const onRateSelected = React.useCallback(
     (type) => {
@@ -34,12 +34,12 @@ const MainScreen = ({ rates, rateTypes, shoudStretch }) => {
           type,
           stats: rates[type].stats,
           onSelected: onRateSelected,
-          shoudStretch,
+          shouldStretch,
         }}
         key={type}
       />
     ),
-    [rates, shoudStretch],
+    [rates, shouldStretch, onRateSelected],
   );
   if (rateTypes.length === 0) {
     return (
@@ -74,6 +74,5 @@ export default compose(
   withRates(true),
   withScreenshotShareSheet({
     actions: [I18n.t('edit')],
-    handleContentChangeSize: true,
   }),
 )(MainScreen);

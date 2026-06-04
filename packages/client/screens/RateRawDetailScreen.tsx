@@ -47,7 +47,7 @@ const RateRawDetailItem = ({ timestamp, value, change }) => {
   );
 };
 
-const RateRawDetailScreen = ({ headerHeight, tabBarHeight, rates }) => {
+const RateRawDetailScreen = ({ rates }) => {
   const params = useLocalSearchParams();
   const type = params?.type as string;
   const rangeIndex = Number(params?.rangeIndex || 0);
@@ -131,8 +131,6 @@ const RateRawDetailScreen = ({ headerHeight, tabBarHeight, rates }) => {
         title,
         data,
         itemHeight: ITEM_HEIGHT,
-        headerHeight,
-        tabBarHeight,
       }}
     />
   );

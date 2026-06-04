@@ -254,9 +254,8 @@ const getRates = (rates) =>
     .then((new_rates) => getNewRates(rates, new_rates));
 
 // process these rates only on business days
-const getBusinessDayRates = (rates, realtime) => {
-  const promises = [
-    // (for now) the following rates are updated on holidays or after closing time
+const getBusinessDayRates = (rates) =>
+  Promise.all([
     getRate(AmbitoDolar.BNA_TYPE),
     // getRate(AmbitoDolar.INFORMAL_TYPE),
     getRate(AmbitoDolar.TOURIST_TYPE),
@@ -267,28 +266,9 @@ const getBusinessDayRates = (rates, realtime) => {
     getRate(AmbitoDolar.EURO_INFORMAL_TYPE),
     getRate(AmbitoDolar.REAL_TYPE),
     getRate(AmbitoDolar.FUTURE_TYPE),
-  ];
-  // REVIEW: disabled (for now) for more frequent updates
-  realtime = false;
-  if (realtime) {
-    // the following rates are frequently updated
-    promises.push(
-      getRate(AmbitoDolar.BNA_TYPE),
-      getRate(AmbitoDolar.TOURIST_TYPE),
-      getRate(AmbitoDolar.CCL_TYPE),
-      getRate(AmbitoDolar.MEP_TYPE),
-      getRate(AmbitoDolar.CCB_TYPE),
-      /* getCryptoRates([
-        // ['cclgd30', AmbitoDolar.CCL_TYPE],
-        // ['mepgd30', AmbitoDolar.MEP_TYPE],
-        AmbitoDolar.CCB_TYPE,
-      ]), */
-    );
-  }
-  return Promise.all(promises)
+  ])
     .then(getObjectRates)
     .then((new_rates) => getNewRates(rates, new_rates));
-};
 
 const getHistoricalRates = (rates, base_rates) =>
   Promise.all(
@@ -365,9 +345,6 @@ const notify = (
   );
 };
 
-// in minutes
-const REALTIME_PROCESSING_INTERVAL = 15;
-
 export const handler = Shared.wrapHandler(async (event) => {
   const {
     notify: trigger_notification,
@@ -382,10 +359,6 @@ export const handler = Shared.wrapHandler(async (event) => {
       force,
     }),
   );
-  // at this point to avoid fetch delays
-  const in_time =
-    AmbitoDolar.getTimezoneDate().minutes() % REALTIME_PROCESSING_INTERVAL ===
-    0;
   const base_rates = await Shared.getRatesJsonObject().catch((error) => {
     if (error.name === 'NoSuchKey') {
       return {};
@@ -401,8 +374,7 @@ export const handler = Shared.wrapHandler(async (event) => {
   const new_rates = await getRates(rates);
   const is_opening = !has_rates_from_today && !_.isEmpty(new_rates);
   if (is_opening || has_rates_from_today || force) {
-    const realtime = is_opening || in_time;
-    const new_business_day_rates = await getBusinessDayRates(rates, realtime);
+    const new_business_day_rates = await getBusinessDayRates(rates);
     Object.assign(new_rates, new_business_day_rates);
   }
   const has_new_rates = !_.isEmpty(new_rates);

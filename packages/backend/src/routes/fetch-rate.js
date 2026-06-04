@@ -1,5 +1,4 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import prettyMilliseconds from 'pretty-ms';
 
 import Shared, { USER_AGENT } from '../libs/shared';
 
@@ -14,7 +13,7 @@ export const handler = Shared.wrapHandler(async (event) => {
   })
     .then(async (response) => {
       const data = await response.json();
-      const duration = prettyMilliseconds(Date.now() - start_time);
+      const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
       console.info(
         'Rate fetch completed',
         JSON.stringify({

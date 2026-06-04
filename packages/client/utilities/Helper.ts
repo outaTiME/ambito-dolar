@@ -9,18 +9,15 @@ import * as Sharing from 'expo-sharing';
 import * as _ from 'lodash';
 import hash from 'object-hash';
 import React from 'react';
-import { Platform, Linking, StyleSheet, PixelRatio } from 'react-native';
+import { Platform, Linking, PixelRatio, StyleSheet, View } from 'react-native';
 import {
-  SafeAreaInsetsContext,
-  SafeAreaFrameContext,
-  useSafeAreaInsets,
   useSafeAreaFrame,
+  useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { useSelector, shallowEqual } from 'react-redux';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
 import semverDiff from 'semver/functions/diff';
-import semverGt from 'semver/functions/gt';
 import semverValid from 'semver/functions/valid';
 import { ThemeContext } from 'styled-components';
 import useSWR from 'swr';
@@ -120,11 +117,9 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
 const instatDB =
   Settings.INSTANT_APP_ID && init({ appId: Settings.INSTANT_APP_ID });
 
-// https://github.com/react-navigation/react-navigation/blob/main/packages/bottom-tabs/src/views/BottomTabBar.tsx#L40
-const TABBAR_HEIGHT_UIKIT = 49;
-
 // https://github.com/react-navigation/react-navigation/blob/main/packages/native-stack/src/views/NativeStackView.native.tsx#L50
 const ANDROID_DEFAULT_HEADER_HEIGHT = 56;
+const TABBAR_HEIGHT_UIKIT = 49;
 
 const promiseRetry = AmbitoDolar.promiseRetry;
 
@@ -137,6 +132,9 @@ export default {
   },
   formatIntegerNumber(num) {
     return formatNumber(num, 0, false);
+  },
+  formatTimestamp(ts) {
+    return ts ? AmbitoDolar.getDate(ts).format('DD/MM/YY HH:mm') : null;
   },
   getNumber: AmbitoDolar.getNumber,
   formatFloatingPointNumber,
@@ -191,11 +189,6 @@ export default {
     versionB = this.cleanVersion(versionB);
     return semverDiff(versionA, versionB) === 'major';
   },
-  isVersionGt(versionA, versionB) {
-    versionA = this.cleanVersion(versionA);
-    versionB = this.cleanVersion(versionB);
-    return semverGt(versionA, versionB);
-  },
   getNotificationSettings,
   getNotificationSettingsSelector,
   getSortedRates(rates, order, orderDirection, excludedRates, rateTypes) {
@@ -246,10 +239,10 @@ export default {
   getAvailableRates(rates) {
     if (rates) {
       return _.chain(rates)
+        .thru((rates) => AmbitoDolar.getAvailableRates(rates))
         .omit([
           // rates to exclude
         ])
-        .thru((rates) => AmbitoDolar.getAvailableRates(rates))
         .pickBy(({ stats }) => stats?.length > 1)
         .mapValues(({ stats, ...rate }) => ({
           ...rate,
@@ -305,9 +298,6 @@ export default {
     });
     return ref.current;
   },
-  getChartTicks() {
-    return 4;
-  },
   // https://stackoverflow.com/a/51497981/460939
   getTickValues(min, max, numValues) {
     const stepValue = (max - min) / (numValues - 1);
@@ -329,15 +319,6 @@ export default {
   roundToNearestEven(num) {
     return Math.round(num / 2) * 2;
   },
-  roundToNearestEvenWithDecimals(num) {
-    const scaledNum = Math.round(num * 100);
-    const evenNum = Math.round(scaledNum / 2) * 2;
-    return evenNum / 100;
-  },
-  roundDownToNearestEven(num) {
-    const evenNum = Math.floor(num / 2) * 2;
-    return evenNum;
-  },
   getAvailableAppearances() {
     const appearances = ['system', 'light', 'dark'];
     const version = parseInt(Platform.Version, 10);
@@ -357,35 +338,118 @@ export default {
   getRateOrderString(order) {
     return I18n.t((order ?? 'default') + '_rate_order');
   },
-  getRateDisplayString(display) {
-    return I18n.t((display ?? 'default') + '_rate_display');
-  },
   getInvertedTheme(theme) {
     return theme === 'light' ? 'dark' : 'light';
   },
+  // https://github.com/react-navigation/react-navigation/blob/main/packages/elements/src/Header/getDefaultHeaderHeight.tsx
+  getDefaultHeaderHeight({ landscape, modalPresentation, topInset }) {
+    let headerHeight;
+    // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
+    const hasDynamicIsland = Platform.OS === 'ios' && topInset > 50;
+    const statusBarHeight = Math.max(
+      topInset - (hasDynamicIsland ? 5 + 1 / PixelRatio.get() : 0),
+      0,
+    );
+    if (Platform.OS === 'ios') {
+      if (Platform.isPad || Platform.isTV) {
+        // iPad LG and non-LG share the same compact header height
+        headerHeight = modalPresentation ? 56 : 50;
+      } else if (Settings.IS_LIQUID_GLASS) {
+        if (modalPresentation) {
+          headerHeight = 70;
+        } else if (hasDynamicIsland) {
+          headerHeight = 60;
+        } else {
+          headerHeight = 64;
+        }
+      } else if (modalPresentation && !landscape) {
+        headerHeight = 56;
+      } else {
+        headerHeight = 44;
+      }
+    } else {
+      headerHeight = 64;
+    }
+    return headerHeight + statusBarHeight;
+  },
+  // https://github.com/software-mansion/react-native-screens/issues/2536
+  getTabBarHeight(insets) {
+    if (insets) {
+      return TABBAR_HEIGHT_UIKIT + insets.bottom;
+    }
+  },
+  usePreciseHeaderHeight(isModal = false) {
+    const insets = useSafeAreaInsets();
+    const frame = useSafeAreaFrame();
+    // Modals are fullscreen in landscape only on iPhone
+    const isIPhone =
+      Platform.OS === 'ios' && !(Platform.isPad || Platform.isTV);
+    const landscape = frame.width > frame.height;
+    const isParentHeaderShown = false;
+    const topInset =
+      isParentHeaderShown ||
+      (Platform.OS === 'ios' && isModal) ||
+      (isIPhone && landscape)
+        ? 0
+        : insets.top;
+    // https://github.com/react-navigation/react-navigation/blob/main/packages/native-stack/src/views/NativeStackView.native.tsx#L196
+    const defaultHeaderHeight = Platform.select({
+      // FIXME: Currently screens isn't using Material 3
+      // So our `getDefaultHeaderHeight` doesn't return the correct value
+      // So we hardcode the value here for now until screens is updated
+      android: ANDROID_DEFAULT_HEADER_HEIGHT + topInset,
+      default: this.getDefaultHeaderHeight({
+        landscape,
+        modalPresentation: isModal,
+        topInset,
+      }),
+    });
+    return defaultHeaderHeight;
+  },
   getStackScreenOptions({ theme, fonts, modal = false }) {
     return {
-      headerBackVisible: false,
-      headerShadowVisible: false,
+      headerBackTitle: '',
+      headerBackButtonDisplayMode: 'minimal',
       headerTitleAlign: 'center',
       ...Platform.select({
         ios: {
           headerTransparent: true,
-          headerBlurEffect: modal
-            ? `systemMaterial${AmbitoDolar.getCapitalized(theme)}`
-            : theme,
+          ...(!Settings.IS_LIQUID_GLASS && {
+            headerBlurEffect: modal
+              ? `systemMaterial${AmbitoDolar.getCapitalized(theme)}`
+              : theme,
+          }),
+          headerShadowVisible: true,
         },
+        // native-stack headerStyle only honors backgroundColor; use
+        // headerBackground to draw the hairline matching tab bar top
+        android: Settings.USE_NATIVE_TABS_ANDROID
+          ? {
+              headerStyle: {
+                backgroundColor: Settings.getContentColor(theme),
+              },
+            }
+          : {
+              headerShadowVisible: false,
+              headerBackground: () =>
+                React.createElement(View, {
+                  style: {
+                    flex: 1,
+                    backgroundColor: Settings.getContentColor(theme),
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    borderBottomColor: Settings.getSeparatorColor(theme),
+                  },
+                }),
+            },
       }),
-      headerStyle: {
-        ...(Platform.OS === 'android' && {
-          backgroundColor: Settings.getContentColor(theme),
-        }),
-      },
       headerTintColor: Settings.getForegroundColor(theme),
       headerTitleStyle: {
         ...fonts.title,
       },
       statusBarStyle: this.getInvertedTheme(theme),
+      contentStyle: {
+        backgroundColor: Settings.getBackgroundColor(theme, false, modal),
+      },
     };
   },
   getScreenTitle(title) {
@@ -508,126 +572,6 @@ export default {
   getInstantDB: () => instatDB,
   forceException(message) {
     throw new Error(message ?? 'Forced exception signal');
-  },
-  // https://github.com/react-navigation/react-navigation/blob/main/packages/elements/src/Header/getDefaultHeaderHeight.tsx
-  getDefaultHeaderHeight(layout, modalPresentation, topInset) {
-    let headerHeight;
-    let statusBarHeight = topInset;
-    // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
-    const hasDynamicIsland = Platform.OS === 'ios' && topInset > 50;
-    if (hasDynamicIsland) {
-      statusBarHeight -= 5;
-      const offset = 1 / PixelRatio.get();
-      // https://github.com/devym-37/react-native-safearea-height?tab=readme-ov-file#usage-getstatusbarheightskipandroid-boolean--false
-      switch (topInset) {
-        case 59: // 14 Pro / 14 Pro Max / 15 series / 16 / 16 Plus
-          statusBarHeight -= offset;
-          break;
-        case 62: // 16 Pro / 16 Pro Max / 17 / 17 Pro / 17 Pro Max
-        case 68: // Air
-          statusBarHeight -= 0.5 + offset;
-          break;
-      }
-    }
-    /* console.log('>>> getDefaultHeaderHeight', {
-      hasDynamicIsland,
-      topInset,
-      statusBarHeight,
-    }); */
-    const isLandscape = layout.width > layout.height;
-    if (Platform.OS === 'ios') {
-      if (Platform.isPad || Platform.isTV) {
-        if (modalPresentation) {
-          headerHeight = 56;
-        } else {
-          headerHeight = 50;
-        }
-      } else {
-        if (isLandscape) {
-          headerHeight = 32;
-        } else {
-          if (modalPresentation) {
-            headerHeight = 56;
-          } else {
-            headerHeight = 44;
-          }
-        }
-      }
-    } else {
-      headerHeight = 64;
-    }
-    return headerHeight + statusBarHeight;
-  },
-  // https://github.com/software-mansion/react-native-screens/issues/2536
-  usePreciseHeaderHeight(isModal = false) {
-    const insets = useSafeAreaInsets();
-    const frame = useSafeAreaFrame();
-    // Modals are fullscreen in landscape only on iPhone
-    const isIPhone =
-      Platform.OS === 'ios' && !(Platform.isPad || Platform.isTV);
-    const isLandscape = frame.width > frame.height;
-    const isParentHeaderShown = false;
-    const topInset =
-      isParentHeaderShown ||
-      (Platform.OS === 'ios' && isModal) ||
-      (isIPhone && isLandscape)
-        ? 0
-        : insets.top;
-    // https://github.com/react-navigation/react-navigation/blob/main/packages/native-stack/src/views/NativeStackView.native.tsx#L196
-    const defaultHeaderHeight = Platform.select({
-      // FIXME: Currently screens isn't using Material 3
-      // So our `getDefaultHeaderHeight` doesn't return the correct value
-      // So we hardcode the value here for now until screens is updated
-      android: ANDROID_DEFAULT_HEADER_HEIGHT + topInset,
-      default: this.getDefaultHeaderHeight(frame, isModal, topInset),
-    });
-    return defaultHeaderHeight;
-  },
-  // https://github.com/react-navigation/react-navigation/blob/main/packages/bottom-tabs/src/views/BottomTabBar.tsx#L125
-  getTabBarHeight(insets) {
-    if (insets) {
-      const inset = insets.bottom;
-      return TABBAR_HEIGHT_UIKIT + inset;
-    }
-  },
-  useWindowHeight: () => {
-    const frame = React.useContext(SafeAreaFrameContext);
-    if (frame) {
-      return frame.height;
-    }
-  },
-  useContentMetrics(isModal) {
-    const safeAreaInsets = React.useContext(SafeAreaInsetsContext);
-    const headerHeight = this.usePreciseHeaderHeight(isModal);
-    // console.log('>>> useContentMetrics', { headerHeight });
-    const bottomTabBarHeight = this.getTabBarHeight(safeAreaInsets);
-    const deviceHeight = this.useWindowHeight();
-    return React.useMemo(() => {
-      if (safeAreaInsets && headerHeight) {
-        const tabBarHeight = !isModal
-          ? bottomTabBarHeight
-          : Platform.OS === 'ios'
-            ? Settings.IS_TABLET ||
-              (Settings.IS_HANDSET && safeAreaInsets.bottom === 0)
-              ? 0
-              : safeAreaInsets.bottom + 15
-            : safeAreaInsets.bottom;
-        const dividerHeight = StyleSheet.hairlineWidth;
-        const contentHeight = deviceHeight - headerHeight - tabBarHeight;
-        return {
-          headerHeight,
-          tabBarHeight,
-          dividerHeight,
-          contentHeight,
-        };
-      }
-    }, [
-      safeAreaInsets,
-      headerHeight,
-      isModal,
-      bottomTabBarHeight,
-      deviceHeight,
-    ]);
   },
   useSelectorRef(selector) {
     const select = useSelector(selector);

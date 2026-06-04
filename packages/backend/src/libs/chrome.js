@@ -2,7 +2,6 @@ import AmbitoDolar from '@ambito-dolar/core';
 import chromium from '@sparticuz/chromium';
 import imageType from 'image-type';
 import prettyBytes from 'pretty-bytes';
-import prettyMilliseconds from 'pretty-ms';
 import puppeteer from 'puppeteer-core';
 import sharp from 'sharp';
 
@@ -205,7 +204,7 @@ export const generateScreenshot = async (url, opts) => {
       sharp_file,
       sharp_story_file,
     ]);
-  const duration = prettyMilliseconds(Date.now() - start_time);
+  const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
   const file_size = prettyBytes(sharp_file.length, { space: false });
   const story_file_size = prettyBytes(sharp_story_file.length, {
     space: false,
