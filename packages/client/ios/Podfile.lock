@@ -315,8 +315,8 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - PurchasesHybridCommon (18.8.0):
-    - RevenueCat (= 5.74.0)
+  - PurchasesHybridCommon (18.10.0):
+    - RevenueCat (= 5.76.0)
   - RCTDeprecation (0.83.9)
   - RCTRequired (0.83.9)
   - RCTSwiftUI (0.83.9)
@@ -2316,7 +2316,7 @@ PODS:
     - React-utils (= 0.83.9)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.83.9)
-  - RevenueCat (5.74.0)
+  - RevenueCat (5.76.0)
   - RNCAsyncStorage (2.2.0):
     - hermes-engine
     - RCTRequired
@@ -2362,8 +2362,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNPurchases (10.2.0):
-    - PurchasesHybridCommon (= 18.8.0)
+  - RNPurchases (10.2.2):
+    - PurchasesHybridCommon (= 18.10.0)
     - React-Core
   - RNReanimated (4.4.1):
     - hermes-engine
@@ -3084,7 +3084,7 @@ SPEC CHECKSUMS:
   libavif: 5f8e715bea24debec477006f21ef9e95432e254d
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  PurchasesHybridCommon: e723f7c9b109be51f7ec6c85a104791369f1b562
+  PurchasesHybridCommon: 3e650c7f56ebcd63b37a708685fbf98515305d14
   RCTDeprecation: fd33ca1ccd370f92d656b2b2c42eb64920722170
   RCTRequired: e8df4eae11cd93c621094fd7ebc5519a52de1c6d
   RCTSwiftUI: cef2010e1e5e699600b2064d3aa702e53c35816c
@@ -3161,10 +3161,10 @@ SPEC CHECKSUMS:
   ReactCodegen: 05b717660223a88071c03ece612bca997027eb79
   ReactCommon: 2564a7f26237121a5d769b8b5b4d7d8af16ddad2
   ReactNativeDependencies: 8cf21fa1d902a0985558a65b9fdf1fadfe9de40a
-  RevenueCat: efcd02bf9b14ffce229e57dc6863a2513136b9ca
+  RevenueCat: 792388288b4207a5056550fbf8f673090f1fbe22
   RNCAsyncStorage: c8407cc394627a3a4cf56b457d594bfa822b6ab8
   RNGestureHandler: dda75100407db32972016eef2000a04ff716d3a3
-  RNPurchases: 814d23250d91856382f2d1d7c5e255b3d6b4b8ef
+  RNPurchases: 3138a73091d78c9ddaa86a405488cd9b5f8404e7
   RNReanimated: 087a978ee0ab4b03ca2d69b254dfbd9f82e3221a
   RNScreens: 55c1f023c1260d1af54f9f95f7437a809303c4d9
   RNSentry: 733b5dba30c3a6905a1cd6903737a2596a4ad648
