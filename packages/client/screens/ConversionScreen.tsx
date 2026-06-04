@@ -3,7 +3,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { compose } from '@reduxjs/toolkit';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { View, Platform, TouchableWithoutFeedback } from 'react-native';
+import { Platform, View, TouchableWithoutFeedback } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import * as actions from '@/actions';
@@ -28,15 +28,10 @@ const CONVERSION_TYPES = [I18n.t('buy'), I18n.t('average'), I18n.t('sell')];
 
 const DEFAULT_NUMBER = 1;
 
-const ConversionScreen = ({
-  headerHeight,
-  tabBarHeight,
-  rates,
-  rateTypes,
-  shoudStretch,
-}) => {
+const ConversionScreen = ({ rates, rateTypes, backgroundColor }) => {
   const params = useLocalSearchParams();
   const { theme, fonts } = Helper.useTheme();
+  const headerHeight = Helper.usePreciseHeaderHeight();
   const [numberValue, setNumberValue] = React.useState(DEFAULT_NUMBER);
   const [inputText, setInputText] = React.useState(
     Helper.formatFloatingPointNumber(DEFAULT_NUMBER),
@@ -51,10 +46,8 @@ const ConversionScreen = ({
   const onTextInputBlur = React.useCallback(() => {
     let number = Helper.getNumber(inputText);
     if (!number) {
-      // rollback when invalid
       number = numberValue;
     } else {
-      // only when value updated
       dispatch(actions.registerApplicationConversion());
     }
     setNumberValue(number);
@@ -67,17 +60,22 @@ const ConversionScreen = ({
   const dismissKeyboard = React.useCallback(() => {
     inputTextRef.current?.blur();
   }, []);
-  const handleCurrencyTypeChange = React.useCallback((index) => {
-    dismissKeyboard();
-    setCurrencyIndex(index);
-  }, []);
-  const handleConversionTypeChange = React.useCallback((index) => {
-    dismissKeyboard();
-    setTypeIndex(index);
-  }, []);
+  const handleCurrencyTypeChange = React.useCallback(
+    (index) => {
+      dismissKeyboard();
+      setCurrencyIndex(index);
+    },
+    [dismissKeyboard],
+  );
+  const handleConversionTypeChange = React.useCallback(
+    (index) => {
+      dismissKeyboard();
+      setTypeIndex(index);
+    },
+    [dismissKeyboard],
+  );
   const getValueFromType = React.useCallback((rate, typeIndex) => {
     const value = rate[1];
-    // use value from single changes
     const buy = Array.isArray(value) ? value[0] : value;
     const sell = Array.isArray(value) ? value[1] : value;
     if (typeIndex === 0) {
@@ -87,72 +85,68 @@ const ConversionScreen = ({
     }
     return sell;
   }, []);
-  const getItemView = React.useCallback(
-    (type) => {
-      const stats = rates[type].stats;
-      // took last one
-      const rate = stats[stats.length - 1];
-      const rate_value = getValueFromType(rate, typeIndex);
-      return (
-        <CardItemView
-          key={type}
-          containerStyle={{
-            flexGrow: 1,
-          }}
-          title={AmbitoDolar.getRateTitle(type)}
-          titleStyle={{
-            color: Settings.getGrayColor(theme),
-          }}
-          useSwitch={false}
-          value={Helper.getCurrency(
-            currencyIndex === 0
-              ? numberValue * rate_value
-              : numberValue / rate_value,
-            true,
-            currencyIndex === 1,
-            type,
-          )}
-          valueStyle={fonts.title}
-          selectable
-        />
-      );
-    },
-    [rates, typeIndex, theme, currencyIndex, numberValue, fonts],
+  const containerStyle = React.useMemo(() => ({ flexGrow: 1 }), []);
+  const titleStyle = React.useMemo(
+    () => ({ color: Settings.getGrayColor(theme) }),
+    [theme],
   );
+  const getItemView = (type) => {
+    const stats = rates[type].stats;
+    const rate = stats[stats.length - 1];
+    const rate_value = getValueFromType(rate, typeIndex);
+    return (
+      <CardItemView
+        key={type}
+        containerStyle={containerStyle}
+        title={AmbitoDolar.getRateTitle(type)}
+        titleStyle={titleStyle}
+        useSwitch={false}
+        value={Helper.getCurrency(
+          currencyIndex === 0
+            ? numberValue * rate_value
+            : numberValue / rate_value,
+          true,
+          currencyIndex === 1,
+          type,
+        )}
+        valueStyle={fonts.title}
+        selectable
+      />
+    );
+  };
   useFocusEffect(
     React.useCallback(() => {
       if (params?.focus !== 'true') {
         return;
       }
-      // required to handle the focus on Android
       const timeoutId = setTimeout(() => {
         inputTextRef.current?.focus();
         router.setParams({ focus: undefined });
       }, 0);
       return () => clearTimeout(timeoutId);
-    }, [params?.focus, router]),
+    }, [params?.focus]),
   );
   return (
-    <>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor,
+        // android header is solid (not transparent), native layout handles offset
+        paddingTop: Platform.OS === 'android' ? 0 : headerHeight,
+      }}
+    >
       <TouchableWithoutFeedback onPress={dismissKeyboard} accessible={false}>
-        <View
-          style={[
-            {
-              alignItems: 'center',
-              ...(Platform.OS === 'ios' && {
-                paddingTop: headerHeight,
-              }),
-            },
-          ]}
-        >
-          <ContentView>
+        <View style={{ alignItems: 'center' }}>
+          <ContentView
+            contentContainerStyle={Settings.CONTENT_TOP_SHRINK_STYLE}
+          >
             <View
               style={{
                 borderRadius: Settings.BORDER_RADIUS,
+                borderCurve: 'continuous',
                 borderWidth: Settings.BORDER_WIDTH,
                 borderColor: Settings.getStrokeColor(theme),
                 margin: Settings.CARD_PADDING,
-                // perfect size using lineHeight-size diff and border width
                 padding:
                   Settings.PADDING - (34 - 28) / 2 - Settings.BORDER_WIDTH * 2,
                 backgroundColor: Settings.getContentColor(theme),
@@ -166,11 +160,7 @@ const ConversionScreen = ({
                 onChangeText={onTextInputChangeText}
                 style={[
                   fonts.largeTitle,
-                  {
-                    includeFontPadding: false,
-                    // required for Android on Expo 53
-                    padding: 0,
-                  },
+                  { includeFontPadding: false, padding: 0 },
                 ]}
                 underlineColorAndroid="transparent"
                 returnKeyType="done"
@@ -199,51 +189,23 @@ const ConversionScreen = ({
       </TouchableWithoutFeedback>
       <DividerView />
       <ScrollView
-        // automaticallyAdjustContentInsets={false}
-        scrollIndicatorInsets={{
-          bottom: tabBarHeight,
-        }}
-        automaticallyAdjustsScrollIndicatorInsets={false}
-        contentContainerStyle={[
-          {
-            flexGrow: 1,
-            // required when translucent bars
-            ...(Platform.OS === 'ios' && {
-              paddingBottom: tabBarHeight,
-            }),
-          },
-        ]}
+        contentInsetAdjustmentBehavior="automatic"
+        // explicit value disables broken auto-inset calculation for partial-screen ScrollViews
+        scrollIndicatorInsets={{ top: 0, bottom: 0.1 }}
         style={{
+          flex: 1,
           backgroundColor: Settings.getContentColor(theme),
         }}
-        // contentInsetAdjustmentBehavior="automatic"
         onScrollBeginDrag={dismissKeyboard}
-        handleContentChangeSize
+        keyboardShouldPersistTaps="handled"
       >
         <ContentView
-          style={{ flex: 1 }}
-          contentContainerStyle={[
-            {
-              flex: 1,
-              // marginHorizontal: Settings.CARD_PADDING,
-              marginVertical: -Settings.CARD_PADDING,
-              // paddingVertical: 0,
-              // justifyContent: 'center',
-            },
-          ]}
+          contentContainerStyle={{ marginVertical: -Settings.CONTENT_MARGIN }}
         >
           {rateTypes.length === 0 ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                // backgroundColor: 'red',
-              }}
-            >
+            <View style={{ justifyContent: 'center' }}>
               <MessageView
-                style={{
-                  marginBottom: Settings.PADDING,
-                }}
+                style={{ marginBottom: Settings.PADDING }}
                 message={I18n.t('no_selected_rates')}
               />
               <ActionButton
@@ -255,20 +217,13 @@ const ConversionScreen = ({
               />
             </View>
           ) : (
-            <CardView
-              plain
-              style={{
-                ...(shoudStretch && {
-                  flex: 1,
-                }),
-              }}
-            >
+            <CardView plain>
               {rateTypes.map((type) => getItemView(type))}
             </CardView>
           )}
         </ContentView>
       </ScrollView>
-    </>
+    </View>
   );
 };
 

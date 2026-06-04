@@ -30,6 +30,26 @@ export default ({
   duration = 160,
 }: any) => {
   const onLongPressTimeoutId = useSharedValue(null);
+  const activeScaleTimeoutRef = React.useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const endScaleTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  React.useEffect(
+    () => () => {
+      if (activeScaleTimeoutRef.current) {
+        clearTimeout(activeScaleTimeoutRef.current);
+      }
+      if (endScaleTimeoutRef.current) {
+        clearTimeout(endScaleTimeoutRef.current);
+      }
+      if (onLongPressTimeoutId.value !== null) {
+        clearTimeout(Number(onLongPressTimeoutId.value));
+      }
+    },
+    [onLongPressTimeoutId],
+  );
   const scale = useSharedValue(1);
   // https://github.com/rainbow-me/rainbow/blob/develop/src/components/animations/ButtonPressAnimation/ScaleButtonZoomable.tsx#L33
   /* const scaleTraversed = useDerivedValue(() =>
@@ -88,10 +108,11 @@ export default ({
           if (delayActiveScale <= 0) {
             beginScale();
           } else {
-            setTimeout(() => {
+            activeScaleTimeoutRef.current = setTimeout(() => {
               if (isActive.value === 1) {
                 beginScale();
               }
+              activeScaleTimeoutRef.current = null;
             }, delayActiveScale);
           }
           // onLongPress
@@ -111,11 +132,12 @@ export default ({
             if (delayActiveScale > 0) {
               beginScale();
             }
-            setTimeout(() => {
+            endScaleTimeoutRef.current = setTimeout(() => {
               endScale();
               if (!immediatePress) {
                 runOnJS(onPress)(x, y);
               }
+              endScaleTimeoutRef.current = null;
             }, 50);
             if (immediatePress) {
               runOnJS(onPress)(x, y);
