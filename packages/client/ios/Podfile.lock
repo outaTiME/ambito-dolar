@@ -1,5 +1,5 @@
 PODS:
-  - amplitude-react-native (1.5.55):
+  - amplitude-react-native (1.5.56):
     - React-Core
   - EXApplication (55.0.15):
     - ExpoModulesCore
@@ -250,7 +250,7 @@ PODS:
     - ReactCommon
   - ExpoNotifications (55.0.23):
     - ExpoModulesCore
-  - ExpoQuickActions (6.0.1):
+  - ExpoQuickActions (6.0.2):
     - ExpoModulesCore
   - ExpoRouter (55.0.16):
     - ExpoModulesCore
@@ -2365,7 +2365,7 @@ PODS:
   - RNPurchases (10.2.2):
     - PurchasesHybridCommon (= 18.10.0)
     - React-Core
-  - RNReanimated (4.4.1):
+  - RNReanimated (4.3.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2387,11 +2387,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNReanimated/apple (= 4.4.1)
-    - RNReanimated/common (= 4.4.1)
+    - RNReanimated/apple (= 4.3.1)
+    - RNReanimated/common (= 4.3.1)
     - RNWorklets
     - Yoga
-  - RNReanimated/apple (4.4.1):
+  - RNReanimated/apple (4.3.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2415,7 +2415,7 @@ PODS:
     - ReactNativeDependencies
     - RNWorklets
     - Yoga
-  - RNReanimated/common (4.4.1):
+  - RNReanimated/common (4.3.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2555,7 +2555,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNWorklets (0.9.1):
+  - RNWorklets (0.8.3):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2577,10 +2577,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNWorklets/apple (= 0.9.1)
-    - RNWorklets/common (= 0.9.1)
+    - RNWorklets/apple (= 0.8.3)
+    - RNWorklets/common (= 0.8.3)
     - Yoga
-  - RNWorklets/apple (0.9.1):
+  - RNWorklets/apple (0.8.3):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2603,7 +2603,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNWorklets/common (0.9.1):
+  - RNWorklets/common (0.8.3):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -3040,7 +3040,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amplitude-react-native: fbfadededff67d2da51adeff44c6a71882934257
+  amplitude-react-native: 738f174786f8f04480513ffca56c414b1bddefe7
   EXApplication: 82a44fa8236bb644a805ee21e64054eeb01d22ea
   EXConstants: dadbeba983acc30f855a919658a2b34fbd86615d
   EXJSONUtils: 04bc3807d351331a5fe154ce1da596ec15d99169
@@ -3068,7 +3068,7 @@ SPEC CHECKSUMS:
   ExpoModulesCore: 100f9f3fd9bf5d1ae3dd7a1fb0b6fcaa8f016bf5
   ExpoModulesJSI: 1685389cde9f19c40f98ca0ad46d4804471486cc
   ExpoNotifications: 61c46aa5df088ff0ad41de0504a86a92333aec55
-  ExpoQuickActions: 61e27ec458e4e06b854ddc6967c2b57aa6a772d5
+  ExpoQuickActions: edf2c5bc044f83dc9e9ed4dc4de7fe4a5b1b0422
   ExpoRouter: e0e2aa4b03843e7abfa3e63e0cdd6c642d74780f
   ExpoScreenOrientation: dc4a898732b636e356d553e97044d8fbd34c62a1
   ExpoSharing: ae902b28ac0eb274d771411f39a7daad2529309d
@@ -3165,11 +3165,11 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: c8407cc394627a3a4cf56b457d594bfa822b6ab8
   RNGestureHandler: dda75100407db32972016eef2000a04ff716d3a3
   RNPurchases: 3138a73091d78c9ddaa86a405488cd9b5f8404e7
-  RNReanimated: 087a978ee0ab4b03ca2d69b254dfbd9f82e3221a
+  RNReanimated: f177e4f568e377e8be182977c705a7dc819469c6
   RNScreens: 55c1f023c1260d1af54f9f95f7437a809303c4d9
   RNSentry: 733b5dba30c3a6905a1cd6903737a2596a4ad648
   RNSVG: 8665c6282a30896e1c6b086f89849d468f9d16a9
-  RNWorklets: 7567b54db398bf1d2dbc41d5e812c2d1ef82e2c3
+  RNWorklets: 8aae0363b180f9478a6269a1ea3522bdff6fac26
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
