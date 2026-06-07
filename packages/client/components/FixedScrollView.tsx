@@ -1,45 +1,17 @@
-import { Platform } from 'react-native';
-
 import ContentView from '@/components/ContentView';
 import ScrollView from '@/components/ScrollView';
+import Settings from '@/config/settings';
 
 const FixedScrollView = ({
   children,
   backgroundColor,
   contentContainerRef,
-  headerHeight,
-  tabBarHeight,
   ...extra
 }) => (
-  <ScrollView
-    // automaticallyAdjustContentInsets={false}
-    scrollIndicatorInsets={{
-      top: headerHeight,
-      bottom: tabBarHeight,
-    }}
-    automaticallyAdjustsScrollIndicatorInsets={false}
-    contentContainerStyle={[
-      {
-        flexGrow: 1,
-        // required when translucent bars
-        ...(Platform.OS === 'ios' && {
-          paddingTop: headerHeight,
-          paddingBottom: tabBarHeight,
-        }),
-      },
-    ]}
-    /* style={
-        {
-          backgroundColor: 'pink',
-        }
-      } */
-    // contentInsetAdjustmentBehavior="automatic"
-    // scrollToOverflowEnabled
-    {...extra}
-  >
+  <ScrollView contentInsetAdjustmentBehavior="automatic" {...extra}>
     <ContentView
-      style={{ flex: 1, backgroundColor }}
-      contentContainerStyle={{ flex: 1 }}
+      style={{ backgroundColor }}
+      contentContainerStyle={Settings.CONTENT_TOP_SHRINK_STYLE}
       ref={contentContainerRef}
     >
       {children}

@@ -19,10 +19,10 @@ const springConfig = {
   restSpeedThreshold: 0.001,
 };
 
-export default ({ isVisible, text, onCompleted }) => {
-  const targetTranslate = -Settings.CARD_PADDING * 2;
+export default ({ isVisible, text, onCompleted, hiddenOffset = undefined }) => {
+  const targetTranslate = -Settings.CONTENT_MARGIN * 2;
   // subhead lineHeight + vertical padding
-  const distance = (20 + Settings.PADDING) / 2;
+  const distance = hiddenOffset ?? (20 + Settings.PADDING) / 2;
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: withTiming(
@@ -46,7 +46,7 @@ export default ({ isVisible, text, onCompleted }) => {
   }, [isVisible]);
   const { invertedTheme } = Helper.useTheme();
   return (
-    <Animated.View pointerEvents="none" style={animatedStyle}>
+    <Animated.View style={animatedStyle} pointerEvents="none">
       <View
         style={{
           alignSelf: 'center',
@@ -56,27 +56,20 @@ export default ({ isVisible, text, onCompleted }) => {
           justifyContent: 'center',
           backgroundColor: Settings.getBackgroundColor(invertedTheme, true),
           borderRadius: distance,
+          borderCurve: 'continuous',
           bottom: 0,
           maxWidth: Settings.CONTENT_WIDTH - 38,
           position: 'absolute',
           zIndex: 100,
           // https://github.com/rainbow-me/rainbow/blob/develop/src/components/toasts/Toast.tsx#L33
           shadowColor: '#25292E',
-          shadowOffset: {
-            height: 0,
-            width: 6,
-          },
+          shadowOffset: { width: 6, height: 0 },
           shadowOpacity: 0.14,
           shadowRadius: 10,
         }}
       >
         <Text
-          style={[
-            Settings.getFontObject(invertedTheme, 'subhead'),
-            {
-              // pass
-            },
-          ]}
+          style={[Settings.getFontObject(invertedTheme, 'subhead')]}
           numberOfLines={1}
         >
           {text}

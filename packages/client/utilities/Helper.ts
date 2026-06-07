@@ -421,8 +421,8 @@ export default {
           }),
           headerShadowVisible: true,
         },
-        // native-stack headerStyle only honors backgroundColor; use
-        // headerBackground to draw the hairline matching tab bar top
+        // native-stack headerStyle only honors backgroundColor
+        // use headerBackground to draw the hairline matching tab bar top
         android: Settings.USE_NATIVE_TABS_ANDROID
           ? {
               headerStyle: {

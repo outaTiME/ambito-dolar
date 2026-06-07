@@ -196,7 +196,6 @@ const RateView = ({
   large = false,
   highlight = true,
   compact = null,
-  shouldStretch = true,
   smallPadding = false,
 }) => {
   const { theme } = Helper.useTheme();
@@ -224,7 +223,7 @@ const RateView = ({
   return (
     <CardView
       style={[
-        shouldStretch === true && {
+        Platform.OS === 'web' && {
           flex: 1,
         },
         highlight === false && {

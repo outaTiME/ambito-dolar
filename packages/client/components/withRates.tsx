@@ -11,7 +11,6 @@ export default (customized) => (Component) => (props) => {
         ...props,
         rates,
         rateTypes,
-        shouldStretch: false,
       }}
     />
   );

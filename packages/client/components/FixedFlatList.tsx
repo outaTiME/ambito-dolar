@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, Platform } from 'react-native';
+import { Text } from 'react-native';
 
 import { Separator } from '@/components/CardView';
 import ContentView from '@/components/ContentView';
@@ -13,8 +13,9 @@ export const HeaderComponent = ({ ListHeaderComponent, title }: any) => {
     <ContentView
       contentContainerStyle={{
         padding: Settings.PADDING,
+        ...Settings.CONTENT_TOP_SHRINK_STYLE,
         marginBottom: 0,
-        marginHorizontal: Settings.CARD_PADDING * 2,
+        marginHorizontal: Settings.CONTENT_MARGIN * 2,
         justifyContent: 'flex-end',
       }}
     >
@@ -48,7 +49,7 @@ export const FooterComponent = ({ ListFooterComponent, note }: any) => {
       contentContainerStyle={{
         padding: Settings.PADDING,
         marginTop: 0,
-        marginHorizontal: Settings.CARD_PADDING * 2,
+        marginHorizontal: Settings.CONTENT_MARGIN * 2,
         justifyContent: 'flex-start',
       }}
     >
@@ -78,8 +79,6 @@ const FixedFlatList = ({
   title,
   data,
   itemHeight,
-  headerHeight,
-  tabBarHeight,
   note,
   ListHeaderComponent,
   ListFooterComponent,
@@ -87,6 +86,7 @@ const FixedFlatList = ({
   ...extra
 }: any) => {
   const { theme } = Helper.useTheme();
+  const lastIndex = data.length - 1;
   const renderItem = React.useCallback(
     ({
       item: { component },
@@ -107,14 +107,11 @@ const FixedFlatList = ({
                 isModal,
               ),
               marginVertical: 0,
-              marginHorizontal: Settings.CARD_PADDING * 2,
+              marginHorizontal: Settings.CONTENT_MARGIN * 2,
               // add shadow while dragging
               ...(isActive && {
                 shadowColor: '#000',
-                shadowOffset: {
-                  width: 0,
-                  height: 0,
-                },
+                shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: 0.34,
                 shadowRadius: 6.27,
                 elevation: 10,
@@ -123,10 +120,12 @@ const FixedFlatList = ({
             index === 0 && {
               borderTopLeftRadius: Settings.BORDER_RADIUS,
               borderTopRightRadius: Settings.BORDER_RADIUS,
+              borderCurve: 'continuous',
             },
-            index === data.length - 1 && {
+            index === lastIndex && {
               borderBottomLeftRadius: Settings.BORDER_RADIUS,
               borderBottomRightRadius: Settings.BORDER_RADIUS,
+              borderCurve: 'continuous',
             },
           ]}
         >
@@ -141,7 +140,7 @@ const FixedFlatList = ({
         </ContentView>
       );
     },
-    [theme, data, isModal],
+    [theme, lastIndex, isModal],
   );
   const separatorComponent = React.useCallback(
     () => (
@@ -153,7 +152,7 @@ const FixedFlatList = ({
             isModal,
           ),
           marginVertical: 0,
-          marginHorizontal: Settings.CARD_PADDING * 2,
+          marginHorizontal: Settings.CONTENT_MARGIN * 2,
         }}
       >
         <Separator style={undefined} isModal={isModal} />
@@ -169,30 +168,16 @@ const FixedFlatList = ({
     () => <FooterComponent {...{ ListFooterComponent, note }} />,
     [ListFooterComponent, note],
   );
-  const extraData = React.useMemo(() => Date.now(), [theme, data]);
   return (
     <FlatList
-      // automaticallyAdjustContentInsets={false}
-      scrollIndicatorInsets={{
-        top: headerHeight,
-        bottom: tabBarHeight,
-      }}
-      automaticallyAdjustsScrollIndicatorInsets={false}
-      contentContainerStyle={{
-        // required when translucent bars
-        ...(Platform.OS === 'ios' && {
-          paddingTop: headerHeight,
-          paddingBottom: tabBarHeight,
-        }),
-      }}
-      // contentInsetAdjustmentBehavior="automatic"
+      contentInsetAdjustmentBehavior="automatic"
       {...{ data }}
       renderItem={renderItem}
       ItemSeparatorComponent={separatorComponent}
       ListHeaderComponent={headerComponent}
       ListFooterComponent={footerComponent}
       estimatedItemSize={itemHeight}
-      extraData={extraData}
+      extraData={theme}
       {...extra}
     />
   );

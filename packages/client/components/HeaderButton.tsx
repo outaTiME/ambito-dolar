@@ -1,6 +1,7 @@
 import MaterialCommunityIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialIcons';
 import { HeaderButton } from '@react-navigation/elements';
+import { router } from 'expo-router';
 import { Text } from 'react-native';
 
 import Settings from '@/config/settings';
@@ -11,6 +12,7 @@ const ButtonBase = ({ onPress, children }: any) => {
     <HeaderButton
       onPress={onPress}
       style={{
+        // marginHorizontal: -8,
         // prevents ripple cutoff on android
         padding: 8,
       }}
@@ -20,12 +22,7 @@ const ButtonBase = ({ onPress, children }: any) => {
   );
 };
 
-const IconButton = ({
-  iconName,
-  community = false,
-  onPress,
-  left = true,
-}: any) => {
+const IconButton = ({ iconName, community = false, onPress }: any) => {
   const { theme } = Helper.useTheme();
   const Icon = community === true ? MaterialCommunityIcons : MaterialIcons;
   return (
@@ -54,6 +51,17 @@ const TextButton = ({ title, onPress }: any) => {
     </ButtonBase>
   );
 };
+
+// non-Liquid-Glass platforms (legacy iOS + Android) get custom back button matching headerRight
+export const customHeaderBackOptions = Settings.IS_LIQUID_GLASS
+  ? {}
+  : {
+      headerBackVisible: false,
+      headerLeft: ({ canGoBack }: { canGoBack?: boolean }) =>
+        canGoBack ? (
+          <IconButton iconName="arrow-back" onPress={() => router.back()} />
+        ) : null,
+    };
 
 export default {
   Icon: IconButton,

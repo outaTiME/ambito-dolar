@@ -18,7 +18,7 @@ import {
   goToCustomizeRatesModal,
 } from '@/utilities/Navigation';
 
-const MainScreen = ({ rates, rateTypes, shouldStretch }) => {
+const MainScreen = ({ rates, rateTypes }) => {
   const dispatch = useDispatch();
   const onRateSelected = React.useCallback(
     (type) => {
@@ -34,12 +34,11 @@ const MainScreen = ({ rates, rateTypes, shouldStretch }) => {
           type,
           stats: rates[type].stats,
           onSelected: onRateSelected,
-          shouldStretch,
         }}
         key={type}
       />
     ),
-    [rates, shouldStretch, onRateSelected],
+    [rates, onRateSelected],
   );
   if (rateTypes.length === 0) {
     return (

@@ -377,7 +377,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
           style={{
             flex: 1,
             // optical baseline nudge
-            transform: [{ translateY: 3 }],
+            transform: [{ translateY: 2 }],
           }}
         >
           <Text
@@ -411,7 +411,6 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
                 },
               ]}
               numberOfLines={1}
-              lineHeight="none"
             >
               {DateUtils.humanize(processedAt, 2)}
             </Text>
