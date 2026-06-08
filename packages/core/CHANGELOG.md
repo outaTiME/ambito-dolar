@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@5.0.1...@ambito-dolar/core@5.2.0) (2026-06-08)
+
+### Features
+
+- add dolar futuro ([44b7552](https://github.com/outaTiME/ambito-dolar/commit/44b75524dcc18affb7b68a23b6a48c598cfd58ff))
+
 ## [5.0.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@5.0.0...@ambito-dolar/core@5.0.1) (2026-05-02)
 
 ### Bug Fixes

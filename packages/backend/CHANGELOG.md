@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/backend@5.0.2...@ambito-dolar/backend@5.1.0) (2026-06-08)
+
+### Bug Fixes
+
+- tune wholesale notification threshold to half percent ([3745385](https://github.com/outaTiME/ambito-dolar/commit/37453851b7d4b117e33f0696fd417b214da6f1c9))
+
+### Features
+
+- add dolar futuro ([44b7552](https://github.com/outaTiME/ambito-dolar/commit/44b75524dcc18affb7b68a23b6a48c598cfd58ff))
+
 ## [5.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/backend@5.0.1...@ambito-dolar/backend@5.0.2) (2026-05-06)
 
 **Note:** Version bump only for package @ambito-dolar/backend

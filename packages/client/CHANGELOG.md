@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [13.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@13.1.0...@ambito-dolar/client@13.2.0) (2026-06-08)
+
+### Bug Fixes
+
+- memory leaks and stale state ([60f8e42](https://github.com/outaTiME/ambito-dolar/commit/60f8e4211901524d80bb54bbc7f268f42656efe1))
+- modal background color ([7d84a6b](https://github.com/outaTiME/ambito-dolar/commit/7d84a6b27ba3de1ffe75d787a4e1e604c39b11a2))
+- restore baseline layout and tighten comments ([c90a9dd](https://github.com/outaTiME/ambito-dolar/commit/c90a9dd1f4dca3425a03678eece5315423b74f5b))
+
+### Features
+
+- add dolar futuro ([44b7552](https://github.com/outaTiME/ambito-dolar/commit/44b75524dcc18affb7b68a23b6a48c598cfd58ff))
+- donations flow ([9b2645e](https://github.com/outaTiME/ambito-dolar/commit/9b2645e8ab1d45452ce5611c4c50aa55978603cf))
+- liquid glass support ([d344dbd](https://github.com/outaTiME/ambito-dolar/commit/d344dbdaf1d9cc2db516d4c52c8b0c5d69d83971))
+- native tabs and toast overlay ([592224d](https://github.com/outaTiME/ambito-dolar/commit/592224da4afc36c4c48bab9903ff889a86f47c6a))
+
+### Performance Improvements
+
+- isolate navigation re-renders ([487a9b0](https://github.com/outaTiME/ambito-dolar/commit/487a9b0f2ae8ff0ecdb6a7e3aea7244ea6d611ae))
+
 # [13.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@13.0.1...@ambito-dolar/client@13.1.0) (2026-05-06)
 
 ### Features
