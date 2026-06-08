@@ -236,6 +236,10 @@ const getVariationThreshold = (type, prev_rate, rate) => {
     // flexible variation of 1% between notifications
     return ((prev_rate + rate) / 2) * 0.01;
   }
+  // many small intraday ticks, 0.5% filters noise without losing trends
+  if (type === AmbitoDolar.WHOLESALE_TYPE) {
+    return ((prev_rate + rate) / 2) * 0.005;
+  }
   return 0.05;
 };
 
