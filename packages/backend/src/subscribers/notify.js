@@ -21,19 +21,20 @@ const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 const getChangeMessage = (rate) => {
   const value = AmbitoDolar.getRateValue(rate);
-  const body = [AmbitoDolar.formatRateCurrency(value, true)];
+  const formatted_value = AmbitoDolar.formatRateCurrency(value, true);
   const change = rate[2];
-  const formattedChange = AmbitoDolar.formatRateChange(change, true, true);
-  if (formattedChange) {
-    body.push(` (${formattedChange})`);
+  const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '';
+  if (arrow) {
+    const abs_pct = AmbitoDolar.formatRateCurrency(Math.abs(change), true);
+    return `${formatted_value} ${arrow}${abs_pct}%`;
   }
-  return body.join('');
+  return formatted_value;
 };
 
 const getRateMessage = (type, rate) => {
   const rate_title = AmbitoDolar.getRateTitle(type);
   if (rate_title) {
-    return `${rate_title.toUpperCase()}: ${getChangeMessage(rate)}`;
+    return `${rate_title.toUpperCase()} ${getChangeMessage(rate)}`;
   }
 };
 
@@ -41,15 +42,14 @@ const getBodyMessage = (rates) => {
   const available_rates = AmbitoDolar.getAvailableRates(rates);
   if (available_rates) {
     const body = _.chain(available_rates)
-      .reduce((obj, rate, type) => {
-        obj.push(getRateMessage(type, rate));
-        return obj;
-      }, [])
+      .map((rate, type) => ({ type, rate, mag: Math.abs(rate[2] ?? 0) }))
+      .sortBy((x) => -x.mag)
+      .map(({ type, rate }) => getRateMessage(type, rate))
       // remove empty messages
       .compact()
       .value();
     if (body.length > 0) {
-      return `${body.join(', ')}.`;
+      return body.join(', ');
     }
   }
 };
