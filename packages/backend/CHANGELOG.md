@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/backend@5.1.0...@ambito-dolar/backend@5.1.1) (2026-06-10)
+
+### Bug Fixes
+
+- compact notification body to fit social 300 char cap ([bd11f3e](https://github.com/outaTiME/ambito-dolar/commit/bd11f3ee34b3469b4452efc2053ebc19e685aaaf))
+
 # [5.1.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/backend@5.0.2...@ambito-dolar/backend@5.1.0) (2026-06-08)
 
 ### Bug Fixes
