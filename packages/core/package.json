@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "ava": "^8.0.1",
-    "undici": "^7.27.2"
+    "undici": "^7.28.0"
   },
   "scripts": {
     "test": "yarn g:eslint && ava"
