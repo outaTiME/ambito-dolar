@@ -1,5 +1,5 @@
-const version = '13.2.0';
-const buildNumber = 216;
+const version = '14.0.0';
+const buildNumber = 217;
 
 export default {
   name: 'Ámbito Dólar',
