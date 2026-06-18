@@ -6,7 +6,7 @@ import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
 // module-level state dedupes parallel fetches, boot attempt runs once per session
-let inflight: Promise<any[]> | null = null;
+let inflight = null;
 let autoAttempted = false;
 
 const fetchProductsOnce = () => {

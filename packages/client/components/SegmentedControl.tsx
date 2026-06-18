@@ -10,7 +10,7 @@ export default ({
   onTabPress,
   enabled,
   showDirectionalArrow,
-}: any) => {
+}) => {
   const { theme, fonts } = Helper.useTheme();
   return (
     <View

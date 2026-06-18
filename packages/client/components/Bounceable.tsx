@@ -6,9 +6,6 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   runOnJS,
-  /* useDerivedValue,
-  withTiming,
-  Easing, */
 } from 'react-native-reanimated';
 
 export default ({
@@ -28,14 +25,10 @@ export default ({
   onLongPress,
   immediatePress = true,
   duration = 160,
-}: any) => {
+}) => {
   const onLongPressTimeoutId = useSharedValue(null);
-  const activeScaleTimeoutRef = React.useRef<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-  const endScaleTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const activeScaleTimeoutRef = React.useRef(null);
+  const endScaleTimeoutRef = React.useRef(null);
   React.useEffect(
     () => () => {
       if (activeScaleTimeoutRef.current) {
@@ -51,13 +44,6 @@ export default ({
     [onLongPressTimeoutId],
   );
   const scale = useSharedValue(1);
-  // https://github.com/rainbow-me/rainbow/blob/develop/src/components/animations/ButtonPressAnimation/ScaleButtonZoomable.tsx#L33
-  /* const scaleTraversed = useDerivedValue(() =>
-    withTiming(scale.value, {
-      duration,
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-    }),
-  ); */
   const isActive = useSharedValue(0);
   const sz = useAnimatedStyle(() => {
     'worklet';
@@ -98,7 +84,7 @@ export default ({
     {
       maxDurationMs: 99999999,
       shouldCancelWhenOutside: true,
-      onHandlerStateChange: ({ nativeEvent: { state, x, y } }: any) => {
+      onHandlerStateChange: ({ nativeEvent: { state, x, y } }) => {
         if (disabled) {
           return;
         }

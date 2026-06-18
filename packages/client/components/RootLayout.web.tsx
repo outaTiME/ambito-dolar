@@ -1,7 +1,6 @@
 import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
-import { Slot } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
+import { Slot, SplashScreen } from 'expo-router';
 import React from 'react';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -20,13 +19,6 @@ SplashScreen.preventAutoHideAsync().catch(console.warn);
 const ThemedLayoutWeb = () => {
   const colorScheme = useColorScheme();
   const theme = { colorScheme };
-  React.useEffect(() => {
-    Helper.debug(
-      '👌 Web application loading is completed',
-      Date.now() - start_time,
-    );
-    SplashScreen.hideAsync().catch(console.warn);
-  }, []);
   return (
     <ThemeProvider theme={theme}>
       <Slot />
@@ -38,11 +30,10 @@ const RootLayoutWeb = () => {
   useAssets([require('../assets/about-icon-borderless.png')]);
   const [fontsLoaded] = useFonts({
     'FiraGO-Regular': require('../assets/fonts/FiraGO-Regular.otf'),
-    FontAwesome6_Brands: require('../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Brands.ttf'),
   });
   const constantsLoaded = Helper.useApplicationConstants();
   const [appIsReady, setAppIsReady] = React.useState(false);
-  const appIsLoading = !fontsLoaded || !constantsLoaded || !appIsReady;
+  const isReady = fontsLoaded && constantsLoaded && appIsReady;
   React.useEffect(() => {
     async function prepare() {
       try {
@@ -55,9 +46,15 @@ const RootLayoutWeb = () => {
     }
     prepare();
   }, []);
-  if (appIsLoading) {
-    return null;
-  }
+  React.useEffect(() => {
+    if (isReady) {
+      Helper.debug(
+        '👌 Web application loading is completed',
+        Date.now() - start_time,
+      );
+      SplashScreen.hideAsync().catch(console.warn);
+    }
+  }, [isReady]);
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <GestureHandlerRootView>

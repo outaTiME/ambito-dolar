@@ -52,17 +52,11 @@ export default {
     'expo-router',
     'expo-localization',
     'expo-image',
-    'expo-sharing',
+    './plugins/withAndroidBottomNavDimens',
     [
       'expo-font',
       {
-        fonts: [
-          './assets/fonts/FiraGO-Regular.otf',
-          './node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf',
-          './node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf',
-          './node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Brands.ttf',
-          './node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Solid.ttf',
-        ],
+        fonts: ['./assets/fonts/FiraGO-Regular.otf'],
       },
     ],
     Boolean(process.env.SENTRY_AUTH_TOKEN) && [
@@ -127,19 +121,7 @@ export default {
         color: '#00AE6B',
       },
     ],
-    // https://expo.dev/blog/edge-to-edge-display-now-streamlined-for-android#additional-edge-to-edge-configuration-options
-    [
-      'react-native-edge-to-edge',
-      {
-        android: {
-          parentTheme: 'Light',
-          enforceNavigationBarContrast: false,
-        },
-      },
-    ],
     'expo-mail-composer',
-    // remove next comment when CNG is supported on iOS
-    // '@bacons/apple-targets',
   ].filter(Boolean),
   ios: {
     appleTeamId: 'F3XMLHHGWP',
@@ -180,8 +162,6 @@ export default {
       UIViewControllerBasedStatusBarAppearance: true,
       // optimizes ProMotion refresh rates
       CADisableMinimumFrameDurationOnPhone: true,
-      // enables liquid glass (iOS 26+)
-      UIDesignRequiresCompatibility: false,
     },
     privacyManifests: {
       // https://docs.sentry.io/platforms/react-native/data-management/apple-privacy-manifest/#create-privacy-manifest-in-expo

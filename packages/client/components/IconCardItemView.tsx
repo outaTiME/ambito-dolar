@@ -1,17 +1,24 @@
-import FontAwesome6 from '@expo/vector-icons/build/vendor/react-native-vector-icons/FontAwesome6';
-import MaterialCommunityIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { View, Text } from 'react-native';
 
 import CardItemView from '@/components/CardItemView';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
-export default ({ title, iconName, iconColor, onAction, community }) => {
+export default ({
+  title,
+  iconName,
+  iconColor,
+  onAction,
+  community,
+  iconStyle = 'brand',
+}: any) => {
   const { theme, fonts } = Helper.useTheme();
-  const Icon = community === true ? MaterialCommunityIcons : FontAwesome6;
-  const CardItemViewComponent = CardItemView as any;
+  const size = Settings.SOCIAL_ICON_SIZE;
+  const color = iconColor ?? Settings.getForegroundColor(theme);
   return (
-    <CardItemViewComponent
+    <CardItemView
       title={
         <View
           style={[
@@ -23,11 +30,16 @@ export default ({ title, iconName, iconColor, onAction, community }) => {
             },
           ]}
         >
-          <Icon
-            name={iconName}
-            size={Settings.SOCIAL_ICON_SIZE}
-            color={iconColor ?? (Settings as any).getForegroundColor(theme)}
-          />
+          {community === true ? (
+            <MaterialCommunityIcons name={iconName} size={size} color={color} />
+          ) : (
+            <FontAwesome6
+              iconStyle={iconStyle}
+              name={iconName}
+              size={size}
+              color={color}
+            />
+          )}
           <Text
             style={[fonts.body, { marginLeft: Settings.PADDING }]}
             numberOfLines={1}

@@ -1,5 +1,5 @@
-import MaterialCommunityIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialCommunityIcons';
-import MaterialIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
 import { View, ActivityIndicator } from 'react-native';
 
 import Settings from '@/config/settings';
@@ -15,7 +15,7 @@ export default ({
 }: any) => {
   const { theme } = Helper.useTheme();
   const Icon = community === true ? MaterialCommunityIcons : MaterialIcons;
-  color = color ?? (Settings as any).getStrokeColor(theme, false, isModal);
+  color = color ?? Settings.getStrokeColor(theme, false, isModal);
   return (
     <View
       style={[

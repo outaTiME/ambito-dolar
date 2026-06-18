@@ -29,7 +29,7 @@ export default function RateWidget(props) {
   const borderRadius = getAdaptiveSize(20);
   // twitter.com/okovalenkome/status/1749839657561674154
   // const borderRadius = (12 / 60) * size;
-  console.log(
+  Helper.debug(
     '>>> RateWidget',
     // preview,
     theme,

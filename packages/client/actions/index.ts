@@ -14,7 +14,6 @@ import {
   APP_USAGE_DAY,
   APP_USAGE,
   APP_CONVERSION,
-  APP_SHARE_RATES,
   APP_DOWNLOAD_RATES,
   APP_DOWNLOAD_HISTORICAL_RATES,
   APP_DETAILED_RATES,
@@ -171,11 +170,6 @@ export const registerApplicationUsageDay = () => ({
 export const registerApplicationConversion = () => ({
   type: APP_CONVERSION,
 });
-
-export const registerApplicationShareRates = () => (dispatch) => {
-  dispatch({ type: APP_SHARE_RATES });
-  Amplitude.track('Share rates');
-};
 
 export const registerApplicationDownloadRates = () => ({
   type: APP_DOWNLOAD_RATES,

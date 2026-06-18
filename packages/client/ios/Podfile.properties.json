@@ -6,5 +6,7 @@
   "apple.privacyManifestAggregationEnabled": "true",
   "newArchEnabled": "true",
   "ios.useFrameworks": "static",
-  "expo-image.disable-libdav1d": "false"
+  "expo-image.disable-libdav1d": "false",
+  "expo.inlineModules.watchedDirectories": "[]",
+  "expo.inlineModules.xcodeProjectTargets": "{\"mainTarget\":\"mbitoDlar\",\"targets\":[]}"
 }

@@ -9,8 +9,6 @@ import Helper from '@/utilities/Helper';
 
 export default ({ style, text, onDoubleTap, onLongPress }) => {
   const { theme, fonts } = Helper.useTheme();
-  const CardViewComponent = CardView as any;
-  const CardItemViewComponent = CardItemView as any;
   const gesture = React.useMemo(() => {
     const gestures = [];
     if (onDoubleTap) {
@@ -39,7 +37,7 @@ export default ({ style, text, onDoubleTap, onLongPress }) => {
         style={[
           fonts.subhead,
           {
-            color: (Settings as any).getGrayColor(theme),
+            color: Settings.getGrayColor(theme),
             textAlign: 'center',
             padding: Settings.PADDING / 2,
             margin: -(Settings.PADDING / 2),
@@ -59,13 +57,13 @@ export default ({ style, text, onDoubleTap, onLongPress }) => {
     );
   }, [gesture, text, fonts.subhead, theme]);
   return (
-    <CardViewComponent plain transparent style={style}>
-      <CardItemViewComponent
+    <CardView plain transparent style={style}>
+      <CardItemView
         title={content}
         titleContainerStyle={{ justifyContent: 'center' }}
         useSwitch={false}
         chevron={false}
       />
-    </CardViewComponent>
+    </CardView>
   );
 };

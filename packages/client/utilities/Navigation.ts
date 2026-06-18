@@ -1,11 +1,23 @@
 import { router } from 'expo-router';
 
-const pushRoute = (routePath: any) => {
-  router.push(routePath);
+const navigateRoute = (routePath) => {
+  router.navigate(routePath);
 };
 
-const navigateRoute = (routePath: any) => {
-  router.navigate(routePath);
+export const goBack = () => {
+  if (router.canGoBack()) {
+    router.back();
+  }
+};
+
+export const dismissToTop = () => {
+  if (router.canGoBack()) {
+    router.dismissAll();
+  }
+};
+
+export const clearRouteParam = (name) => {
+  router.setParams({ [name]: undefined });
 };
 
 export const goToRatesWithPopToTop = () => {
@@ -17,15 +29,15 @@ export const goToRatesWithPopToTop = () => {
   });
 };
 
-export const goToRateDetail = (type: string) => {
-  pushRoute({
+export const goToRateDetail = (type) => {
+  navigateRoute({
     pathname: '/rates/[type]',
     params: { type },
   });
 };
 
-export const goToRateRawDetail = (type: string, rangeIndex?: number) => {
-  pushRoute({
+export const goToRateRawDetail = (type, rangeIndex) => {
+  navigateRoute({
     pathname: '/rates/[type]/raw',
     params: {
       type,
@@ -48,44 +60,44 @@ export const goToConversionWithFocus = () => {
 };
 
 export const goToNotifications = () => {
-  pushRoute('/settings/notifications');
+  navigateRoute('/settings/notifications');
 };
 
-export const goToAdvancedNotifications = (type: string) => {
-  pushRoute({
+export const goToAdvancedNotifications = (type) => {
+  navigateRoute({
     pathname: '/settings/notifications/[type]',
     params: { type },
   });
 };
 
 export const goToAppearance = () => {
-  pushRoute('/settings/appearance');
+  navigateRoute('/settings/appearance');
 };
 
 export const goToCustomizeRates = (modal = false) => {
-  pushRoute(modal ? '/customize-rates' : '/settings/customize-rates');
+  navigateRoute(modal ? '/customize-rates' : '/settings/customize-rates');
 };
 
 export const goToRateOrder = (modal = false) => {
-  pushRoute(
+  navigateRoute(
     modal ? '/customize-rates/order' : '/settings/customize-rates/order',
   );
 };
 
 export const goToStatistics = () => {
-  pushRoute('/settings/statistics');
+  navigateRoute('/settings/statistics');
 };
 
 export const goToDeveloper = () => {
-  pushRoute('/settings/developer');
+  navigateRoute('/settings/developer');
 };
 
 export const goToAbout = () => {
-  pushRoute('/settings/about');
+  navigateRoute('/settings/about');
 };
 
 export const goToRateWidgetPreview = () => {
-  pushRoute('/settings/rate-widget-preview');
+  navigateRoute('/settings/rate-widget-preview');
 };
 
 export const goToCustomizeRatesModal = () => {
@@ -93,5 +105,9 @@ export const goToCustomizeRatesModal = () => {
 };
 
 export const goToDonate = () => {
-  pushRoute('/settings/donate');
+  navigateRoute('/settings/donate');
+};
+
+export const goToDonateModal = () => {
+  navigateRoute('/donate');
 };

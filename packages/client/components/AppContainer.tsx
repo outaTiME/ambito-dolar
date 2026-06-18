@@ -9,7 +9,6 @@ import { compose } from '@reduxjs/toolkit';
 import * as Device from 'expo-device';
 import * as Localization from 'expo-localization';
 import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
 import * as StoreReview from 'expo-store-review';
 import * as _ from 'lodash';
 import React from 'react';
@@ -38,6 +37,7 @@ import {
   showPurchaseErrorAlert,
 } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
+import { goToDonateModal } from '@/utilities/Navigation';
 import Sentry from '@/utilities/Sentry';
 import { reloadWidgets } from '@/widgets';
 
@@ -566,7 +566,7 @@ const withAppDonation = (Component) => (props) => {
           }
           if (Settings.USE_NATIVE_DONATION_SHEET) {
             setDonationSlug(purchaseSlug);
-            router.push('/donate');
+            goToDonateModal();
           } else {
             bottomSheetRef.current?.present();
           }

@@ -201,6 +201,7 @@ const AboutScreen = () => {
           <IconCardItemView
             title={I18n.t('website')}
             iconName="link"
+            iconStyle="solid"
             onAction={onPressWebsite}
           />
         </CardView>
@@ -262,6 +263,7 @@ const AboutScreen = () => {
           <IconCardItemView
             title="Cafecito"
             iconName="mug-hot"
+            iconStyle="solid"
             onAction={onPressCafecito}
           />
         </CardView>

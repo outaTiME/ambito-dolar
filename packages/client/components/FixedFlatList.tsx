@@ -7,7 +7,7 @@ import FlatList from '@/components/FlatList';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
-export const HeaderComponent = ({ ListHeaderComponent, title }: any) => {
+export const HeaderComponent = ({ ListHeaderComponent, title }) => {
   const { theme, fonts } = Helper.useTheme();
   const contents = title ? (
     <ContentView
@@ -23,7 +23,7 @@ export const HeaderComponent = ({ ListHeaderComponent, title }: any) => {
         style={[
           fonts.subhead,
           {
-            color: (Settings as any).getGrayColor(theme),
+            color: Settings.getGrayColor(theme),
             textTransform: 'uppercase',
           },
         ]}
@@ -42,7 +42,7 @@ export const HeaderComponent = ({ ListHeaderComponent, title }: any) => {
   );
 };
 
-export const FooterComponent = ({ ListFooterComponent, note }: any) => {
+export const FooterComponent = ({ ListFooterComponent, note }) => {
   const { theme, fonts } = Helper.useTheme();
   const contents = note ? (
     <ContentView
@@ -57,7 +57,7 @@ export const FooterComponent = ({ ListFooterComponent, note }: any) => {
         style={[
           fonts.footnote,
           {
-            color: (Settings as any).getGrayColor(theme),
+            color: Settings.getGrayColor(theme),
           },
         ]}
       >
@@ -84,28 +84,17 @@ const FixedFlatList = ({
   ListFooterComponent,
   isModal,
   ...extra
-}: any) => {
+}) => {
   const { theme } = Helper.useTheme();
   const lastIndex = data.length - 1;
   const renderItem = React.useCallback(
-    ({
-      item: { component },
-      index,
-      drag,
-      isActive,
-      getIndex,
-      onStartDrag,
-    }: any) => {
+    ({ item: { component }, index, drag, isActive, getIndex, onStartDrag }) => {
       index = index ?? getIndex();
       return (
         <ContentView
           contentContainerStyle={[
             {
-              backgroundColor: (Settings as any).getContentColor(
-                theme,
-                false,
-                isModal,
-              ),
+              backgroundColor: Settings.getContentColor(theme, false, isModal),
               marginVertical: 0,
               marginHorizontal: Settings.CONTENT_MARGIN * 2,
               // add shadow while dragging
@@ -146,11 +135,7 @@ const FixedFlatList = ({
     () => (
       <ContentView
         contentContainerStyle={{
-          backgroundColor: (Settings as any).getContentColor(
-            theme,
-            false,
-            isModal,
-          ),
+          backgroundColor: Settings.getContentColor(theme, false, isModal),
           marginVertical: 0,
           marginHorizontal: Settings.CONTENT_MARGIN * 2,
         }}

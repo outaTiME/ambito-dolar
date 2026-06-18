@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { router } from 'expo-router';
 import React from 'react';
 import { Platform, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,6 +15,7 @@ import {
   showPurchaseErrorAlert,
 } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
+import { goBack } from '@/utilities/Navigation';
 
 const DonateScreen = () => {
   const dispatch = useDispatch();
@@ -63,7 +63,7 @@ const DonateScreen = () => {
         if (forcedRef.current) {
           setAppDonationModal(false);
         }
-        router.back();
+        goBack();
       } catch (e) {
         showPurchaseErrorAlert(e);
       } finally {
@@ -145,9 +145,7 @@ const DonateScreen = () => {
       <ActionButton
         borderless
         title={I18n.t('not_now')}
-        handleOnPress={
-          loadingProductId === null ? () => router.back() : undefined
-        }
+        handleOnPress={loadingProductId === null ? goBack : undefined}
         colorScheme
         style={{ marginTop: Settings.PADDING * 2 }}
       />

@@ -9,11 +9,11 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import * as actions from '@/actions';
 import CardItemView from '@/components/CardItemView';
 import CardView from '@/components/CardView';
+import FixedScrollView from '@/components/FixedScrollView';
 import SegmentedControlTab from '@/components/SegmentedControl';
 import VictoryRateChartView from '@/components/VictoryRateChartView';
 import withContainer from '@/components/withContainer';
 import withRates from '@/components/withRates';
-import withScreenshotShareSheet from '@/components/withScreenshotShareSheet';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import DateUtils from '@/utilities/Date';
@@ -128,7 +128,7 @@ const RANGE_TYPES = [
   I18n.t('one_year'),
 ];
 
-const RateDetailScreen = ({ rates }) => {
+const RateDetailScreen = ({ rates, backgroundColor }) => {
   const params = useLocalSearchParams();
   const [rangeIndex, setRangeIndex] = React.useState(0);
   const prev_rangeIndex = Helper.usePrevious(rangeIndex);
@@ -255,7 +255,7 @@ const RateDetailScreen = ({ rates }) => {
     setRangeIndex(index);
   }, []);
   return (
-    <>
+    <FixedScrollView backgroundColor={backgroundColor}>
       <SegmentedControlTab
         values={RANGE_TYPES}
         selectedIndex={rangeIndex}
@@ -312,12 +312,8 @@ const RateDetailScreen = ({ rates }) => {
       <CardView title={I18n.t('source')} plain>
         <CardItemView title={rate.provider} useSwitch={false} />
       </CardView>
-    </>
+    </FixedScrollView>
   );
 };
 
-export default compose(
-  withContainer,
-  withRates(),
-  withScreenshotShareSheet(),
-)(RateDetailScreen);
+export default compose(withContainer, withRates())(RateDetailScreen);

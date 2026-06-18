@@ -94,7 +94,12 @@ const SettingsScreen = () => {
   );
   const { products: donationProducts, ensureProducts } = useDonationProducts();
   const [purchaseLoading, setPurchaseLoading] = React.useState(false);
+  const purchaseLoadingRef = React.useRef(false);
   const onPressDonate = React.useCallback(async () => {
+    if (purchaseLoadingRef.current) {
+      return;
+    }
+    purchaseLoadingRef.current = true;
     setPurchaseLoading(true);
     try {
       const items = await ensureProducts();
@@ -113,6 +118,7 @@ const SettingsScreen = () => {
         showPurchaseErrorAlert(e);
       }
     } finally {
+      purchaseLoadingRef.current = false;
       setPurchaseLoading(false);
     }
   }, [ensureProducts, dispatch]);

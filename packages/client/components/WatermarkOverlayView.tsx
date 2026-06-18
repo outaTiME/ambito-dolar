@@ -29,11 +29,11 @@ export default () => {
             // use height without font size
             y="80"
             // https://github.com/expo/expo/issues/1959#issuecomment-780198250
-            fontFamily={(Settings as any).getFontObject().fontFamily}
+            fontFamily={Settings.getFontObject().fontFamily}
             // same as fonts.title
             fontSize="20"
             opacity="0.1"
-            fill={(Settings as any).getGrayColor(theme)}
+            fill={Settings.getGrayColor(theme)}
           >
             {Settings.APP_COPYRIGHT}
           </SvgText>

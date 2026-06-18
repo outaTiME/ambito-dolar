@@ -1,8 +1,6 @@
 // @ts-nocheck
 import AmbitoDolar from '@ambito-dolar/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
-import * as StatusBar from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import * as _ from 'lodash';
 import React from 'react';
@@ -100,14 +98,14 @@ export async function taskHandler(props) {
   switch (props.widgetAction) {
     case 'WIDGET_ADDED':
     case 'WIDGET_UPDATE':
-      console.log(
+      Helper.debug(
         '>>> taskHandler (renderWidget) (before)',
         props.widgetAction,
         widgetInfo,
       );
       await getWidgetProps(widgetInfo, props.widgetAction === 'WIDGET_ADDED')
         .then((widgetProps) => {
-          console.log(
+          Helper.debug(
             '>>> taskHandler (renderWidget) (after)',
             AmbitoDolar.getTimezoneDate().format(),
             props.widgetAction,
@@ -160,8 +158,8 @@ export const ConfigurationScreen = Sentry.wrap((props) => {
   React.useEffect(() => {
     async function prepare() {
       try {
-        const statusBarStyle = Helper.getInvertedTheme(colorScheme);
-        StatusBar.setStatusBarStyle(statusBarStyle);
+        // const statusBarStyle = Helper.getInvertedTheme(colorScheme);
+        // StatusBar.setStatusBarStyle(statusBarStyle);
         const backgroundColor = Settings.getBackgroundColor(colorScheme);
         await SystemUI.setBackgroundColorAsync(backgroundColor);
         // additional async stuff here
@@ -202,7 +200,7 @@ export const ConfigurationScreen = Sentry.wrap((props) => {
           .finally(() => {
             setConfig(newConfig);
             getWidgetProps(widgetInfo, true).then((widgetProps) => {
-              console.log(
+              Helper.debug(
                 '>>> ConfigurationScreen (renderWidget)',
                 AmbitoDolar.getTimezoneDate().format(),
                 widgetProps,
@@ -219,52 +217,43 @@ export const ConfigurationScreen = Sentry.wrap((props) => {
       <GestureHandlerRootView>
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
           <ThemeProvider theme={theme}>
-            <NavigationContainer
-              {...{
-                theme: {
-                  dark: colorScheme === 'dark',
-                },
-              }}
-            >
-              <ScrollView>
-                <ContentView contentContainerStyle={{ flex: 1 }}>
-                  <CloseButton {...props} />
-                  <CardView title="Cotización" plain>
-                    {rateTypes.map((type, index) => (
-                      <CardItemView
-                        key={type}
-                        title={AmbitoDolar.getRateTitle(type)}
-                        useSwitch={false}
-                        chevron={false}
-                        check={
-                          config.rate === type || (!config.rate && index === 0)
-                        }
-                        onAction={() => {
-                          saveSetting('rate', type);
-                        }}
-                      />
-                    ))}
-                  </CardView>
-                  <CardView title="Mostrar" plain>
-                    {['buy', 'average', 'sell'].map((type, index) => (
-                      <CardItemView
-                        key={type}
-                        title={I18n.t(type)}
-                        useSwitch={false}
-                        chevron={false}
-                        check={
-                          config.value === type ||
-                          (!config.value && index === 2)
-                        }
-                        onAction={() => {
-                          saveSetting('value', type);
-                        }}
-                      />
-                    ))}
-                  </CardView>
-                </ContentView>
-              </ScrollView>
-            </NavigationContainer>
+            <ScrollView>
+              <ContentView contentContainerStyle={{ flex: 1 }}>
+                <CloseButton {...props} />
+                <CardView title="Cotización" plain>
+                  {rateTypes.map((type, index) => (
+                    <CardItemView
+                      key={type}
+                      title={AmbitoDolar.getRateTitle(type)}
+                      useSwitch={false}
+                      chevron={false}
+                      check={
+                        config.rate === type || (!config.rate && index === 0)
+                      }
+                      onAction={() => {
+                        saveSetting('rate', type);
+                      }}
+                    />
+                  ))}
+                </CardView>
+                <CardView title="Mostrar" plain>
+                  {['buy', 'average', 'sell'].map((type, index) => (
+                    <CardItemView
+                      key={type}
+                      title={I18n.t(type)}
+                      useSwitch={false}
+                      chevron={false}
+                      check={
+                        config.value === type || (!config.value && index === 2)
+                      }
+                      onAction={() => {
+                        saveSetting('value', type);
+                      }}
+                    />
+                  ))}
+                </CardView>
+              </ContentView>
+            </ScrollView>
           </ThemeProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
@@ -280,7 +269,7 @@ export const reloadWidgets = (data) =>
     renderWidget: (widgetInfo) =>
       getWidgetProps(widgetInfo, false, data)
         .then((widgetProps) => {
-          console.log(
+          Helper.debug(
             '>>> reloadWidgets (renderWidget)',
             AmbitoDolar.getTimezoneDate().format(),
             widgetProps,

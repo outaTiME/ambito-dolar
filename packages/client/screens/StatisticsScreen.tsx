@@ -21,7 +21,6 @@ const StatisticsScreen = () => {
     usages,
     daysUsed,
     conversions,
-    sharedRates,
     downloadedRates,
     downloadedHistoricalRates,
     detailedRates,
@@ -32,7 +31,6 @@ const StatisticsScreen = () => {
         usages,
         days_used: daysUsed,
         conversions,
-        shared_rates: sharedRates,
         downloaded_rates: downloadedRates,
         downloaded_historical_rates: downloadedHistoricalRates,
         detailed_rates: detailedRates,
@@ -42,7 +40,6 @@ const StatisticsScreen = () => {
       usages,
       daysUsed,
       conversions,
-      sharedRates,
       downloadedRates,
       downloadedHistoricalRates,
       detailedRates,
@@ -109,11 +106,6 @@ const StatisticsScreen = () => {
           title={I18n.t('app_conversions')}
           useSwitch={false}
           value={Helper.formatIntegerNumber(conversions)}
-        />
-        <CardItemView
-          title={I18n.t('app_shared_rates')}
-          useSwitch={false}
-          value={Helper.formatIntegerNumber(sharedRates)}
         />
         {lastReview && (
           <CardItemView

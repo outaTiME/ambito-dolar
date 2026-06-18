@@ -18,11 +18,7 @@ export const Separator = ({
         full === false && { marginLeft: Settings.PADDING },
         {
           height: StyleSheet.hairlineWidth,
-          backgroundColor: (Settings as any).getStrokeColor(
-            theme,
-            soft,
-            isModal,
-          ),
+          backgroundColor: Settings.getStrokeColor(theme, soft, isModal),
         },
         style,
       ]}
@@ -85,7 +81,7 @@ export default ({
             style={[
               fonts.subhead,
               {
-                color: (Settings as any).getGrayColor(theme),
+                color: Settings.getGrayColor(theme),
                 textTransform: 'uppercase',
               },
             ]}
@@ -100,11 +96,7 @@ export default ({
             borderRadius: Settings.BORDER_RADIUS,
             borderCurve: 'continuous',
             ...(transparent !== true && {
-              backgroundColor: (Settings as any).getContentColor(
-                theme,
-                false,
-                isModal,
-              ),
+              backgroundColor: Settings.getContentColor(theme, false, isModal),
             }),
             // flexGrow required when customization on CardItemView
             [Platform.OS === 'web' ? 'flex' : 'flexGrow']: 1,
@@ -121,7 +113,8 @@ export default ({
             ]}
             onPress={onPress}
             activeOpacity={1}
-            underlayColor={(Settings as any).getStrokeColor(theme, true)}
+            underlayColor={Settings.getStrokeColor(theme, true)}
+            rippleColor={Settings.getRippleColor(theme)}
           >
             <>{row_items}</>
           </RectButton>
@@ -150,7 +143,7 @@ export default ({
             style={[
               fonts.footnote,
               {
-                color: (Settings as any).getGrayColor(theme),
+                color: Settings.getGrayColor(theme),
               },
             ]}
           >

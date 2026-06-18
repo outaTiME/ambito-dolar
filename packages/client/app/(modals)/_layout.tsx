@@ -1,45 +1,36 @@
-import { router, Stack } from 'expo-router';
-import React from 'react';
+import { Stack } from 'expo-router';
 import { Platform } from 'react-native';
 
-import HeaderButton from '@/components/HeaderButton';
+import HeaderButton, {
+  customHeaderBackOptions,
+} from '@/components/HeaderButton';
 import I18n from '@/config/I18n';
 import Helper from '@/utilities/Helper';
+import { goBack } from '@/utilities/Navigation';
 
 export default function ModalsLayout() {
   const { theme, fonts } = Helper.useTheme();
   return (
     <Stack
-      screenOptions={
-        Helper.getStackScreenOptions({
+      screenOptions={{
+        ...Helper.getStackScreenOptions({
           theme,
           fonts,
           modal: true,
-        }) as any
-      }
+        }),
+        ...customHeaderBackOptions,
+      }}
     >
       <Stack.Screen
         name="customize-rates/index"
         initialParams={{ modal: 'true' }}
         options={{
           title: Helper.getScreenTitle(I18n.t('customize_rates')),
-          ...Platform.select({
-            ios: {
-              headerRight: () => (
-                <HeaderButton.Text
-                  title={I18n.t('done')}
-                  onPress={() => router.back()}
-                />
-              ),
-            },
-            android: {
-              headerLeft: () => (
-                <HeaderButton.Icon
-                  iconName="arrow-back"
-                  onPress={() => router.back()}
-                />
-              ),
-            },
+          // android headerLeft comes from parent customHeaderBackOptions spread
+          ...(Platform.OS === 'ios' && {
+            headerRight: () => (
+              <HeaderButton.Text title={I18n.t('done')} onPress={goBack} />
+            ),
           }),
         }}
       />

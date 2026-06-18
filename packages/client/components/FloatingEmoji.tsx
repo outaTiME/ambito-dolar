@@ -24,7 +24,7 @@ const FloatingEmoji = ({
   size,
   top,
   wiggleFactor,
-}: any) => {
+}) => {
   const TextComponent = Text as any;
   const animation = useSharedValue(0);
   useLayoutEffect(() => {

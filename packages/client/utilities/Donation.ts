@@ -9,7 +9,7 @@ import Sentry from '@/utilities/Sentry';
 const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 
 // distinct usage days before re-show, count=0 uses shorter wait to invite casuals
-export const getCooldownDays = (ignoreCount: number = 0): number => {
+export const getCooldownDays = (ignoreCount = 0) => {
   if (ignoreCount === 0) {
     return 15;
   }
@@ -26,7 +26,7 @@ export const getCooldownDays = (ignoreCount: number = 0): number => {
 };
 
 // re-ask cadence tiered by lifetime total (USD)
-export const getReAskMs = (lifetimeTotal: number = 0): number => {
+export const getReAskMs = (lifetimeTotal = 0) => {
   if (lifetimeTotal < 2) {
     return 3 * MONTH_MS;
   }
@@ -36,13 +36,8 @@ export const getReAskMs = (lifetimeTotal: number = 0): number => {
   return 12 * MONTH_MS;
 };
 
-type Transaction = { productIdentifier?: string } | null | undefined;
-
 // sum lifetime in local currency via current product prices (approximation)
-export const computeLifetime = (
-  transactions: Transaction[] = [],
-  priceMap: Record<string, number> = {},
-): number =>
+export const computeLifetime = (transactions = [], priceMap = {}) =>
   transactions.reduce(
     (sum, tx) => sum + (priceMap[tx?.productIdentifier ?? ''] ?? 0),
     0,

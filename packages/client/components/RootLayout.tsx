@@ -1,15 +1,13 @@
 // https://docs.expo.dev/develop/development-builds/use-development-builds/#add-error-handling
 import 'expo-dev-client';
-import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { SplashScreen, Stack } from 'expo-router';
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
   ThemeProvider as NavigationThemeProvider,
-} from '@react-navigation/native';
-import { Stack } from 'expo-router';
+} from 'expo-router/react-navigation';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import {
   Appearance,
@@ -19,7 +17,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import AnimateableText from 'react-native-animateable-text/lib/commonjs';
+import AnimateableText from 'react-native-animateable-text';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   initialWindowMetrics,
@@ -42,9 +40,6 @@ import Sentry from '@/utilities/Sentry';
 
 const start_time = Date.now();
 SplashScreen.preventAutoHideAsync().catch(console.warn);
-SplashScreen.setOptions({
-  fade: true,
-});
 
 // leaf component to isolate usePathname subscription away from ThemedLayout
 // prevents the whole app tree from re-rendering on every URL change
@@ -102,7 +97,6 @@ const ThemedLayout = () => {
       '👌 Application loading is completed',
       Date.now() - start_time,
     );
-    SplashScreen.hideAsync().catch(console.warn);
   }, []);
   React.useEffect(() => {
     Helper.debug(
@@ -114,14 +108,9 @@ const ThemedLayout = () => {
       setLayoutKey(Helper.getHashId(windowDimensions));
     });
   }, [windowDimensions]);
-  // sync app-level appearance override with UIKit native chrome (iOS only)
-  const appearance = useSelector(
-    (state: any) => state.application.appearance,
-  ) as 'light' | 'dark' | null | undefined;
+  // bridge redux appearance to native chrome (iOS UIKit, Android AppCompat)
+  const appearance = useSelector((state: any) => state.application.appearance);
   React.useEffect(() => {
-    if (Platform.OS !== 'ios') {
-      return;
-    }
     Appearance.setColorScheme(appearance ?? 'unspecified');
   }, [appearance]);
   // set background color early to avoid white flash on Android
@@ -129,12 +118,7 @@ const ThemedLayout = () => {
   const stackScreenOptions = React.useMemo(
     () => ({
       headerShown: false,
-      statusBarStyle: Helper.getInvertedTheme(colorScheme) as
-        | 'dark'
-        | 'light'
-        | 'auto'
-        | 'inverted',
-      navigationBarColor: Settings.getContentColor(colorScheme),
+      statusBarStyle: Helper.getInvertedTheme(colorScheme) as 'dark' | 'light',
     }),
     [colorScheme],
   );
@@ -143,46 +127,44 @@ const ThemedLayout = () => {
       {layoutKey && (
         <ThemeProvider theme={theme}>
           <NavigationThemeProvider value={navigationTheme}>
-            <ActionSheetProvider>
-              <BottomSheetModalProvider>
-                <AppContainer>
-                  <Stack
-                    key={layoutKey}
-                    screenOptions={stackScreenOptions}
-                    // initialRouteName="(tabs)"
-                  >
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen
-                      name="(modals)"
-                      options={{
-                        presentation: 'modal',
-                        gestureEnabled: false,
-                      }}
-                    />
-                    <Stack.Screen
-                      name="donate"
-                      options={{
-                        presentation: 'formSheet',
-                        headerShown: false,
-                        sheetAllowedDetents: 'fitToContents',
-                        sheetGrabberVisible: true,
-                        gestureEnabled: true,
-                        // forced light to match the prior gorhom modal
-                        // android stays transparent so the inner view corner radius shows
-                        contentStyle: {
-                          backgroundColor:
-                            Platform.OS === 'android'
-                              ? 'transparent'
-                              : Settings.getContentColor('light'),
-                        },
-                      }}
-                    />
-                  </Stack>
-                  <NavigationTracker />
-                  <ToastOverlay />
-                </AppContainer>
-              </BottomSheetModalProvider>
-            </ActionSheetProvider>
+            <BottomSheetModalProvider>
+              <AppContainer>
+                <Stack
+                  key={layoutKey}
+                  screenOptions={stackScreenOptions}
+                  // initialRouteName="(tabs)"
+                >
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen
+                    name="(modals)"
+                    options={{
+                      presentation: 'modal',
+                      gestureEnabled: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="donate"
+                    options={{
+                      presentation: 'formSheet',
+                      headerShown: false,
+                      sheetAllowedDetents: 'fitToContents',
+                      sheetGrabberVisible: true,
+                      gestureEnabled: true,
+                      // forced light to match the prior gorhom modal
+                      // android stays transparent so the inner view corner radius shows
+                      contentStyle: {
+                        backgroundColor:
+                          Platform.OS === 'android'
+                            ? 'transparent'
+                            : Settings.getContentColor('light'),
+                      },
+                    }}
+                  />
+                </Stack>
+                <NavigationTracker />
+                <ToastOverlay />
+              </AppContainer>
+            </BottomSheetModalProvider>
           </NavigationThemeProvider>
         </ThemeProvider>
       )}
@@ -193,7 +175,7 @@ const ThemedLayout = () => {
 const RootLayout = () => {
   const constantsLoaded = Helper.useApplicationConstants();
   const [appIsReady, setAppIsReady] = React.useState(false);
-  const appIsLoading = !constantsLoaded || !appIsReady;
+  const isReady = constantsLoaded && appIsReady;
   React.useEffect(() => {
     async function prepare() {
       try {
@@ -206,9 +188,11 @@ const RootLayout = () => {
     }
     prepare();
   }, []);
-  if (appIsLoading) {
-    return null;
-  }
+  React.useEffect(() => {
+    if (isReady) {
+      SplashScreen.hideAsync().catch(console.warn);
+    }
+  }, [isReady]);
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <Provider store={store}>

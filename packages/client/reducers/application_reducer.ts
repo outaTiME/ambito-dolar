@@ -13,7 +13,6 @@ import {
   APP_USAGE_DAY,
   APP_USAGE,
   APP_CONVERSION,
-  APP_SHARE_RATES,
   APP_DOWNLOAD_RATES,
   APP_DOWNLOAD_HISTORICAL_RATES,
   APP_DETAILED_RATES,
@@ -43,7 +42,6 @@ const INITIAL_STATE = {
   usages: 0,
   days_used: 0,
   conversions: 0,
-  shared_rates: 0,
   downloaded_rates: 0,
   downloaded_historical_rates: 0,
   detailed_rates: 0,
@@ -120,8 +118,6 @@ export default (state = INITIAL_STATE, action) => {
       return increment(state, 'usages');
     case APP_CONVERSION:
       return increment(state, 'conversions');
-    case APP_SHARE_RATES:
-      return increment(state, 'shared_rates');
     case APP_DOWNLOAD_RATES:
       return increment(state, 'downloaded_rates');
     case APP_DOWNLOAD_HISTORICAL_RATES:

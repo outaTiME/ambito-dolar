@@ -1,5 +1,5 @@
-import { View, Text, ActivityIndicator } from 'react-native';
-import { RectButton, BorderlessButton } from 'react-native-gesture-handler';
+import { View, Text, ActivityIndicator, Pressable } from 'react-native';
+import { RectButton } from 'react-native-gesture-handler';
 
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
@@ -53,18 +53,16 @@ export default ({
   const { theme } = Helper.useTheme(colorScheme);
   if (borderless) {
     return (
-      <View
-        style={[
-          {
-            alignSelf: 'center',
-          },
+      <Pressable
+        onPress={handleOnPress}
+        disabled={loading}
+        style={({ pressed }) => [
+          { alignSelf: 'center', opacity: pressed ? 0.5 : 1 },
           style,
         ]}
       >
-        <BorderlessButton onPress={handleOnPress} enabled={!loading}>
-          <ButtonText {...{ title, small, colorScheme, loading }} />
-        </BorderlessButton>
-      </View>
+        <ButtonText {...{ title, small, colorScheme, loading }} />
+      </Pressable>
     );
   }
   return (
@@ -89,6 +87,7 @@ export default ({
         onPress={handleOnPress}
         activeOpacity={1}
         underlayColor={Settings.getStrokeColor(theme, true)}
+        rippleColor={Settings.getRippleColor(theme)}
         enabled={!loading}
       >
         <ButtonText {...{ title, small, colorScheme, loading }} />

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import AmbitoDolar from '@ambito-dolar/core';
 import { compose } from '@reduxjs/toolkit';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Platform, View, TouchableWithoutFeedback } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -21,7 +21,10 @@ import withRates from '@/components/withRates';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
-import { goToCustomizeRatesModal } from '@/utilities/Navigation';
+import {
+  clearRouteParam,
+  goToCustomizeRatesModal,
+} from '@/utilities/Navigation';
 
 const CURRENCY_TYPES = [I18n.t('currency'), I18n.t('peso')];
 const CONVERSION_TYPES = [I18n.t('buy'), I18n.t('average'), I18n.t('sell')];
@@ -121,7 +124,7 @@ const ConversionScreen = ({ rates, rateTypes, backgroundColor }) => {
       }
       const timeoutId = setTimeout(() => {
         inputTextRef.current?.focus();
-        router.setParams({ focus: undefined });
+        clearRouteParam('focus');
       }, 0);
       return () => clearTimeout(timeoutId);
     }, [params?.focus]),

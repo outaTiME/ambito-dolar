@@ -4,8 +4,8 @@ import { Animated, View, StyleSheet, Platform } from 'react-native';
 import FloatingEmoji from '@/components/FloatingEmoji';
 
 function useTimeout() {
-  const handle = useRef<any>(null);
-  const start = useCallback((func: any, ms: any) => {
+  const handle = useRef(null);
+  const start = useCallback((func, ms) => {
     handle.current = setTimeout(func, ms);
   }, []);
   const stop = useCallback(() => {
@@ -18,9 +18,8 @@ function useTimeout() {
 }
 
 const EMPTY_ARRAY = [];
-const getEmoji = (emojis: any) => Math.floor(Math.random() * emojis.length);
-const getRandomNumber = (min: any, max: any) =>
-  Math.random() * (max - min) + min;
+const getEmoji = (emojis) => Math.floor(Math.random() * emojis.length);
+const getRandomNumber = (min, max) => Math.random() * (max - min) + min;
 
 const FloatingEmojis = ({
   centerVertically,
@@ -42,7 +41,7 @@ const FloatingEmojis = ({
   style,
   disableMoneyMouthFace,
   ...props
-}: any) => {
+}) => {
   const emojisArray = useMemo(
     () => (Array.isArray(emojis) ? emojis : [emojis]),
     [emojis],
@@ -58,7 +57,7 @@ const FloatingEmojis = ({
   // Clear emojis if page navigatorPosition falls below 0.93 (which we should call like `pageTransitionThreshold` or something)
   // otherwise, the FloatingEmojis look weird during stack transitions
   const onNewEmoji = useCallback(
-    (x: any, y: any) => {
+    (x, y) => {
       // Set timeout to automatically clearEmojis after the latest one has finished animating
       stopTimeout();
       startTimeout(clearEmojis, duration * 1.1);

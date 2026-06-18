@@ -10,7 +10,7 @@ export default ({ style, compact }) => {
       style={[
         compact != null ? fonts.subhead : fonts.body,
         {
-          color: (Settings as any).getGrayColor(theme),
+          color: Settings.getGrayColor(theme),
         },
         style,
       ]}

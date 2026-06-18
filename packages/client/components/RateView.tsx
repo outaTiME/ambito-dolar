@@ -1,6 +1,6 @@
 // @ts-nocheck
 import AmbitoDolar from '@ambito-dolar/core';
-import MaterialIcons from '@expo/vector-icons/build/vendor/react-native-vector-icons/MaterialIcons';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
 import React from 'react';
 import { View, Text, Platform, PixelRatio } from 'react-native';
 

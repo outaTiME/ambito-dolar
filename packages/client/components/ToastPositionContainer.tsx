@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 
-export default ({ height, children }: any) => (
+export default ({ height, children }) => (
   <View
     style={{
       pointerEvents: 'none',

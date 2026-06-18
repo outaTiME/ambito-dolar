@@ -5,11 +5,10 @@ import rgba from 'color-rgba';
 import * as d3Array from 'd3-array';
 import * as Application from 'expo-application';
 import * as MailComposer from 'expo-mail-composer';
-import * as Sharing from 'expo-sharing';
 import * as _ from 'lodash';
 import hash from 'object-hash';
 import React from 'react';
-import { Platform, Linking, PixelRatio, StyleSheet, View } from 'react-native';
+import { Platform, Linking, PixelRatio } from 'react-native';
 import {
   useSafeAreaFrame,
   useSafeAreaInsets,
@@ -408,48 +407,22 @@ export default {
   },
   getStackScreenOptions({ theme, fonts, modal = false }) {
     return {
-      headerBackTitle: '',
-      headerBackButtonDisplayMode: 'minimal',
-      headerTitleAlign: 'center',
-      ...Platform.select({
-        ios: {
-          headerTransparent: true,
-          ...(!Settings.IS_LIQUID_GLASS && {
-            headerBlurEffect: modal
-              ? `systemMaterial${AmbitoDolar.getCapitalized(theme)}`
-              : theme,
-          }),
-          headerShadowVisible: true,
-        },
-        // native-stack headerStyle only honors backgroundColor
-        // use headerBackground to draw the hairline matching tab bar top
-        android: Settings.USE_NATIVE_TABS_ANDROID
-          ? {
-              headerStyle: {
-                backgroundColor: Settings.getContentColor(theme),
-              },
-            }
-          : {
-              headerShadowVisible: false,
-              headerBackground: () =>
-                React.createElement(View, {
-                  style: {
-                    flex: 1,
-                    backgroundColor: Settings.getContentColor(theme),
-                    borderBottomWidth: StyleSheet.hairlineWidth,
-                    borderBottomColor: Settings.getSeparatorColor(theme),
-                  },
-                }),
-            },
-      }),
-      headerTintColor: Settings.getForegroundColor(theme),
+      headerBackButtonDisplayMode: 'minimal' as const,
+      headerShadowVisible: true,
+      // forced center cross-platform (Android Material default is left)
+      headerTitleAlign: 'center' as const,
       headerTitleStyle: {
         ...fonts.title,
       },
-      statusBarStyle: this.getInvertedTheme(theme),
-      contentStyle: {
-        backgroundColor: Settings.getBackgroundColor(theme, false, modal),
-      },
+      // ios transparent + UIKit blur, android uses NavigationThemeProvider card
+      ...(Platform.OS === 'ios' && {
+        headerTransparent: true,
+        ...(!Settings.IS_LIQUID_GLASS && {
+          headerBlurEffect: modal
+            ? `systemMaterial${AmbitoDolar.getCapitalized(theme)}`
+            : theme,
+        }),
+      }),
     };
   },
   getScreenTitle(title) {
@@ -520,25 +493,17 @@ export default {
     const [, setContactAvailable] = this.useSharedState('contactAvailable');
     const [, setStoreAvailable] = this.useSharedState('storeAvailable');
     const [, setInstallationTime] = this.useSharedState('installationTime');
-    const [, setSharingAvailable] = this.useSharedState('sharingAvailable');
     React.useEffect(() => {
       Promise.all([
         MailComposer.isAvailableAsync(),
         Linking.canOpenURL(Settings.APP_STORE_URI),
         Application.getInstallationTimeAsync(),
-        Sharing.isAvailableAsync(),
       ]).then((data) => {
         debug('Application constants', data);
-        const [
-          contactAvailable,
-          storeAvailable,
-          installationTime,
-          sharingAvailable,
-        ] = data;
+        const [contactAvailable, storeAvailable, installationTime] = data;
         setContactAvailable(contactAvailable);
         setStoreAvailable(storeAvailable);
         setInstallationTime(installationTime);
-        setSharingAvailable(sharingAvailable);
         // done
         setConstantsLoaded(true);
       });

@@ -9,7 +9,6 @@ export const APP_UPDATE = 'app_update';
 export const APP_USAGE_DAY = 'app_usage_day';
 export const APP_USAGE = 'app_usage';
 export const APP_CONVERSION = 'app_conversion';
-export const APP_SHARE_RATES = 'app_share_rates';
 export const APP_DOWNLOAD_RATES = 'app_download_rates';
 export const APP_DOWNLOAD_HISTORICAL_RATES = 'app_download_historical_rates';
 export const APP_DETAILED_RATES = 'app_detailed_rates';

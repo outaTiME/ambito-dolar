@@ -28,8 +28,13 @@ const DonateScreen = () => {
   const dispatch = useDispatch();
   const { products } = useDonationProducts();
   const [loadingProductId, setLoadingProductId] = React.useState(null);
+  const loadingRef = React.useRef(false);
   const handleDonate = React.useCallback(
     async (product) => {
+      if (loadingRef.current) {
+        return;
+      }
+      loadingRef.current = true;
       setLoadingProductId(product.identifier);
       try {
         await purchaseDonation(product);
@@ -37,6 +42,7 @@ const DonateScreen = () => {
       } catch (e) {
         showPurchaseErrorAlert(e);
       } finally {
+        loadingRef.current = false;
         setLoadingProductId(null);
       }
     },

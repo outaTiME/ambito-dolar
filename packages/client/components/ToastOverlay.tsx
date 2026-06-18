@@ -7,14 +7,16 @@ import Toast from '@/components/Toast';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
-const TAB_BAR_HEIGHT = 49;
+// ios UITabBar 49pt, android 64dp M3 Expressive (forced via
+// plugins/withAndroidBottomNavDimens, base M3 is 80dp)
+const TAB_BAR_HEIGHT = Platform.OS === 'android' ? 64 : 49;
 
 function ToastOverlay() {
   const insets = useSafeAreaInsets();
   const [activityToast, setActivityToast] =
     Helper.useSharedState('activityToast');
   const [activeToast, setActiveToast] = React.useState<any>();
-  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = React.useRef(null);
   React.useEffect(() => {
     if (activityToast) {
       setActivityToast(null);

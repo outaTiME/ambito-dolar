@@ -26,7 +26,7 @@ const EXACT_ROUTE_MAP = {
   '/settings/rate-widget-preview': 'RateWidgetPreview',
 };
 
-const getTrackedScreenFromPathname = (pathname: string) => {
+const getTrackedScreenFromPathname = (pathname) => {
   if (!pathname) {
     return null;
   }
@@ -54,7 +54,7 @@ const getTrackedScreenFromPathname = (pathname: string) => {
 
 export default function useNavigationTrackingRouter() {
   const pathname = usePathname();
-  const previousRouteNameRef = React.useRef<any>(undefined);
+  const previousRouteNameRef = React.useRef(null);
   React.useEffect(() => {
     const currentRouteName = getTrackedScreenFromPathname(pathname);
     if (

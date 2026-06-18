@@ -9,12 +9,10 @@ export default function SettingsStackLayout() {
   const { theme, fonts } = Helper.useTheme();
   return (
     <Stack
-      screenOptions={
-        {
-          ...Helper.getStackScreenOptions({ theme, fonts }),
-          ...customHeaderBackOptions,
-        } as any
-      }
+      screenOptions={{
+        ...Helper.getStackScreenOptions({ theme, fonts }),
+        ...customHeaderBackOptions,
+      }}
     >
       <Stack.Screen
         name="index"

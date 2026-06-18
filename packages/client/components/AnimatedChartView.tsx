@@ -29,7 +29,7 @@ const springDefaultConfig = {
   stiffness: 600,
 };
 
-const Cursor = ({ length, point, width, color }: any) => {
+const Cursor = ({ length, point, width, color }) => {
   const isActive = useSharedValue(false);
   React.useEffect(() => {
     if (isActive.value === false) {
@@ -100,14 +100,7 @@ const scaleInvert = (y, d, r) => {
   return interpolate(y, r, d, Extrapolation.CLAMP);
 };
 
-export default ({
-  data,
-  domain,
-  color,
-  selectionIndex,
-  width,
-  height,
-}: any) => {
+export default ({ data, domain, color, selectionIndex, width, height }) => {
   const range = React.useMemo(
     () => ({
       x: [0, width],
@@ -119,8 +112,8 @@ export default ({
     () =>
       d3Shape
         .line<any>()
-        .x((datum: any) => scale(datum.x, domain.x, (range as any).x))
-        .y((datum: any) => scale(datum.y, domain.y, (range as any).y))
+        .x((datum) => scale(datum.x, domain.x, range.x))
+        .y((datum) => scale(datum.y, domain.y, range.y))
         .curve(d3Shape.curveMonotoneX)(data),
     [data, domain, range],
   );
@@ -135,7 +128,7 @@ export default ({
     };
     return {
       coord,
-      index: Math.round(scaleInvert(coord.x, domain.x, (range as any).x)),
+      index: Math.round(scaleInvert(coord.x, domain.x, range.x)),
     };
   }, [path, domain, range]);
   useAnimatedReaction(

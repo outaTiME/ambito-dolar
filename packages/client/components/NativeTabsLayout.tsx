@@ -1,6 +1,5 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
-import React from 'react';
 import { Platform } from 'react-native';
 
 import Settings from '@/config/settings';
@@ -10,26 +9,29 @@ export default function NativeTabsLayout() {
   const { theme } = Helper.useTheme();
   return (
     <NativeTabs
-      minimizeBehavior="never"
-      // keep tab bar opaque at scroll edge (iOS 18 defaults to transparent)
-      // pinned to current react-native-screens, revisit on expo 56 upgrade
       disableTransparentOnScrollEdge
-      {...(!Settings.IS_LIQUID_GLASS && {
-        blurEffect: theme,
-      })}
-      {...(Platform.OS === 'android' && {
-        backgroundColor: Settings.getContentColor(theme),
-        shadowColor: Settings.getSeparatorColor(theme),
-        indicatorColor: 'transparent',
-      })}
+      labelVisibilityMode="unlabeled"
+      minimizeBehavior="never"
       tintColor={Settings.getForegroundColor(theme)}
       iconColor={Settings.getStrokeColor(theme)}
+      {...Platform.select({
+        android: {
+          // bg matches header card color for coherent surface
+          backgroundColor: Settings.getContentColor(theme),
+          // soft gray pill to match iOS native subtle selection tone
+          indicatorColor: Settings.getStrokeColor(theme, true),
+          selectedIconColor: Settings.getForegroundColor(theme),
+          rippleColor: Settings.getRippleColor(theme),
+        },
+        // LG iOS 26+ ships its own material
+        ios: !Settings.IS_LIQUID_GLASS && { blurEffect: theme },
+      })}
     >
       <NativeTabs.Trigger name="rates">
         <NativeTabs.Trigger.Icon
           src={
             <NativeTabs.Trigger.VectorIcon
-              family={MaterialCommunityIcons as any}
+              family={MaterialCommunityIcons}
               name="cards-outline"
             />
           }
@@ -40,7 +42,7 @@ export default function NativeTabsLayout() {
         <NativeTabs.Trigger.Icon
           src={
             <NativeTabs.Trigger.VectorIcon
-              family={MaterialCommunityIcons as any}
+              family={MaterialCommunityIcons}
               name="swap-horizontal-variant"
             />
           }
@@ -51,7 +53,7 @@ export default function NativeTabsLayout() {
         <NativeTabs.Trigger.Icon
           src={
             <NativeTabs.Trigger.VectorIcon
-              family={MaterialCommunityIcons as any}
+              family={MaterialCommunityIcons}
               name="cog-outline"
             />
           }

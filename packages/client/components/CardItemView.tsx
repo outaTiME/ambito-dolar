@@ -10,32 +10,22 @@ import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
-const ActionViewComponent = ActionView as any;
-const SeparatorComponent = Separator as any;
 const CollapsibleComponent = Collapsible as any;
 
-const ChevronActionView = ({ isModal }: any) => (
-  <ActionViewComponent iconName="chevron-right" isModal={isModal} />
+const ChevronActionView = ({ isModal }) => (
+  <ActionView iconName="chevron-right" isModal={isModal} />
 );
 
 const CheckActionView = () => {
   const { theme } = Helper.useTheme();
   return (
-    <ActionViewComponent
-      iconName="check"
-      color={(Settings as any).getForegroundColor(theme)}
-    />
+    <ActionView iconName="check" color={Settings.getForegroundColor(theme)} />
   );
 };
 
 const LoadingActionView = () => {
   const { theme } = Helper.useTheme();
-  return (
-    <ActionViewComponent
-      loading
-      color={(Settings as any).getForegroundColor(theme)}
-    />
-  );
+  return <ActionView loading color={Settings.getForegroundColor(theme)} />;
 };
 
 export default ({
@@ -73,12 +63,13 @@ export default ({
         ]}
         onPress={onAction}
         activeOpacity={1}
-        underlayColor={(Settings as any).getStrokeColor(theme, true, isModal)}
+        underlayColor={Settings.getStrokeColor(theme, true, isModal)}
+        rippleColor={Settings.getRippleColor(theme)}
       >
         <>
           {draggable && (
             <Sortable.Handle>
-              <ActionViewComponent
+              <ActionView
                 community
                 iconName="drag-horizontal-variant"
                 // iconName="circle-outline"
@@ -129,7 +120,7 @@ export default ({
                     style={[
                       fonts.footnote,
                       {
-                        color: (Settings as any).getGrayColor(theme),
+                        color: Settings.getGrayColor(theme),
                       },
                       extra.titleDetailStyle,
                     ]}
@@ -149,7 +140,7 @@ export default ({
                   style={[
                     fonts.body,
                     {
-                      color: (Settings as any).getGrayColor(theme),
+                      color: Settings.getGrayColor(theme),
                       textAlign: 'right',
                       flexShrink: 1,
                       flexGrow: 0,
@@ -192,7 +183,7 @@ export default ({
           collapsed={value !== true}
           duration={Settings.ANIMATION_DURATION}
         >
-          <SeparatorComponent isModal={isModal} />
+          <Separator isModal={isModal} />
           <RectButton
             style={[
               {
@@ -203,11 +194,8 @@ export default ({
             ]}
             onPress={onAction}
             activeOpacity={1}
-            underlayColor={(Settings as any).getStrokeColor(
-              theme,
-              true,
-              isModal,
-            )}
+            underlayColor={Settings.getStrokeColor(theme, true, isModal)}
+            rippleColor={Settings.getRippleColor(theme)}
           >
             <>
               <View

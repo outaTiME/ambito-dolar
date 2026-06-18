@@ -79,7 +79,7 @@ const CHART_STROKE_WIDTH = 3 - 0.5;
 // toggle native formSheet (true) or gorhom bottom-sheet (false) for the donation modal
 const USE_NATIVE_DONATION_SHEET = false;
 // toggle NativeTabs (true, parity with iOS) or classic Tabs (false) on android
-const USE_NATIVE_TABS_ANDROID = false;
+const USE_NATIVE_TABS_ANDROID = true;
 const DONATION_PRODUCT_IDS = [
   'small_contribution',
   'medium_contribution',
@@ -199,6 +199,10 @@ const Settings: any = {
     // systemGray4
     return 'rgb(209,209,214)';
     // return 'rgba(198, 198, 200, 1.0)';
+  },
+  // M3 pressed state layer .12 (PlatformPressable default .32 is M2)
+  getRippleColor(theme) {
+    return theme === 'dark' ? 'rgba(255, 255, 255, .12)' : 'rgba(0, 0, 0, .12)';
   },
   // adapt to the current appearance (dynamic colors on ios)
   getSeparatorColor(theme) {

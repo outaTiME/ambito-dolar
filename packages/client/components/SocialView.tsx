@@ -1,4 +1,4 @@
-import FontAwesome6 from '@expo/vector-icons/build/vendor/react-native-vector-icons/FontAwesome6';
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
@@ -10,7 +10,7 @@ export default ({
   compact = null,
 }) => {
   const { theme } = Helper.useTheme();
-  const grayColor = (Settings as any).getGrayColor(theme);
+  const grayColor = Settings.getGrayColor(theme);
   if (compact != null) {
     // same size as "fonts.subhead" of FundingView
     size = 15;
@@ -18,6 +18,7 @@ export default ({
   return (
     <>
       <FontAwesome6
+        iconStyle="brand"
         name="x-twitter"
         size={size}
         color={grayColor}
@@ -26,6 +27,7 @@ export default ({
         }}
       />
       <FontAwesome6
+        iconStyle="brand"
         name="telegram"
         size={size}
         color={grayColor}
@@ -34,6 +36,7 @@ export default ({
         }}
       />
       <FontAwesome6
+        iconStyle="brand"
         name="instagram"
         size={size}
         color={grayColor}
@@ -42,6 +45,7 @@ export default ({
         }}
       />
       <FontAwesome6
+        iconStyle="brand"
         name="facebook"
         size={size}
         color={grayColor}
@@ -50,6 +54,7 @@ export default ({
         }}
       />
       <FontAwesome6
+        iconStyle="brand"
         name="reddit-alien"
         size={size}
         color={grayColor}
@@ -58,6 +63,7 @@ export default ({
         }}
       />
       <FontAwesome6
+        iconStyle="brand"
         name="mastodon"
         size={size}
         color={grayColor}
@@ -67,6 +73,7 @@ export default ({
       />
       {false && (
         <FontAwesome6
+          iconStyle="brand"
           name="whatsapp"
           size={size}
           color={grayColor}
@@ -76,6 +83,7 @@ export default ({
         />
       )}
       <FontAwesome6
+        iconStyle="brand"
         name="bluesky"
         size={size}
         color={grayColor}
@@ -84,6 +92,7 @@ export default ({
         }}
       />
       <FontAwesome6
+        iconStyle="brand"
         name="threads"
         size={size}
         color={grayColor}
@@ -92,6 +101,7 @@ export default ({
         }}
       />
       <FontAwesome6
+        iconStyle="brand"
         name="github"
         size={size}
         color={grayColor}

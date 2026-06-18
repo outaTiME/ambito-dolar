@@ -96,7 +96,6 @@ const i18n = new I18n({
     app_days_used: 'Días de uso',
     app_avg_daily_opens: 'Promedio diario',
     app_conversions: 'Conversiones',
-    app_shared_rates: 'Capturas',
     app_donations: 'Donaciones',
     app_donations_count: 'Cantidad',
     app_donations_amount: 'Monto total',

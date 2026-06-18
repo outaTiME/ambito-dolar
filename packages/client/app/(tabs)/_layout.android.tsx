@@ -1,6 +1,5 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { Tabs } from 'expo-router';
-import React from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 
 import NativeTabsLayout from '@/components/NativeTabsLayout';
@@ -33,7 +32,7 @@ export default function TabsLayout() {
         tabBarButton: (props: any) => (
           <Pressable
             {...props}
-            android_ripple={false as any}
+            android_ripple={null}
             style={[props.style, { justifyContent: 'center' }]}
           />
         ),
