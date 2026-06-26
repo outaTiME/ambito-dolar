@@ -9,6 +9,7 @@ export default $config({
       removal: input?.stage === 'prod' ? 'retain' : 'remove',
       state: {
         compress: true,
+        retention: 2,
       },
     };
   },
