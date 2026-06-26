@@ -7,5 +7,7 @@ export function applyFunctionDefaults() {
     };
     args.retries ??= 0;
     args.runtime ??= 'nodejs22.x';
+    // skip the sourcemap upload to s3
+    args.nodejs = { ...args.nodejs, sourcemap: false };
   });
 }
