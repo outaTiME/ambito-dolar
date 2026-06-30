@@ -71,7 +71,7 @@ const VictoryMiniRateChartView = ({
   );
 };
 
-export default ({ stats, color, borderless, domainPaddingY }) => {
+const MiniRateChart = ({ stats, color, borderless, domainPaddingY }) => {
   // layout
   const { onLayout, width, height } = useLayout();
   const hasLayout = React.useMemo(() => width && height, [width, height]);
@@ -92,3 +92,5 @@ export default ({ stats, color, borderless, domainPaddingY }) => {
     </View>
   );
 };
+
+export default React.memo(MiniRateChart);
