@@ -12,13 +12,13 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^21.0.2",
-    "@commitlint/config-conventional": "^21.0.2",
+    "@commitlint/cli": "^21.2.0",
+    "@commitlint/config-conventional": "^21.2.0",
     "eslint": "^8.57.1",
     "eslint-config-universe": "~15.2.0",
     "husky": "^9.1.7",
     "lerna": "^9.0.7",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.4",
     "sst": "^4.17.0"
   },
   "scripts": {
@@ -43,8 +43,7 @@
   },
   "packageManager": "yarn@4.17.0",
   "resolutions": {
-    "@react-native-async-storage/async-storage": "^2.2.0",
-    "through2": "^4.0.0"
+    "@react-native-async-storage/async-storage": "^2.2.0"
   },
   "engines": {
     "node": "22.x"

@@ -296,7 +296,7 @@ PODS:
   - hermes-engine (250829098.0.10):
     - hermes-engine/Pre-built (= 250829098.0.10)
   - hermes-engine/Pre-built (250829098.0.10)
-  - PurchasesHybridCommon (18.14.1):
+  - PurchasesHybridCommon (18.15.1):
     - RevenueCat (= 5.78.0)
   - RCTDeprecation (0.85.3)
   - RCTRequired (0.85.3)
@@ -2287,7 +2287,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNGestureHandler (3.0.1):
+  - RNGestureHandler (3.0.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2310,10 +2310,10 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNPurchases (10.3.0):
-    - PurchasesHybridCommon (= 18.14.1)
+  - RNPurchases (10.4.0):
+    - PurchasesHybridCommon (= 18.15.1)
     - React-Core
-  - RNReanimated (4.4.1):
+  - RNReanimated (4.3.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2335,11 +2335,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNReanimated/apple (= 4.4.1)
-    - RNReanimated/common (= 4.4.1)
+    - RNReanimated/apple (= 4.3.1)
+    - RNReanimated/common (= 4.3.1)
     - RNWorklets
     - Yoga
-  - RNReanimated/apple (4.4.1):
+  - RNReanimated/apple (4.3.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2363,7 +2363,7 @@ PODS:
     - ReactNativeDependencies
     - RNWorklets
     - Yoga
-  - RNReanimated/common (4.4.1):
+  - RNReanimated/common (4.3.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2434,7 +2434,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNSentry (8.14.0):
+  - RNSentry (8.15.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2456,7 +2456,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - Sentry (= 9.16.1)
+    - Sentry (= 9.18.0)
     - Yoga
   - RNSVG (15.15.5):
     - hermes-engine
@@ -2503,7 +2503,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNWorklets (0.9.2):
+  - RNWorklets (0.8.3):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2525,33 +2525,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNWorklets/apple (= 0.9.2)
-    - RNWorklets/common (= 0.9.2)
+    - RNWorklets/apple (= 0.8.3)
+    - RNWorklets/common (= 0.8.3)
     - Yoga
-  - RNWorklets/apple (0.9.2):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
-  - RNWorklets/common (0.9.2):
+  - RNWorklets/apple (0.8.3):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2574,9 +2551,32 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - Sentry (9.16.1):
-    - Sentry/Core (= 9.16.1)
-  - Sentry/Core (9.16.1)
+  - RNWorklets/common (0.8.3):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - Sentry (9.18.0):
+    - Sentry/Core (= 9.18.0)
+  - Sentry/Core (9.18.0)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -3011,7 +3011,7 @@ SPEC CHECKSUMS:
   EXUpdatesInterface: 25408a97d682355eb9fb37e5aa6e22caece1881f
   FBLazyVector: 24e62c765683b8d89006a88a2c8f5cf019f0074d
   hermes-engine: e022fc3f5903eca3ae0ac00e6d2c16cb417ef28f
-  PurchasesHybridCommon: 825e4e748b62c919bc4cb4032b0d1e452409bd74
+  PurchasesHybridCommon: eed735a411c1aee8c05d62933fa7c4a40ede4009
   RCTDeprecation: a4c521821fab57cbb125b36effe84d897d0dfa12
   RCTRequired: 9f3a7e5645d4bc3f551593de7550bb66ab6e42bc
   RCTSwiftUI: 239ed2eb9e73de5a6f518810630f0c95e01c8702
@@ -3090,14 +3090,14 @@ SPEC CHECKSUMS:
   RevenueCat: f3641992451c1426da8d8d1466cec3bbdb765962
   RNCAsyncStorage: d90e523830fa7705f8c61632479abde871bc792f
   RNCMaskedView: 8069b4d4e23b3d28b4fcac70bf266be43ffc3d2e
-  RNGestureHandler: 995b5d7992c5fc4c315c1d06a326dffe9b427e1d
-  RNPurchases: ebcfb4effc608048bf2481a413b0bcaa2b6677f7
-  RNReanimated: ad1e820ef645ecd3055e7cbaab8055b4f6fdd5eb
+  RNGestureHandler: 795970e76a4f4bcef87e77c12c5c791d86574ab6
+  RNPurchases: 1436e2381a4a06bfd6378158f9ebd11993e684cc
+  RNReanimated: dbe1365727409813696964826b407873304f4d51
   RNScreens: d3490d0fe7b77d694f59fa8caeced736f9345298
-  RNSentry: e9b1e3b9806baf7f25e74fefab73baf3eb93eee7
+  RNSentry: 28ca4a996b3b9c3cea3f1df5e126abedaa3a7bb3
   RNSVG: 8efa5ad14ceb98fe56c03793bd55bc4bd30ad84b
-  RNWorklets: 2dd3ec21113976f9cf85f2864b9d9d27d9dedbaa
-  Sentry: e5d82a3c1f2d951f75c04c57215a0abb1facbd51
+  RNWorklets: 4931990f73bc8f347586918b2e13f11dfadf3b75
+  Sentry: 84407b02cd318a63ef0345ad51eaaee555028723
   Yoga: e240fec777ff1f21ef42ccebbb44b6d262125855
 
 PODFILE CHECKSUM: f607c9fa60179fabc35af0749cfe7f79b5f81846
