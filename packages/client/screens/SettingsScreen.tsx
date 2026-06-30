@@ -54,6 +54,9 @@ const SettingsScreen = () => {
       }),
       shallowEqual,
     );
+  const relativeDates = useSelector(
+    (state: any) => state.application.use_relative_dates ?? true,
+  );
   const onPressContact = React.useCallback(() => {
     MailComposer.composeAsync({
       recipients: [`soporte@${Settings.APP_DOMAIN}`],
@@ -80,12 +83,8 @@ const SettingsScreen = () => {
   }, []);
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
-  // tick state forces a re-render so the relative time string stays fresh
-  const [, setTick] = React.useState(0);
-  const tickCallback = React.useCallback(() => {
-    setTick((value) => value + 1);
-  }, []);
-  Helper.useInterval(tickCallback);
+  // subscribe to shared tick so relative time string stays fresh
+  Helper.useNow();
   const updatedAtFromNow = DateUtils.get(updatedAt).calendar();
   const dispatch = useDispatch();
   const [purchasesConfigured] = Helper.useSharedState(
@@ -164,11 +163,20 @@ const SettingsScreen = () => {
             goToCustomizeRates();
           }}
         />
+        {!Settings.NEW_HEADER_SCHEME && (
+          <CardItemView
+            title={I18n.t('show_toast')}
+            value={showUpdateToast}
+            onValueChange={(value) => {
+              dispatch(actions.showUpdateToast(value));
+            }}
+          />
+        )}
         <CardItemView
-          title={I18n.t('show_toast')}
-          value={showUpdateToast}
+          title={I18n.t('relative_dates')}
+          value={relativeDates}
           onValueChange={(value) => {
-            dispatch(actions.showUpdateToast(value));
+            dispatch(actions.changeRelativeDates(value));
           }}
         />
       </CardView>

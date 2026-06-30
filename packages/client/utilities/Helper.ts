@@ -24,6 +24,7 @@ import useSWR from 'swr';
 import rates from '@/assets/rates.json';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
+import useAppState from '@/hooks/useAppState';
 
 const getNotificationSettings = (notification_settings, value, type) => {
   notification_settings = AmbitoDolar.getNotificationSettings(
@@ -436,6 +437,27 @@ export default {
     });
     return [state, setState];
   },
+  useNow() {
+    const [now] = this.useSharedState('now', Date.now());
+    return now;
+  },
+  useTickProvider() {
+    const [, setNow] = this.useSharedState('now', Date.now());
+    const isActive = useAppState('active');
+    React.useEffect(() => {
+      if (!isActive) {
+        return;
+      }
+      // immediate refresh on mount and foreground entry, then 60s interval
+      setNow(Date.now());
+      const id = setInterval(() => {
+        setNow(Date.now());
+      }, 60 * 1000);
+      return () => {
+        clearInterval(id);
+      };
+    }, [setNow, isActive]);
+  },
   useTheme(forcedColorScheme = undefined) {
     const context = React.useContext(ThemeContext);
     const colorScheme = React.useMemo(
@@ -470,23 +492,6 @@ export default {
       [colorScheme],
     );
     return theme;
-  },
-  useInterval: (callback, { leading = true, delay = 60 * 1000 } = {}) => {
-    const handler = React.useCallback(
-      (...args) => callback?.(...args),
-      [callback],
-    );
-    React.useEffect(() => {
-      if (leading === true) {
-        handler(Date.now());
-      }
-      if (delay !== null) {
-        const intervalId = setInterval(() => {
-          handler(Date.now());
-        }, delay);
-        return () => clearInterval(intervalId);
-      }
-    }, [handler, leading, delay]);
   },
   useApplicationConstants() {
     const [constantsLoaded, setConstantsLoaded] = React.useState(false);

@@ -23,6 +23,7 @@ import {
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
   SHOW_UPDATE_TOAST,
+  USE_RELATIVE_DATES,
   APP_IGNORE_DONATION,
   APP_REGISTER_DONATION,
   PRUNE,
@@ -51,6 +52,7 @@ const INITIAL_STATE = {
   excluded_rates: null,
   rate_types: null,
   show_update_toast: true,
+  use_relative_dates: true,
   // version check
   version: null,
   app_updated: null,
@@ -162,6 +164,10 @@ export default (state = INITIAL_STATE, action) => {
     case SHOW_UPDATE_TOAST:
       return update(state, {
         show_update_toast: { $set: action.payload },
+      });
+    case USE_RELATIVE_DATES:
+      return update(state, {
+        use_relative_dates: { $set: action.payload },
       });
     case APP_IGNORE_DONATION:
       return update(state, {

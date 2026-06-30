@@ -7,6 +7,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import { compose } from '@reduxjs/toolkit';
 import * as Device from 'expo-device';
+import * as Haptics from 'expo-haptics';
 import * as Localization from 'expo-localization';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
@@ -62,6 +63,7 @@ const DONATION_PURCHASE_SLUGS = [
 ];
 
 const AppContainer = ({ children, rates, stillLoading = false }) => {
+  Helper.useTickProvider();
   const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
   if (!hasRates) {
     return <InitialScreen rates={rates} stillLoading={stillLoading} />;
@@ -181,8 +183,11 @@ const withRealtime = (Component) => (props) => {
               .then(() => updateLocalRates(board))
               .then(() => {
                 if (shouldShowToast) {
-                  showUpdateToastRef.current !== false &&
+                  if (Settings.NEW_HEADER_SCHEME) {
+                    Settings.HAPTICS_ENABLED && Haptics.notificationAsync();
+                  } else if (showUpdateToastRef.current !== false) {
                     showActivityToast(I18n.t('rates_updated'), true);
+                  }
                   // force a single toast per app foreground entry
                   timeInForeground.current = null;
                 }
@@ -238,12 +243,12 @@ const withAppStatistics = (Component) => (props) => {
   const isActiveAppState = useAppState('active');
   const dispatch = useDispatch();
   // TODO: how to handle local store cleaning (use last_day_used / days_used / usages ?)
-  const tickCallback = React.useCallback(() => {
+  const now = Helper.useNow();
+  React.useEffect(() => {
     if (isActiveAppState) {
       dispatch(actions.registerApplicationUsageDay());
     }
-  }, [dispatch, isActiveAppState]);
-  Helper.useInterval(tickCallback);
+  }, [now, isActiveAppState, dispatch]);
   React.useEffect(() => {
     if (isActiveAppState) {
       dispatch(actions.registerApplicationUsage());

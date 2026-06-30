@@ -2,7 +2,31 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { Platform } from 'react-native';
 
+import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
+
+const shortRelative = (date) => {
+  const now = AmbitoDolar.getDate();
+  const diffMin = now.diff(date, 'minute');
+  if (diffMin < 1) {
+    return I18n.t('now');
+  }
+  if (diffMin < 60) {
+    return I18n.t('ago_minutes', { count: diffMin });
+  }
+  if (date.isSame(now, 'day')) {
+    return `${I18n.t('today')} ${date.format('HH:mm')}`;
+  }
+  // clone now to avoid moment mutation poisoning subsequent checks
+  const yesterday = now.clone().subtract(1, 'day');
+  if (date.isSame(yesterday, 'day')) {
+    return `${I18n.t('yesterday')} ${date.format('HH:mm')}`;
+  }
+  if (now.diff(date, 'day') < 7) {
+    return AmbitoDolar.getCapitalized(date.format('ddd HH:mm'));
+  }
+  return date.format(date.isSame(now, 'year') ? 'DD/MM' : 'DD/MM/YY');
+};
 
 export default {
   get(date = undefined, format = undefined) {
@@ -68,6 +92,15 @@ export default {
     } else if (style === 6) {
       // screenshot (DEPRECATED)
       // return date.format('D MMM YYYY H:mm');
+    } else if (style === 7) {
+      // card date relative on native, web stays absolute
+      if (Platform.OS === 'web') {
+        return date.format('DD/MM H:mm');
+      }
+      return shortRelative(date);
+    } else if (style === 9) {
+      // header subtitle day reference capitalized
+      return AmbitoDolar.getCapitalized(date.format('ddd, D MMM'));
     }
     // rate raw detail, screenshot and statistics
     return date.format('DD/MM/YY H:mm');

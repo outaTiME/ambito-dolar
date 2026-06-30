@@ -19,6 +19,7 @@ export const EXCLUDE_RATE = 'exclude_rate';
 export const UPDATE_RATE_TYPES = 'update_rate_types';
 export const RESTORE_CUSTOMIZATION = 'restore_customization';
 export const SHOW_UPDATE_TOAST = 'show_update_toast';
+export const USE_RELATIVE_DATES = 'use_relative_dates';
 export const APP_IGNORE_DONATION = 'app_ignore_donation';
 export const APP_REGISTER_DONATION = 'app_register_donation';
 

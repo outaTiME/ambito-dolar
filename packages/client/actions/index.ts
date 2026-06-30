@@ -24,6 +24,7 @@ import {
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
   SHOW_UPDATE_TOAST,
+  USE_RELATIVE_DATES,
   APP_IGNORE_DONATION,
   APP_REGISTER_DONATION,
   ADD_RATES,
@@ -217,6 +218,11 @@ export const restoreCustomization = () => ({
 
 export const showUpdateToast = (payload) => ({
   type: SHOW_UPDATE_TOAST,
+  payload,
+});
+
+export const changeRelativeDates = (payload) => ({
+  type: USE_RELATIVE_DATES,
   payload,
 });
 

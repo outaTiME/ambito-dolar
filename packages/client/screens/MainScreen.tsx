@@ -3,7 +3,7 @@ import { compose } from '@reduxjs/toolkit';
 import { Stack, useNavigation } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import * as actions from '@/actions';
 import ActionButton from '@/components/ActionButton';
@@ -23,6 +23,9 @@ import {
 const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const relativeDates = useSelector(
+    (state: any) => state.application.use_relative_dates ?? true,
+  );
   const onRateSelected = React.useCallback(
     (type) => {
       dispatch(actions.registerApplicationRateDetail());
@@ -73,6 +76,7 @@ const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
           type={type}
           stats={rates[type].stats}
           onSelected={onRateSelected}
+          relativeDates={relativeDates}
         />
       ))
     );

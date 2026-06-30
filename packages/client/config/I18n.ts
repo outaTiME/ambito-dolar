@@ -22,6 +22,12 @@ const i18n = new I18n({
     developer: 'Desarrollador',
     generic_error: 'Imposible completar la operación seleccionada.',
     rates_updated: '􀁣 Actualizado',
+    now: 'Ahora',
+    ago_minutes: 'Hace %{count} min',
+    today: 'Hoy',
+    yesterday: 'Ayer',
+    updated_now: 'Actualizado ahora',
+    relative_dates: 'Fechas relativas',
     // rate detail
     detail: 'Detalle',
     one_week: `${Settings.MAX_NUMBER_OF_STATS}D`,

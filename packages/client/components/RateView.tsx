@@ -197,8 +197,10 @@ const RateView = ({
   highlight = true,
   compact = null,
   smallPadding = false,
+  relativeDates = false,
 }) => {
   const { theme } = Helper.useTheme();
+  const now = Helper.useNow();
   const [timestamp, value, change] = React.useMemo(
     () => stats[stats.length - 1],
     [stats],
@@ -212,8 +214,8 @@ const RateView = ({
     [value],
   );
   const timestamp_fmt = React.useMemo(
-    () => DateUtils.humanize(timestamp, 1),
-    [timestamp],
+    () => DateUtils.humanize(timestamp, relativeDates ? 7 : 1),
+    [timestamp, now, relativeDates],
   );
   const change_fmt = React.useMemo(
     () => AmbitoDolar.getRateChange(stats[stats.length - 1], true),
