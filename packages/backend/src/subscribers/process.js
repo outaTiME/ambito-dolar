@@ -15,6 +15,22 @@ const numberValidator = (value, helpers) => {
   return number;
 };
 
+const getBusinessDay = async () => {
+  const response = await AmbitoDolar.fetch(process.env.BUSINESS_DAY_URL, {
+    method: 'POST',
+  });
+  const data = await response.json();
+  const { value, error } = Joi.object({
+    isWorkingDay: Joi.boolean().required(),
+  })
+    .unknown(true)
+    .validate(data);
+  if (error) {
+    throw new Error('Invalid business day schema', { cause: error });
+  }
+  return value.isWorkingDay;
+};
+
 const getRate = (type) => {
   const start_time = Date.now();
   const url = Shared.getRateUrl(type);
@@ -249,13 +265,7 @@ const getRates = (rates) =>
     // getRate(AmbitoDolar.LUXURY_TYPE),
     // getRate(AmbitoDolar.CULTURAL_TYPE),
     getRate(AmbitoDolar.WHOLESALE_TYPE),
-  ])
-    .then(getObjectRates)
-    .then((new_rates) => getNewRates(rates, new_rates));
-
-// process these rates only on business days
-const getBusinessDayRates = (rates) =>
-  Promise.all([
+    // process these rates only on business days
     getRate(AmbitoDolar.BNA_TYPE),
     // getRate(AmbitoDolar.INFORMAL_TYPE),
     getRate(AmbitoDolar.TOURIST_TYPE),
@@ -366,17 +376,20 @@ export const handler = Shared.wrapHandler(async (event) => {
     // unhandled error
     throw error;
   });
+  if (!force && !base_rates.is_open) {
+    const isWorking = await getBusinessDay();
+    if (!isWorking) {
+      console.info('Non-working day, skipping');
+      return;
+    }
+  }
+  base_rates.is_open = !close_day;
   // reduce rate_stats to the last ones
   const rates = await Shared.getRates(base_rates);
   // has rates when processing
   const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
   // leave new rates only (for realtime too)
   const new_rates = await getRates(rates);
-  const is_opening = !has_rates_from_today && !_.isEmpty(new_rates);
-  if (is_opening || has_rates_from_today || force) {
-    const new_business_day_rates = await getBusinessDayRates(rates);
-    Object.assign(new_rates, new_business_day_rates);
-  }
   const has_new_rates = !_.isEmpty(new_rates);
   const processed_at = AmbitoDolar.getTimezoneDate();
   const processed_at_fmt = processed_at.format();

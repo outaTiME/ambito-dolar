@@ -18,6 +18,7 @@ export function createSubscribers(
         ...ctx.baseRuntimeEnv,
         ...ctx.ratesObjectEnv,
         RATE_URL: ctx.requiredEnv('RATE_URL'),
+        BUSINESS_DAY_URL: ctx.requiredEnv('BUSINESS_DAY_URL'),
         ...ctx.realtimeEnv,
       },
       // ~30s
