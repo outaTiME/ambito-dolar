@@ -15,7 +15,7 @@
     "@commitlint/cli": "^21.2.0",
     "@commitlint/config-conventional": "^21.2.0",
     "eslint": "^8.57.1",
-    "eslint-config-universe": "~15.2.0",
+    "eslint-config-universe": "^16.0.0",
     "husky": "^9.1.7",
     "lerna": "^9.0.7",
     "prettier": "^3.9.4",
