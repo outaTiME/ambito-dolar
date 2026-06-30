@@ -221,6 +221,7 @@ export function createApi(
       environment: {
         ...baseRuntimeEnv,
         ...ctx.ratesObjectEnv,
+        ...ctx.realtimeEnv,
       },
     },
     { name: 'UpdateRates', ...privateRouteAuth },
