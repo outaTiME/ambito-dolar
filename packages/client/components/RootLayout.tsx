@@ -1,28 +1,17 @@
 // https://docs.expo.dev/develop/development-builds/use-development-builds/#add-error-handling
 import 'expo-dev-client';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { SplashScreen, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
   ThemeProvider as NavigationThemeProvider,
 } from 'expo-router/react-navigation';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
-import {
-  Appearance,
-  Text,
-  TextInput,
-  Platform,
-  useWindowDimensions,
-  View,
-} from 'react-native';
-import AnimateableText from 'react-native-animateable-text';
+import { Appearance, Platform, useWindowDimensions, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {
-  initialWindowMetrics,
-  SafeAreaProvider,
-} from 'react-native-safe-area-context';
 import { Provider, useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components';
@@ -40,6 +29,7 @@ import Sentry from '@/utilities/Sentry';
 
 const start_time = Date.now();
 SplashScreen.preventAutoHideAsync().catch(console.warn);
+SplashScreen.setOptions({ fade: true });
 
 // leaf component to isolate usePathname subscription away from ThemedLayout
 // prevents the whole app tree from re-rendering on every URL change
@@ -47,21 +37,6 @@ const NavigationTracker = () => {
   useNavigationTrackingRouter();
   return null;
 };
-
-const TextComponent = Text as any;
-const TextInputComponent = TextInput as any;
-const AnimateableTextComponent = AnimateableText as any;
-
-TextComponent.defaultProps = TextComponent.defaultProps || {};
-TextComponent.defaultProps.maxFontSizeMultiplier =
-  Settings.MAX_FONT_SIZE_MULTIPLIER;
-TextInputComponent.defaultProps = TextInputComponent.defaultProps || {};
-TextInputComponent.defaultProps.maxFontSizeMultiplier =
-  Settings.MAX_FONT_SIZE_MULTIPLIER;
-AnimateableTextComponent.defaultProps =
-  AnimateableTextComponent.defaultProps || {};
-AnimateableTextComponent.defaultProps.maxFontSizeMultiplier =
-  Settings.MAX_FONT_SIZE_MULTIPLIER;
 
 if (Platform.OS === 'android') {
   // force landscape on tablets
@@ -129,11 +104,7 @@ const ThemedLayout = () => {
           <NavigationThemeProvider value={navigationTheme}>
             <BottomSheetModalProvider>
               <AppContainer>
-                <Stack
-                  key={layoutKey}
-                  screenOptions={stackScreenOptions}
-                  // initialRouteName="(tabs)"
-                >
+                <Stack key={layoutKey} screenOptions={stackScreenOptions}>
                   <Stack.Screen name="(tabs)" />
                   <Stack.Screen
                     name="(modals)"
@@ -173,36 +144,23 @@ const ThemedLayout = () => {
 };
 
 const RootLayout = () => {
-  const constantsLoaded = Helper.useApplicationConstants();
-  const [appIsReady, setAppIsReady] = React.useState(false);
-  const isReady = constantsLoaded && appIsReady;
-  React.useEffect(() => {
-    async function prepare() {
-      try {
-        // additional async stuff here
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
-    }
-    prepare();
-  }, []);
-  React.useEffect(() => {
+  const isReady = Helper.useApplicationConstants();
+  const onLayoutRootView = React.useCallback(() => {
     if (isReady) {
       SplashScreen.hideAsync().catch(console.warn);
     }
   }, [isReady]);
+  if (!isReady) {
+    return null;
+  }
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <GestureHandlerRootView>
-            <ThemedLayout />
-          </GestureHandlerRootView>
-        </PersistGate>
-      </Provider>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <GestureHandlerRootView onLayout={onLayoutRootView}>
+          <ThemedLayout />
+        </GestureHandlerRootView>
+      </PersistGate>
+    </Provider>
   );
 };
 

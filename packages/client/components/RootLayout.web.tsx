@@ -1,13 +1,10 @@
 import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
-import { Slot, SplashScreen } from 'expo-router';
+import { Slot } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {
-  initialWindowMetrics,
-  SafeAreaProvider,
-} from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components';
 
 import Helper from '@/utilities/Helper';
@@ -32,21 +29,8 @@ const RootLayoutWeb = () => {
     'FiraGO-Regular': require('../assets/fonts/FiraGO-Regular.otf'),
   });
   const constantsLoaded = Helper.useApplicationConstants();
-  const [appIsReady, setAppIsReady] = React.useState(false);
-  const isReady = fontsLoaded && constantsLoaded && appIsReady;
-  React.useEffect(() => {
-    async function prepare() {
-      try {
-        // additional async stuff here
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
-    }
-    prepare();
-  }, []);
-  React.useEffect(() => {
+  const isReady = fontsLoaded && constantsLoaded;
+  const onLayoutRootView = React.useCallback(() => {
     if (isReady) {
       Helper.debug(
         '👌 Web application loading is completed',
@@ -55,12 +39,13 @@ const RootLayoutWeb = () => {
       SplashScreen.hideAsync().catch(console.warn);
     }
   }, [isReady]);
+  if (!isReady) {
+    return null;
+  }
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <GestureHandlerRootView>
-        <ThemedLayoutWeb />
-      </GestureHandlerRootView>
-    </SafeAreaProvider>
+    <GestureHandlerRootView onLayout={onLayoutRootView}>
+      <ThemedLayoutWeb />
+    </GestureHandlerRootView>
   );
 };
 

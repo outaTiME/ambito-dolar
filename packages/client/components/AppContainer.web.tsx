@@ -373,13 +373,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
           alignItems: 'center',
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            // optical baseline nudge
-            transform: [{ translateY: 2 }],
-          }}
-        >
+        <View style={{ flex: 1 }}>
           <Text
             style={[compact != null ? fonts.largeTitle : fonts.extraLargeTitle]}
             numberOfLines={1}
