@@ -22,6 +22,7 @@ Guide for coding agents in repo. Prefer minimal targeted edits. Preserve behavio
 - **Android use CNG**: `packages/client/android/` regen by `expo prebuild`. Build output — no hand-edit. Modify via `app.config.ts` / config plugins.
 - **iOS NOT use CNG**: `packages/client/ios/` checked-in, edit manual. Ships SwiftUI widgets under `packages/client/ios/RateWidgets`. SDK upgrade: apply iOS native diffs by hand in `packages/client/ios/` (see Expo upgrade helper). Widget integration into prebuild pending.
 - **iOS prebuild safe without `--clean`**: `expo prebuild --platform ios` merges, preserves `RateWidgets` + manual Podfile/pbxproj diffs. `--clean` flag DOES clobber, never use it for iOS.
+- **Android system nav bar (edge-to-edge)**: framework does not set button appearance. Use `expo-navigation-bar` — `<NavigationBar style="auto" />` in `RootLayout`, plus plugin `['expo-navigation-bar', { enforceContrast: true }]` for the native os scrim behind 3-button nav.
 
 ### iOS post-bump workflow
 
@@ -56,8 +57,6 @@ Examples:
 Avoid broad globs like `packages/<workspace>/**/*.{js,ts,tsx}` — traverse heavy folders (nested `node_modules`, build outputs), timeout.
 `yarn exec eslint` may fail in monorepo — `eslint` only at root.
 Fallback: `yarn node ./node_modules/eslint/bin/eslint.js <paths>`.
-
-Avoid `yarn g:eslint` (runs `eslint .` from `INIT_CWD`). Traverses whole packages, slow. Reserve for explicit full-package lint.
 
 Client also has:
 
@@ -204,6 +203,8 @@ yarn workspace @ambito-dolar/website run serve
 - No global refactors in navigation/state for small tasks.
 - Preserve behavior across iOS, Android, web when touching client code.
 - For date/time and formatting, reuse `@ambito-dolar/core` helpers.
+- **Android native-stack modal bottom inset**: modals lack the bottom safe-area inset, content slips under the transparent nav bar. `FixedScrollView` pads it via `isModal` prop. New scrolling modal screen must pass `isModal`.
+- `isModal` computed once in `withContainer` (from `useLocalSearchParams`), threaded as prop down the tree. Never call `useLocalSearchParams` for it in nested components.
 
 ### Navigation centralization (client)
 
@@ -217,11 +218,13 @@ yarn workspace @ambito-dolar/website run serve
 
 - Conventional commits enforced (`@commitlint/config-conventional`). Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`. No scope in subjects.
 - Preserve acronym/product casing (e.g. `CloudFront`, `S3`, `iOS`).
+- Subject only, no body. Body reserved for `BREAKING CHANGE:` footer (major SDK bumps).
+- Subject names the real problem or effect, not the mechanism. `fix: unreadable android navigation bar in light mode`, not `fix: theme android navigation bar`. With no body, the subject carries the what and why.
 - Focused reversible commits. Separate by type. No mixing unrelated packages. No experimental or temporary changes.
 - Generic chore subjects (no per-file detail): `chore: bump build number`, `chore: bump version and build number`, `chore: bump yarn`, `chore: bump dependencies`, `docs: update AGENTS rules`.
 - `chore: remove unused code` for pure removals only. Refactors/restructures stay under `refactor:`.
 - Release order at end of branch: `chore: bump version and build number` (touches only `app.config.ts` version+buildNumber, `ios/mbitoDlar/Info.plist` CFBundle keys, `ios/mbitoDlar/Supporting/Expo.plist`) → `chore: bump yarn` (touches only `.yarnrc.yml` and `packageManager` field in root `package.json`) → `chore: bump dependencies` (lockfiles, manifests, `Podfile.lock`, `project.pbxproj` when tooling-driven) → `chore: publish`.
-- Exception: functional commit adds/drops specific dep → nest its `package.json` hunk in that commit instead of deferring to bulk bump.
+- A single-dep functional change may own its whole `package.json` if the file has no other pending bumps. When the manifest mixes many bumps (SDK upgrade), the whole file goes to the dominant commit, no hunk split.
 - Version bump must match conventional commits across branch: major needs `BREAKING CHANGE:`, minor needs `feat:`, patch needs `fix:` only (no `feat:`).
 - Lerna: independent versioning, release from `master`.
 
