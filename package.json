@@ -12,18 +12,17 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^21.2.0",
+    "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
     "eslint": "^8.57.1",
     "eslint-config-universe": "^16.0.0",
     "husky": "^9.1.7",
     "lerna": "^9.0.7",
-    "prettier": "^3.9.4",
-    "sst": "^4.17.0"
+    "prettier": "^3.9.6",
+    "sst": "^4.17.1"
   },
   "scripts": {
     "test": "lerna run test",
-    "g:eslint": "cd $INIT_CWD && eslint .",
     "client:start": "yarn workspace @ambito-dolar/client run start",
     "client:run:android": "yarn workspace @ambito-dolar/client run android",
     "client:run:ios": "yarn workspace @ambito-dolar/client run ios",
