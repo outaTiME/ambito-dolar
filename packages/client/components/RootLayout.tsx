@@ -1,6 +1,7 @@
 // https://docs.expo.dev/develop/development-builds/use-development-builds/#add-error-handling
 import 'expo-dev-client';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { NavigationBar } from 'expo-navigation-bar';
 import { Stack } from 'expo-router';
 import {
   DarkTheme as NavigationDarkTheme,
@@ -99,6 +100,7 @@ const ThemedLayout = () => {
   );
   return (
     <View style={{ flex: 1, backgroundColor }}>
+      <NavigationBar style="auto" />
       {layoutKey && (
         <ThemeProvider theme={theme}>
           <NavigationThemeProvider value={navigationTheme}>

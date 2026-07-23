@@ -53,6 +53,8 @@ export default {
     'expo-localization',
     'expo-image',
     './plugins/withAndroidBottomNavDimens',
+    // native os translucent scrim behind the 3-button nav bar
+    ['expo-navigation-bar', { enforceContrast: true }],
     [
       'expo-font',
       {
