@@ -79,7 +79,7 @@ export function createSubscribers(
         ...ctx.socialScreenshotEnv,
       },
       nodejs: {
-        install: ['@sparticuz/chromium', 'sharp'],
+        install: ['puppeteer-core', '@sparticuz/chromium', 'sharp'],
       },
       // ~60s
       timeout: '2 minutes',
@@ -102,7 +102,7 @@ export function createSubscribers(
         ...ctx.socialScreenshotEnv,
       },
       nodejs: {
-        install: ['@sparticuz/chromium', 'sharp'],
+        install: ['puppeteer-core', '@sparticuz/chromium', 'sharp'],
       },
       // ~60s
       timeout: '2 minutes',
