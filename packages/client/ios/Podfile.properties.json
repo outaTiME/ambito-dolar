@@ -1,12 +1,5 @@
 {
-  "expo.jsEngine": "hermes",
-  "EX_DEV_CLIENT_NETWORK_INSPECTOR": "true",
-  "apple.extraPods": "[]",
-  "apple.ccacheEnabled": "false",
-  "apple.privacyManifestAggregationEnabled": "true",
-  "newArchEnabled": "true",
-  "ios.useFrameworks": "static",
-  "expo-image.disable-libdav1d": "false",
   "expo.inlineModules.watchedDirectories": "[]",
-  "expo.inlineModules.xcodeProjectTargets": "{\"mainTarget\":\"mbitoDlar\",\"targets\":[]}"
+  "expo.inlineModules.xcodeProjectTargets": "{\"mainTarget\":\"mbitoDlar\",\"targets\":[]}",
+  "expo-image.disable-libdav1d": "false"
 }
