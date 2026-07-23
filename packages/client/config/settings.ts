@@ -98,9 +98,10 @@ const Settings: any = {
   // partial shrink to offset Liquid Glass scrollEdge overhead while keeping
   // breathing room between header and first content row
   CONTENT_TOP_SHRINK_STYLE: IS_LIQUID_GLASS
-    ? { marginTop: -CONTENT_MARGIN / 3 }
+    ? { marginTop: -CONTENT_MARGIN / 1.5 }
     : null,
-  NEW_HEADER_SCHEME: true,
+  NEW_HEADER_SCHEME: false,
+  RELATIVE_CARD_DATES: true,
   HEADER_EPHEMERAL_CONCAT: true,
   MAX_FONT_SIZE_MULTIPLIER,
   RATES_URI,
