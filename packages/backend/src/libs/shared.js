@@ -715,8 +715,8 @@ const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
       'ifttt',
       'instagram',
       'mastodon',
-      'reddit',
-      'bsky',
+      // 'reddit',
+      // 'bsky',
       // 'whatsapp',
     ],
   )
