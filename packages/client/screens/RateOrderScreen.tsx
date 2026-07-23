@@ -22,7 +22,7 @@ const RateOrderScreen = ({ isModal }) => {
   );
   const dispatch = useDispatch();
   return (
-    <FixedScrollView>
+    <FixedScrollView isModal={isModal}>
       <CardView {...{ plain: true, isModal }}>
         {['default', 'name', 'price', 'change', 'update', 'custom'].map(
           (order) => (

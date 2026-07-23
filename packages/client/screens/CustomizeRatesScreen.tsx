@@ -4,13 +4,11 @@ import { compose } from '@reduxjs/toolkit';
 import * as Haptics from 'expo-haptics';
 import * as _ from 'lodash';
 import React from 'react';
-import { Platform } from 'react-native';
 import Animated, {
   useAnimatedRef,
   useAnimatedStyle,
   useDerivedValue,
 } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Sortable, { useItemContext } from 'react-native-sortables';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
@@ -93,7 +91,6 @@ const GridItem = ({ id, isModal }) => {
 
 const CustomizeRatesScreen = ({ isModal, rates }) => {
   const scrollableRef = useAnimatedRef();
-  const insets = useSafeAreaInsets();
   const { rate_order, rate_types } = useSelector(
     ({ application: { rate_order, rate_types } }) => ({
       rate_order,
@@ -134,16 +131,8 @@ const CustomizeRatesScreen = ({ isModal, rates }) => {
     ),
     [isModal],
   );
-  // pad scroll content on android modal because native stack lacks safe-area insets
-  const contentContainerStyle =
-    Platform.OS === 'android' && isModal
-      ? { paddingBottom: insets.bottom }
-      : undefined;
   return (
-    <FixedScrollView
-      ref={scrollableRef}
-      contentContainerStyle={contentContainerStyle}
-    >
+    <FixedScrollView ref={scrollableRef} isModal={isModal}>
       <CardView {...{ plain: true, isModal }}>
         <CardItemView
           title={I18n.t('rate_order')}

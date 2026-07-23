@@ -5,7 +5,7 @@ import { View, Platform } from 'react-native';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
-export default (Component) => (props) => {
+export default (Component: any) => (props: any) => {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
   const { theme } = Helper.useTheme();
