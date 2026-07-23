@@ -80,7 +80,7 @@ const formatCurrency = AmbitoDolar.formatCurrency;
 // https://github.com/realadvisor/rifm/blob/master/pages/number-format/index.js#L39
 
 const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
-  if (typeof value === 'number' && !isNaN(value)) {
+  if (typeof value === 'number' && !Number.isNaN(value)) {
     return formatNumber(value, maxDigits, false);
   }
   // handles delimiter updates due to system settings or initial boot
@@ -194,9 +194,9 @@ export default {
   getSortedRates(rates, order, orderDirection, excludedRates, rateTypes) {
     if (rates) {
       // defaults
-      order ?? (order = 'default');
-      orderDirection ?? (orderDirection = 'asc');
-      rateTypes ?? (rateTypes = Object.keys(rates));
+      order ??= 'default';
+      orderDirection ??= 'asc';
+      rateTypes ??= Object.keys(rates);
       let chain = _.chain(rates).omit(excludedRates).toPairs();
       if (order === 'default' && orderDirection === 'desc') {
         chain = chain.reverse();
