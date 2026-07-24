@@ -17,7 +17,7 @@
     "undici": "^7.28.0"
   },
   "scripts": {
-    "test": "yarn g:eslint && ava"
+    "test": "eslint . && ava"
   },
   "main": "index.js",
   "files": [
