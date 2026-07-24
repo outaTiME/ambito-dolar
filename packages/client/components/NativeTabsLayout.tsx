@@ -2,6 +2,7 @@ import MaterialCommunityIcons from '@react-native-vector-icons/material-design-i
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { Platform } from 'react-native';
 
+import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
@@ -36,7 +37,9 @@ export default function NativeTabsLayout() {
             />
           }
         />
-        <NativeTabs.Trigger.Label hidden>Cotizaciones</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label hidden>
+          {I18n.t('rates')}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="conversion">
         <NativeTabs.Trigger.Icon
@@ -47,7 +50,9 @@ export default function NativeTabsLayout() {
             />
           }
         />
-        <NativeTabs.Trigger.Label hidden>Conversor</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label hidden>
+          {I18n.t('conversion')}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings">
         <NativeTabs.Trigger.Icon
@@ -58,7 +63,9 @@ export default function NativeTabsLayout() {
             />
           }
         />
-        <NativeTabs.Trigger.Label hidden>Settings</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label hidden>
+          {I18n.t('settings')}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

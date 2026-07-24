@@ -45,6 +45,8 @@ const i18n = new I18n({
     source: 'Fuente',
     detail_loading_error:
       'Imposible obtener las cotizaciones para el periodo seleccionado.',
+    // rates
+    rates: 'Cotizaciones',
     // conversion
     conversion: 'Conversor',
     currency: 'Divisa',
