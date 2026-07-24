@@ -8,11 +8,7 @@ import * as MailComposer from 'expo-mail-composer';
 import * as _ from 'lodash';
 import hash from 'object-hash';
 import React from 'react';
-import { Platform, Linking, PixelRatio } from 'react-native';
-import {
-  useSafeAreaFrame,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { Platform, Linking } from 'react-native';
 import { useSelector, shallowEqual } from 'react-redux';
 import { createSelector } from 'reselect';
 import semverCoerce from 'semver/functions/coerce';
@@ -117,8 +113,6 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
 const instatDB =
   Settings.INSTANT_APP_ID && init({ appId: Settings.INSTANT_APP_ID });
 
-// https://github.com/react-navigation/react-navigation/blob/main/packages/native-stack/src/views/NativeStackView.native.tsx#L50
-const ANDROID_DEFAULT_HEADER_HEIGHT = 56;
 const TABBAR_HEIGHT_UIKIT = 49;
 
 const promiseRetry = AmbitoDolar.promiseRetry;
@@ -341,70 +335,11 @@ export default {
   getInvertedTheme(theme) {
     return theme === 'light' ? 'dark' : 'light';
   },
-  // https://github.com/react-navigation/react-navigation/blob/main/packages/elements/src/Header/getDefaultHeaderHeight.tsx
-  getDefaultHeaderHeight({ landscape, modalPresentation, topInset }) {
-    let headerHeight;
-    // on models with Dynamic Island the status bar height is smaller than the safe area top inset
-    const hasDynamicIsland = Platform.OS === 'ios' && topInset > 50;
-    const statusBarHeight = Math.max(
-      topInset - (hasDynamicIsland ? 5 + 1 / PixelRatio.get() : 0),
-      0,
-    );
-    if (Platform.OS === 'ios') {
-      if (Platform.isPad || Platform.isTV) {
-        // iPad LG and non-LG share the same compact header height
-        headerHeight = modalPresentation ? 56 : 50;
-      } else if (Settings.IS_LIQUID_GLASS) {
-        if (modalPresentation) {
-          headerHeight = 70;
-        } else if (hasDynamicIsland) {
-          headerHeight = 60;
-        } else {
-          headerHeight = 64;
-        }
-      } else if (modalPresentation && !landscape) {
-        headerHeight = 56;
-      } else {
-        headerHeight = 44;
-      }
-    } else {
-      headerHeight = 64;
-    }
-    return headerHeight + statusBarHeight;
-  },
   // https://github.com/software-mansion/react-native-screens/issues/2536
   getTabBarHeight(insets) {
     if (insets) {
       return TABBAR_HEIGHT_UIKIT + insets.bottom;
     }
-  },
-  usePreciseHeaderHeight(isModal = false) {
-    const insets = useSafeAreaInsets();
-    const frame = useSafeAreaFrame();
-    // Modals are fullscreen in landscape only on iPhone
-    const isIPhone =
-      Platform.OS === 'ios' && !(Platform.isPad || Platform.isTV);
-    const landscape = frame.width > frame.height;
-    const isParentHeaderShown = false;
-    const topInset =
-      isParentHeaderShown ||
-      (Platform.OS === 'ios' && isModal) ||
-      (isIPhone && landscape)
-        ? 0
-        : insets.top;
-    // https://github.com/react-navigation/react-navigation/blob/main/packages/native-stack/src/views/NativeStackView.native.tsx#L196
-    const defaultHeaderHeight = Platform.select({
-      // FIXME: Currently screens isn't using Material 3
-      // So our `getDefaultHeaderHeight` doesn't return the correct value
-      // So we hardcode the value here for now until screens is updated
-      android: ANDROID_DEFAULT_HEADER_HEIGHT + topInset,
-      default: this.getDefaultHeaderHeight({
-        landscape,
-        modalPresentation: isModal,
-        topInset,
-      }),
-    });
-    return defaultHeaderHeight;
   },
   getStackScreenOptions({ theme, fonts, modal = false }) {
     return {

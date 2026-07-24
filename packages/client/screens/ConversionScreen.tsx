@@ -4,15 +4,15 @@ import { compose } from '@reduxjs/toolkit';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Platform, View, TouchableWithoutFeedback } from 'react-native';
+import { SafeAreaView } from 'react-native-screens/experimental';
 import { useDispatch } from 'react-redux';
 
 import * as actions from '@/actions';
-import ActionButton from '@/components/ActionButton';
 import CardItemView from '@/components/CardItemView';
 import CardView from '@/components/CardView';
 import ContentView from '@/components/ContentView';
 import DividerView from '@/components/DividerView';
-import MessageView from '@/components/MessageView';
+import EmptyRatesView from '@/components/EmptyRatesView';
 import ScrollView from '@/components/ScrollView';
 import SegmentedControlTab from '@/components/SegmentedControl';
 import TextInput from '@/components/TextInput';
@@ -21,10 +21,7 @@ import withRates from '@/components/withRates';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
-import {
-  clearRouteParam,
-  goToCustomizeRatesModal,
-} from '@/utilities/Navigation';
+import { clearRouteParam } from '@/utilities/Navigation';
 
 const CURRENCY_TYPES = [I18n.t('currency'), I18n.t('peso')];
 const CONVERSION_TYPES = [I18n.t('buy'), I18n.t('average'), I18n.t('sell')];
@@ -34,7 +31,6 @@ const DEFAULT_NUMBER = 1;
 const ConversionScreen = ({ rates, rateTypes, backgroundColor }) => {
   const params = useLocalSearchParams();
   const { theme, fonts } = Helper.useTheme();
-  const headerHeight = Helper.usePreciseHeaderHeight();
   const [numberValue, setNumberValue] = React.useState(DEFAULT_NUMBER);
   const [inputText, setInputText] = React.useState(
     Helper.formatFloatingPointNumber(DEFAULT_NUMBER),
@@ -130,13 +126,10 @@ const ConversionScreen = ({ rates, rateTypes, backgroundColor }) => {
     }, [params?.focus]),
   );
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor,
-        // android header is solid (not transparent), native layout handles offset
-        paddingTop: Platform.OS === 'android' ? 0 : headerHeight,
-      }}
+    <SafeAreaView
+      // ios needs the transparent header inset, android header is solid
+      edges={Platform.OS === 'ios' ? { top: true } : {}}
+      style={{ flex: 1, backgroundColor }}
     >
       <TouchableWithoutFeedback onPress={dismissKeyboard} accessible={false}>
         <View style={{ alignItems: 'center' }}>
@@ -191,42 +184,34 @@ const ConversionScreen = ({ rates, rateTypes, backgroundColor }) => {
         </View>
       </TouchableWithoutFeedback>
       <DividerView />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        // explicit value disables broken auto-inset calculation for partial-screen ScrollViews
-        scrollIndicatorInsets={{ top: 0, bottom: 0.1 }}
-        style={{
-          flex: 1,
-          backgroundColor: Settings.getContentColor(theme),
-        }}
-        onScrollBeginDrag={dismissKeyboard}
-        keyboardShouldPersistTaps="handled"
-      >
-        <ContentView
-          contentContainerStyle={{ marginVertical: -Settings.CONTENT_MARGIN }}
+      {rateTypes.length === 0 ? (
+        <EmptyRatesView
+          edges={{ bottom: true }}
+          backgroundColor={Settings.getContentColor(theme)}
+          alternativeBackground
+        />
+      ) : (
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          // explicit value disables broken auto-inset calculation for partial-screen ScrollViews
+          scrollIndicatorInsets={{ top: 0, bottom: 0.1 }}
+          style={{
+            flex: 1,
+            backgroundColor: Settings.getContentColor(theme),
+          }}
+          onScrollBeginDrag={dismissKeyboard}
+          keyboardShouldPersistTaps="handled"
         >
-          {rateTypes.length === 0 ? (
-            <View style={{ justifyContent: 'center' }}>
-              <MessageView
-                style={{ marginBottom: Settings.PADDING }}
-                message={I18n.t('no_selected_rates')}
-              />
-              <ActionButton
-                handleOnPress={() => {
-                  goToCustomizeRatesModal();
-                }}
-                title={I18n.t('select_rates')}
-                alternativeBackground
-              />
-            </View>
-          ) : (
+          <ContentView
+            contentContainerStyle={{ marginVertical: -Settings.CONTENT_MARGIN }}
+          >
             <CardView plain>
               {rateTypes.map((type) => getItemView(type))}
             </CardView>
-          )}
-        </ContentView>
-      </ScrollView>
-    </View>
+          </ContentView>
+        </ScrollView>
+      )}
+    </SafeAreaView>
   );
 };
 
