@@ -2,18 +2,15 @@
 import { compose } from '@reduxjs/toolkit';
 import { Stack, useNavigation } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as actions from '@/actions';
-import ActionButton from '@/components/ActionButton';
+import EmptyRatesView from '@/components/EmptyRatesView';
 import FixedScrollView from '@/components/FixedScrollView';
 import HeaderButton from '@/components/HeaderButton';
-import MessageView from '@/components/MessageView';
 import RateView from '@/components/RateView';
 import withContainer from '@/components/withContainer';
 import withRates from '@/components/withRates';
-import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import {
   goToRateDetail,
@@ -48,38 +45,6 @@ const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
       ),
     });
   }, [navigation]);
-  const content =
-    rateTypes.length === 0 ? (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-        }}
-      >
-        <MessageView
-          style={{
-            marginBottom: Settings.PADDING,
-          }}
-          message={I18n.t('no_selected_rates')}
-        />
-        <ActionButton
-          handleOnPress={() => {
-            goToCustomizeRatesModal();
-          }}
-          title={I18n.t('select_rates')}
-        />
-      </View>
-    ) : (
-      rateTypes.map((type) => (
-        <RateView
-          key={type}
-          type={type}
-          stats={rates[type].stats}
-          onSelected={onRateSelected}
-          relativeDates={relativeDates}
-        />
-      ))
-    );
   return (
     <>
       {Settings.IS_LIQUID_GLASS && (
@@ -91,9 +56,27 @@ const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
           />
         </Stack.Toolbar>
       )}
-      <FixedScrollView key={rateTypes.length} backgroundColor={backgroundColor}>
-        {content}
-      </FixedScrollView>
+      {rateTypes.length === 0 ? (
+        <EmptyRatesView
+          edges={{ top: true, bottom: true }}
+          backgroundColor={backgroundColor}
+        />
+      ) : (
+        <FixedScrollView
+          key={rateTypes.length}
+          backgroundColor={backgroundColor}
+        >
+          {rateTypes.map((type) => (
+            <RateView
+              key={type}
+              type={type}
+              stats={rates[type].stats}
+              onSelected={onRateSelected}
+              relativeDates={relativeDates}
+            />
+          ))}
+        </FixedScrollView>
+      )}
     </>
   );
 };
