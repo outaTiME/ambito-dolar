@@ -220,6 +220,7 @@ yarn workspace @ambito-dolar/website run serve
 - Preserve acronym/product casing (e.g. `CloudFront`, `S3`, `iOS`).
 - Subject only, no body. Body reserved for `BREAKING CHANGE:` footer (major SDK bumps).
 - Subject names the real problem or effect, not the mechanism. `fix: unreadable android navigation bar in light mode`, not `fix: theme android navigation bar`. With no body, the subject carries the what and why.
+- Preventive fix uses `fix: prevent <effect>` (e.g. `fix: prevent expo-server-sdk v6 bundle break in notification lambdas`, `fix: externalize puppeteer-core to prevent social lambda crash`). Present tense (`X breaks`) only when the break actually happened, not when the fix forestalls it.
 - Focused reversible commits. Separate by type. No mixing unrelated packages. No experimental or temporary changes.
 - Generic chore subjects (no per-file detail): `chore: bump build number`, `chore: bump version and build number`, `chore: bump yarn`, `chore: bump dependencies`, `docs: update AGENTS rules`.
 - `chore: remove unused code` for pure removals only. Refactors/restructures stay under `refactor:`.
