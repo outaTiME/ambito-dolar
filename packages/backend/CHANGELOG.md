@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/backend@5.1.1...@ambito-dolar/backend@5.2.0) (2026-07-26)
+
+### Features
+
+- gate processor with business day flag ([d26205f](https://github.com/outaTiME/ambito-dolar/commit/d26205f8d522b949ff362fb077ab8eeceef93289))
+- migrate reddit and bsky to ifttt ([ee2eee2](https://github.com/outaTiME/ambito-dolar/commit/ee2eee23a7ad9c4f37251c41bf3faf633c93fe1f))
+
 ## [5.1.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/backend@5.1.0...@ambito-dolar/backend@5.1.1) (2026-06-10)
 
 ### Bug Fixes

@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [14.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@13.2.0...@ambito-dolar/client@14.0.0) (2026-07-26)
+
+### Bug Fixes
+
+- android modal content under the navigation bar ([3f734d9](https://github.com/outaTiME/ambito-dolar/commit/3f734d97721700d9ea4d5120080cfce78e596b1e))
+- center empty rates state vertically ([73140ff](https://github.com/outaTiME/ambito-dolar/commit/73140ff55cb066891f1b20e2700e2a834e585e26))
+- hide splashscreen after layout ready ([33d7483](https://github.com/outaTiME/ambito-dolar/commit/33d7483235ec7c254717b1e9d55192d6ba50aea6))
+- unreadable android navigation bar in light mode ([7cdf27e](https://github.com/outaTiME/ambito-dolar/commit/7cdf27e66c1437da67158e58f178affab94ab0ff))
+
+### Features
+
+- add relative dates and update indicator ([fa8af19](https://github.com/outaTiME/ambito-dolar/commit/fa8af19845c03f8317163f9e19700b2d618ef592))
+- add relative rate dates ([4cb2e9a](https://github.com/outaTiME/ambito-dolar/commit/4cb2e9acd468e3bcc2ff636c0c13180da5a4e4ac))
+- update to Expo SDK 56 ([3d61170](https://github.com/outaTiME/ambito-dolar/commit/3d611709d36efcf28c29ec86800e365790ebfdb4))
+- update to Expo SDK 57 ([4e3962c](https://github.com/outaTiME/ambito-dolar/commit/4e3962c7d79c6fe00d357ac2aab51d2a5fb844c6))
+
+### Performance Improvements
+
+- memoize mini rate chart ([89c2fec](https://github.com/outaTiME/ambito-dolar/commit/89c2fec2d1dac21cead776ee43a3a95e72818215))
+
+### BREAKING CHANGES
+
+- upgraded to React Native 0.86
+- upgraded to React Native 0.85
+
 # [13.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@13.1.0...@ambito-dolar/client@13.2.0) (2026-06-08)
 
 ### Bug Fixes
