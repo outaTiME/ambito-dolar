@@ -577,7 +577,6 @@ const withAppDonation = (Component) => (props) => {
           }
         },
       );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     purchasesConfigured,
     donationProducts,

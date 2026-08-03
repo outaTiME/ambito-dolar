@@ -49,7 +49,6 @@ const DonateScreen = () => {
         dispatch(actions.ignoreApplicationDonation());
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleDonate = React.useCallback(
     async (product, productId) => {
