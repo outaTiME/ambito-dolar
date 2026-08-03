@@ -41,9 +41,9 @@ packages/client/targets/
 # Firebase (Android) Google services
 google-services.json
 
-# Gatsby
-packages/website/.cache/
-packages/website/public/
+# Astro
+packages/website/dist/
+packages/website/.astro/
 
 # SST build output
 .sst/

@@ -1,0 +1,75 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const links = [
+  {
+    href: 'https://twitter.com/AmbitoDolar',
+    icon: 'fa6-brands:x-twitter',
+    label: 'Twitter',
+  },
+  {
+    href: 'https://t.me/AmbitoDolar',
+    icon: 'fa6-brands:telegram',
+    label: 'Telegram',
+  },
+  {
+    href: 'https://instagram.com/ambitodolar',
+    icon: 'fa6-brands:instagram',
+    label: 'Instagram',
+  },
+  {
+    href: 'https://fb.me/AmbitoDolar',
+    icon: 'fa6-brands:facebook',
+    label: 'Facebook',
+  },
+  {
+    href: 'https://www.reddit.com/r/AmbitoDolar',
+    icon: 'fa6-brands:reddit-alien',
+    label: 'Reddit',
+  },
+  {
+    href: 'https://mastodon.social/@AmbitoDolar',
+    icon: 'fa6-brands:mastodon',
+    label: 'Mastodon',
+    me: true,
+  },
+  {
+    href: 'https://bsky.app/profile/ambitodolar.bsky.social',
+    icon: 'fa6-brands:bluesky',
+    label: 'Bluesky',
+    me: true,
+  },
+  {
+    href: 'https://www.threads.net/@ambitodolar',
+    icon: 'fa6-brands:threads',
+    label: 'Threads',
+    me: true,
+  },
+  {
+    href: 'https://github.com/outaTiME/ambito-dolar',
+    icon: 'fa6-brands:github',
+    label: 'GitHub',
+  },
+  {
+    href: 'mailto:soporte@ambito-dolar.app',
+    icon: 'fa6-solid:envelope',
+    label: 'Correo',
+  },
+];
+---
+
+<p class="social">
+  {
+    links.map(({ href, icon, label, me }) => (
+      <a
+        class="icon"
+        href={href}
+        target="_blank"
+        rel={me ? 'noopener noreferrer me' : 'noopener noreferrer'}
+        aria-label={label}
+      >
+        <Icon name={icon} aria-hidden="true" />
+      </a>
+    ))
+  }
+</p>

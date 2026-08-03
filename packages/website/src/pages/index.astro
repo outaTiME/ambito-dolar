@@ -1,0 +1,61 @@
+---
+import appStore from '../assets/images/app-store.png';
+import playStore from '../assets/images/play-store.png';
+import Icon from '../components/Icon.astro';
+import Phone from '../components/Phone.astro';
+import Social from '../components/Social.astro';
+import StoreBadge from '../components/StoreBadge.astro';
+import { site } from '../config';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <div class="container">
+    <div class="features">
+      <div class="feature__item">
+        <div class="row">
+          <div class="col-6">
+            <div class="feature__content">
+              <div class="feature__icon">
+                <Icon />
+              </div>
+              <h2>{site.title}</h2>
+              <p>
+                Conocé las distintas cotizaciones de las principales divisas en
+                la Argentina de manera simple, elegante y efectiva.
+              </p>
+              <Social />
+              <p class="donation">
+                Esta aplicación es gratuita, de código abierto y sin
+                publicidades, podés contribuir con su desarrollo y mantenimiento
+                haciendo tu aporte en&nbsp;<a
+                  class="icon"
+                  href="https://cafecito.app/ambitodolar"
+                  target="_blank"
+                  rel="noopener noreferrer">Cafecito App</a
+                >.
+              </p>
+              <div class="feature__action">
+                <StoreBadge
+                  href={site.appStoreUrl}
+                  src={appStore}
+                  alt="Descargar en el App Store"
+                  class="app-store"
+                />
+                <StoreBadge
+                  href={site.playStoreUrl}
+                  src={playStore}
+                  alt="Disponible en Google Play"
+                  class="play-store"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-6 first">
+            <Phone />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,16 @@
+{
+  "name": "Ámbito Dólar",
+  "short_name": "Ámbito Dólar",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#00AE6B",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

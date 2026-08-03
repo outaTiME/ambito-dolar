@@ -39,9 +39,9 @@ packages/client/android/
 # Firebase (Android) Google services
 google-services.json
 
-# Gatsby
-.cache/
-public/
+# Astro
+dist/
+.astro/
 
 # SST build output
 .sst/

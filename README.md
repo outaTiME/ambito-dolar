@@ -11,17 +11,17 @@
 ## Preview
 
 <p>
-  <img width="250" src="packages/website/static/images/iphone.png">
+  <img width="250" src="packages/website/src/assets/images/iphone.png">
   &nbsp;
-  <img width="250" src="packages/website/static/images/iphone-dark.png">
+  <img width="250" src="packages/website/src/assets/images/iphone-dark.png">
 </p>
 
 ## Download
 
 <p>
-  <a href="https://apps.apple.com/app/id1485120819"><img width="120" src="packages/website/static/images/app-store.png"></a>
+  <a href="https://apps.apple.com/app/id1485120819"><img width="120" src="packages/website/src/assets/images/app-store.png"></a>
   &nbsp;
-  <a href="https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar"><img width="120" src="packages/website/static/images/play-store.png"></a>
+  <a href="https://play.google.com/store/apps/details?id=im.outa.AmbitoDolar"><img width="120" src="packages/website/src/assets/images/play-store.png"></a>
 </p>
 
 - App Store: https://apps.apple.com/app/id1485120819

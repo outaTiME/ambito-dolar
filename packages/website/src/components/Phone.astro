@@ -1,0 +1,25 @@
+---
+import { getImage } from 'astro:assets';
+
+import iphoneDark from '../assets/images/iphone-dark.png';
+import iphone from '../assets/images/iphone.png';
+
+const light1x = await getImage({ src: iphone, width: 300, quality: 100 });
+const light2x = await getImage({ src: iphone, width: 600, quality: 100 });
+const dark1x = await getImage({ src: iphoneDark, width: 300, quality: 100 });
+const dark2x = await getImage({ src: iphoneDark, width: 600, quality: 100 });
+---
+
+<picture>
+  <source
+    srcset={`${dark1x.src} 1x, ${dark2x.src} 2x`}
+    media="(prefers-color-scheme: dark)"
+  />
+  <img
+    src={light1x.src}
+    srcset={`${light1x.src} 1x, ${light2x.src} 2x`}
+    alt=""
+    width="300"
+    height="612"
+  />
+</picture>

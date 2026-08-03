@@ -1,6 +1,6 @@
 $break-small: 719px;
 
-html, body, #___gatsby, #gatsby-focus-wrapper, main {
+html, body, main {
   height: 100%;
 }
 
@@ -20,7 +20,7 @@ body {
     justify-content: center;
     width: 100%;
     // background image
-    background-image: url(../images/seamless-background.jpg);
+    background-image: url(/seamless-background.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -80,6 +80,12 @@ body {
           .icon {
             transition: 0.1s ease-in;
             color: #797283;
+
+            svg {
+              width: 18px;
+              height: 18px;
+              vertical-align: middle;
+            }
           }
 
           .icon:hover {
@@ -107,11 +113,11 @@ body {
         display: flex;
         margin-top: 60px;
 
-        .gatsby-image-wrapper {
+        a {
           cursor: pointer;
         }
 
-        .gatsby-image-wrapper:first-child {
+        a:first-child {
           margin-right: 1.25em;
         }
       }
@@ -136,7 +142,7 @@ body {
       order: 2;
     }
 
-    .feature__icon .gatsby-image-wrapper {
+    .feature__icon img {
       margin: 0 auto;
     }
 

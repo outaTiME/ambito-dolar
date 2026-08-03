@@ -1,0 +1,48 @@
+---
+import { site } from '../config';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = title || site.title;
+const pageDescription = description || site.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/apple-touch-icon.png', Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: site.title,
+  description: site.description,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'iOS, Android',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'ARS' },
+  url: Astro.site?.href,
+  image: ogImage,
+  downloadUrl: [site.appStoreUrl, site.playStoreUrl],
+};
+---
+
+<title>{pageTitle}</title>
+<meta name="description" content={pageDescription} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={site.title} />
+<meta property="og:locale" content="es_AR" />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={pageDescription} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:alt" content={site.title} />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content={site.twitterSite} />
+<meta name="twitter:creator" content={site.twitterCreator} />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={pageDescription} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="twitter:image:alt" content={site.title} />
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

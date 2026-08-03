@@ -1,0 +1,16 @@
+---
+import { Image } from 'astro:assets';
+
+const { href, src, alt, class: className } = Astro.props;
+---
+
+<a href={href} target="_blank" rel="noopener noreferrer">
+  <Image
+    src={src}
+    alt={alt}
+    height={40}
+    densities={[1, 2]}
+    quality={100}
+    class={className}
+  />
+</a>

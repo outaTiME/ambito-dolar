@@ -29,7 +29,7 @@ export function createSites(ctx: StackContext, api: sst.aws.ApiGatewayV2) {
       path: 'packages/website',
       build: {
         command: 'yarn build',
-        output: 'public',
+        output: 'dist',
       },
     });
 
