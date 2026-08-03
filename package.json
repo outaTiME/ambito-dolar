@@ -14,12 +14,16 @@
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
-    "eslint": "^8.57.1",
+    "astro-eslint-parser": "^3.0.0",
+    "eslint": "^9.39.5",
     "eslint-config-universe": "^16.0.0",
+    "eslint-plugin-astro": "^3.1.0",
     "husky": "^9.1.7",
-    "lerna": "^9.0.7",
+    "lerna": "^10.0.0",
     "prettier": "^3.9.6",
-    "sst": "^4.17.1"
+    "prettier-plugin-astro": "^0.14.1",
+    "sst": "^4.17.1",
+    "typescript": "~6.0.3"
   },
   "scripts": {
     "test": "lerna run test",
@@ -37,10 +41,10 @@
     "website:clean": "yarn workspace @ambito-dolar/website run clean",
     "publish": "lerna version --conventional-commits --conventional-graduate",
     "version": "yarn install && git stage yarn.lock",
-    "depcheck": "yarn workspaces foreach --verbose exec npx depcheck",
+    "depcheck": "yarn workspaces foreach -A --verbose exec npx depcheck",
     "postinstall": "husky"
   },
-  "packageManager": "yarn@4.17.1",
+  "packageManager": "yarn@4.18.0",
   "resolutions": {
     "@react-native-async-storage/async-storage": "^2.2.0"
   },
