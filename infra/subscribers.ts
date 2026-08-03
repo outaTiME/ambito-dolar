@@ -40,10 +40,6 @@ export function createSubscribers(
         ...ctx.baseRuntimeEnv,
         QUOTES_OBJECT_KEY: ctx.requiredEnv('QUOTES_OBJECT_KEY'),
       },
-      nodejs: {
-        // unbundled, expo-server-sdk v6 requires its own package.json which esbuild breaks
-        install: ['expo-server-sdk'],
-      },
       // ~2m
       timeout: '4 minutes',
     },
@@ -61,10 +57,6 @@ export function createSubscribers(
       link: [bucket, devicesTable, notificationsTable],
       environment: {
         ...ctx.baseRuntimeEnv,
-      },
-      nodejs: {
-        // unbundled, expo-server-sdk v6 requires its own package.json which esbuild breaks
-        install: ['expo-server-sdk'],
       },
       // ~30s
       timeout: '1 minute',

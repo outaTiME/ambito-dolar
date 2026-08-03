@@ -11,6 +11,7 @@ import { init, tx } from '@instantdb/admin';
 import * as Sentry from '@sentry/aws-serverless';
 import { parallelScan } from '@shelf/dynamodb-parallel-scan';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
+// eslint-disable-next-line import/namespace -- expo-server-sdk v7 ships json import attributes universe parser cannot read
 import { Expo } from 'expo-server-sdk';
 import { JWT } from 'google-auth-library';
 import https from 'https';
