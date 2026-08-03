@@ -107,14 +107,14 @@ const withStats =
 const StatView = ({ title, current, change }) => {
   const { theme, fonts } = Helper.useTheme();
   // convert change to number
-  change = parseFloat(change);
+  const changeValue = parseFloat(change);
   const color = React.useMemo(
-    () => Helper.getChangeColor(change, theme),
-    [change, theme],
+    () => Helper.getChangeColor(changeValue, theme),
+    [changeValue, theme],
   );
   const change_fmt = React.useMemo(
-    () => AmbitoDolar.getRateChange(change, true),
-    [change],
+    () => AmbitoDolar.getRateChange(changeValue, true),
+    [changeValue],
   );
   return (
     <CardView>

@@ -50,9 +50,9 @@ const FloatingEmojis = ({
   const [startTimeout, stopTimeout] = useTimeout();
   const clearEmojis = useCallback(() => setEmojis(EMPTY_ARRAY), []);
   // emoji not available on older android versions
-  if (Platform.OS === 'android' && Platform.Version < 24) {
-    disableMoneyMouthFace = true;
-  }
+  const hideMoneyMouthFace =
+    disableMoneyMouthFace ||
+    (Platform.OS === 'android' && Platform.Version < 24);
   // 🚧️ TODO: 🚧️
   // Clear emojis if page navigatorPosition falls below 0.93 (which we should call like `pageTransitionThreshold` or something)
   // otherwise, the FloatingEmojis look weird during stack transitions
@@ -65,7 +65,7 @@ const FloatingEmojis = ({
         const newEmoji = {
           // if a user has smashed the button 7 times, they deserve a 🤑 money mouth face
           emojiToRender:
-            (existingEmojis.length + 1) % 7 === 0 && !disableMoneyMouthFace
+            (existingEmojis.length + 1) % 7 === 0 && !hideMoneyMouthFace
               ? '🤑'
               : emojisArray.length === 1
                 ? emojisArray[0]
@@ -81,7 +81,7 @@ const FloatingEmojis = ({
     },
     [
       clearEmojis,
-      disableMoneyMouthFace,
+      hideMoneyMouthFace,
       duration,
       emojisArray,
       rangeMin,
