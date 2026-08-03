@@ -2,7 +2,7 @@ import AmbitoDolar from '@ambito-dolar/core';
 import chromium from '@sparticuz/chromium';
 import imageType from 'image-type';
 import prettyBytes from 'pretty-bytes';
-import puppeteer from 'puppeteer-core';
+import { launch } from 'puppeteer-core';
 import sharp from 'sharp';
 
 import Shared from './shared';
@@ -135,7 +135,7 @@ const JPEG_OPTIONS = {
 export const generateScreenshot = async (url, opts) => {
   const start_time = Date.now();
   const isSquare = opts?.square === true;
-  const browser = await puppeteer.launch({
+  const browser = await launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath(),
