@@ -1,4 +1,3 @@
-/* eslint-env node */
 const { getSentryExpoConfig } = require('@sentry/react-native/metro');
 const path = require('path');
 

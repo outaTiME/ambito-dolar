@@ -1,0 +1,15 @@
+{
+  "lsp": {
+    "eslint": {
+      "settings": {
+        "validate": [
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact",
+          "astro"
+        ]
+      }
+    }
+  }
+}
