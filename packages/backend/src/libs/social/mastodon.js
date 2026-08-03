@@ -2,7 +2,7 @@ import { createRestAPIClient } from 'masto';
 
 // https://github.com/neet/masto.js/blob/main/examples/create-new-status-with-image.ts
 export const publish = async (caption, file) => {
-  const masto = await createRestAPIClient({
+  const masto = createRestAPIClient({
     url: process.env.MASTODON_URL,
     accessToken: process.env.MASTODON_ACCESS_TOKEN,
     ...(process.env.SST_STAGE !== 'prod' && {
