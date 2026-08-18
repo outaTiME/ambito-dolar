@@ -80,7 +80,7 @@ export default {
         ],
       },
     ],
-    false && [
+    [
       'react-native-android-widget',
       {
         fonts: ['./assets/fonts/FiraGO-Regular.otf'],
@@ -92,14 +92,42 @@ export default {
             minWidth: '110dp',
             minHeight: '110dp',
             label: 'Cotizaciones',
-            description:
-              'Mantenete al tanto de las cotizaciones durante el transcurso del día.',
+            // same verb and noun as the ios description, android picker drops the period
+            description: 'Consultá las cotizaciones del día',
             targetCellWidth: 2,
             targetCellHeight: 2,
-            previewImage: './assets/widgets/android-2x2.png',
+            previewImage: './assets/widgets/android-rate-2x2.png',
             resizeMode: 'none',
             widgetFeatures: 'reconfigurable|configuration_optional',
             // https://saleksovski.github.io/react-native-android-widget/docs/public-api/interfaces/Widget#updateperiodmillis
+            updatePeriodMillis: 30 * 60 * 1000,
+          },
+          {
+            name: 'List',
+            minWidth: '110dp',
+            minHeight: '110dp',
+            label: 'Lista de cotizaciones',
+            // same verb and noun as the ios description, android picker drops the period
+            description: 'Consultá las cotizaciones del día',
+            targetCellWidth: 2,
+            targetCellHeight: 2,
+            previewImage: './assets/widgets/android-list-2x2.png',
+            resizeMode: 'none',
+            widgetFeatures: 'reconfigurable|configuration_optional',
+            updatePeriodMillis: 30 * 60 * 1000,
+          },
+          {
+            name: 'Spread',
+            minWidth: '110dp',
+            minHeight: '110dp',
+            label: 'Brechas',
+            // same verb and noun as the ios description, android picker drops the period
+            description: 'Consultá las brechas entre cotizaciones',
+            targetCellWidth: 2,
+            targetCellHeight: 2,
+            previewImage: './assets/widgets/android-spread-2x2.png',
+            resizeMode: 'none',
+            widgetFeatures: 'reconfigurable|configuration_optional',
             updatePeriodMillis: 30 * 60 * 1000,
           },
         ],

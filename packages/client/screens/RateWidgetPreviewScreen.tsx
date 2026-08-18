@@ -1,50 +1,40 @@
 // @ts-nocheck
-import AmbitoDolar from '@ambito-dolar/core';
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
 import { View } from 'react-native';
 import { WidgetPreview } from 'react-native-android-widget';
 
+import FixedScrollView from '@/components/FixedScrollView';
 import withContainer from '@/components/withContainer';
 import withRates from '@/components/withRates';
-import Helper from '@/utilities/Helper';
-import RateWidget from '@/widgets/RateWidget';
+import Settings from '@/config/settings';
+import { WIDGET_NAMES, getPreviewProps } from '@/widgets';
+import WidgetCard from '@/widgets/WidgetCard';
 
-const RateWidgetPreviewScreen = ({ rates, rateTypes }) => {
-  const { theme } = Helper.useTheme();
-  const type = rateTypes[0];
-  const stats = rates[type].stats;
-  const [timestamp, value, change] = React.useMemo(
-    () => stats[stats.length - 1],
-    [stats],
-  );
-  return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <WidgetPreview
-        renderWidget={({ width }) => (
-          <RateWidget
-            {...{
-              theme,
-              preview: true,
-              size: width,
-              type,
-              change,
-              value: AmbitoDolar.getRateValue(value),
-              timestamp,
-            }}
-          />
-        )}
-        width={130}
-        height={130}
-      />
+// about what a 2x2 cell reports, this emulator logs 172, so the preview renders at the
+// size the launcher does and scripts/widget-preview.js needs no upscale
+const SIZE = 170;
+
+const RateWidgetPreviewScreen = ({ rates }) => (
+  // centered while the cards fit, scrolls once they do not
+  <FixedScrollView
+    contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+  >
+    {/* the scroll view lays its content full width, centering has to happen in here.
+        the gaps also keep the cards apart for scripts/widget-preview.js */}
+    <View style={{ alignItems: 'center', gap: Settings.PADDING }}>
+      {WIDGET_NAMES.map((widgetName) => (
+        <WidgetPreview
+          key={widgetName}
+          renderWidget={() => (
+            <WidgetCard size={SIZE} {...getPreviewProps(widgetName, rates)} />
+          )}
+          width={SIZE}
+          height={SIZE}
+        />
+      ))}
     </View>
-  );
-};
+  </FixedScrollView>
+);
 
 export default compose(withContainer, withRates())(RateWidgetPreviewScreen);
