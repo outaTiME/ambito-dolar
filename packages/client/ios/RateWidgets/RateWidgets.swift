@@ -378,7 +378,7 @@ struct RateWidget: Widget {
         .environment(\.sizeCategory, .large)
     }
     .configurationDisplayName("Cotizaciones")
-    .description("Consulta las cotizaciones a lo largo del día.")
+    .description("Consultá las cotizaciones a lo largo del día.")
     .supportedFamilies(supportedFamilies)
     .contentMarginsDisabledIfAvailable()
     // .disfavoredLocationsIfAvailable()
@@ -510,7 +510,7 @@ struct ListRatesWidget: Widget {
         .environment(\.sizeCategory, .large)
     }
     .configurationDisplayName("Lista de cotizaciones")
-    .description("Consulta las cotizaciones a lo largo del día.")
+    .description("Consultá las cotizaciones a lo largo del día.")
     .supportedFamilies(supportedFamilies)
     .contentMarginsDisabledIfAvailable()
     // .disfavoredLocationsIfAvailable()
@@ -549,8 +549,10 @@ struct SpreadWidgetEntryView : View {
   let fgSecondaryColor = Color(UIColor.secondaryLabel)
   var body: some View {
     let rates = entry.rates
-    let firstRate = rates?[0]
-    let secondRate = rates?[1]
+    // optional chaining only covers a nil array, a rate that stopped coming back leaves
+    // it short and the subscript would trap
+    let firstRate = rates?.first
+    let secondRate = rates?.dropFirst().first
     var spreadRate: RateValue? {
       if let firstRate = firstRate, let secondRate = secondRate {
         let detail =  "\(firstRate.name) → \(secondRate.name)"
@@ -562,7 +564,7 @@ struct SpreadWidgetEntryView : View {
         let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false)
         let changeColor = getChangeColor(num: rateChange)
         let (date, dateValue) = {
-          if (firstRate.date > secondRate.date) {
+          if (firstRate.dateValue > secondRate.dateValue) {
             return (firstRate.date, firstRate.dateValue)
           }
           return (secondRate.date, secondRate.dateValue)
@@ -705,7 +707,7 @@ struct SpreadWidget: Widget {
         .environment(\.sizeCategory, .large)
     }
     .configurationDisplayName("Brechas")
-    .description("Consulta las brechas entre cotizaciones a lo largo del día.")
+    .description("Consultá las brechas entre cotizaciones a lo largo del día.")
     .supportedFamilies(supportedFamilies)
     .contentMarginsDisabledIfAvailable()
     // .disfavoredLocationsIfAvailable()
