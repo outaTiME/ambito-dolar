@@ -9,10 +9,21 @@ import { clearRouteParam, dismissToTop } from '@/utilities/Navigation';
 
 const POP_TO_TOP_PARAM = 'popToTop';
 
+// a custom title subview leaves the header with no background on ios 27, so only the
+// subtitle scheme pays for it. Keeping the hook in here also means nothing subscribes
+// to the tick while the scheme is off
+const RatesTitle = () => {
+  const subtitle = useHeaderSubtitle();
+  return (
+    <Stack.Title asChild>
+      <HeaderSubtitle title={Settings.APP_NAME} subtitle={subtitle} />
+    </Stack.Title>
+  );
+};
+
 const RatesIndexRoute = () => {
   const params = useLocalSearchParams();
   const shouldPopToTop = params?.[POP_TO_TOP_PARAM] === 'true';
-  const subtitle = useHeaderSubtitle();
   React.useEffect(() => {
     if (!shouldPopToTop) {
       return;
@@ -22,9 +33,7 @@ const RatesIndexRoute = () => {
   }, [shouldPopToTop]);
   return (
     <>
-      <Stack.Title asChild>
-        <HeaderSubtitle title={Settings.APP_NAME} subtitle={subtitle} />
-      </Stack.Title>
+      {Settings.NEW_HEADER_SCHEME && <RatesTitle />}
       <MainScreen />
     </>
   );

@@ -33,9 +33,6 @@ const useHeaderSubtitle = () => {
       clearTimeout(t);
     };
   }, [showUpdated, updated_at]);
-  if (!Settings.NEW_HEADER_SCHEME) {
-    return undefined;
-  }
   if (showUpdated) {
     const label = I18n.t('updated_now');
     if (Settings.HEADER_EPHEMERAL_CONCAT) {
