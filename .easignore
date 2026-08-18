@@ -56,6 +56,8 @@ dist/
 .github/
 .husky/
 .vscode/
+.zed/
+.claude/
 /assets/
 packages/*
 !packages/backend
@@ -74,7 +76,7 @@ packages/website/*
 !packages/website/package.json
 /infra/
 .editorconfig
-.eslintrc.js
+eslint.config.js
 .gitattributes
 .gitignore
 .prettierrc.json
