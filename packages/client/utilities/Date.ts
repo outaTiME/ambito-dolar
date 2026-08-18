@@ -71,12 +71,13 @@ export default {
   humanize(date, style) {
     date = this.get(date);
     if (style === 1) {
-      // rate view
+      // rate view with relative dates off, and the android widget card. Padded hour so
+      // every row keeps the same width, same as the ios widget dd/MM HH:mm
       if (Platform.OS === 'web') {
-        // return date.format('ddd, D MMM H:mm');
+        // return date.format('ddd, D MMM HH:mm');
       }
-      // return date.format('D MMM H:mm');
-      return date.format('DD/MM H:mm');
+      // return date.format('D MMM HH:mm');
+      return date.format('DD/MM HH:mm');
     } else if (style === 2) {
       // timestamp on web, rate chart
       return date.format('dddd, D [de] MMM [de] YYYY H:mm');
@@ -95,7 +96,7 @@ export default {
     } else if (style === 7) {
       // card date relative on native, web stays absolute
       if (Platform.OS === 'web') {
-        return date.format('DD/MM H:mm');
+        return date.format('DD/MM HH:mm');
       }
       return shortRelative(date);
     } else if (style === 9) {
