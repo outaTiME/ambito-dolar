@@ -101,7 +101,6 @@ const Settings: any = {
     ? { marginTop: -CONTENT_MARGIN / 1.5 }
     : null,
   NEW_HEADER_SCHEME: false,
-  RELATIVE_CARD_DATES: true,
   HEADER_EPHEMERAL_CONCAT: true,
   MAX_FONT_SIZE_MULTIPLIER,
   RATES_URI,
