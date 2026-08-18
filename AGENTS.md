@@ -54,11 +54,13 @@ yarn workspace @ambito-dolar/website run build|preview
 ### Core tests (AVA)
 
 ```bash
-yarn workspace @ambito-dolar/core test
+yarn test                                                        # root, via lerna
+yarn workspace @ambito-dolar/core exec ava
 yarn workspace @ambito-dolar/core exec ava --match="Dates should use*"
 ```
 
 - Auto tests only in `packages/core`. `yarn test` runs `lerna run test` to core. Backend no test script.
+- Core `test` script is `eslint . && ava`, so `yarn workspace @ambito-dolar/core test` dies with `command not found: eslint` (same root-only eslint caveat). Go through root `yarn test` or `exec ava`.
 - `packages/backend/src/routes/test.js` = API endpoint, not a test.
 - Fast feedback: AVA `--match`, not full repo.
 
@@ -113,7 +115,7 @@ Drop (tsc infers fine):
 
 Keep (load-bearing):
 
-- `Settings:any` (`config/settings.ts:89`) — `updateSettings` mutates dynamic fields (`CONTENT_WIDTH` etc.), methods called with args outside inferred sig. Never drop. Never wrap callsites `(Settings as any).foo`, `Settings.foo` already returns `any`.
+- `Settings:any` (`config/settings.ts`) — `updateSettings` mutates dynamic fields (`CONTENT_WIDTH` etc.), methods called with args outside inferred sig. Never drop. Never wrap callsites `(Settings as any).foo`, `Settings.foo` already returns `any`.
 - Exported component `({a,b}:any)` — dropping forces all props required, breaks callers. Drop `:any` only on internal same-file helpers (`const ButtonBase = ({onPress,children}) => ...`).
 - `useSelector((state:any) => state.x)` required unless file has `// @ts-nocheck`.
 - `useState<any>()` only if consumers read fields off state (else narrows to undefined). `useRef<any>` only if union defeats inference, else `useRef(null)`.
@@ -214,6 +216,58 @@ Release after approval: delete only the `// TODO:` line + that rate entry. Prese
 - Format: `LABEL VALOR ↑PCT%` / `↓PCT%`. No colon, no parens, no trailing period. No-change rates (CRIPTO) drop arrow+pct.
 - Separator `, ` (cleanest in iOS push vs ` · ` or ` | `). Sort by absolute pct DESC, biggest movers first, no-change rates land last.
 - Arrows ↑↓ over `+/-` for peripheral scan (SF Pro native). Before adding a rate: simulate caption with all active + new, must ≤300 with ≥10 headroom. Headroom <10 → compact (drop "de jornada", shorter labels) before merge.
+
+## Android widgets
+
+`react-native-android-widget`. Widget tree in `packages/client/widgets/`, declared in the plugin block of `app.config.ts`.
+
+- **Entry point**: `main` is `./index.js`, NOT `expo-router/entry`. `registerWidgetTaskHandler` + `registerWidgetConfigurationScreen` must run at bundle eval, expo-router loads routes lazily so `app/_layout` never runs headless. Do not revert `main` on an SDK bump.
+- **Numeral delimiters**: `getWidgetProps` sets them from `expo-localization`. `AppContainer` does it for the app but never mounts in the headless task or the config activity, and without it those paths format with the core `es` defaults (`1.520,49` vs `1,520.49`).
+- **Widget components are NOT React components.** `buildWidgetTree` calls them as plain functions (`jsxTree.type(jsxTree.props)`), outside the renderer. No hooks, no state, no context, no `Helper.useTheme`, and never wrap them in an HOC (`Sentry.wrap`, `compose`) — the wrapper's own hooks throw `Invalid hook call`. Pure function of props, everything precomputed in `getWidgetProps`. Applies to `renderWidget` and to `WidgetPreview` alike. If React Compiler is ever enabled, widget files need `'use no memo';` at the top.
+- **One component for every widget**, `widgets/WidgetCard.tsx`. `rows` switches it to the list layout, otherwise it lays out title / detail / gap / small / big / date. The difference between widgets lives in the props builders of `widgets/index.tsx` (`WIDGETS`), never in a second component. Sizes are the ios ones scaled by 0.8235 (`RateWidgets.swift` 26/20/16/14/11 to 21.4/16.5/13.2/11.5/9).
+- **`buildWidgetTree` flattens children only one level** (`Array.isArray(children) ? children : [children]`). A `.map()` has to be the only child of its parent, mixing it with siblings nests arrays and breaks the tree.
+- **Widget order in the picker follows the labels, not the declaration.** `WIDGET_NAMES` and the `app.config.ts` entries follow the ios bundle order (`RateWidgets.swift`, Rate then List then Spread) and drive our own code and the in app preview, but the Pixel launcher sorts by label and hoists the last one alphabetically into the wide hero row. Measured twice: two different declaration orders gave the same picker, and renaming the labels to `Zzz`/`Aaa`/`Mmm` without touching the declaration reordered it. Labels have to match `.configurationDisplayName(...)`, so the picker order is not ours to pick, do not reshuffle the entries chasing it.
+- **Layout from `widgetInfo`**: card is a square of `min(width, height)`, cells are not square. Never `match_parent` on the card, and keep the `|| DEFAULT_WIDGET_SIZE` fallback, some launchers report 0.
+- **Redraw triggers**: `WIDGET_ADDED`/`WIDGET_UPDATE`/`WIDGET_RESIZED` (headless, hits `/fetch`), `reloadWidgets` from `AppContainer` (store data, foreground only), config save. `updatePeriodMillis` floor is 30 min, Android ignores anything lower. `adb shell am broadcast APPWIDGET_UPDATE` is a protected broadcast, does NOT work to force a redraw.
+- **`previewImage`**: regenerate from a live device with `node scripts/widget-preview.js assets/widgets/android-rate-2x2.png [--device serial]`, ImageOptim after, `expo prebuild` last (script overwrites, prebuild copies to `res/drawable`). Library has no `previewLayout` support so the PNG is used on every API level. The script segments cards on both axes, so the source can be the home screen or the in app preview (`screens/RateWidgetPreviewScreen.tsx`, every widget with its defaults, at about the size a 2x2 cell reports).
+- **Retired rate types**: a type dropped from `getAvailableRateTypes` stops coming from `/fetch`, and a widget configured with it would render nothing forever. `getWidgetProps` filters the config against the payload and falls back to `empty` when fewer than `min` survive, same as the ios `compactMap`. `min` is per widget, the Spread needs both sides.
+- Android cannot re-render a widget on system theme change (upstream #36, no `onUpdate` callback). Widgets are forced dark like iOS. Adaptive theming needs `renderWidget({light, dark})`, dual bitmaps, not a repaint.
+
+### Config screen
+
+`ConfigurationScreen` (`widgets/ConfigurationScreen.tsx`, registered via `registerWidgetConfigurationScreen`) runs inside `RNWidgetConfigurationActivity`, a **separate React root**. Not the app. `widgets/index.tsx` keeps the logic (props builders, task handler) so the headless task never pulls in the screen.
+
+- Library contract, upstream issue #74: "a small separate app with one screen, stores/context will need to be provided again". Isolation is by design, not a gap. Do not fight it.
+- No router, no redux store, no app providers. Screen mounts its own `GestureHandlerRootView` + `SafeAreaProvider` + styled-components `ThemeProvider` + RN `StatusBar`.
+- Never mount `<NavigationBar>` (`expo-navigation-bar`) here. `style` is a no-op with the plugin `enforceContrast: true`, it mutates module level state shared with the app, and its unmount reset rejects with `The current activity is no longer available` once the activity is gone.
+- Never reuse components pulling react-navigation context. `HeaderButton` crashes `Couldn't find a theme`. Plain `Pressable` + `MaterialIcons`/`Text` instead.
+- No store: rates come from `Settings.API_URL + '/fetch'`, one call per save. Per-widget config in AsyncStorage key `<widgetName>:<widgetId>:config`, cleaned on `WIDGET_DELETED`.
+- Bottom inset: use `FixedScrollView isModal`, activity is not the app and misses the app chrome.
+- Activity generated with no `android:configChanges`. Live system theme switch while open does not repaint, fixed on reopen. Do NOT patch the manifest, tried and reverted: trades content staleness for nav bar staleness and pushes the activity away from the isolation contract.
+- Activity sets `RESULT_CANCELED` on create, so system back drops a freshly added widget. Confirm control must be affirmative (`Listo`), never an X or a back arrow. `setResult('ok')` is what keeps the widget.
+
+#### Rate picker sheet
+
+`SlotsSection` renders N ordered rows over one option list, each opening `PickerSheet`, a Material `ModalBottomSheet` (`@expo/ui/jetpack-compose`) hosting our own `CardView` rows. Every widget uses it: one rate slot for Rate, two for Spread, three for List, plus a one slot `Mostrar` section wherever ios has the `valueType` parameter (all but Spread). No widget gets its own config layout.
+
+Stored config is `{ rateTypes: [...], value }` for every widget, the widget entry defaults filled in by `getConfig` (`widgets/index.tsx`), the one place every surface reads a config through. Picking a rate another slot already holds swaps them, so a widget never shows the same rate twice.
+
+- **`Host` needs an explicit width.** It sits inside the content container, so `left: 0, right: 0` resolves against `CONTENT_WIDTH`, not the screen, and the sheet renders narrow and pushed left. Use `useWindowDimensions().width`.
+- **`RNHostView` needs `matchContents` + `fillMaxWidth()`.** Without the modifier the host measures the rn content unconstrained and the card collapses to a third of the sheet.
+- **The sheet inherits no app chrome.** Its own `GestureHandlerRootView` (separate native window, the `RectButton` rows are dead without it), its own `ThemeProvider`, and `ContentView` around the card, whose margin pairs with the `CardView` one to make up `PADDING`. Skipping `ContentView` leaves half the app margin.
+- **The sheet grows with its content and has no cap of its own**, so on short devices it runs off both screen edges and the last rows are unreachable. The list caps itself with `ScrollView maxHeight: height * 0.75`.
+- **Visibility follows mounting**, there is no `visible` prop. Unmounting on select skips the exit animation, so await `ref.hide()` (resolves after the animation) and apply the change in `then`.
+
+## Copy register and widget picker text
+
+- **Voseo everywhere.** App I18n is rioplatense voseo (`Elegí`, `verificá`, `Tenés`). No tuteo (`Elige`, `verifica`, `Tienes`). Applies to iOS Swift strings too.
+- **iOS is the base for meaning, not for format.** New Android widget copy derives verb + noun from the iOS `.description(...)`, never invented fresh.
+- iOS `.description(...)` (`ios/RateWidgets/RateWidgets.swift`): full sentence, trailing period. Apple style.
+- Android `description` (`app.config.ts` widget entry): imperative, **no trailing period**, 4-8 words. Android picker style, matches system widgets (Battery `See battery info for your devices`, Chrome `Quickly start a search in Chrome`, Clock `Choose cities in the Clock app`).
+- Android drops the iOS filler, keeps the verb: iOS `Consultá las cotizaciones a lo largo del día.` → Android `Consultá las cotizaciones del día`.
+- `label` (Android) and `.configurationDisplayName(...)` (iOS) identical string.
+- Config section titles come from the iOS intent parameter display names (`ios/RateWidgets/Base.lproj/RateWidgets.intentdefinition`, read with `plutil -convert xml1`): Rate `Cotización` + `Mostrar`, list `Cotizaciones` + `Mostrar`, Spread `Cotizaciones`. Singular when the widget takes one rate, plural when it takes several.
+- Android description shorter than the current one is always safe, no hard length cap but picker truncates.
 
 ## Donation modal policy
 
