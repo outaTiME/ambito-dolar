@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- the inset of every card, the ios systemSmall one. Declared once because the layouts lay it
+       out and the kotlin has to know it to tell a text how much card there is left -->
+  <dimen name="widget_padding">16dp</dimen>
+
+  <!-- what a card rounds by, and ours and not the system one. Android asks for
+       system_app_widget_background_radius from api 31, which is 28dp, and taking it was measured
+       to round the card 44 percent more than before on android 12 and up while leaving android 11
+       at 20: the same widget with two different shapes, and neither of them the ios one.
+       The launcher masks with its own radius anyway, and a card rounded less than the mask is
+       never clipped by it, so this costs nothing and keeps the shape iOS has.
+       scripts/widget-preview.js cuts the preview corners with this same 20 -->
+  <dimen name="widget_corner">20dp</dimen>
+</resources>

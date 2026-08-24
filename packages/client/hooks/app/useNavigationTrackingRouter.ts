@@ -23,7 +23,6 @@ const EXACT_ROUTE_MAP = {
   '/settings/statistics': 'Statistics',
   '/settings/about': 'About',
   '/settings/developer': 'Developer',
-  '/settings/rate-widget-preview': 'RateWidgetPreview',
 };
 
 const getTrackedScreenFromPathname = (pathname) => {

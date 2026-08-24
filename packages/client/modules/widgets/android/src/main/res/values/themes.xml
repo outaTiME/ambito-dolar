@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- the activity is only a shell that shows dialogs, so it stays transparent and appcompat draws
+     everything. No window overrides beyond that, the settings dialog and the option pickers are
+     both plain AlertDialogs and look the same on every android version -->
+<resources>
+  <style name="Theme.Widget.Config" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowBackground">@android:color/transparent</item>
+  </style>
+</resources>

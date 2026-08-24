@@ -9,9 +9,6 @@
 // corners and writes the asset. Run `expo prebuild --platform android` afterwards to
 // copy it into res/drawable.
 //
-// The in app preview screen works as a source too, and renders every widget with its
-// defaults at about the size a 2x2 cell reports.
-//
 // Corners are neutralized to the card color BEFORE scaling. Scaling first would bleed
 // the wallpaper into the rounded edge and no mask can take it back out.
 
@@ -21,7 +18,7 @@ const path = require('path');
 const { PNG } = require('pngjs');
 const { parseArgs } = require('util');
 
-// keep in sync with the borderRadius over DEFAULT_WIDGET_SIZE of widgets/WidgetCard.tsx
+// the 20dp corner of widget_card_background.xml over the 130dp a 2x2 card reports
 const RADIUS_RATIO = 20 / 130;
 // a card pixel is this dark, the launcher wallpaper never is
 const DARK = 30;
@@ -98,12 +95,26 @@ const findCards = (img) => {
       }
     }
     for (const row of runs(band, height)) {
-      cards.push({
-        x: column.start,
-        y: row.start,
-        width: column.size,
-        height: row.size,
-      });
+      // and split that row back by columns. Two widgets sitting side by side share one column
+      // band, and the first pass hands back the pair as a single card twice as wide as it is
+      // tall. Scanning inside the row separates them because the gap between them is wallpaper
+      const strip = new Uint8Array(width);
+      for (let x = column.start; x < column.start + column.size; x++) {
+        for (let y = row.start; y < row.start + row.size; y++) {
+          if (isDark(x, y)) {
+            strip[x] = 1;
+            break;
+          }
+        }
+      }
+      for (const cell of runs(strip, width)) {
+        cards.push({
+          x: cell.start,
+          y: row.start,
+          width: cell.size,
+          height: row.size,
+        });
+      }
     }
   }
   return cards;

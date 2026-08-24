@@ -96,10 +96,6 @@ export const goToAbout = () => {
   navigateRoute('/settings/about');
 };
 
-export const goToRateWidgetPreview = () => {
-  navigateRoute('/settings/rate-widget-preview');
-};
-
 export const goToCustomizeRatesModal = () => {
   goToCustomizeRates(true);
 };

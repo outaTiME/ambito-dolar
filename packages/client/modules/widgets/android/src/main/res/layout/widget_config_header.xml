@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- section title. The recipe is the one PreferenceCategory uses, read from its own layout and
+     styles: Body2, which is 14sp medium and not the regular the small appearance gives, the
+     accent color, and its 16dp of margin over 8dp of padding -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginTop="16dp"
+  android:paddingStart="?attr/dialogPreferredPadding"
+  android:paddingEnd="?attr/dialogPreferredPadding"
+  android:paddingTop="8dp"
+  android:paddingBottom="8dp"
+  android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+  android:textColor="?attr/colorAccent" />

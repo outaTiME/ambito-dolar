@@ -1,0 +1,74 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- the widgets bring their own data, so the module asks for the network itself instead of
+       living off the app declaring it. The merger dedupes it against the app one -->
+  <uses-permission android:name="android.permission.INTERNET" />
+  <!-- coming back after a reboot, watching the network and the wakelock are WorkManager's own
+       business, and it declares all three in its manifest -->
+
+  <application>
+    <!-- the font is a resource reference and those only resolve from api 26, so the receivers
+         ship disabled below that and the launcher never lists them. Nobody loses a widget,
+         the android ones were never published -->
+    <receiver
+      android:name="im.outa.ambitodolar.widgets.RateWidget"
+      android:enabled="@bool/widget_supported"
+      android:exported="false"
+      android:label="@string/widget_rate_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <!-- an app update re-inflates every widget from initialLayout, which is the no data
+             card. Without this they sit like that until the next tick, up to half an hour -->
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+        <action android:name="android.intent.action.LOCALE_CHANGED" />
+        <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/widget_rate_info" />
+    </receiver>
+
+    <receiver
+      android:name="im.outa.ambitodolar.widgets.ListWidget"
+      android:enabled="@bool/widget_supported"
+      android:exported="false"
+      android:label="@string/widget_list_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+        <action android:name="android.intent.action.LOCALE_CHANGED" />
+        <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/widget_list_info" />
+    </receiver>
+
+    <receiver
+      android:name="im.outa.ambitodolar.widgets.SpreadWidget"
+      android:enabled="@bool/widget_supported"
+      android:exported="false"
+      android:label="@string/widget_spread_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+        <action android:name="android.intent.action.LOCALE_CHANGED" />
+        <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/widget_spread_info" />
+    </receiver>
+
+    <!-- one screen for every widget, it reads which one from the id it was launched with -->
+    <activity
+      android:name="im.outa.ambitodolar.widgets.WidgetConfigActivity"
+      android:enabled="@bool/widget_supported"
+      android:exported="true"
+      android:theme="@style/Theme.Widget.Config">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+      </intent-filter>
+    </activity>
+
+  </application>
+</manifest>

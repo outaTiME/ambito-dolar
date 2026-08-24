@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- the six slots every ios systemSmall view lays out: title / detail / gap / small / big / date.
+     Which value goes where and which one is colored is decided per widget in kotlin, so both the
+     rate and the spread render through this one layout.
+     It also serves as initialLayout, and that state is the bare card: an app update re-inflates
+     every widget from here and until the redraw lands the rates are loading, not missing. Saying
+     unavailable there would be a lie for the few seconds it takes.
+     The slots are ImageView and not TextView because the launcher resolves only system fonts in
+     its own process, so the text is drawn with our font on our side and travels as a bitmap.
+     Sizes and colors moved out with it: the sizes to Sizes.kt, one per role and shared with the
+     list, and the colors to the kotlin that fills each slot -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:targetApi="26">
+
+  <!-- the card is square: its height comes from the width through the 1:1 drawable below, so it
+       never stretches to fill a cell that is taller than wide -->
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:background="@drawable/widget_card_background">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/widget_square" />
+
+    <LinearLayout
+        android:id="@+id/widget_content"
+        android:screenReaderFocusable="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/widget_padding"
+        android:visibility="gone">
+
+      <ImageView
+          android:id="@+id/widget_title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" />
+
+      <ImageView
+          android:id="@+id/widget_detail"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" />
+
+      <!-- the gap that stretches, same as the ios Spacer -->
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:layout_weight="1"
+          android:orientation="vertical"
+          android:gravity="bottom">
+
+        <ImageView
+            android:id="@+id/widget_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/widget_big"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/widget_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+      </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/widget_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+  </FrameLayout>
+</FrameLayout>

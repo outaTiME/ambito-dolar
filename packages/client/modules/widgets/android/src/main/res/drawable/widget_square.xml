@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- only there to give an intrinsic 1:1 ratio. An ImageView with adjustViewBounds takes its
+     height from the width through this ratio, which is how the card stays square without
+     knowing the cell size. Works on every api level and does not depend on the reported size -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+  <size android:width="100dp" android:height="100dp" />
+  <solid android:color="@android:color/transparent" />
+</shape>

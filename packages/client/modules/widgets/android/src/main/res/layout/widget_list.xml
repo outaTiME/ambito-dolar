@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- the ios list widget: three rates, each one a name against its price and under it the date
+     against the change. The gaps between them stretch, same as the ios Spacer, and a slot with no
+     rate is left invisible instead of gone so the other rows keep their place, which is what the
+     ios padding of the remaining slots does.
+     The slots are ImageView and not TextView because the launcher resolves only system fonts in
+     its own process, so the text is drawn with our font on our side and travels as a bitmap.
+     Sizes and colors moved out with it: the sizes to Sizes.kt, one per role and shared with the
+     card, and the colors to the kotlin that fills each slot. The ones that carry weight scale
+     with fitStart, where the height is what limits, so the bitmap draws at its natural size -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:targetApi="26">
+
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:background="@drawable/widget_card_background">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/widget_square" />
+
+    <LinearLayout
+        android:id="@+id/widget_content"
+        android:screenReaderFocusable="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/widget_padding"
+        android:visibility="gone">
+
+    <LinearLayout
+        android:id="@+id/widget_row0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+      <ImageView
+          android:id="@+id/widget_name0"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:scaleType="fitStart" />
+
+      <ImageView
+          android:id="@+id/widget_price0"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_meta0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+      <ImageView
+          android:id="@+id/widget_date0"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:scaleType="fitStart" />
+
+      <ImageView
+          android:id="@+id/widget_change0"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/widget_row1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+      <ImageView
+          android:id="@+id/widget_name1"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:scaleType="fitStart" />
+
+      <ImageView
+          android:id="@+id/widget_price1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_meta1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+      <ImageView
+          android:id="@+id/widget_date1"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:scaleType="fitStart" />
+
+      <ImageView
+          android:id="@+id/widget_change1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/widget_row2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+      <ImageView
+          android:id="@+id/widget_name2"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:scaleType="fitStart" />
+
+      <ImageView
+          android:id="@+id/widget_price2"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_meta2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+      <ImageView
+          android:id="@+id/widget_date2"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:scaleType="fitStart" />
+
+      <ImageView
+          android:id="@+id/widget_change2"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="4dp" />
+    </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/widget_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+  </FrameLayout>
+</FrameLayout>

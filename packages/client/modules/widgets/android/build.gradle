@@ -1,0 +1,58 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'im.outa.ambitodolar'
+version = '1.0.0'
+
+// the renderers load the font as a compiled resource, R.font.widget_firago_regular, while the app
+// its copy under assets. One file in the repo, copied at build time, same as the single pbxproj
+// reference the ios widget target uses
+def widgetGeneratedRes = layout.buildDirectory.dir('generated/res/widget')
+def copyWidgetFont = tasks.register('copyWidgetFont', Copy) {
+  from file("$projectDir/../../../assets/fonts/FiraGO-Regular.otf")
+  into widgetGeneratedRes.map { it.dir('font') }
+  rename { 'widget_firago_regular.otf' }
+}
+
+// the picker needs a previewImage or it falls back to the app icon. From android 15
+// setWidgetPreview replaces it at runtime with the real rates
+def previews = ['rate': 'android-rate-2x2.png', 'list': 'android-list-2x2.png', 'spread': 'android-spread-2x2.png']
+def copyWidgetPreviews = previews.collect { name, asset ->
+  tasks.register("copyWidget${name.capitalize()}Preview", Copy) {
+    from file("$projectDir/../../../assets/widgets/$asset")
+    into widgetGeneratedRes.map { it.dir('drawable-nodpi') }
+    rename { "widget_${name}_preview.png" }
+  }
+}
+
+android {
+  namespace 'im.outa.ambitodolar.widgets'
+  defaultConfig {
+    versionCode 1
+    versionName '1.0.0'
+    // the widgets fetch on their own, so they need the same endpoint app.config.ts reads from
+    // the environment. Falls back to production, which is what a plain gradle build gets
+    resValue 'string', 'widget_api_url', (System.getenv('API_URL') ?: 'https://api.ambito-dolar.app')
+  }
+  sourceSets {
+    main {
+      res.srcDir widgetGeneratedRes
+    }
+  }
+}
+
+dependencies {
+  // the appcompat dialog is the centered one with side margins, the platform one follows the
+  // oem and on one ui becomes a full width bottom sheet that also tints the status bar
+  implementation 'androidx.appcompat:appcompat:1.7.1'
+
+  // the periodic redraw. Google points a widget that needs the network at this instead of a
+  // JobScheduler of its own, and it brings the reboot, the constraint and the unique work with it
+  implementation 'androidx.work:work-runtime-ktx:2.10.1'
+}
+
+tasks.named('preBuild') {
+  dependsOn([copyWidgetFont] + copyWidgetPreviews)
+}

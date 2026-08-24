@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 110dp is the fallback for launchers before android 12, which places by minWidth. From 12 it
+     is targetCellWidth that places, and neither of them promises any size in dp: the cell and the
+     margins around it are the launcher decision -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:targetCellWidth="2"
+    android:targetCellHeight="2"
+    android:resizeMode="none"
+    android:widgetCategory="home_screen"
+    android:description="@string/widget_list_description"
+    android:initialLayout="@layout/widget_list"
+    android:previewImage="@drawable/widget_list_preview"
+    android:configure="im.outa.ambitodolar.widgets.WidgetConfigActivity"
+    android:widgetFeatures="reconfigurable|configuration_optional"
+    android:updatePeriodMillis="0" />

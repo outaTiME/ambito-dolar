@@ -79,12 +79,6 @@ export default function SettingsStackLayout() {
           title: Helper.getScreenTitle(I18n.t('donate')),
         }}
       />
-      <Stack.Screen
-        name="rate-widget-preview"
-        options={{
-          title: Helper.getScreenTitle(I18n.t('detail')),
-        }}
-      />
     </Stack>
   );
 }

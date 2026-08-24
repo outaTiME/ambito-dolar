@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- overridden to true in values-v26, where the font resource resolves -->
+  <bool name="widget_supported">false</bool>
+</resources>

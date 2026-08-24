@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- forced dark like the ios widget, which sets colorScheme dark. Same values the app uses in
+     config/settings.ts for the blue, green, red and gray -->
+<resources>
+  <color name="widget_background">#000000</color>
+  <color name="widget_foreground">#FFFFFF</color>
+  <color name="widget_secondary">#8E8E93</color>
+  <color name="widget_blue">#0A84FF</color>
+  <color name="widget_green">#30D158</color>
+  <color name="widget_red">#FF453A</color>
+</resources>

@@ -1,7 +1,6 @@
 // @ts-nocheck
 import { tx, id } from '@instantdb/react-native';
 import { compose } from '@reduxjs/toolkit';
-import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import * as actions from '@/actions';
@@ -11,11 +10,7 @@ import FixedScrollView from '@/components/FixedScrollView';
 import withContainer from '@/components/withContainer';
 import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
-import {
-  goToConversion,
-  goToRatesWithPopToTop,
-  goToRateWidgetPreview,
-} from '@/utilities/Navigation';
+import { goToConversion, goToRatesWithPopToTop } from '@/utilities/Navigation';
 
 const DeveloperScreen = () => {
   const dispatch = useDispatch();
@@ -123,18 +118,6 @@ const DeveloperScreen = () => {
           }}
         />
       </CardView>
-      {Platform.OS === 'android' && (
-        <CardView title="Widgets" plain>
-          <CardItemView
-            title="Cotizaciones"
-            useSwitch={false}
-            chevron={false}
-            onAction={() => {
-              goToRateWidgetPreview();
-            }}
-          />
-        </CardView>
-      )}
     </FixedScrollView>
   );
 };

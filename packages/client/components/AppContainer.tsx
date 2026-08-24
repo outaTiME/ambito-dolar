@@ -26,6 +26,7 @@ import Settings from '@/config/settings';
 import useAppState from '@/hooks/useAppState';
 import { useDonationProducts } from '@/hooks/useDonationProducts';
 import * as WidgetKit from '@/modules/widgetkit';
+import { reloadWidgets } from '@/modules/widgets';
 import InitialScreen from '@/screens/InitialScreen';
 import Amplitude from '@/utilities/Amplitude';
 import DateUtils from '@/utilities/Date';
@@ -40,7 +41,6 @@ import {
 import Helper from '@/utilities/Helper';
 import { goToDonateModal } from '@/utilities/Navigation';
 import Sentry from '@/utilities/Sentry';
-import { reloadWidgets } from '@/widgets';
 
 // suppress RevenueCat dev-overlay banners, errors still print to console
 if (__DEV__) {
@@ -100,7 +100,7 @@ const withRealtime = (Component) => (props) => {
           dispatch(actions.registerApplicationDownloadRates());
           // force reload of widgets
           WidgetKit.reloadAllTimelines();
-          reloadWidgets(data);
+          reloadWidgets();
         })
         .catch(console.warn);
     },

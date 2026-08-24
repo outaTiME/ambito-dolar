@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- labels match .configurationDisplayName on ios, descriptions carry the same verb and noun
+       as its .description with the trailing period dropped, which is the android picker style -->
+  <string name="widget_rate_label">Cotizaciones</string>
+  <string name="widget_rate_description">Consultá las cotizaciones del día</string>
+  <string name="widget_list_label">Lista de cotizaciones</string>
+  <string name="widget_list_description">Consultá las cotizaciones del día</string>
+  <string name="widget_spread_label">Brechas</string>
+  <string name="widget_spread_description">Consultá las brechas entre cotizaciones</string>
+
+  <string name="widget_empty">Cotización no disponible</string>
+  <string name="widget_empty_plural">Cotizaciones no disponibles</string>
+
+  <!-- the ios intent parameter display names, read from RateWidgets.intentdefinition -->
+  <string name="widget_config_rate">Cotización</string>
+  <string name="widget_config_rates">Cotizaciones</string>
+  <string name="widget_config_value">Mostrar</string>
+  <string name="widget_config_done">Listo</string>
+</resources>
