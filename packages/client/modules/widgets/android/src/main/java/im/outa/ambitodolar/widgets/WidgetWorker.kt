@@ -24,17 +24,28 @@ class WidgetWorker(context: Context, params: WorkerParameters) : Worker(context,
   override fun doWork(): Result {
     // through the same single thread every other redraw goes through, so a periodic run and a
     // broadcast never draw at once. Waiting on it is what keeps the worker alive until it is done
-    Widgets.EXECUTOR
-      .submit {
-        Widgets.ALL.forEach {
-          if (!isStopped) {
-            it.renderNow(applicationContext, trigger = WidgetProvider.PERIODIC, alive = { !isStopped })
+    val reached =
+      Widgets.EXECUTOR
+        .submit<Boolean> {
+          Widgets.ALL.map {
+            if (isStopped) {
+              true
+            } else {
+              it.renderNow(applicationContext, trigger = WidgetProvider.PERIODIC, alive = { !isStopped })
+            }
           }
+            .all { it }
         }
-      }
-      .get()
-    // a fetch that fails already leaves the widgets as they were and falls back to the stored
-    // payload, so there is nothing here worth asking WorkManager to retry sooner
+        .get()
+    // the run that lands on a doze maintenance window can find dns with no answer yet and fail in
+    // milliseconds. Asking WorkManager to come back is what covers that: it backs off on its own,
+    // it waits for the network constraint again, and it survives the process dying, none of which
+    // a sleep inside this run would. Bounded because the period is the real schedule and retrying
+    // a service that is down every backoff step is requests nobody reads
+    if (!reached && runAttemptCount < RETRIES) {
+      Log.i(TAG, "service unreachable, asking for a retry, attempt $runAttemptCount")
+      return Result.retry()
+    }
     return Result.success()
   }
 
@@ -43,6 +54,10 @@ class WidgetWorker(context: Context, params: WorkerParameters) : Worker(context,
 
     // the name is the work: enqueueing it again finds the one already there instead of stacking
     private const val NAME = "widgets"
+
+    // one extra go and then wait for the period, which is what the widgets can afford: the stored
+    // payload is on screen meanwhile, so this is about being fresh sooner, not about being blank
+    private const val RETRIES = 1
 
     // ios asks for 15 but widgetkit budgets it out to somewhere between 15 and 60, while work in
     // the active bucket runs close to what it says, so 30 is what lands on the same cadence

@@ -142,18 +142,21 @@ abstract class WidgetProvider : AppWidgetProvider() {
   // blocking, so the caller owns the thread. The worker needs it this way to hold itself until
   // the redraw is done, and it is also where the periodic work is put back after an app update.
   // A reboot is WorkManager's own business and needs nothing from here
+  // false when the service could not be reached, which is the only thing the worker asks for so
+  // it can hand the retry to WorkManager instead of sleeping inside its own run
   internal fun renderNow(
     context: Context,
     ids: IntArray? = null,
     trigger: String = "app",
     alive: () -> Boolean = { true },
-  ) {
+  ): Boolean {
     val manager = AppWidgetManager.getInstance(context)
-    try {
+    return try {
       render(context, manager, ids ?: all(context, manager), trigger, alive)
     } catch (e: Exception) {
       // an exception thrown in here would die on the executor thread without a trace
       Log.w(TAG, "redraw failed on $trigger", e)
+      true
     }
   }
 
@@ -166,11 +169,11 @@ abstract class WidgetProvider : AppWidgetProvider() {
     ids: IntArray,
     trigger: String,
     alive: () -> Boolean,
-  ) {
+  ): Boolean {
     // a provider with nothing on a screen is only here for the picker preview, and below api 35
     // there is no preview to publish, so there is nothing worth a request
     if (ids.isEmpty() && Build.VERSION.SDK_INT < PREVIEW_SDK) {
-      return
+      return true
     }
     // before the fetch and whatever it answers. Hanging it off a good answer meant that a first
     // widget added with no network never got one: nothing was scheduled, updatePeriodMillis is
@@ -187,12 +190,12 @@ abstract class WidgetProvider : AppWidgetProvider() {
     // away good data over a dropped request
     if (rates == null) {
       Log.w(TAG, "rates unavailable, widgets left as they were")
-      return
+      return false
     }
     // the fetch is the long part, so the stop is looked at again on the way out of it. What it
     // asks is whether the worker was stopped, and once it was, whatever this returns is ignored
     if (!alive()) {
-      return
+      return true
     }
     // the picker preview is limited to about two an hour, and the periodic run visits every provider
     // every half hour, so a provider nobody placed would spend the whole quota on its own and
@@ -226,13 +229,14 @@ abstract class WidgetProvider : AppWidgetProvider() {
     // ends up driving a view that is no longer the one it was built against.
     // The widgets are already drawn, a preview that fails must not take the redraw down with it
     if (!worthPreviewing) {
-      return
+      return true
     }
     try {
       publishPreview(context, manager, rates)
     } catch (e: Exception) {
       Log.w(TAG, "preview not published", e)
     }
+    return true
   }
 
   // from android 15 the picker can show a real widget instead of a static image, which is what
