@@ -200,7 +200,7 @@ extension ValueType {
   }
 }
 
-private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes(), valueType: ValueType = ValueType.sell, changeType: ChangeType = ChangeType.percentage ) -> [RateValue]? {
+private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes(), valueType: ValueType = ValueType.sell) -> [RateValue]? {
   let rates = getRates()
   return rateTypes.map {
     if let type = $0.identifier {
@@ -209,11 +209,9 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
       if Helper.getRateTypes().contains(where: { $0.identifier == type }), rates != nil, let rate = rates![type] as? [Any] {
         let rateValue = rate[1]
         let value: Double
-        let amount: Double
         var detail: String?
         if rateValue is Double {
           value = rateValue as! Double
-          amount = value
         } else {
           var arr = [Double]()
           for item in rateValue as! NSArray {
@@ -228,16 +226,12 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
           } else {
             value = sell
           }
-          amount = sell
           detail = valueType.displayName
         }
         let price = formatRateCurrency(num: value)
-        var rateChange = rate[2] as! Double
-        if (changeType == ChangeType.amount) {
-          rateChange = amount - (rate[3] as! Double)
-        }
-        let change = formatRateChange(num: rateChange, type: changeType)
-        let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false)
+        let rateChange = rate[2] as! Double
+        let change = formatRateChange(num: rateChange, type: .percentage)
+        let plainChange = formatRateChange(num: rateChange, type: .percentage, symbol: false)
         let changeColor = getChangeColor(num: rateChange)
         // the default options reject fractional seconds, so a timestamp that grows milliseconds
         // parses to nil and unwrapping it would take the extension down, the android side drops
