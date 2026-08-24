@@ -36,21 +36,110 @@ struct RateValue: Identifiable, Equatable {
   }
 }
 
+private let ratesCacheKey = "last_rates"
+private let ratesCacheAtKey = "last_rates_at"
+// the three widgets reload in the same batch and every one of them asks through here for its
+// timeline, its snapshot and its placeholder, which is one request each. Inside the window the
+// first one pays and the rest read what it brought, which is still the real rates and not a
+// sample, so the preview keeps showing live numbers. Same window the android widgets use
+private let ratesCacheWindow: TimeInterval = 60
+private let ratesTimeout: TimeInterval = 4
+
+// an error body is valid json too, so taking any dictionary as success would blank the widgets
+// and leave that body as the fallback for the next failure, which is what android avoids by
+// requiring the parse to yield at least one rate.
+// The shape is checked and not only the presence, because lookupRateValues reads this array by
+// index and forces its casts: a short array or a string where a number goes takes the extension
+// down with it
+private func wellFormed(_ value: Any) -> Bool {
+  guard let rate = value as? [Any], rate.count >= 3, rate[0] is String else {
+    return false
+  }
+  // the value is a number on its own or a pair of them, the two shapes lookupRateValues reads
+  let amount: Bool
+  if rate[1] is NSNumber {
+    amount = true
+  } else if let pair = rate[1] as? [Any] {
+    amount = pair.count >= 2 && pair.allSatisfy { $0 is NSNumber }
+  } else {
+    amount = false
+  }
+  return amount && rate[2] is NSNumber
+}
+
+// only the rates that are shaped the way lookupRateValues reads them, which is the android rule
+// of dropping what does not parse instead of keeping it. Keeping the whole payload because one
+// rate was fine let a malformed one through, and once it was persisted it came back to kill the
+// extension on every later snapshot inside the cache window
+private func usableRates(_ rates: [String: Any]) -> [String: Any] {
+  var kept: [String: Any] = [:]
+  for type in Helper.getRateTypes() {
+    guard let identifier = type.identifier, let rate = rates[identifier] else {
+      continue
+    }
+    if wellFormed(rate) {
+      kept[identifier] = rate
+    }
+  }
+  return kept
+}
+
+private func storedRates() -> [String: Any]? {
+  guard let data = UserDefaults.standard.data(forKey: ratesCacheKey) else {
+    return nil
+  }
+  return try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+}
+
 private func getRates() -> [String: Any]? {
+  // a clock moved backwards makes the age negative, and negative passes any upper bound, which
+  // would freeze the widget on the stored payload until the clock catches up
+  let age = Date().timeIntervalSince1970 - UserDefaults.standard.double(forKey: ratesCacheAtKey)
+  if age >= 0, age < ratesCacheWindow, let fresh = storedRates() {
+    return fresh
+  }
   let url = URL(string: "https://api.ambito-dolar.app/fetch")!
+  // the default is a minute, which is long enough for the system to kill the extension while it
+  // waits, the android widgets bound the same call to four seconds for the same reason
+  let configuration = URLSessionConfiguration.default
+  configuration.timeoutIntervalForRequest = ratesTimeout
+  configuration.timeoutIntervalForResource = ratesTimeout
   let semaphore = DispatchSemaphore(value: 0)
   var rates: [String: Any]?
-  let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-    if let data = data {
-      if let response = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-        rates = response
-      }
+  let task = URLSession(configuration: configuration).dataTask(with: url) { (data, response, error) in
+    // an error body is json too, so the status is what says whether this is rates at all
+    if error == nil,
+       let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status),
+       let data = data,
+       let parsed = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+      rates = parsed
     }
     semaphore.signal()
   }
   task.resume()
-  semaphore.wait()
-  return rates
+  // a bounded wait, otherwise a stalled connection holds the extension past the timeouts above
+  if semaphore.wait(timeout: .now() + ratesTimeout + 1) == .timedOut {
+    task.cancel()
+  }
+  // what is kept is what is well formed, so nothing that could be indexed by force ever reaches
+  // lookupRateValues or the stored payload. An answer that yields nothing usable is a failure
+  if let rates = rates {
+    let kept = usableRates(rates)
+    if !kept.isEmpty {
+      // only replace the stored payload when there is one to store, set with nil removes the key
+      // and would leave the fallback empty for the next failure
+      if let data = try? JSONSerialization.data(withJSONObject: kept) {
+        UserDefaults.standard.set(data, forKey: ratesCacheKey)
+        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: ratesCacheAtKey)
+      }
+      return kept
+    }
+  }
+  // a failed call keeps the last payload instead of blanking the widget, which is what the
+  // android one does by not calling updateAppWidget. No window here, whatever its age it beats
+  // an empty card. A call that does succeed without the configured rate still falls through to
+  // the unavailable text, same as before
+  return storedRates()
 }
 
 private func formatNumber(num: Double) -> String {
@@ -150,10 +239,16 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
         let change = formatRateChange(num: rateChange, type: changeType)
         let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false)
         let changeColor = getChangeColor(num: rateChange)
-        let rateDate = ISO8601DateFormatter().date(from: rate[0] as! String)
+        // the default options reject fractional seconds, so a timestamp that grows milliseconds
+        // parses to nil and unwrapping it would take the extension down, the android side drops
+        // the rate instead
+        guard let timestamp = rate[0] as? String,
+              let rateDate = ISO8601DateFormatter().date(from: timestamp) else {
+          return nil
+        }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM HH:mm"
-        let date = dateFormatter.string(from: rateDate!)
+        let date = dateFormatter.string(from: rateDate)
         return RateValue(
           id: type,
           name: name,
@@ -165,7 +260,7 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
           price: price,
           priceValue: value,
           date: date,
-          dateValue: rateDate!.timeIntervalSince1970 * 1000.0
+          dateValue: rateDate.timeIntervalSince1970 * 1000.0
         )
       }
     }
