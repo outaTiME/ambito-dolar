@@ -10,11 +10,9 @@
      Sizes and colors moved out with it: the sizes to Sizes.kt, one per role and shared with the
      list, and the colors to the kotlin that fills each slot -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:targetApi="26">
+    android:layout_height="match_parent">
 
   <!-- the card is square: its height comes from the width through the 1:1 drawable below, so it
        never stretches to fill a cell that is taller than wide -->

@@ -9,11 +9,9 @@
      card, and the colors to the kotlin that fills each slot. The ones that carry weight scale
      with fitStart, where the height is what limits, so the bitmap draws at its natural size -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:targetApi="26">
+    android:layout_height="match_parent">
 
   <FrameLayout
       android:layout_width="match_parent"

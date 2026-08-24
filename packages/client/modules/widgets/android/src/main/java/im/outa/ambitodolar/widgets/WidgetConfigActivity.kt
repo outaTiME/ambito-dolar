@@ -31,10 +31,10 @@ class WidgetConfigActivity : AppCompatActivity() {
     // the launcher drops a freshly added widget unless the result says otherwise, so back cancels
     setResult(RESULT_CANCELED)
     widgetId =
-      intent?.extras?.getInt(
+      intent.getIntExtra(
         AppWidgetManager.EXTRA_APPWIDGET_ID,
         AppWidgetManager.INVALID_APPWIDGET_ID,
-      ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+      )
     val info = AppWidgetManager.getInstance(this).getAppWidgetInfo(widgetId)
     val target = Widgets.byName(info?.provider?.className)
     if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID || target == null) {

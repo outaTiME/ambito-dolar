@@ -93,24 +93,14 @@ abstract class WidgetProvider : AppWidgetProvider() {
       return
     }
     val pending = goAsync()
-    val trigger = intent.action?.substringAfterLast('.') ?: "unknown"
+    val trigger = intent.action.orEmpty().substringAfterLast('.')
     Widgets.EXECUTOR.execute {
       try {
-        render(context, manager, ids, trigger) { true }
-      } catch (e: Exception) {
-        // without this it dies on the executor thread and the redraw fails in silence
-        Log.w(TAG, "redraw failed on $trigger", e)
+        renderNow(context, ids, trigger)
       } finally {
         pending.finish()
       }
     }
-  }
-
-  override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
-    oldWidgetIds.forEachIndexed { i, old ->
-      newWidgetIds.getOrNull(i)?.let { WidgetConfig.move(context, old, it, defaultRates.size) }
-    }
-    Log.i(TAG, "${javaClass.simpleName} restored ${oldWidgetIds.size}")
   }
 
   override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -189,7 +179,6 @@ abstract class WidgetProvider : AppWidgetProvider() {
     // a failed fetch leaves whatever the widget was showing, redrawing it empty would throw
     // away good data over a dropped request
     if (rates == null) {
-      Log.w(TAG, "rates unavailable, widgets left as they were")
       return false
     }
     // the fetch is the long part, so the stop is looked at again on the way out of it. What it
@@ -206,21 +195,15 @@ abstract class WidgetProvider : AppWidgetProvider() {
       // waiting out the whole set
       // the list is a snapshot taken before the fetch, and a widget removed in between would be
       // drawn again here from defaults, its configuration already cleared by onDeleted
-      val live = all(context, manager).toSet()
-      var drawn = 0
+      // an id removed while the fetch ran is not skipped: the host already dropped it and
+      // updateAppWidget on an id it does not know is a no op, never a widget brought back
       for (id in ids) {
         if (!alive()) {
           break
         }
-        if (id !in live) {
-          continue
-        }
         manager.updateAppWidget(id, views(context, card(context, id, rates), id))
-        drawn++
       }
-      // what it drew and not what it was going to: a stop halfway used to be logged as a full
-      // set, which is the one line anyone reads when a widget did not update
-      Log.i(TAG, "${javaClass.simpleName} drew $drawn of ${ids.size} on $trigger")
+      Log.i(TAG, "${javaClass.simpleName} drew ${ids.size} on $trigger")
     }
     // the preview is not for the widgets on a screen, it is for the ones in the picker that
     // nobody placed yet, so it is published even when this provider has none. Cutting out on an
@@ -247,15 +230,13 @@ abstract class WidgetProvider : AppWidgetProvider() {
       return
     }
     val preview = card(context, AppWidgetManager.INVALID_APPWIDGET_ID, rates) ?: return
-    val taken =
-      manager.setWidgetPreview(
-        ComponentName(context, javaClass),
-        AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
-        views(context, preview, null),
-      )
-    // false means the two an hour are spent, and then the picker keeps the previous one, which
-    // may be one built by an older version of the app against resource ids that have since moved
-    Log.i(TAG, "${javaClass.simpleName} preview " + if (taken) "published" else "over quota")
+    // it answers false when the two an hour are spent, and then the picker keeps the previous
+    // one, which there is nothing to do about
+    manager.setWidgetPreview(
+      ComponentName(context, javaClass),
+      AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
+      views(context, preview, null),
+    )
   }
 
   // widgetId is null for the picker preview, which has nothing to open
@@ -302,7 +283,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
       }
     // the padding comes from the same resource the layouts lay out, so the two cannot drift
     val padding = context.resources.getDimensionPixelSize(R.dimen.widget_padding)
-    return (CEILING * (card - 2 * padding)).coerceAtLeast(padding)
+    return CEILING * (card - 2 * padding)
   }
 
   // OPTION_APPWIDGET_SIZES first, which is the one android added in 12 for exactly this and the
@@ -311,10 +292,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
   // reporting 166dp for a card it lays out near 184. The list can come back empty from a launcher
   // that does not fill it, and below 12 it does not exist, so the old extra stays as the fallback
   @Suppress("DEPRECATION")
-  private fun widthDp(options: Bundle?): Int {
-    if (options == null) {
-      return 0
-    }
+  private fun widthDp(options: Bundle): Int {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       options
         .getParcelableArrayList<SizeF>(AppWidgetManager.OPTION_APPWIDGET_SIZES)
@@ -408,7 +386,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
 
   // the app already declares the ambito-dolar scheme with VIEW and BROWSABLE. The ios widgets
   // open a universal link instead, which android would need a verified assetlinks for
-  protected fun openApp(context: Context, widgetId: Int, type: String?): PendingIntent {
+  private fun openApp(context: Context, widgetId: Int, type: String?): PendingIntent {
     val uri = "ambito-dolar://rates" + if (type != null) "/$type" else ""
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri)).setPackage(context.packageName)
     return PendingIntent.getActivity(

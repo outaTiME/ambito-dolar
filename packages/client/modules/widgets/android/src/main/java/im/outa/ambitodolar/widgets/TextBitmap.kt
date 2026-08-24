@@ -29,12 +29,7 @@ internal object TextBitmap {
   // that fits the loop may land, so it is small: a tenth is the whole budget, forty turns at worst
   private const val STEP = 0.0025f
 
-  // the file does not change under us and the typeface does not depend on the locale, unlike the
-  // separators, so unlike the DecimalFormat this one is worth holding
-  private var cached: Typeface? = null
-
-  fun typeface(context: Context): Typeface =
-    cached ?: context.resources.getFont(R.font.widget_firago_regular).also { cached = it }
+  fun typeface(context: Context): Typeface = context.resources.getFont(R.font.widget_firago_regular)
 
   // the one routine every slot goes through, so a fourth widget gets it for free. A single line
   // through StaticLayout draws what drawText would, which is why there is no second path.

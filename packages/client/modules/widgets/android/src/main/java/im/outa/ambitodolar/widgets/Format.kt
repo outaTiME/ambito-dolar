@@ -55,12 +55,9 @@ object Format {
 
   // the spread carries the newer of its two rates, and the second one when they tie, which is
   // what the ios comparison falls through to
-  fun later(first: String, second: String): String {
-    val a = instant(first)
-    val b = instant(second)
-    val newer = if (a != null && b != null && a.isAfter(b)) a else b
-    return newer?.atZoneSameInstant(ZoneId.systemDefault())?.format(date()) ?: ""
-  }
+  fun later(first: String, second: String): String =
+    // second first so a tie keeps it, which is what the ios comparison falls through to
+    shown(listOfNotNull(instant(second), instant(first)).maxOrNull())
 
   fun instant(value: String): OffsetDateTime? =
     try {
@@ -70,12 +67,10 @@ object Format {
     }
 
   // the api sends iso 8601 with the buenos aires offset, shown in the device timezone like ios
-  fun timestamp(value: String): String =
-    try {
-      OffsetDateTime.parse(value).atZoneSameInstant(ZoneId.systemDefault()).format(date())
-    } catch (e: Exception) {
-      ""
-    }
+  fun timestamp(value: String): String = shown(instant(value))
+
+  private fun shown(value: OffsetDateTime?): String =
+    value?.atZoneSameInstant(ZoneId.systemDefault())?.format(date()) ?: ""
 
   // ios/RateWidgets/Utils/Helper.swift keeps the same list, in the same order
   val RATE_TYPES =

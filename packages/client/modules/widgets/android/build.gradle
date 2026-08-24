@@ -30,6 +30,8 @@ def copyWidgetPreviews = previews.collect { name, asset ->
 android {
   namespace 'im.outa.ambitodolar.widgets'
   defaultConfig {
+    // agp ignores both on a library, but expo-autolinking reads versionName off every local
+    // module and the whole gradle configuration fails without it
     versionCode 1
     versionName '1.0.0'
     // the widgets fetch on their own, so they need the same endpoint app.config.ts reads from
