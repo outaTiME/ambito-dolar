@@ -37,20 +37,10 @@ yarn workspace @ambito-dolar/website run build|preview
 - From repo root: `yarn eslint packages` lints all fast (~6s; generated dirs ignored in config). Or scope: `yarn eslint "packages/<ws>/<path>"`.
 - **`eslint` and `prettier` run from the repo root only.** `packages/client` sets `installConfig.hoistingLimits: workspaces`, so its `.bin` holds `tsc` and nothing else. Calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. Mirror case: `tsc` needs the client, `yarn workspace @ambito-dolar/client exec tsc --noEmit`.
 - Fallback if the root call itself fails: `yarn node ./node_modules/eslint/bin/eslint.js <paths>`.
-- Client also: `yarn workspace @ambito-dolar/client run lint|check`. `expo lint` fails with the same message, use the scoped root cmd.
 
-### Core tests (AVA)
+### Tests
 
-```bash
-yarn test                                                        # root, via lerna
-yarn workspace @ambito-dolar/core exec ava
-yarn workspace @ambito-dolar/core exec ava --match="Dates should use*"
-```
-
-- Auto tests only in `packages/core`. `yarn test` runs `lerna run test` to core. Backend no test script.
-- Core `test` script is `eslint . && ava`, so `yarn workspace @ambito-dolar/core test` dies with `command not found: eslint` (same root-only eslint caveat). Go through root `yarn test` or `exec ava`.
-- `packages/backend/src/routes/test.js` = API endpoint, not a test.
-- Fast feedback: AVA `--match`, not full repo.
+- The only automated tests are AVA in `packages/core`; root `yarn test` runs them through lerna. No other workspace has a test script. Details in `packages/core/AGENTS.md`.
 
 ## Code Style
 
@@ -67,7 +57,6 @@ yarn workspace @ambito-dolar/core exec ava --match="Dates should use*"
 ### ESLint presets
 
 - Flat config `eslint.config.js` (ESLint 9). Base `universe/node`. Client `universe/native`. Website `.astro` via `eslint-plugin-astro`.
-- Client override: React Compiler rules off (`react-hooks/{immutability,refs,set-state-in-effect,purity}`) — project not on compiler, they false-positive on Reanimated `.value` + intentional ref/effect patterns. Fix real prop reassigns, do not mute those.
 - Ignores `web-build`/`android` (generated, gitignored; flat config ignores neither by default).
 
 ### Imports
@@ -87,21 +76,9 @@ yarn workspace @ambito-dolar/core exec ava --match="Dates should use*"
 - Runtime validation at boundaries (API input, env vars, external payloads). Patterns: `joi`, `yn`, lodash guards.
 - Preserve public response shapes + persisted storage schema.
 
-### TypeScript discipline
-
-- The client runs `strict:false` on purpose and some `any` are load bearing: removing one can force
-  every prop required or break a callsite. Never add code or a type just to delete an `any`. Read
-  `packages/client/AGENTS.md` before any type cleanup there.
-
 ### Error handling and logging
 
-- API handlers: `Shared.wrapHandler(...)` + `Shared.serviceResponse(...)`.
 - `try/catch` or `.catch(...)` on async. Log actionable serializable metadata (`console.info/warn`). No silent swallow unless intentional fallback.
-
-### Navigation
-
-- Every `router.X` call lives in `packages/client/utilities/Navigation.ts`. Never import `router`
-  from `expo-router` anywhere else. New route means a new `goToX` helper there.
 
 ## Git, commits, and releases
 
@@ -177,11 +154,6 @@ Read `packages/client/docs/android-widgets.md` before touching any of that.
 Voseo everywhere, rioplatense: `Elegí`, `verificá`, `Tenés`. No tuteo. Applies to the ios swift
 strings too. The widget picker has its own register, see `packages/client/docs/android-widgets.md`.
 
-## Donation modal policy
-
-Cooldown counted in distinct usage days and not wall clock, one escalating schedule, and only two
-persisted fields. New fields need a strong reason. See `docs/product-policies.md`.
-
 ## Agent Operating Defaults
 
 - `CLAUDE.md` imports this via `@AGENTS.md`. New rule files (`.cursor/rules/`, `.cursorrules`, `.github/copilot-instructions.md`) → treat high-priority, update this guide.
@@ -189,31 +161,25 @@ persisted fields. New fields need a strong reason. See `docs/product-policies.md
 
 ### Reading and writing these files
 
-Three levels, and what puts a rule in one or the other is not how important it is, it is how often
-it is needed. This file is loaded on every session, so what sits here is paid on every session
-whatever the task is.
+Four levels. What decides where a rule goes is not how important it is, it is who could break it.
 
-- **This file**: what any session may need without opening a particular file. Layout, tooling,
-  build and lint commands, code style, commits and releases.
-- **`packages/<name>/AGENTS.md`**: rules for one subtree. They load on their own when working
-  there, so nobody has to remember them. Client TypeScript, navigation and native code live there.
-- **`docs/`**: the depth, whole, with its measurements and what was tried and failed. Nothing here
-  loads on its own, it is read when a pointer says to, so it sits next to what it describes:
-  `packages/client/docs/` for what only that package can break, the root `docs/` only for what
-  crosses packages, the way the rollout of a rate crosses the backend and the client.
+- **This file** loads on every session, so what sits here is paid on every session whatever the
+  task is. It holds what someone could break without ever opening the subtree that owns it.
+- **`packages/<name>/AGENTS.md`** loads on its own, on top of this one, when working in that
+  subtree. Nobody has to remember it, so anything that can only be broken from inside goes there
+  and not here.
+- **`docs/`** is the depth, with its measurements and what was tried and failed. Nothing here loads
+  on its own, it is read when a pointer says to, so it sits next to what it describes:
+  `packages/client/docs/` for what only that package can break, the root `docs/` for what crosses
+  packages, the way the rollout of a rate crosses the backend and the client.
+- **A pointer** is one line that names the trap and where the detail is. It goes wherever the
+  reader who could break the rule will be: the same trap can be worth writing twice with a
+  different audience, once here for a backend session changing `/fetch` and once in the client file
+  for whoever opens the widget itself.
 
-Every path written in any of the three is complete from the repo root, `packages/client/config/settings.ts`
-and not `config/settings.ts`, whatever file it is written in. A relative path reads fine to whoever
-wrote it and sends everyone else to a directory that does not exist.
+Every path with a slash is written complete from the repo root, `packages/client/config/settings.ts`
+and not `config/settings.ts`. A bare filename with no slash is fine as shorthand.
 
-Reading: follow a pointer before touching what it names, not after. A `docs/` file opens with the
-line that says when it applies, and it is the record of why something is the way it is, which is
-what keeps a settled decision from being reopened.
-
-Writing: one question decides it. **Could a session that never opens those files still break this
-rule?** If yes, a line here plus a pointer, however deep the detail goes elsewhere: nobody looks up
-a document they have no reason to open. The voseo, the 300 character caption cap, the widgets being
-written twice and the four app files that break them are here for that reason and no other. If no,
-it goes to the scoped file or to a `docs/` file alone. A pointer to a document that only one package
-can reach goes in both this file and that package's, because a session loads one or the other, never
-a guarantee of both.
+Follow a pointer before touching what it names, not after. A `docs/` file opens with the line that
+says when it applies, and it is the record of why something is the way it is, which is what keeps a
+settled decision from being reopened.

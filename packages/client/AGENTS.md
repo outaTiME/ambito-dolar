@@ -21,6 +21,21 @@ cd packages/client/ios && pod update && cd - && yarn run client:prebuild:ios
 - `prebuild` then: syncs `app.config.ts` to `Info.plist` (CFBundle keys) + `Expo.plist` + Podfile plugin specs. Without `--clean` preserves manual edits.
 - Major SDK bump (Podfile constraints themselves change, RN version etc.): prebuild first then `pod update` after, so pod resolution reads the SDK-updated Podfile.
 
+## Lint
+
+- `expo lint` fails here with `Couldn't find a script named "eslint"`: eslint only resolves from the
+  repo root, so scope it from there, `yarn eslint "packages/client/<path>"`. `tsc` is the mirror
+  case and only resolves here, `yarn workspace @ambito-dolar/client exec tsc --noEmit`.
+- React Compiler rules are off on purpose (`react-hooks/{immutability,refs,set-state-in-effect,purity}`):
+  the project is not on the compiler and they false positive on Reanimated `.value` and on
+  intentional ref and effect patterns. Fix a real prop reassign, do not mute those rules.
+
+## Donation modal
+
+Cooldown counted in distinct usage days and not wall clock, one escalating schedule, and only two
+persisted fields. New fields need a strong reason. Read `docs/product-policies.md` before touching
+the flow, the re-ask of a donor and the Developer screen bypass are there too.
+
 ## TypeScript discipline
 
 `tsconfig`: `strict:false`, `noImplicitAny:false`. Implicit `any` OK.
