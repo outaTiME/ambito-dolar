@@ -8,12 +8,18 @@ web-build/
 expo-env.d.ts
 
 # Native
+build/
 *.orig.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
+
+# Agent skills, installed per machine and not part of the project
+.agents/
+.claude/skills/
+skills-lock.json
 
 # Node
 node_modules/
@@ -92,3 +98,4 @@ sst-env.d.ts
 
 # https://github.com/expo/eas-cli/issues/2875
 .git
+
