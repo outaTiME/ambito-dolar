@@ -44,8 +44,23 @@ object WidgetConfig {
     }
   }
 
-  // or the widget comes back on its defaults and the old keys stay forever. Android gives the
-  // mapping in onRestored and this is the only chance to use it
+  // a restore hands the widgets new ids, so what was saved under the old ones has to move or the
+  // widget comes back on its defaults and the old keys stay forever. Android gives the mapping in
+  // onRestored and this is the only chance to use it.
+  // allowBackup is false, which used to mean this could never run, but from android 12 that flag
+  // stopped covering a device to device transfer: that one is dataExtractionRules and there is
+  // none here, so the default applies and the widgets do come across
+  fun move(context: Context, from: Int, to: Int, slots: Int) {
+    val prefs = prefs(context)
+    val editor = prefs.edit()
+    repeat(slots) { slot ->
+      prefs.getString(key(slot, from), null)?.let { editor.putString(key(slot, to), it) }
+      editor.remove(key(slot, from))
+    }
+    prefs.getString("value_$from", null)?.let { editor.putString("value_$to", it) }
+    editor.remove("value_$from")
+    editor.apply()
+  }
 
   fun clear(context: Context, widgetId: Int, slots: Int) {
     val editor = prefs(context).edit().remove("value_$widgetId")

@@ -103,6 +103,14 @@ abstract class WidgetProvider : AppWidgetProvider() {
     }
   }
 
+  // the two arrays are parallel and the same length, which is what the framework documents
+  override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
+    oldWidgetIds.zip(newWidgetIds).forEach { (old, new) ->
+      WidgetConfig.move(context, old, new, defaultRates.size)
+    }
+    Log.i(TAG, "${javaClass.simpleName} restored ${oldWidgetIds.size}")
+  }
+
   override fun onDeleted(context: Context, appWidgetIds: IntArray) {
     appWidgetIds.forEach { WidgetConfig.clear(context, it, defaultRates.size) }
   }
@@ -176,6 +184,10 @@ abstract class WidgetProvider : AppWidgetProvider() {
       WidgetWorker.schedule(context)
     }
     val rates = RatesApi.fetch(context)
+    // asked once, right after the call, because a later redraw could answer from the cache and
+    // move it. A fetch that failed still hands back the payload on disk, so this and not a null
+    // is what says the service was unreachable
+    val reached = RatesApi.reached
     // a failed fetch leaves whatever the widget was showing, redrawing it empty would throw
     // away good data over a dropped request
     if (rates == null) {
@@ -197,13 +209,17 @@ abstract class WidgetProvider : AppWidgetProvider() {
       // drawn again here from defaults, its configuration already cleared by onDeleted
       // an id removed while the fetch ran is not skipped: the host already dropped it and
       // updateAppWidget on an id it does not know is a no op, never a widget brought back
+      var drawn = 0
       for (id in ids) {
         if (!alive()) {
           break
         }
         manager.updateAppWidget(id, views(context, card(context, id, rates), id))
+        drawn++
       }
-      Log.i(TAG, "${javaClass.simpleName} drew ${ids.size} on $trigger")
+      // what it drew and not what it was going to: a stop halfway logged as a full set is
+      // misleading in the one line anyone reads when a widget did not update
+      Log.i(TAG, "${javaClass.simpleName} drew $drawn of ${ids.size} on $trigger")
     }
     // the preview is not for the widgets on a screen, it is for the ones in the picker that
     // nobody placed yet, so it is published even when this provider has none. Cutting out on an
@@ -212,14 +228,14 @@ abstract class WidgetProvider : AppWidgetProvider() {
     // ends up driving a view that is no longer the one it was built against.
     // The widgets are already drawn, a preview that fails must not take the redraw down with it
     if (!worthPreviewing) {
-      return true
+      return reached
     }
     try {
       publishPreview(context, manager, rates)
     } catch (e: Exception) {
       Log.w(TAG, "preview not published", e)
     }
-    return true
+    return reached
   }
 
   // from android 15 the picker can show a real widget instead of a static image, which is what
@@ -266,9 +282,9 @@ abstract class WidgetProvider : AppWidgetProvider() {
   // The report can come up short, but not by half, so at twice the width nothing normal is ever
   // truncated and something pathological still is.
   // The picker preview has no widget to ask, so it falls back to the width this provider itself
-  // declares as its minimum, which is ours and not a guess. Zero is never returned: it would read
-  // as no ceiling, and a host reporting an odd width for a moment would turn the ceiling off
-  // exactly when a narrow card needs it most
+  // declares as its minimum, which is ours and not a guess. A host that answers something absurd
+  // can drive this to zero, and zero reads as no ceiling: nothing is truncated, which beats a
+  // ceiling of a few pixels that would truncate everything
   private fun contentPx(context: Context, widgetId: Int?): Int {
     val manager = AppWidgetManager.getInstance(context)
     val reported = widgetId?.let { widthDp(manager.getAppWidgetOptions(it)) } ?: 0

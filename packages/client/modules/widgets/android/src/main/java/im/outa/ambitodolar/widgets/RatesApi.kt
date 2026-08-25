@@ -42,12 +42,23 @@ object RatesApi {
   // a receiver gets before it is killed. The same four the ios extension uses
   private const val TIMEOUT_MS = 4_000
 
+  // characters, a couple of hundred times what the service really sends
+  private const val MAX_BODY = 256 * 1024
+
+  private const val BUFFER = 8 * 1024
+
   private var cached: Map<String, Rate>? = null
 
   // never, and not zero. elapsedRealtime counts from boot, so zero reads as a check made at boot
   // and the whole first minute of the phone answered from a cache that was never filled: no
   // request and not even the stored payload, right when a widget is coming back from a reboot
   private var checkedAt = Long.MIN_VALUE
+
+  // whether the last call came back, which is not the same as whether there is something to
+  // draw: a failed call still answers with the payload on disk, so the caller cannot tell one
+  // from the other by the return value. Only the worker asks, to decide whether to retry
+  var reached = true
+    private set
 
   @Synchronized
   fun fetch(context: Context): Map<String, Rate>? {
@@ -76,11 +87,18 @@ object RatesApi {
   // and fall back to the payload on disk, so they draw rates that are stale, never a blank card
   private fun request(context: Context): Map<String, Rate>? {
     try {
-      fresh(context)?.let { return it }
+      fresh(context)?.let {
+        reached = true
+        return it
+      }
+      // it answered with nothing usable, which is a bad deploy or a proxy in the way, so it
+      // counts as not reached and the worker gets to come back
+      Log.w(TAG, "the service answered nothing usable")
     } catch (e: Exception) {
       // the class and the message inline, a stack alone does not survive the logcat buffer
       Log.w(TAG, "rates fetch failed with ${e.javaClass.simpleName}: ${e.message}", e)
     }
+    reached = false
     return last(context).also {
       Log.i(
         TAG,
@@ -116,7 +134,7 @@ object RatesApi {
         if (connection.responseCode !in 200..299) {
           throw IOException("service answered ${connection.responseCode}")
         }
-        val body = connection.inputStream.bufferedReader().use { it.readText() }
+        val body = body(connection)
         // a payload that parses to nothing is a failure, not an empty board. Treating it as
         // success would blank every widget that is showing good rates
         parse(JSONObject(body)).takeIf { it.isNotEmpty() }?.also {
@@ -126,6 +144,33 @@ object RatesApi {
         connection.disconnect()
       }
     }
+
+  // bounded in both size and time. readTimeout only fires when nothing arrives at all, so a
+  // service handing over a few characters at a time never trips it and readText would run as
+  // long as it likes on the one thread every redraw shares. The cap is a couple of hundred times
+  // the real payload, and it is a cap and not a guess: an OutOfMemoryError is an Error that no
+  // catch here would hold, so it would take the process down instead of failing the fetch
+  private fun body(connection: HttpURLConnection): String {
+    val deadline = SystemClock.elapsedRealtime() + TIMEOUT_MS
+    val text = StringBuilder()
+    val buffer = CharArray(BUFFER)
+    connection.inputStream.bufferedReader().use { reader ->
+      while (true) {
+        if (SystemClock.elapsedRealtime() > deadline) {
+          throw IOException("service took longer than $TIMEOUT_MS ms to answer")
+        }
+        val read = reader.read(buffer)
+        if (read < 0) {
+          break
+        }
+        text.append(buffer, 0, read)
+        if (text.length > MAX_BODY) {
+          throw IOException("service answered more than $MAX_BODY characters")
+        }
+      }
+    }
+    return text.toString()
+  }
 
   private fun parse(json: JSONObject): Map<String, Rate> {
     val rates = mutableMapOf<String, Rate>()
