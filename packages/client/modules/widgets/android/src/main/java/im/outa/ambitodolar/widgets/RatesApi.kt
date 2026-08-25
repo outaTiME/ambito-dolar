@@ -46,8 +46,6 @@ object RatesApi {
   // characters, a couple of hundred times what the service really sends
   private const val MAX_BODY = 256 * 1024
 
-  private const val BUFFER = 8 * 1024
-
   private var cached: Map<String, Rate>? = null
 
   // never, and not zero. elapsedRealtime counts from boot, so zero reads as a check made at boot
@@ -65,9 +63,9 @@ object RatesApi {
   fun fetch(context: Context): Map<String, Rate>? {
     // elapsed and not wall clock: the user moving the clock back would freeze the cache
     val now = SystemClock.elapsedRealtime()
-    // por si la ultima llamada salio bien y no por si hay algo que devolver: una llamada fallida
-    // igual deja el payload de disco en cached, asi que mirar cached daba los 60 siempre y el
-    // reintento del worker, que llega a los 30, volvia del cache sin tocar la red
+    // on whether the last call came back and not on whether there is something to return: a
+    // failed call leaves the disk payload in cached too, so reading cached gave the long window
+    // every time and the worker retry, which lands at 30s, answered from the cache
     val window = if (reached) CACHE_MS else FAILED_MS
     if (checkedAt != Long.MIN_VALUE && now - checkedAt < window) {
       return cached
@@ -83,12 +81,9 @@ object RatesApi {
     return cached
   }
 
-  // one attempt and then the stored payload. A redraw that lands as the device wakes can find dns
-  // with no answer yet and fail in milliseconds, and what comes back for that is WorkManager: it
-  // is the periodic run that wakes into doze, and asking it to retry backs off on its own, waits
-  // for the network constraint again and survives the process dying. A sleep in here did none of
-  // that and spent the ten seconds the receiver had. The other triggers fire with the device awake
-  // and fall back to the payload on disk, so they draw rates that are stale, never a blank card
+  // one attempt and then the payload on disk. The retry is WidgetWorker's, see the reason there.
+  // The other triggers fire with the device awake and fall back to that payload, so they draw
+  // rates that are stale, never a blank card
   private fun request(context: Context): Map<String, Rate>? {
     try {
       fresh(context)?.let {
@@ -157,7 +152,7 @@ object RatesApi {
   private fun body(connection: HttpURLConnection): String {
     val deadline = SystemClock.elapsedRealtime() + TIMEOUT_MS
     val text = StringBuilder()
-    val buffer = CharArray(BUFFER)
+    val buffer = CharArray(8 * 1024)
     connection.inputStream.bufferedReader().use { reader ->
       while (true) {
         if (SystemClock.elapsedRealtime() > deadline) {

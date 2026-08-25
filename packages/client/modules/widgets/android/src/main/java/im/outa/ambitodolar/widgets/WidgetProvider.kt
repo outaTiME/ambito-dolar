@@ -61,14 +61,21 @@ abstract class WidgetProvider : AppWidgetProvider() {
   open val hasValueType: Boolean = true
 
   // the configured rate of every slot, each one falling back to its own default. Pairing a slot
-  // with the wrong default is the kind of mistake that only shows up as a wrong widget
-  protected fun rateTypes(context: Context, widgetId: Int): List<String> =
+  // with the wrong default is the kind of mistake that only shows up as a wrong widget. The config
+  // screen reads them through here too, so the pairing is written once
+  internal fun rateTypes(context: Context, widgetId: Int): List<String> =
     defaultRates.mapIndexed { slot, default ->
       WidgetConfig.rateType(context, widgetId, slot, default)
     }
 
   // what the config screen puts on top, the same string the launcher shows in the picker
   abstract val label: Int
+
+  // whether this provider has put rates on a widget since the process started. A fetch that
+  // answers nothing usually means nothing was ever drawn, but not always: a fresh payload that
+  // fails to persist is drawn and then cannot be recovered, and without this the next failed
+  // fetch would replace good rates with the empty text
+  private var drew = false
 
   // the fetch cannot run on the main thread and a receiver can be killed as soon as onReceive
   // returns, so the update is held with goAsync until the redraw is done
@@ -138,8 +145,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
   }
 
   // blocking, so the caller owns the thread. The worker needs it this way to hold itself until
-  // the redraw is done, and it is also where the periodic work is put back after an app update.
-  // A reboot is WorkManager's own business and needs nothing from here
+  // the redraw is done
   // false when the service could not be reached, which is the only thing the worker asks for so
   // it can hand the retry to WorkManager instead of sleeping inside its own run
   internal fun renderNow(
@@ -185,19 +191,20 @@ abstract class WidgetProvider : AppWidgetProvider() {
     }
     val rates = RatesApi.fetch(context)
     // asked once, right after the call, because a later redraw could answer from the cache and
-    // move it. A fetch that failed still hands back the payload on disk, so this and not a null
-    // is what says the service was unreachable
+    // move it
     val reached = RatesApi.reached
     // a failed fetch leaves whatever the widget was showing, redrawing it empty would throw away
     // good data over a dropped request. Null is the other case: the call failed and there was
-    // nothing on disk either, so nothing is being protected and what the widget would keep is the
-    // initial layout, a bare card with no text and no tap. That is the first run with no network,
-    // and ios shows its empty text there
+    // nothing on disk either, so what the widget would keep is the initial layout, a bare card
+    // with no text and no tap. That is the first run with no network and ios shows its empty text
+    // there, so it is drawn, but only while nothing better has been on it
     if (rates == null) {
-      for (id in ids) {
-        manager.updateAppWidget(id, views(context, null, id))
+      if (!drew) {
+        for (id in ids) {
+          manager.updateAppWidget(id, views(context, null, id))
+        }
+        Log.i(TAG, "${javaClass.simpleName} has nothing to draw yet, ${ids.size} left on the empty text")
       }
-      Log.i(TAG, "${javaClass.simpleName} has nothing to draw yet, ${ids.size} left on the empty text")
       return false
     }
     // the fetch is the long part, so the stop is looked at again on the way out of it. What it
@@ -223,6 +230,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
         }
         manager.updateAppWidget(id, views(context, card(context, id, rates), id))
         drawn++
+        drew = true
       }
       // what it drew and not what it was going to: a stop halfway logged as a full set is
       // misleading in the one line anyone reads when a widget did not update

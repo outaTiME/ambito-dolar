@@ -42,10 +42,7 @@ class WidgetConfigActivity : AppCompatActivity() {
       return
     }
     provider = target
-    rateTypes =
-      provider.defaultRates
-        .mapIndexed { slot, default -> WidgetConfig.rateType(this, widgetId, slot, default) }
-        .toMutableList()
+    rateTypes = provider.rateTypes(this, widgetId).toMutableList()
     valueType = WidgetConfig.valueType(this, widgetId)
     // a rotation mid pick would otherwise read the stored values back and drop the selection
     savedInstanceState?.getStringArrayList(STATE_RATES)?.let { rateTypes = it.toMutableList() }

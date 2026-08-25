@@ -56,7 +56,6 @@ object Format {
   // the spread carries the newer of its two rates, and the second one when they tie, which is
   // what the ios comparison falls through to
   fun later(first: String, second: String): String =
-    // second first so a tie keeps it, which is what the ios comparison falls through to
     shown(listOfNotNull(instant(second), instant(first)).maxOrNull())
 
   fun instant(value: String): OffsetDateTime? =
