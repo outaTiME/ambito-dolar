@@ -188,9 +188,16 @@ abstract class WidgetProvider : AppWidgetProvider() {
     // move it. A fetch that failed still hands back the payload on disk, so this and not a null
     // is what says the service was unreachable
     val reached = RatesApi.reached
-    // a failed fetch leaves whatever the widget was showing, redrawing it empty would throw
-    // away good data over a dropped request
+    // a failed fetch leaves whatever the widget was showing, redrawing it empty would throw away
+    // good data over a dropped request. Null is the other case: the call failed and there was
+    // nothing on disk either, so nothing is being protected and what the widget would keep is the
+    // initial layout, a bare card with no text and no tap. That is the first run with no network,
+    // and ios shows its empty text there
     if (rates == null) {
+      for (id in ids) {
+        manager.updateAppWidget(id, views(context, null, id))
+      }
+      Log.i(TAG, "${javaClass.simpleName} has nothing to draw yet, ${ids.size} left on the empty text")
       return false
     }
     // the fetch is the long part, so the stop is looked at again on the way out of it. What it

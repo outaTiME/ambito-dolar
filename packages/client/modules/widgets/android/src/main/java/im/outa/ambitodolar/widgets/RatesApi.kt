@@ -38,8 +38,9 @@ object RatesApi {
   // widget as it was for another minute
   private const val FAILED_MS = 10_000L
 
-  // connect and read each get this, so an attempt is bounded at twice it, against the ten seconds
-  // a receiver gets before it is killed. The same four the ios extension uses
+  // connect and read each get this, and the read loop adds its own deadline, so the worst case is
+  // connect plus the deadline plus one last blocking read, around three times this. The same four
+  // the ios extension uses
   private const val TIMEOUT_MS = 4_000
 
   // characters, a couple of hundred times what the service really sends
@@ -64,7 +65,10 @@ object RatesApi {
   fun fetch(context: Context): Map<String, Rate>? {
     // elapsed and not wall clock: the user moving the clock back would freeze the cache
     val now = SystemClock.elapsedRealtime()
-    val window = if (cached == null) FAILED_MS else CACHE_MS
+    // por si la ultima llamada salio bien y no por si hay algo que devolver: una llamada fallida
+    // igual deja el payload de disco en cached, asi que mirar cached daba los 60 siempre y el
+    // reintento del worker, que llega a los 30, volvia del cache sin tocar la red
+    val window = if (reached) CACHE_MS else FAILED_MS
     if (checkedAt != Long.MIN_VALUE && now - checkedAt < window) {
       return cached
     }
