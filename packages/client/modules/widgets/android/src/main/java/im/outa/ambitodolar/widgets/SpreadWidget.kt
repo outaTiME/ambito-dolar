@@ -24,10 +24,9 @@ class SpreadWidget : WidgetProvider() {
     val firstValue = first.value(WidgetConfig.DEFAULT_VALUE)
     val secondValue = second.value(WidgetConfig.DEFAULT_VALUE)
     val change = (firstValue / secondValue - 1) * 100
-    // a spread that is not a number says nothing and would be drawn as if it did: a divisor near
-    // zero, or a subtraction between two values far apart, comes out infinite from two finite
-    // sides, reaches DecimalFormat and prints. The empty text is the honest answer
-    if (!change.isFinite() || !(firstValue - secondValue).isFinite()) {
+    // a divisor at zero comes out infinite from two finite sides, reaches DecimalFormat and
+    // prints as if it were a number. The empty text is the honest answer
+    if (!change.isFinite()) {
       return null
     }
     return Content.Card(

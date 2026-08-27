@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- the ios list widget: three rates, each one a name against its price and under it the date
-     against the change. The gaps between them stretch, same as the ios Spacer, and a slot with no
-     rate is left invisible instead of gone so the other rows keep their place, which is what the
-     ios padding of the remaining slots does.
-     The slots are ImageView and not TextView because the launcher resolves only system fonts in
-     its own process, so the text is drawn with our font on our side and travels as a bitmap.
-     Sizes and colors moved out with it: the sizes to Sizes.kt, one per role and shared with the
-     card, and the colors to the kotlin that fills each slot. The ones that carry weight scale
-     with fitStart, where the height is what limits, so the bitmap draws at its natural size -->
+<!-- the slots are ImageViews and not TextViews, see widget_card.xml -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
     android:layout_width="match_parent"

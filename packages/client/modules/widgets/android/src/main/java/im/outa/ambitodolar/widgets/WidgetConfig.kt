@@ -6,16 +6,12 @@ import android.util.Log
 // per widget instance settings. What the defaults are belongs to each widget, the same way the
 // ios intents carry their own default values
 object WidgetConfig {
-  private const val TAG = "AmbitoWidgets"
-
   private const val PREFS = "ambito_widgets"
   const val DEFAULT_VALUE = "sell"
 
   private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
-  // slot zero keeps the plain key, so a widget configured before the second slot existed reads back
-  private fun key(slot: Int, widgetId: Int) =
-    if (slot == 0) "rate_$widgetId" else "rate${slot}_$widgetId"
+  private fun key(slot: Int, widgetId: Int) = "rate${slot}_$widgetId"
 
   fun rateType(context: Context, widgetId: Int, slot: Int, default: String): String =
     prefs(context).getString(key(slot, widgetId), default) ?: default

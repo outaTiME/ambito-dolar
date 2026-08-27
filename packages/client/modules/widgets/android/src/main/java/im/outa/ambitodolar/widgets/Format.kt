@@ -23,12 +23,15 @@ object Format {
 
   // the ios spread reads the difference through the same formatter with the percent off
   fun rateAmount(value: Double): String {
-    val text = currency().format(value)
-    val zero = currency().format(0.0)
+    val format = currency()
+    val text = format.format(value)
+    val zero = format.format(0.0)
     // a value that formats to zero loses its sign first, or a change of a thousandth down would
-    // print as -0,00% right next to the equals sign that changeSymbol gives it for not moving
+    // print as -0,00% right next to the equals sign that changeSymbol gives it for not moving.
+    // Decided on the magnitude and not on the text: the sign is whatever the locale uses, U+2212
+    // in the nordics and a mark plus a hyphen in arabic, so matching a string never held there
     return when {
-      text == "-$zero" -> zero
+      value < 0 && format.format(-value) == zero -> zero
       value > 0 -> "+$text"
       else -> text
     }
@@ -90,9 +93,8 @@ object Format {
 
   fun rateTitle(type: String): String = RATE_TYPES.firstOrNull { it.first == type }?.second ?: type
 
-  // ios checks Helper.getRateTypes().contains before reading a rate out of the payload, so a type
-  // it retired is dropped even while the service keeps sending it, which is the case of qatar and
-  // ahorro today. Without this the widget would title a rate with its raw id
+  // the same check as the ios Helper.getRateTypes().contains: a type it retired is dropped even
+  // while the service keeps sending it, which is the case of qatar and ahorro today
   fun isKnown(type: String): Boolean = RATE_TYPES.any { it.first == type }
 
   // ValueType.displayName on ios

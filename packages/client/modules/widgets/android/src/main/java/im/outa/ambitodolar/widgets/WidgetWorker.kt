@@ -1,7 +1,6 @@
 package im.outa.ambitodolar.widgets
 
 import android.content.Context
-import android.util.Log
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -14,85 +13,47 @@ import java.util.concurrent.TimeUnit
 // updatePeriodMillis is an alarm and an alarm fires whether or not the app has network, while
 // doze suspends network for an idle app, which is why those redraws died in milliseconds without
 // a round trip. Work behind a network constraint does not run until the app really has network,
-// so it waits for the maintenance window instead of burning the slot.
-//
-// WorkManager and not a JobScheduler of our own, which is what google points at for a widget that
-// needs the network. The same thing was written by hand here once: unique periodic work, coming
-// back after a reboot, the network constraint, cancelling, telling one run from the next, and a
-// version stamp to notice a changed spec. All of that is what this class gets for free now
+// which is what google points a widget that needs the network at
 class WidgetWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
   override fun doWork(): Result {
     // through the same single thread every other redraw goes through, so a periodic run and a
-    // broadcast never draw at once. Waiting on it is what keeps the worker alive until it is done
-    val reached =
-      Widgets.EXECUTOR
-        .submit<Boolean> {
-          Widgets.ALL.map {
-            if (isStopped) {
-              true
-            } else {
-              it.renderNow(applicationContext, trigger = WidgetProvider.PERIODIC, alive = { !isStopped })
-            }
-          }
-            .all { it }
-        }
-        .get()
-    // the run that lands on a doze maintenance window can find dns with no answer yet and fail in
-    // milliseconds. Asking WorkManager to come back is what covers that: it backs off on its own,
-    // it waits for the network constraint again, and it survives the process dying, none of which
-    // a sleep inside this run would. Bounded because the period is the real schedule and retrying
-    // a service that is down every backoff step is requests nobody reads
-    if (!reached && runAttemptCount < RETRIES) {
-      Log.i(TAG, "service unreachable, asking for a retry, attempt $runAttemptCount")
-      return Result.retry()
-    }
-    return Result.success()
+    // broadcast never draw at once. Waiting on it holds the worker until the redraw is done, and
+    // it is also what makes the flag below visible on this thread
+    Widgets.EXECUTOR
+      .submit { Widgets.ALL.forEach { it.renderNow(applicationContext, trigger = WidgetProvider.PERIODIC) } }
+      .get()
+    // retry re-evaluates the constraint before running again and backs off on its own, 30s and
+    // doubling up to five hours, so this already means come back when there is network and it
+    // survives the process dying. There is no count of our own: the backoff is the throttle
+    return if (RatesApi.usable) Result.success() else Result.retry()
   }
 
   companion object {
-    private const val TAG = "AmbitoWidgets"
-
     // the name is the work: enqueueing it again finds the one already there instead of stacking
     private const val NAME = "widgets"
 
-    // one extra go and then wait for the period, which is what the widgets can afford: the stored
-    // payload is on screen meanwhile, so this is about being fresh sooner, not about being blank
-    private const val RETRIES = 1
-
-    // ios asks for 15 but widgetkit budgets it out to somewhere between 15 and 60, while work in
-    // the active bucket runs close to what it says, so 30 is what lands on the same cadence
+    // ios asks for 15 but widgetkit budgets it out to somewhere between 15 and 60, and 30 is what
+    // the google widget sample uses. No flex: it narrows the window a constrained run has to land
+    // in, so it makes a skipped period more likely, not less
     private const val PERIOD_MIN = 30L
 
-    // without a flex the run may land anywhere inside its period, which leaves two redraws up to
-    // two periods apart. This pins it to the last third and keeps the cadence at 20 to 40
-    private const val FLEX_MIN = 10L
-
-    // called from every redraw, so an app update puts it back even if something dropped it. A
-    // reboot is WorkManager's own business and it needs nothing from us for that
+    // called from every redraw, so an app update puts it back even if something dropped it
     fun schedule(context: Context) {
       val request =
-        PeriodicWorkRequestBuilder<WidgetWorker>(
-            PERIOD_MIN,
-            TimeUnit.MINUTES,
-            FLEX_MIN,
-            TimeUnit.MINUTES,
-          )
+        PeriodicWorkRequestBuilder<WidgetWorker>(PERIOD_MIN, TimeUnit.MINUTES)
           .setConstraints(
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
           )
           .build()
       // UPDATE and not KEEP: a changed period or constraint reaches a widget that is already out
       // there, and unlike REPLACE it does not restart the period on every redraw, which would
-      // push the next run away forever. Telling a live one from a stale one used to be a version
-      // stamp of ours in the job extras, and it silently failed to deploy twice
+      // push the next run away forever
       WorkManager.getInstance(context)
         .enqueueUniquePeriodicWork(NAME, ExistingPeriodicWorkPolicy.UPDATE, request)
-      Log.i(TAG, "periodic work every $PERIOD_MIN min behind a network constraint")
     }
 
     fun cancel(context: Context) {
       WorkManager.getInstance(context).cancelUniqueWork(NAME)
-      Log.i(TAG, "no widgets left, periodic work cancelled")
     }
   }
 }

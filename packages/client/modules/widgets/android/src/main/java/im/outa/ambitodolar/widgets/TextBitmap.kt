@@ -23,16 +23,13 @@ internal object TextBitmap {
 
   private const val WRAPPED_LINES = 2
 
-  // the least a turn may take off, which is what keeps the loop moving when the measurement does
-  // not: a paint with no subpixel rounds every glyph advance to a whole pixel, so a size that is
-  // one percent smaller can measure exactly the same. It is also how far past the largest size
-  // that fits the loop may land, so it is small: a tenth is the whole budget, forty turns at worst
+  // the least a turn may take off, see the loop below
   private const val STEP = 0.0025f
 
   fun typeface(context: Context): Typeface = context.resources.getFont(R.font.widget_firago_regular)
 
-  // the one routine every slot goes through, so a fourth widget gets it for free. A single line
-  // through StaticLayout draws what drawText would, which is why there is no second path.
+  // a single line through StaticLayout draws what drawText would, which is why there is no
+  // second path.
   // setIncludePad keeps the box a TextView reserves by default, top to bottom of the font and not
   // just ascent to descent, so a slot holds the height it had and the vertical rhythm stays put
   // room is a ceiling and not the width of the slot, which only the layout knows, and floor is

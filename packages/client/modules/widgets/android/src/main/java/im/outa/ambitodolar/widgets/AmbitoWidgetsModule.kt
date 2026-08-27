@@ -3,8 +3,7 @@ package im.outa.ambitodolar.widgets
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
-// what reloadAllTimelines is on ios, and the providers are called directly because
-// APPWIDGET_UPDATE is protected and an app cannot send it
+// what reloadAllTimelines is on ios
 class AmbitoWidgetsModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("AmbitoWidgets")

@@ -19,8 +19,7 @@ data class Rate(val timestamp: String, val buy: Double?, val sell: Double, val c
     when {
       buy == null -> sell
       type == "buy" -> buy
-      // halved before adding, not added before halving: two values that are each fine on their
-      // own can add up past what a double holds, and an infinite average would be drawn as a rate
+      // halved before adding, which cannot overflow the way adding first can
       type == "average" -> buy / 2 + sell / 2
       else -> sell
     }
@@ -28,98 +27,50 @@ data class Rate(val timestamp: String, val buy: Double?, val sell: Double, val c
 
 // the widget brings its own data, same as the ios one which does its own URLSession call
 object RatesApi {
-  private const val TAG = "AmbitoWidgets"
+  // collapses a burst into one call, the three providers of a periodic run included. Counted from
+  // the start of the request, so it is not a guarantee, only what a burst takes. Has to stay under
+  // WorkManager's 30s minimum backoff or the first retry lands inside it and reports success on
+  // stale data without asking the service
+  private const val CACHE_MS = 10_000L
 
-  // collapses bursts into one call, failures included so a down service is not hammered
-  private const val CACHE_MS = 60_000L
-
-  // a failure is held for less than an answer. Holding both the same meant that coming back from
-  // no signal, the redraw the network itself triggers found the failure still cached and left the
-  // widget as it was for another minute
-  private const val FAILED_MS = 10_000L
-
-  // connect and read each get this, and the read loop adds its own deadline, so the worst case is
-  // connect plus the deadline plus one last blocking read, around three times this. The same four
-  // the ios extension uses
+  // connect and read each get this, the same four the ios extension uses
   private const val TIMEOUT_MS = 4_000
 
-  // characters, a couple of hundred times what the service really sends
+  // characters and not bytes, a couple of hundred times what the service sends. A cap and not a
+  // guess: an OutOfMemoryError is an Error no catch here would hold, so a runaway body would take
+  // the process down instead of failing the fetch
   private const val MAX_BODY = 256 * 1024
 
+  // the last call that came back, only ever replaced by another one that came back: nothing a
+  // failed call finds can take rates off a widget
   private var cached: Map<String, Rate>? = null
 
-  // never, and not zero. elapsedRealtime counts from boot, so zero reads as a check made at boot
-  // and the whole first minute of the phone answered from a cache that was never filled: no
-  // request and not even the stored payload, right when a widget is coming back from a reboot
-  private var checkedAt = Long.MIN_VALUE
+  // elapsed and not wall clock: the user moving the clock back would freeze the cache
+  private var nextCallAt = 0L
 
-  // whether the last call came back, which is not the same as whether there is something to
-  // draw: a failed call still answers with the payload on disk, so the caller cannot tell one
-  // from the other by the return value. Only the worker asks, to decide whether to retry
-  var reached = true
+  // whether the last call produced rates worth keeping, which is not whether there is something
+  // to draw: a call that failed still answers with what is cached or stored. Only the worker asks
+  var usable = true
     private set
 
   @Synchronized
   fun fetch(context: Context): Map<String, Rate>? {
-    // elapsed and not wall clock: the user moving the clock back would freeze the cache
     val now = SystemClock.elapsedRealtime()
-    // on whether the last call came back and not on whether there is something to return: a
-    // failed call leaves the disk payload in cached too, so reading cached gave the long window
-    // every time and the worker retry, which lands at 30s, answered from the cache
-    val window = if (reached) CACHE_MS else FAILED_MS
-    if (checkedAt != Long.MIN_VALUE && now - checkedAt < window) {
-      return cached
+    if (now >= nextCallAt) {
+      val fresh = request(context)
+      usable = fresh != null
+      nextCallAt = now + CACHE_MS
+      Log.i(TAG, "fetch took ${SystemClock.elapsedRealtime() - now}ms, ${fresh?.size ?: "failed"}")
+      fresh?.let { cached = it }
     }
-    checkedAt = now
-    val started = now
-    cached = request(context)
-    Log.i(
-      TAG,
-      "call to the service took ${SystemClock.elapsedRealtime() - started}ms, " +
-        (cached?.let { "${it.size} rates" } ?: "failed"),
-    )
-    return cached
+    // the stored payload is only reached when this process never got an answer, which is a reboot
+    // or an app update. The ios getRates() falls back the same way
+    return cached ?: last(context)
   }
 
-  // one attempt and then the payload on disk. The retry is WidgetWorker's, see the reason there.
-  // The other triggers fire with the device awake and fall back to that payload, so they draw
-  // rates that are stale, never a blank card
-  private fun request(context: Context): Map<String, Rate>? {
+  // one attempt, null when it did not come back. The retry is WorkManager's
+  private fun request(context: Context): Map<String, Rate>? =
     try {
-      fresh(context)?.let {
-        reached = true
-        return it
-      }
-      // it answered with nothing usable, which is a bad deploy or a proxy in the way, so it
-      // counts as not reached and the worker gets to come back
-      Log.w(TAG, "the service answered nothing usable")
-    } catch (e: Exception) {
-      // the class and the message inline, a stack alone does not survive the logcat buffer
-      Log.w(TAG, "rates fetch failed with ${e.javaClass.simpleName}: ${e.message}", e)
-    }
-    reached = false
-    return last(context).also {
-      Log.i(
-        TAG,
-        "fell back to the stored payload, " +
-          (it?.let { r -> "${r.size} rates" } ?: "which is empty too"),
-      )
-    }
-  }
-
-  // whatever the service left us with, as long as it parses to at least one rate
-  private fun last(context: Context): Map<String, Rate>? =
-    WidgetConfig.lastPayload(context)?.let {
-      try {
-        parse(JSONObject(it)).takeIf { rates -> rates.isNotEmpty() }
-      } catch (e: Exception) {
-        Log.w(TAG, "stored payload does not parse: ${e.javaClass.simpleName}: ${e.message}")
-        null
-      }
-    }
-
-  private fun fresh(context: Context): Map<String, Rate>? =
-    run {
       val endpoint = context.getString(R.string.widget_api_url) + "/fetch"
       val connection =
         (URL(endpoint).openConnection() as HttpURLConnection).apply {
@@ -128,48 +79,50 @@ object RatesApi {
         }
       try {
         // reading the status runs the request. Any 2xx is taken, which is what the ios getRates
-        // does, and only the body decides whether it is usable. Anything else carries nothing
-        // worth parsing, so it drops to the stored payload instead of throwing on an empty body
+        // does, and only the body decides whether it is usable
         if (connection.responseCode !in 200..299) {
           throw IOException("service answered ${connection.responseCode}")
         }
         val body = body(connection)
-        // a payload that parses to nothing is a failure, not an empty board. Treating it as
-        // success would blank every widget that is showing good rates
+        // a payload that parses to nothing is a failure and not an empty board, so the worker
+        // gets to come back
         parse(JSONObject(body)).takeIf { it.isNotEmpty() }?.also {
           WidgetConfig.setLastPayload(context, body)
         }
       } finally {
         connection.disconnect()
       }
+    } catch (e: Exception) {
+      // the class and the message inline, a stack alone does not survive the logcat buffer
+      Log.w(TAG, "rates fetch failed with ${e.javaClass.simpleName}: ${e.message}", e)
+      null
     }
 
-  // bounded in both size and time. readTimeout only fires when nothing arrives at all, so a
-  // service handing over a few characters at a time never trips it and readText would run as
-  // long as it likes on the one thread every redraw shares. The cap is a couple of hundred times
-  // the real payload, and it is a cap and not a guess: an OutOfMemoryError is an Error that no
-  // catch here would hold, so it would take the process down instead of failing the fetch
-  private fun body(connection: HttpURLConnection): String {
-    val deadline = SystemClock.elapsedRealtime() + TIMEOUT_MS
-    val text = StringBuilder()
-    val buffer = CharArray(8 * 1024)
-    connection.inputStream.bufferedReader().use { reader ->
-      while (true) {
-        if (SystemClock.elapsedRealtime() > deadline) {
-          throw IOException("service took longer than $TIMEOUT_MS ms to answer")
-        }
-        val read = reader.read(buffer)
-        if (read < 0) {
-          break
-        }
-        text.append(buffer, 0, read)
-        if (text.length > MAX_BODY) {
-          throw IOException("service answered more than $MAX_BODY characters")
-        }
+  // whatever the service left us with, as long as it parses to at least one rate
+  private fun last(context: Context): Map<String, Rate>? =
+    WidgetConfig.lastPayload(context)?.let {
+      try {
+        parse(JSONObject(it)).takeIf { rates -> rates.isNotEmpty() }
+      } catch (e: Exception) {
+        null
       }
     }
-    return text.toString()
-  }
+
+  // capped, for the Error above. Time is bounded by connectTimeout and readTimeout, each of which
+  // covers one stalled read rather than the whole response, which is what every google sample does
+  private fun body(connection: HttpURLConnection): String =
+    connection.inputStream.bufferedReader().use { reader ->
+      val text = StringBuilder()
+      val buffer = CharArray(8 * 1024)
+      while (text.length <= MAX_BODY) {
+        val read = reader.read(buffer)
+        if (read < 0) {
+          return text.toString()
+        }
+        text.append(buffer, 0, read)
+      }
+      throw IOException("service answered more than $MAX_BODY characters")
+    }
 
   private fun parse(json: JSONObject): Map<String, Rate> {
     val rates = mutableMapOf<String, Rate>()
@@ -187,8 +140,11 @@ object RatesApi {
       // a missing or non numeric value comes back as NaN and would render as the literal text
       when (val value = stat.opt(1)) {
         is JSONArray -> {
-          val buy = value.optDouble(0)
-          val sell = value.optDouble(1)
+          // opt(n) and not optDouble: optDouble coerces a numeric string and the scalar branch
+          // below does not, so a pair of strings was kept while a single one was dropped. ios
+          // requires NSNumber on both and is the reference
+          val buy = (value.opt(0) as? Number)?.toDouble() ?: Double.NaN
+          val sell = (value.opt(1) as? Number)?.toDouble() ?: Double.NaN
           if (buy.isFinite() && sell.isFinite()) {
             rates[type] = Rate(timestamp, buy, sell, change)
           }

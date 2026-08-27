@@ -52,10 +52,8 @@ class WidgetConfigActivity : AppCompatActivity() {
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-      outState.putStringArrayList(STATE_RATES, ArrayList(rateTypes))
-      outState.putString(STATE_VALUE, valueType)
-    }
+    outState.putStringArrayList(STATE_RATES, ArrayList(rateTypes))
+    outState.putString(STATE_VALUE, valueType)
   }
 
   override fun onDestroy() {
@@ -147,12 +145,6 @@ class WidgetConfigActivity : AppCompatActivity() {
     layoutInflater.inflate(layout, parent, false)
 
   private fun confirm() {
-    // the id was checked when this opened, and the widget can be gone by now: writing then would
-    // leave preferences nobody owns and ask for a redraw of something that is not there
-    if (AppWidgetManager.getInstance(this).getAppWidgetInfo(widgetId) == null) {
-      finish()
-      return
-    }
     rateTypes.forEachIndexed { slot, type -> WidgetConfig.setRateType(this, widgetId, slot, type) }
     if (provider.hasValueType) {
       WidgetConfig.setValueType(this, widgetId, valueType)
