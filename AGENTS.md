@@ -57,7 +57,7 @@ yarn workspace @ambito-dolar/website run build|preview
 ### ESLint presets
 
 - Flat config `eslint.config.js` (ESLint 9). Base `universe/node`. Client `universe/native`. Website `.astro` via `eslint-plugin-astro`.
-- Ignores `web-build`/`android` (generated, gitignored; flat config ignores neither by default).
+- Ignores the generated trees, `web-build`, `android`, `.sst`, `dist` and `build` (gitignored, and flat config ignores none of them by default).
 
 ### Imports
 
@@ -110,10 +110,7 @@ yarn workspace @ambito-dolar/website run build|preview
 
 1. `feat: update to Expo SDK <N>` + `BREAKING CHANGE:` footer (`BREAKING CHANGE: upgraded to React Native 0.85`) — code migration, native diffs, plugins, forced import migration.
 2. `docs: update AGENTS rules` if rules change with the upgrade.
-3. `chore: bump version and build number`.
-4. `chore: bump yarn` (only if Yarn changed).
-5. `chore: bump dependencies`.
-6. `chore: publish` (auto, via lerna).
+3. Then the release order above, `chore: bump yarn` only if Yarn changed.
 
 ## Analytics and tracking policy
 
@@ -161,7 +158,7 @@ strings too. The widget picker has its own register, see `packages/client/docs/a
 
 ### Reading and writing these files
 
-Four levels. What decides where a rule goes is not how important it is, it is who could break it.
+Three levels. What decides where a rule goes is not how important it is, it is who could break it.
 
 - **This file** loads on every session, so what sits here is paid on every session whatever the
   task is. It holds what someone could break without ever opening the subtree that owns it.

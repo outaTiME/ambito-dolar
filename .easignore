@@ -94,6 +94,7 @@ README.md
 CHANGELOG.md
 AGENTS.md
 CLAUDE.md
+docs/
 sst-env.d.ts
 
 # https://github.com/expo/eas-cli/issues/2875

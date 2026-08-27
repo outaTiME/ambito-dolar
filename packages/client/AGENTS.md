@@ -33,7 +33,7 @@ cd packages/client/ios && pod update && cd - && yarn run client:prebuild:ios
 ## Donation modal
 
 Cooldown counted in distinct usage days and not wall clock, one escalating schedule, and only two
-persisted fields. New fields need a strong reason. Read `docs/product-policies.md` before touching
+persisted fields. New fields need a strong reason. Read `docs/product-policies.md` at the repo root before touching
 the flow, the re-ask of a donor and the Developer screen bypass are there too.
 
 ## TypeScript discipline
@@ -81,7 +81,8 @@ Verify before stripping: drop one cast, run `yarn workspace @ambito-dolar/client
 
 ## Navigation centralization
 
-- **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Tabs`, `Slot`, `Redirect`, `SplashScreen`, `useNavigation` (setOptions), `useLocalSearchParams`, `useFocusEffect`, `usePathname`.
+- **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Tabs`, `Slot`, `Redirect`, `useNavigation` (setOptions), `useLocalSearchParams`, `useFocusEffect`, `usePathname`, plus `NativeTabs` from `expo-router/unstable-native-tabs`, `HeaderButton` from `expo-router/react-navigation` and `BottomTabBar` from `expo-router/js-tabs`.
+- **`SplashScreen` comes from `expo-splash-screen`, never from `expo-router`.** The router re-exports it and the re-export is marked `@hidden`, so it resolves, it type checks and it is not the public api. Both `RootLayout` files already import it right.
 - Helpers: `goToX` (nav), `goBack` (guarded), `dismissToTop` (guarded pop), `clearRouteParam(name)`.
 - New route to a `goToX` helper. Modal variant = separate helper (`goToDonate` settings tab vs `goToDonateModal` root modal). Use `router.navigate` not `push` (dedupes, prevents double-tap stacks).
 - Clear a consumed deeplink/intent param (`focus=true`, `popToTop=true`) via `clearRouteParam('focus')`, not inline `router.setParams({focus: undefined})`.

@@ -6,8 +6,8 @@
 //
 // Place the widget on the home screen, leave it visible, then run this with a device
 // connected. It screencaps, finds the card, cuts it out with transparent rounded
-// corners and writes the asset. Run `expo prebuild --platform android` afterwards to
-// copy it into res/drawable.
+// corners and writes the asset. The widgets module copies it from here at build time,
+// so there is nothing to run afterwards.
 //
 // Corners are neutralized to the card color BEFORE scaling. Scaling first would bleed
 // the wallpaper into the rounded edge and no mask can take it back out.
