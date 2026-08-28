@@ -106,9 +106,6 @@
     <string>Expo Dev Launcher uses the local network to discover and connect to development servers running on your computer.</string>
     <key>NSUserActivityTypes</key>
     <array>
-      <string>SelectRateTypeIntent</string>
-      <string>SelectRateTypesIntent</string>
-      <string>SelectSpreadRateTypesIntent</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
     <key>RCTMetroPort</key>

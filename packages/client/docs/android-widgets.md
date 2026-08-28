@@ -61,8 +61,9 @@ one side alone is the bug that gets shipped.
 
 ### A new widget
 
-- **iOS**: a `struct X: Widget` with its `kind`, added to the `RateWidgets` bundle, plus its
-  parameters in `RateWidgets.intentdefinition`. One file, one target.
+- **iOS**: a `struct X: Widget` with its `kind`, added to the `RateWidgets` bundle, plus a
+  `WidgetConfigurationIntent` with its parameters in `packages/client/ios/RateWidgets/Intents.swift`.
+  One file, one target.
 - **Android**: a `WidgetProvider` subclass, one line in `Widgets.ALL`, a `<receiver>`, an
   `res/xml/widget_x_info.xml` in the module, label and description in `strings.xml`, the preview png in
   `packages/client/assets/widgets/` and its line in the module `build.gradle`. Four of those are static
@@ -106,5 +107,5 @@ Module resources are all prefixed `widget_`, plus `Theme.Widget.Config`. Keep it
 - Android `description` (`packages/client/modules/widgets/android/src/main/res/values/strings.xml`): imperative, **no trailing period**, 4-8 words. Android picker style, matches system widgets (Battery `See battery info for your devices`, Chrome `Quickly start a search in Chrome`, Clock `Choose cities in the Clock app`).
 - Android drops the iOS filler, keeps the verb: iOS `Consultá las cotizaciones a lo largo del día.` → Android `Consultá las cotizaciones del día`.
 - `label` (Android) and `.configurationDisplayName(...)` (iOS) identical string.
-- Config section titles come from the iOS intent parameter display names (`packages/client/ios/RateWidgets/Base.lproj/RateWidgets.intentdefinition`, read with `plutil -convert xml1`): Rate `Cotización` + `Mostrar`, list `Cotizaciones` + `Mostrar`, Spread `Cotizaciones`. Singular when the widget takes one rate, plural when it takes several.
+- Config section titles come from the iOS intent parameter titles (the `@Parameter(title:)` of each `WidgetConfigurationIntent` in `packages/client/ios/RateWidgets/Intents.swift`): Rate `Cotización` + `Mostrar`, list `Cotizaciones` + `Mostrar`, Spread `Cotizaciones`. Singular when the widget takes one rate, plural when it takes several.
 - Android description shorter than the current one is always safe, no hard length cap but picker truncates.

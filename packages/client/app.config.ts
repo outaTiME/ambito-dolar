@@ -38,10 +38,6 @@ export default {
                 targetName: 'RateWidgetsExtension',
                 bundleIdentifier: 'im.outa.AmbitoDolar.RateWidgets',
               },
-              {
-                targetName: 'RateIntents',
-                bundleIdentifier: 'im.outa.AmbitoDolar.RateIntents',
-              },
             ],
           },
         },

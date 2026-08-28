@@ -7,7 +7,7 @@
 
 import WidgetKit
 import SwiftUI
-import Intents
+import AppIntents
 
 struct RateValue: Identifiable, Equatable {
   let id: String
@@ -307,25 +307,26 @@ extension WidgetConfiguration {
   }
 }
 
-struct RateProvider: IntentTimelineProvider {
+struct RateProvider: AppIntentTimelineProvider {
+  // the intent no longer carries a handler supplying the default, so an unconfigured widget
+  // falls back here to the same Helper value IntentHandler.defaultRateType used to return
+  private func rateTypes(for configuration: SelectRateTypeIntent) -> [RateType] {
+    [configuration.rateType ?? Helper.getDefaultRateType()]
+  }
   func placeholder(in context: Context) -> SimpleEntry {
     let rates = lookupRateValues()
     return SimpleEntry(date: Date(), rates: rates)
   }
-  func getSnapshot(for configuration: SelectRateTypeIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-    let rates = lookupRateValues(rateTypes: [configuration.rateType!], valueType: configuration.valueType)
-    let entry = SimpleEntry(date: Date(), rates: rates)
-    completion(entry)
+  func snapshot(for configuration: SelectRateTypeIntent, in context: Context) async -> SimpleEntry {
+    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
+    return SimpleEntry(date: Date(), rates: rates)
   }
-  func getTimeline(for configuration: SelectRateTypeIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-    var entries: [SimpleEntry] = []
+  func timeline(for configuration: SelectRateTypeIntent, in context: Context) async -> Timeline<SimpleEntry> {
     let date = Date()
-    let rates = lookupRateValues(rateTypes: [configuration.rateType!], valueType: configuration.valueType)
+    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
     let entry = SimpleEntry(date: date, rates: rates)
-    entries.append(entry)
     let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
-    let timeline = Timeline(entries: entries, policy: .after(reloadDate))
-    completion(timeline)
+    return Timeline(entries: [entry], policy: .after(reloadDate))
   }
 }
 
@@ -449,19 +450,13 @@ struct RateWidgetEntryView : View {
 struct RateWidget: Widget {
   let kind: String = "RateWidget"
   private var supportedFamilies: [WidgetFamily] {
-    if #available(iOSApplicationExtension 16.0, *) {
-      return [
-        .systemSmall,
-        .accessoryCircular,
-      ]
-    } else {
-      return [
-        .systemSmall,
-      ]
-    }
+    return [
+      .systemSmall,
+      .accessoryCircular,
+    ]
   }
   var body: some WidgetConfiguration {
-    IntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateProvider()) { entry in
+    AppIntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateProvider()) { entry in
       RateWidgetEntryView(entry: entry)
         .environment(\.colorScheme, .dark)
         .environment(\.sizeCategory, .large)
@@ -474,25 +469,25 @@ struct RateWidget: Widget {
   }
 }
 
-struct ListRatesProvider: IntentTimelineProvider {
+struct ListRatesProvider: AppIntentTimelineProvider {
+  private func rateTypes(for configuration: SelectRateTypesIntent) -> [RateType] {
+    let selected = configuration.rateTypes ?? []
+    return selected.isEmpty ? Helper.getDefaultRateTypes() : selected
+  }
   func placeholder(in context: Context) -> SimpleEntry {
     let rates = lookupRateValues()
     return SimpleEntry(date: Date(), rates: rates)
   }
-  func getSnapshot(for configuration: SelectRateTypesIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-    let rates = lookupRateValues(rateTypes: configuration.rateTypes!, valueType: configuration.valueType)
-    let entry = SimpleEntry(date: Date(), rates: rates)
-    completion(entry)
+  func snapshot(for configuration: SelectRateTypesIntent, in context: Context) async -> SimpleEntry {
+    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
+    return SimpleEntry(date: Date(), rates: rates)
   }
-  func getTimeline(for configuration: SelectRateTypesIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-    var entries: [SimpleEntry] = []
+  func timeline(for configuration: SelectRateTypesIntent, in context: Context) async -> Timeline<SimpleEntry> {
     let date = Date()
-    let rates = lookupRateValues(rateTypes: configuration.rateTypes!, valueType: configuration.valueType)
+    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
     let entry = SimpleEntry(date: date, rates: rates)
-    entries.append(entry)
     let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
-    let timeline = Timeline(entries: entries, policy: .after(reloadDate))
-    completion(timeline)
+    return Timeline(entries: [entry], policy: .after(reloadDate))
   }
 }
 
@@ -593,7 +588,7 @@ struct ListRatesWidget: Widget {
     ]
   }
   var body: some WidgetConfiguration {
-    IntentConfiguration(kind: kind, intent: SelectRateTypesIntent.self, provider: ListRatesProvider()) { entry in
+    AppIntentConfiguration(kind: kind, intent: SelectRateTypesIntent.self, provider: ListRatesProvider()) { entry in
       ListRatesWidgetEntryView(entry: entry)
         .environment(\.colorScheme, .dark)
         .environment(\.sizeCategory, .large)
@@ -606,25 +601,25 @@ struct ListRatesWidget: Widget {
   }
 }
 
-struct SpreadProvider: IntentTimelineProvider {
+struct SpreadProvider: AppIntentTimelineProvider {
+  private func rateTypes(for configuration: SelectSpreadRateTypesIntent) -> [RateType] {
+    let selected = configuration.rateTypes ?? []
+    return selected.isEmpty ? Helper.getDefaultSpreadRateTypes() : selected
+  }
   func placeholder(in context: Context) -> SimpleEntry {
     let rates = lookupRateValues()
     return SimpleEntry(date: Date(), rates: rates)
   }
-  func getSnapshot(for configuration: SelectSpreadRateTypesIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-    let rates = lookupRateValues(rateTypes: configuration.rateTypes!)
-    let entry = SimpleEntry(date: Date(), rates: rates)
-    completion(entry)
+  func snapshot(for configuration: SelectSpreadRateTypesIntent, in context: Context) async -> SimpleEntry {
+    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration))
+    return SimpleEntry(date: Date(), rates: rates)
   }
-  func getTimeline(for configuration: SelectSpreadRateTypesIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-    var entries: [SimpleEntry] = []
+  func timeline(for configuration: SelectSpreadRateTypesIntent, in context: Context) async -> Timeline<SimpleEntry> {
     let date = Date()
-    let rates = lookupRateValues(rateTypes: configuration.rateTypes!)
+    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration))
     let entry = SimpleEntry(date: date, rates: rates)
-    entries.append(entry)
     let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
-    let timeline = Timeline(entries: entries, policy: .after(reloadDate))
-    completion(timeline)
+    return Timeline(entries: [entry], policy: .after(reloadDate))
   }
 }
 
@@ -778,19 +773,13 @@ struct SpreadWidgetEntryView : View {
 struct SpreadWidget: Widget {
   let kind: String = "SpreadWidget"
   private var supportedFamilies: [WidgetFamily] {
-    if #available(iOSApplicationExtension 16.0, *) {
-      return [
-        .systemSmall,
-        .accessoryCircular,
-      ]
-    } else {
-      return [
-        .systemSmall,
-      ]
-    }
+    return [
+      .systemSmall,
+      .accessoryCircular,
+    ]
   }
   var body: some WidgetConfiguration {
-    IntentConfiguration(kind: kind, intent: SelectSpreadRateTypesIntent.self, provider: SpreadProvider()) { entry in
+    AppIntentConfiguration(kind: kind, intent: SelectSpreadRateTypesIntent.self, provider: SpreadProvider()) { entry in
       SpreadWidgetEntryView(entry: entry)
         .environment(\.colorScheme, .dark)
         .environment(\.sizeCategory, .large)
