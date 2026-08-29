@@ -7,14 +7,15 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "prebuild:ios": "expo prebuild --platform ios --no-clean",
+    "prebuild:ios": "expo prebuild --platform ios",
     "lint": "expo lint",
     "eas-build-pre-install": "corepack enable && yarn set version 4",
     "check": "expo install --check"
   },
   "dependencies": {
     "@ambito-dolar/core": "^5.2.1",
-    "@amplitude/analytics-react-native": "^1.7.0",
+    "@amplitude/analytics-react-native": "^1.8.0",
+    "@bacons/apple-targets": "^5.0.0",
     "@expo/ui": "~57.0.14",
     "@gorhom/bottom-sheet": "^5.2.14",
     "@instantdb/react-native": "^1.0.66",
@@ -30,14 +31,14 @@
     "color-rgba": "^3.1.1",
     "d3-array": "^3.2.4",
     "d3-shape": "^3.2.0",
-    "expo": "^57.0.17",
+    "expo": "^57.0.18",
     "expo-application": "~57.0.2",
     "expo-clipboard": "~57.0.1",
-    "expo-constants": "~57.0.15",
+    "expo-constants": "~57.0.16",
     "expo-dev-client": "~57.0.16",
     "expo-device": "~57.0.1",
     "expo-file-system": "~57.0.6",
-    "expo-font": "~57.0.1",
+    "expo-font": "~57.0.2",
     "expo-glass-effect": "~57.0.1",
     "expo-haptics": "~57.0.2",
     "expo-image": "~57.0.3",
@@ -63,7 +64,7 @@
     "react-native-animateable-text": "~0.19.3",
     "react-native-gesture-handler": "3.1.0",
     "react-native-get-random-values": "^2.0.0",
-    "react-native-purchases": "^10.8.0",
+    "react-native-purchases": "^10.8.1",
     "react-native-reanimated": "~4.5.5",
     "react-native-redash": "^18.1.5",
     "react-native-safe-area-context": "^5.9.1",
@@ -98,7 +99,8 @@
       "exclude": [
         "@react-native-vector-icons/fontawesome6",
         "@react-native-vector-icons/material-design-icons",
-        "@react-native-vector-icons/material-icons"
+        "@react-native-vector-icons/material-icons",
+        "@bacons/apple-targets"
       ]
     },
     "install": {

@@ -38,6 +38,7 @@ lerna-debug.log
 
 # Ignoring using CNG
 packages/client/android/
+packages/client/ios/
 
 # Environment variables
 .env
@@ -70,9 +71,6 @@ packages/*
 packages/backend/*
 !packages/backend/package.json
 !packages/client
-packages/client/ios/build/
-packages/client/ios/Pods/
-packages/client/ios/.xcode.env.local
 !packages/core
 packages/core/*
 !packages/core/index.js

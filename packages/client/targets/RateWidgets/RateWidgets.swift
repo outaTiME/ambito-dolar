@@ -270,39 +270,16 @@ struct SimpleEntry: TimelineEntry {
 extension View {
   @ViewBuilder
   func widgetBackground(backgroundView: some View = Color.black) -> some View {
-    if #available(iOSApplicationExtension 17.0, *) {
-      containerBackground(for: .widget) {
-        backgroundView
-      }
-    } else {
-      background(backgroundView)
+    containerBackground(for: .widget) {
+      backgroundView
     }
   }
   @ViewBuilder
   func conditionalContentTransition(value: Double? = nil) -> some View {
-    if #available(iOS 17.0, *), let value = value {
+    if let value = value {
       self.contentTransition(.numericText(value: value))
-    } else if #available(iOS 16.0, *) {
+    } else {
       self.contentTransition(.numericText())
-    } else {
-      self
-    }
-  }
-}
-
-extension WidgetConfiguration {
-  func contentMarginsDisabledIfAvailable() -> some WidgetConfiguration {
-    if #available(iOSApplicationExtension 17.0, *) {
-      return self.contentMarginsDisabled()
-    } else {
-      return self
-    }
-  }
-  func disfavoredLocationsIfAvailable() -> some WidgetConfiguration {
-    if #available(iOS 17, *) {
-      return self.disfavoredLocations([.lockScreen, .standBy], for: [.systemSmall])
-    } else {
-      return self
     }
   }
 }
@@ -342,50 +319,48 @@ struct RateWidgetEntryView : View {
     let rates = entry.rates
     switch widgetFamily {
     case .accessoryCircular:
-      if #available(iOSApplicationExtension 16.0, *) {
-        if rates?.isEmpty == false, let rate = rates?[0] {
-          ZStack {
-            AccessoryWidgetBackground()
-            VStack {
-              Text(rate.name)
+      if rates?.isEmpty == false, let rate = rates?[0] {
+        ZStack {
+          AccessoryWidgetBackground()
+          VStack {
+            Text(rate.name)
+              .font(.custom(fontName, size: 10))
+              .lineLimit(1)
+              .padding(.horizontal, 8)
+            Text(rate.price)
+              .font(.custom(fontName, size: 13))
+              .lineLimit(1)
+              .conditionalContentTransition(value: rate.priceValue)
+              .padding(.horizontal, 2)
+              .widgetAccentable()
+            if let plainChange = rate.plainChange {
+              Text(plainChange)
                 .font(.custom(fontName, size: 10))
                 .lineLimit(1)
+                .conditionalContentTransition(value: rate.changeValue)
                 .padding(.horizontal, 8)
-              Text(rate.price)
-                .font(.custom(fontName, size: 13))
+            } else {
+              Text(" ")
+                .font(.custom(fontName, size: 10))
                 .lineLimit(1)
-                .conditionalContentTransition(value: rate.priceValue)
-                .padding(.horizontal, 2)
-                .widgetAccentable()
-              if let plainChange = rate.plainChange {
-                Text(plainChange)
-                  .font(.custom(fontName, size: 10))
-                  .lineLimit(1)
-                  .conditionalContentTransition(value: rate.changeValue)
-                  .padding(.horizontal, 8)
-              } else {
-                Text(" ")
-                  .font(.custom(fontName, size: 10))
-                  .lineLimit(1)
-              }
             }
           }
-          .widgetURL(getWidgetUrl(id: rate.id))
-          .widgetBackground()
-        } else {
-          ZStack {
-            AccessoryWidgetBackground()
-            VStack {
-              Text("N/D")
-                .font(.custom(fontName, size: 13))
-                .lineLimit(1)
-                .widgetAccentable()
-            }
-            .padding(.horizontal, 2)
-          }
-          .widgetURL(getWidgetUrl())
-          .widgetBackground()
         }
+        .widgetURL(getWidgetUrl(id: rate.id))
+        .widgetBackground()
+      } else {
+        ZStack {
+          AccessoryWidgetBackground()
+          VStack {
+            Text("N/D")
+              .font(.custom(fontName, size: 13))
+              .lineLimit(1)
+              .widgetAccentable()
+          }
+          .padding(.horizontal, 2)
+        }
+        .widgetURL(getWidgetUrl())
+        .widgetBackground()
       }
     default:
       if rates?.isEmpty == false, let rate = rates?[0] {
@@ -464,8 +439,7 @@ struct RateWidget: Widget {
     .configurationDisplayName("Cotizaciones")
     .description("Consultá las cotizaciones a lo largo del día.")
     .supportedFamilies(supportedFamilies)
-    .contentMarginsDisabledIfAvailable()
-    // .disfavoredLocationsIfAvailable()
+    .contentMarginsDisabled()
   }
 }
 
@@ -596,8 +570,7 @@ struct ListRatesWidget: Widget {
     .configurationDisplayName("Lista de cotizaciones")
     .description("Consultá las cotizaciones a lo largo del día.")
     .supportedFamilies(supportedFamilies)
-    .contentMarginsDisabledIfAvailable()
-    // .disfavoredLocationsIfAvailable()
+    .contentMarginsDisabled()
   }
 }
 
@@ -671,44 +644,42 @@ struct SpreadWidgetEntryView : View {
     }
     switch widgetFamily {
     case .accessoryCircular:
-      if #available(iOSApplicationExtension 16.0, *) {
-        if let spreadRate = spreadRate {
-          ZStack {
-            AccessoryWidgetBackground()
-            VStack {
-              Text(spreadRate.name)
-                .font(.custom(fontName, size: 10))
-                .lineLimit(1)
-                .padding(.horizontal, 8)
-              Text(spreadRate.plainChange!)
-                .font(.custom(fontName, size: 13))
-                .lineLimit(1)
-                .conditionalContentTransition(value: spreadRate.changeValue)
-                .padding(.horizontal, 2)
-                .widgetAccentable()
-              Text(spreadRate.price)
-                .font(.custom(fontName, size: 10))
-                .lineLimit(1)
-                .conditionalContentTransition(value: spreadRate.priceValue)
-                .padding(.horizontal, 8)
-            }
+      if let spreadRate = spreadRate {
+        ZStack {
+          AccessoryWidgetBackground()
+          VStack {
+            Text(spreadRate.name)
+              .font(.custom(fontName, size: 10))
+              .lineLimit(1)
+              .padding(.horizontal, 8)
+            Text(spreadRate.plainChange!)
+              .font(.custom(fontName, size: 13))
+              .lineLimit(1)
+              .conditionalContentTransition(value: spreadRate.changeValue)
+              .padding(.horizontal, 2)
+              .widgetAccentable()
+            Text(spreadRate.price)
+              .font(.custom(fontName, size: 10))
+              .lineLimit(1)
+              .conditionalContentTransition(value: spreadRate.priceValue)
+              .padding(.horizontal, 8)
           }
-          .widgetURL(getWidgetUrl(id: firstRate!.id))
-          .widgetBackground()
-        } else {
-          ZStack {
-            AccessoryWidgetBackground()
-            VStack {
-              Text("N/D")
-                .font(.custom(fontName, size: 13))
-                .lineLimit(1)
-                .widgetAccentable()
-            }
-            .padding(.horizontal, 2)
-          }
-          .widgetURL(getWidgetUrl())
-          .widgetBackground()
         }
+        .widgetURL(getWidgetUrl(id: firstRate!.id))
+        .widgetBackground()
+      } else {
+        ZStack {
+          AccessoryWidgetBackground()
+          VStack {
+            Text("N/D")
+              .font(.custom(fontName, size: 13))
+              .lineLimit(1)
+              .widgetAccentable()
+          }
+          .padding(.horizontal, 2)
+        }
+        .widgetURL(getWidgetUrl())
+        .widgetBackground()
       }
     default:
       if let spreadRate = spreadRate {
@@ -787,8 +758,7 @@ struct SpreadWidget: Widget {
     .configurationDisplayName("Brechas")
     .description("Consultá las brechas entre cotizaciones a lo largo del día.")
     .supportedFamilies(supportedFamilies)
-    .contentMarginsDisabledIfAvailable()
-    // .disfavoredLocationsIfAvailable()
+    .contentMarginsDisabled()
   }
 }
 
@@ -820,7 +790,6 @@ struct RateWidgets: WidgetBundle {
   }
 }
 
-@available(iOS 16.0, *)
 struct RateWidgets_Previews: PreviewProvider {
   static var previews: some View {
     let rates = lookupRateValues()

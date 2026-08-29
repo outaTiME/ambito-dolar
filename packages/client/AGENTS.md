@@ -4,22 +4,11 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 
 ## Native code
 
-- **Android CNG**: `packages/client/android/` regen by `expo prebuild`. Build output, no hand-edit. Modify via `app.config.ts` / config plugins.
-- **iOS NOT CNG**: `packages/client/ios/` checked-in, edit manual. Ships SwiftUI widgets under `packages/client/ios/RateWidgets`. The widgets are written twice, once here and once as the android module under `packages/client/modules/widgets/`, so a rate, a label, a font size or a `/fetch` schema change moves on both sides: read `packages/client/docs/android-widgets.md` first. SDK upgrade: apply iOS native diffs by hand (see Expo upgrade helper). Widget prebuild integration pending.
-- **iOS prebuild safe without `--clean`**: `expo prebuild --platform ios` merges, preserves `RateWidgets` + manual Podfile/pbxproj diffs. `--clean` clobbers, never use for iOS.
+- **Both platforms CNG**: `packages/client/android/` and `packages/client/ios/` are regen by `expo prebuild`. Build output, gitignored, no hand-edit. Modify via `app.config.ts` / config plugins.
+- **iOS widgets live in `packages/client/targets/`**, generated into the Xcode project by the `@bacons/apple-targets` plugin. Source, committed. `RateWidgets/` is the widget extension, `_shared/` holds what must compile into the app target too. Read `packages/client/docs/ios-widgets.md` before touching it.
+- **Always `--clean` on iOS prebuild.** It is the SDK 57 default and `expo prebuild -p ios` without it crashes the apple-targets plugin.
+- **After a version, dep or SDK bump**: `yarn run client:prebuild:ios`, nothing else. It regenerates `ios/` and runs `pod install`, there is nothing left in there to preserve. What used to be hand-edited in the Xcode project now lives in `app.config.ts` and in `packages/client/targets/RateWidgets/expo-target.config.js`.
 - **Android nav bar (edge-to-edge)**: framework does not set button appearance. Use `expo-navigation-bar` — `<NavigationBar style="auto" />` in `RootLayout` + plugin `['expo-navigation-bar', { enforceContrast: true }]` for os scrim behind 3-button nav.
-
-## iOS post-bump workflow
-
-After `app.config.ts` version/build bump, dep bumps, or SDK sync:
-
-```bash
-cd packages/client/ios && pod update && cd - && yarn run client:prebuild:ios
-```
-
-- `pod update` first: refreshes Pods/Podfile.lock with current Podfile constraints (Hermes, RN core, transitive bumps).
-- `prebuild` then: syncs `app.config.ts` to `Info.plist` (CFBundle keys) + `Expo.plist` + Podfile plugin specs. Without `--clean` preserves manual edits.
-- Major SDK bump (Podfile constraints themselves change, RN version etc.): prebuild first then `pod update` after, so pod resolution reads the SDK-updated Podfile.
 
 ## Lint
 

@@ -30,22 +30,11 @@ export default {
     instantApiId: process.env.INSTANT_APP_ID,
     eas: {
       projectId: '88dc0a10-eec5-11e8-bdb0-e9d94f6dfa7d',
-      build: {
-        experimental: {
-          ios: {
-            appExtensions: [
-              {
-                targetName: 'RateWidgetsExtension',
-                bundleIdentifier: 'im.outa.AmbitoDolar.RateWidgets',
-              },
-            ],
-          },
-        },
-      },
     },
   },
   plugins: [
     'expo-router',
+    '@bacons/apple-targets',
     'expo-localization',
     'expo-image',
     './plugins/withAndroidBottomNavDimens',

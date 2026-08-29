@@ -44,7 +44,7 @@ Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews
 The widgets are written twice, once in Swift and once in Kotlin, so these move together. Touching
 one side alone is the bug that gets shipped.
 
-- **A rate added or retired**: `packages/client/ios/RateWidgets/Utils/Helper.swift` `getRateTypes()` and
+- **A rate added or retired**: `packages/client/targets/RateWidgets/Utils/Helper.swift` `getRateTypes()` and
   `Format.kt` `RATE_TYPES`. Both mirror `getAvailableRateTypes()` in `packages/core`, which is
   the order the app itself lists rates in, and the one the picker and the defaults read here.
   Retired ones stay commented on the ios list and are simply absent from the kotlin one, which doubles as the picker. A widget still configured on a retired type shows its raw id in the config row until the user picks another, which is the whole cost of not keeping a second list of names to hand sync. `getRateTitle` in the same core file is a third copy of
@@ -54,7 +54,9 @@ one side alone is the bug that gets shipped.
   times 1.05. Measured against real captures, that factor puts android inside the spread ios
   already has between an iPhone Air and a 15 Pro Max, so change the role and not the factor.
 - **A default**: ios in `Helper.swift`, `getDefaultRateType`, `getDefaultRateTypes` and
-  `getDefaultSpreadRateTypes`, plus the intent; android in each provider's `defaultRates`.
+  `getDefaultSpreadRateTypes`, read from `RateTypeQuery.defaultResult` for the single rate and from
+  each provider's `rateTypes(for:)` fallback for the two lists; android in each provider's
+  `defaultRates`.
 - **A /fetch schema change**: ios first, always. `lookupRateValues` reads the array by index and
   forces its casts, so it only survives because `wellFormed` filters ahead of it, while android drops
   the rate and keeps the rest.
@@ -62,7 +64,7 @@ one side alone is the bug that gets shipped.
 ### A new widget
 
 - **iOS**: a `struct X: Widget` with its `kind`, added to the `RateWidgets` bundle, plus a
-  `WidgetConfigurationIntent` with its parameters in `packages/client/ios/RateWidgets/Intents.swift`.
+  `WidgetConfigurationIntent` with its parameters in `packages/client/targets/RateWidgets/Intents.swift`.
   One file, one target.
 - **Android**: a `WidgetProvider` subclass, one line in `Widgets.ALL`, a `<receiver>`, an
   `res/xml/widget_x_info.xml` in the module, label and description in `strings.xml`, the preview png in
@@ -103,9 +105,9 @@ Module resources are all prefixed `widget_`, plus `Theme.Widget.Config`. Keep it
 
 - **Voseo everywhere.** App I18n is rioplatense voseo (`Elegí`, `verificá`, `Tenés`). No tuteo (`Elige`, `verifica`, `Tienes`). Applies to iOS Swift strings too.
 - **iOS is the base for meaning, not for format.** New Android widget copy derives verb + noun from the iOS `.description(...)`, never invented fresh.
-- iOS `.description(...)` (`packages/client/ios/RateWidgets/RateWidgets.swift`): full sentence, trailing period. Apple style.
+- iOS `.description(...)` (`packages/client/targets/RateWidgets/RateWidgets.swift`): full sentence, trailing period. Apple style.
 - Android `description` (`packages/client/modules/widgets/android/src/main/res/values/strings.xml`): imperative, **no trailing period**, 4-8 words. Android picker style, matches system widgets (Battery `See battery info for your devices`, Chrome `Quickly start a search in Chrome`, Clock `Choose cities in the Clock app`).
 - Android drops the iOS filler, keeps the verb: iOS `Consultá las cotizaciones a lo largo del día.` → Android `Consultá las cotizaciones del día`.
 - `label` (Android) and `.configurationDisplayName(...)` (iOS) identical string.
-- Config section titles come from the iOS intent parameter titles (the `@Parameter(title:)` of each `WidgetConfigurationIntent` in `packages/client/ios/RateWidgets/Intents.swift`): Rate `Cotización` + `Mostrar`, list `Cotizaciones` + `Mostrar`, Spread `Cotizaciones`. Singular when the widget takes one rate, plural when it takes several.
+- Config section titles come from the iOS intent parameter titles (the `@Parameter(title:)` of each `WidgetConfigurationIntent` in `packages/client/targets/RateWidgets/Intents.swift`): Rate `Cotización` + `Mostrar`, list `Cotizaciones` + `Mostrar`, Spread `Cotizaciones`. Singular when the widget takes one rate, plural when it takes several.
 - Android description shorter than the current one is always safe, no hard length cap but picker truncates.

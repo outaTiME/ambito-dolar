@@ -38,8 +38,7 @@ lerna-debug.log
 
 # Ignoring using CNG
 packages/client/android/
-# Remove next line when CNG is supported on iOS
-packages/client/targets/
+packages/client/ios/
 
 # Environment variables
 .env
