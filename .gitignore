@@ -40,6 +40,9 @@ lerna-debug.log
 packages/client/android/
 packages/client/ios/
 
+# Written by @bacons/apple-targets on every prebuild, from the colors of expo-target.config.js
+packages/client/targets/*/Assets.xcassets/*.colorset/
+
 # Environment variables
 .env
 
