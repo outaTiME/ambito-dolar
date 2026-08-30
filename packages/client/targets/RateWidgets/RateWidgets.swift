@@ -285,10 +285,8 @@ extension View {
 }
 
 struct RateProvider: AppIntentTimelineProvider {
-  // the intent no longer carries a handler supplying the default, so an unconfigured widget
-  // falls back here to the same Helper value IntentHandler.defaultRateType used to return
   private func rateTypes(for configuration: SelectRateTypeIntent) -> [RateType] {
-    [configuration.rateType ?? Helper.getDefaultRateType()]
+    [configuration.rateType]
   }
   func placeholder(in context: Context) -> SimpleEntry {
     let rates = lookupRateValues()
@@ -445,7 +443,7 @@ struct RateWidget: Widget {
 
 struct ListRatesProvider: AppIntentTimelineProvider {
   private func rateTypes(for configuration: SelectRateTypesIntent) -> [RateType] {
-    let selected = configuration.rateTypes ?? []
+    let selected = configuration.rateTypes
     return selected.isEmpty ? Helper.getDefaultRateTypes() : selected
   }
   func placeholder(in context: Context) -> SimpleEntry {
@@ -576,7 +574,7 @@ struct ListRatesWidget: Widget {
 
 struct SpreadProvider: AppIntentTimelineProvider {
   private func rateTypes(for configuration: SelectSpreadRateTypesIntent) -> [RateType] {
-    let selected = configuration.rateTypes ?? []
+    let selected = configuration.rateTypes
     return selected.isEmpty ? Helper.getDefaultSpreadRateTypes() : selected
   }
   func placeholder(in context: Context) -> SimpleEntry {

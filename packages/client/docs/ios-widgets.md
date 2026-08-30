@@ -12,40 +12,60 @@ packages/client/targets/
     expo-target.config.js              everything the pbxproj used to hold by hand
     Info.plist                         hand managed, the plugin never rewrites it
     RateWidgets.swift                  views, providers, @main WidgetBundle
-    Intents.swift                      AppEntity, AppEnum, the 3 WidgetConfigurationIntent
-    Utils/Helper.swift                 the rate list, mirrored by Format.kt on android
+    _shared/Intents.swift              AppEntity, AppEnum, the 3 WidgetConfigurationIntent
+    _shared/Helper.swift               the rate list, mirrored by Format.kt on android
     FiraGO-Regular.otf                 symlink, see below
-    Assets.xcassets/                   source, committed
+    Assets.xcassets/                   symbolset committed, colorsets generated
 ```
 
 `@bacons/apple-targets` links the folder as a `PBXFileSystemSynchronizedRootGroup`: Xcode globs it
 at build time, so **any file dropped in becomes part of the target** and Swift-only edits do not
-need a prebuild. Adding, renaming or removing a file in `_shared/` does.
+need a prebuild. Adding, renaming or removing a file in a `_shared/` does.
+
+The intents live in `packages/client/targets/RateWidgets/_shared/` and not next to the views, so the **main app target
+compiles them too**. The plugin README asks for that, and the hand written project did the same by
+putting `RateWidgets.intentdefinition` in the Sources phase of all three targets. The app target is
+16.4 against the extension's 17.0, which is why the intents carry `@available` annotations.
 
 ## Traps
 
-**The font is a symlink**, pointing at the same `../../assets/fonts/FiraGO-Regular.otf` that
+**The font is a symlink**, pointing at the same `packages/client/assets/fonts/FiraGO-Regular.otf` that
 `expo-font` puts in the app. Never turn it into a copy. Measured on device: an extension only loads
 fonts from its own bundle, so the file in the target folder, `UIAppFonts` in the target `Info.plist`
 and `Font.custom("FiraGO-Regular", ...)` are all three required, and dropping either of the first
-two falls back to the system font silently. It survives EAS, the archive keeps symlinks verbatim and
-`assets/` ships with it.
+two falls back to the system font silently. It survives EAS, measured by simulating the upload: the
+symlink and its target both go, and `packages/client/assets/` ships with it.
 
-**`Assets.xcassets` is committed source.** The plugin only creates and writes, never deletes, so a
-hand written entry survives every prebuild and a renamed colorset lingers until removed by hand.
-`AppWidgetIcon.symbolset` must not be declared in `images:` or the SVG ends up in the folder twice.
+**`Assets.xcassets` is compiled whole, but only part of it is source.** Xcode globs the folder, so
+anything in it lands in `Assets.car`. `AppWidgetIcon.symbolset` is the hand made one and is
+committed; WidgetKit picks it up by name, which is why it needs no entry in the target config and
+must not be declared in `images:` or the SVG ends up in the folder twice. The two colorsets are
+plugin output, rewritten on every prebuild, and are ignored by both git and EAS. What differs is who points at them:
+the symbol is referenced by name, the colors only through the build settings below.
 
-**`colors:` writes the assets, not the build settings.** The target template names both
-`$widgetBackground` and `$accent` whatever the config says; `with-xcode-changes.js` then removes
-`ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME` when `$accent` is absent but never removes the
-widget background one. So dropping `$widgetBackground` leaves a setting pointing at a colorset that
-no longer exists. `$accent` is left undeclared on purpose: the hand written project pointed
-`AccentColor` at the system `linkColor` and the plugin only emits literal display-p3 components, so
-declaring it would freeze a hex of ours where a system colour used to be. The tint falls back to the
-system default instead.
+**`colors:` owns both the colorset and the build setting, and you cannot keep one without the
+other.** For every name in `colors:` the plugin writes `packages/client/targets/RateWidgets/Assets.xcassets/<name>.colorset/Contents.json`
+into the source tree on each prebuild, and `with-xcode-changes.js` sets
+`ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME` / `ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME`
+only while the matching entry exists, removing it otherwise. So the trick that keeps
+`AppWidgetIcon.symbolset` hand written, leaving it out of `images:`, has no equivalent here: drop
+`$accent` and the colorset survives but the gallery button goes black. Both measured.
 
-**Never prebuild iOS without `--clean`.** It is the SDK 57 default; `--no-clean` crashes the plugin
-and can duplicate targets first. Upstream issues 201 and 202.
+That is what freezes `$accent` to a literal where the hand written project pointed `AccentColor` at
+the system `linkColor`. `with-ios-colorset.js` always emits `color-space: display-p3` and
+`custom-color-from-css.js` quantises through `@react-native/normalize-colors`, so the config takes
+sRGB hex and renders it as p3: `#007AFF` has to be written as `#3478F6` and `#0A84FF` as `#3B82F7`,
+or the tone comes out visibly off. Measured, not documented: the conversion lands within the 8 bit
+rounding, about 0.2 levels of 255, of what a device renders for `systemBlue`, and Apple documents
+`linkColor` and `systemBlue` as separate semantic colors without publishing components for either.
+A colorset can reference a system color
+(`{"platform":"ios","reference":"linkColor"}`) and that was tried: the next prebuild overwrote it.
+Doing it properly would take a config plugin of our own running after `apple-targets`. Not worth it
+for a difference that only shows under increased contrast.
+
+**Never prebuild iOS without `--clean`.** It is the SDK 57 default anyway. Upstream issues 201 and
+202 report `--no-clean` crashing the plugin and duplicating targets; not reproduced here, and not
+worth reproducing.
 
 **Deployment target is 17.0**, above the app's 16.4, because `AppIntentConfiguration` requires it.
 Deliberate. It costs widgets on iOS 16.4 to 16.7 only, the app itself needs 16.4.
@@ -53,19 +73,56 @@ Deliberate. It costs widgets on iOS 16.4 to 16.7 only, the app itself needs 16.4
 **The extension reports `CFBundleDevelopmentRegion = en`** where the hand written project said
 `es-419`, and it cannot be fixed from the target `Info.plist`: `GENERATE_INFOPLIST_FILE` makes Xcode
 synthesise it from the project level `developmentRegion`, which no Expo option exposes. Measured
-twice. Nothing resolves against it, every string is a Swift literal, and the App Store language
-comes from the app bundle, which still reports `es-419`. Localizing the widget one day means a
+twice. Nothing resolves against it, every string is a Swift literal, and the store listing kept
+reporting Spanish with the app bundle still at `es-419`. Localizing the widget one day means a
 config plugin.
 
 **No `icon` in the target config**, so the extension inherits the project level
 `ASSETCATALOG_COMPILER_APPICON_NAME`. Fine with a plain PNG app icon, revisit before moving to an
 Xcode 26 `.icon` bundle. Upstream issue 159.
 
+**The rate parameters have to be non optional.** `[RateType]?` is what Xcode's own converter emits
+and with it the editor opens on three "Seleccionar" rows, while the widget renders fine off the
+provider fallback. Dropping the `?` and handing the parameter its own query is what fixes it:
+
+```swift
+@Parameter(title: "Cotizaciones", size: [...], query: ListRateTypesQuery())
+var rateTypes: [RateType]
+```
+
+Apple states the rule plainly in `widgetkit/making-a-configurable-widget`: "If your widget includes
+nonoptional parameters, you must supply a default value... A second option is to use a query type
+that implements `defaultResult()`." `DefaultValue` is an associated type, one per query, which is
+why Lista and Brechas each need their own `EntityQuery` to keep their own defaults. Per parameter
+queries exist for collections, `AppIntents.swiftinterface` line 11216.
+
+Only the collections actually needed this: the single rate parameter opened on Oficial while it was
+still `RateType?`. Why they differ was never established. It is non optional too, for symmetry, and
+that is the one gap here: its upgrade path was never re-tested from an App Store build, the
+collections were. If a widget ever comes back from an update having lost its rate, look here first.
+
+**The non optional warning is deliberate, do not silence it by adding `?`.** The metadata processor
+prints, twice per parameter:
+
+```
+Encountered a non-optional type for parameter: rateTypes. Conformance to the following AppIntent
+protocols requires all parameter types to be optional: ... AppIntents.WidgetConfigurationIntent
+```
+
+Making the parameter optional to quiet it is exactly what breaks the defaults. The risk it points
+at is real but was measured and does not happen: a widget configured under the SiriKit build keeps
+its rates after updating onto the non optional parameter, tested on device with four widgets, two
+hand configured and two on defaults. Re-test that whenever Xcode or the deployment target moves.
+
 **`placeholder(in:)` goes to the network, leave it.** Apple asks that callback to return immediately
 and ours can block five seconds in `getRates()`, so it reads like a bug. Reading `storedRates()`
 instead was tried and made the widget show "Cotizaciones no disponibles" right after an install:
 WidgetKit paints the placeholder as the widget content until the first timeline arrives, and the
-blocking fetch is what fills that gap. If revisited, the check is to install and look at the widgets
+blocking fetch is what fills that gap. Rewriting `getRates()` as `async` works and would be the
+correct shape, since `snapshot` and `timeline` are async now and a blocked semaphore holds a
+cooperative pool thread, but it drags a synthesised placeholder with it, so it was left for its own
+change. It is also why a widget preview in the gallery sometimes paints empty: the three previews
+race the same five second fetch. If revisited, the check is to install and look at the widgets
 before opening the app.
 
 ## Widget configuration
@@ -77,55 +134,61 @@ together, all of it load bearing:
   the configuration of widgets already placed by users when they update. Verified on device.
 - `static let isDiscoverable = false`. AppIntents flips the SiriKit default: without this the three
   configuration intents show up in the Shortcuts app as actions named in English.
-- `RateTypeQuery` is an `EntityStringQuery` and not an `EntityQuery`. Being searchable is what makes
-  the system present the full sheet with a search field instead of a compact menu.
+- All three queries are `EntityStringQuery`, so `entities(matching:)` backs the search field in
+  every rate picker. It does not decide whether a picker opens compact or full screen; what does is
+  not known.
 - `entities(for:)` resolves in the order asked for. The list widget lets the user drag its rates
   around and that order is the configuration.
-- `@Parameter(size: [.systemSmall: 3])` replaces the per-family fixed array sizes SiriKit had.
+- `@Parameter(size: [...])` replaces `INIntentParameterArraySizes`. All eight families are listed
+  exactly as the `.intentdefinition` had them even though only two are supported, for schema parity.
+- The three rate parameters are **non optional**, and the collections each carry their own query.
+  See the trap above, this is the whole reason a fresh widget opens on its defaults.
 
-A rate retired from `Helper.getRateTypes()` no longer resolves, so widgets configured with it fall
-back to defaults. It already rendered nothing before, since `lookupRateValues` filters unknown
-types.
+A rate retired from `Helper.getRateTypes()` no longer resolves, so `entities(for:)` drops it from
+the selection. The provider only substitutes defaults when that leaves the selection empty,
+otherwise the remaining rates stay. It already rendered nothing before, since `lookupRateValues`
+filters unknown types.
 
-### The blank rows on the first open are an iOS bug, do not chase them
+### The blank rows on the first open of a migrated widget
 
-A widget carried over from the SiriKit build shows its array rows empty the first time its
+A widget carried over from the SiriKit build shows its collection rows empty the first time its
 configuration sheet opens, right count and drag handles but no labels. Close and reopen and they
-are there for good. Once per placed widget, never on one added new, only the two array widgets, and
-the widget itself renders the right rates throughout. Reproduced on two devices, iOS 26 and 27, over
-nine instances, so it is not a regression in either.
+are there for good. Once per placed widget, only on widgets that existed before the update, never
+on one added new, and the widget itself renders the right rates throughout. The stored
+configuration is intact: the rates the user picked survive the update.
 
-It was measured, not argued. On the open that paints blank we resolve everything and the system
-asks us how to draw it:
+This is the cost of the SiriKit to App Intents transition and it is not worth more device builds.
+It is not the same defect as the "Seleccionar" one, which was ours and is fixed above, and there is
+no evidence it is a bug in iOS either.
+
+On the open that paints blank the query does answer, measured with `os_log` on device:
 
 ```
-01:00:03.495  entities(for:) asked=3 -> got=3
-01:00:03.496  displayRepresentation   x3
+entities(for:) asked=3 -> got=3
+displayRepresentation   x3
 ```
 
 Three identifiers in, three entities out, three display representations handed over, three empty
-rows drawn. Closing the sheet untouched leaves the widget unchanged, which is only possible if the
-sheet held the right selection all along.
+rows drawn. Closing the sheet untouched leaves the widget unchanged, so nothing was persisted over
+the stored configuration. Good evidence the selection was there and only the labels failed to draw,
+but it stays an inference.
 
-Five candidates were tested on device and all five fell. Do not re-run these:
+Tested on device and fallen, do not re-run:
 
 | Candidate | How it fell |
 |---|---|
 | Lazy migration that never consults the query | `entities(for:)` is called on the first pass |
 | `compactMap` dropping legacy identifiers | `asked=3 -> got=3`, nothing was dropped |
 | The blocking network call in `placeholder(in:)` | a freshly added widget runs the same code and never fails |
-| One shared query whose `defaultResult()` returns a scalar | split into three queries, no change |
-| Collection parameter backed by `EntityStringQuery` | dropped to plain `EntityQuery`, no change |
-
-The shape is not the problem either. Xcode's own SiriKit converter emits exactly this, and
-`twofas/2fas-ios` ships the identical `CustomIntentMigratedAppIntent` plus `[Entity]?` since 2024.
-`TransientAppEntity`, which Apple's migration page names for custom objects, is impossible here: its
-`id` is a framework owned `UUID` that cannot carry `oficial`, and its private query has no
-`suggestedEntities`, so there would be no picker. Two Apple feedbacks on `[AppEntity]` collection
-configuration in these versions are open and unanswered, FB23075373 and FB23114212.
+| `AppIntentTimelineProvider.recommendations()` | returned two visibly different entries, the gallery showed neither |
+| `static var parameterSummary { Summary() }` | lands in the metadata as `actionConfiguration`, no change |
+| A custom `init()` on the intent assigning the rates | no change |
+| `DisplayRepresentation` built without string interpolation | no change |
+| Moving the intents into `_shared/` so the app target compiles them | the app metadata did gain the entity and query, no change |
+| Clean uninstall plus device reboot, to rule out a stale `appintentsd` index | no change |
 
 ## Rollback
 
 The plugin only runs at prebuild, never at runtime. If it breaks: `expo prebuild -p ios`, commit
-the generated `ios/`, drop `@bacons/apple-targets` from `app.config.ts` and un-ignore
+the generated `packages/client/ios/`, drop `@bacons/apple-targets` from `app.config.ts` and un-ignore
 `packages/client/ios/`. The Xcode project becomes hand maintained again, as it was before 2026-08.

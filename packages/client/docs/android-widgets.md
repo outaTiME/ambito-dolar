@@ -44,7 +44,7 @@ Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews
 The widgets are written twice, once in Swift and once in Kotlin, so these move together. Touching
 one side alone is the bug that gets shipped.
 
-- **A rate added or retired**: `packages/client/targets/RateWidgets/Utils/Helper.swift` `getRateTypes()` and
+- **A rate added or retired**: `packages/client/targets/RateWidgets/_shared/Helper.swift` `getRateTypes()` and
   `Format.kt` `RATE_TYPES`. Both mirror `getAvailableRateTypes()` in `packages/core`, which is
   the order the app itself lists rates in, and the one the picker and the defaults read here.
   Retired ones stay commented on the ios list and are simply absent from the kotlin one, which doubles as the picker. A widget still configured on a retired type shows its raw id in the config row until the user picks another, which is the whole cost of not keeping a second list of names to hand sync. `getRateTitle` in the same core file is a third copy of
@@ -64,8 +64,8 @@ one side alone is the bug that gets shipped.
 ### A new widget
 
 - **iOS**: a `struct X: Widget` with its `kind`, added to the `RateWidgets` bundle, plus a
-  `WidgetConfigurationIntent` with its parameters in `packages/client/targets/RateWidgets/Intents.swift`.
-  One file, one target.
+  `WidgetConfigurationIntent` with its parameters in `packages/client/targets/RateWidgets/_shared/Intents.swift`,
+  which compiles into the app target as well as the widget one.
 - **Android**: a `WidgetProvider` subclass, one line in `Widgets.ALL`, a `<receiver>`, an
   `res/xml/widget_x_info.xml` in the module, label and description in `strings.xml`, the preview png in
   `packages/client/assets/widgets/` and its line in the module `build.gradle`. Four of those are static
@@ -107,7 +107,7 @@ Module resources are all prefixed `widget_`, plus `Theme.Widget.Config`. Keep it
 - **iOS is the base for meaning, not for format.** New Android widget copy derives verb + noun from the iOS `.description(...)`, never invented fresh.
 - iOS `.description(...)` (`packages/client/targets/RateWidgets/RateWidgets.swift`): full sentence, trailing period. Apple style.
 - Android `description` (`packages/client/modules/widgets/android/src/main/res/values/strings.xml`): imperative, **no trailing period**, 4-8 words. Android picker style, matches system widgets (Battery `See battery info for your devices`, Chrome `Quickly start a search in Chrome`, Clock `Choose cities in the Clock app`).
-- Android drops the iOS filler, keeps the verb: iOS `Consultá las cotizaciones a lo largo del día.` → Android `Consultá las cotizaciones del día`.
+- Android drops the iOS filler, keeps the verb: iOS `Consultá las cotizaciones a lo largo del día.` becomes Android `Consultá las cotizaciones del día`.
 - `label` (Android) and `.configurationDisplayName(...)` (iOS) identical string.
-- Config section titles come from the iOS intent parameter titles (the `@Parameter(title:)` of each `WidgetConfigurationIntent` in `packages/client/targets/RateWidgets/Intents.swift`): Rate `Cotización` + `Mostrar`, list `Cotizaciones` + `Mostrar`, Spread `Cotizaciones`. Singular when the widget takes one rate, plural when it takes several.
+- Config section titles come from the iOS intent parameter titles (the `@Parameter(title:)` of each `WidgetConfigurationIntent` in `packages/client/targets/RateWidgets/_shared/Intents.swift`): Rate `Cotización` + `Mostrar`, list `Cotizaciones` + `Mostrar`, Spread `Cotizaciones`. Singular when the widget takes one rate, plural when it takes several.
 - Android description shorter than the current one is always safe, no hard length cap but picker truncates.
