@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [14.1.1](https://github.com/outaTiME/ambito-dolar/compare/%40ambito-dolar%2Fclient%4014.1.0...%40ambito-dolar%2Fclient%4014.1.1) (2026-08-31)
+
+### Bug Fixes
+
+- cramped android widgets on a launcher that gives a small card ([43626dd](https://github.com/outaTiME/ambito-dolar/commit/43626dd47154fbf8140e154c83cbf6559ce6a1b1))
+- prevent the iOS widget from blocking a cooperative thread ([7fe3684](https://github.com/outaTiME/ambito-dolar/commit/7fe368427ea5caff15240609e6831a126aa69f4d))
+
 # [14.1.0](https://github.com/outaTiME/ambito-dolar/compare/%40ambito-dolar%2Fclient%4014.0.0...%40ambito-dolar%2Fclient%4014.1.0) (2026-08-31)
 
 ### Bug Fixes

@@ -90,7 +90,7 @@
     "pngjs": "^7.0.0",
     "typescript": "~6.0.3"
   },
-  "version": "14.1.0",
+  "version": "14.1.1",
   "installConfig": {
     "hoistingLimits": "workspaces"
   },
