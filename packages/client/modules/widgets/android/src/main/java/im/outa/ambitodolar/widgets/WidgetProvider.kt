@@ -244,11 +244,11 @@ abstract class WidgetProvider : AppWidgetProvider() {
 
   // a ceiling, never a layout. Sharing a row out is the LinearLayout job, done with the width it
   // really has, and that is the whole reason these are real views and not one drawn image.
-  // Twice the card on purpose. What the host reports is not what it lays out, measured, one ui
-  // says 166dp for a card it gives around 184, and a ceiling set at the reported width cuts text
-  // that had room: a spread of two long rates measures just over the 166 and fits the 184.
-  // The report can come up short, but not by half, so at twice the width nothing normal is ever
-  // truncated and something pathological still is.
+  // Twice the card on purpose, because what the host reports is not what it lays out and the gap
+  // goes either way: measured, a galaxy s9 on one ui reports 174dp for a card it draws at 144,
+  // while the pixel launcher reports it to the dp. A ceiling set at the reported width would cut
+  // text that had room, and at twice it nothing normal is ever truncated while something
+  // pathological still is.
   // The picker preview has no widget to ask, so it falls back to the width this provider itself
   // declares as its minimum, which is ours and not a guess. A host that answers something absurd
   // can drive this to zero, and zero reads as no ceiling: nothing is truncated, which beats a
@@ -285,27 +285,54 @@ abstract class WidgetProvider : AppWidgetProvider() {
     return options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
   }
 
+  // Sizes is a proportion of the card, glyph height over card width, so it only holds while the
+  // card is the width it was calibrated at. What decides that width is the host, not the android
+  // version: below api 31 it places by minWidth and adds its own margins, from 31 targetCellWidth
+  // hands over the whole cell, and a launcher with a dense grid can be tight on either. Measured
+  // on the emulators, 130dp of card on android 10 against 176 on android 12, with 140dp of
+  // content to fit in the first.
+  // Never above 1: a card at or over the reference keeps exactly the sizes it was drawn for, so
+  // everywhere the widget renders right today nothing moves
+  private fun scaleFor(context: Context, widgetId: Int?): Float {
+    val manager = AppWidgetManager.getInstance(context)
+    val reported = widgetId?.let { widthDp(manager.getAppWidgetOptions(it)) } ?: 0
+    if (reported <= 0) {
+      return 1f
+    }
+    return (reported / REFERENCE_DP).coerceIn(SCALE_FLOOR, 1f)
+  }
+
   private fun views(context: Context, content: Content?, widgetId: Int?): RemoteViews {
     val views = RemoteViews(context.packageName, layout)
     views.setViewVisibility(R.id.widget_content, if (content == null) View.GONE else View.VISIBLE)
     views.setViewVisibility(R.id.widget_empty, if (content == null) View.VISIBLE else View.GONE)
+    val scale = scaleFor(context, widgetId)
+    // the padding follows the text but at half its rate: fixed it turns into a frame around a
+    // card that shrank around it, and at the full rate it gives away more room than the content
+    // needs back
+    if (scale < 1f) {
+      val padding =
+        (context.resources.getDimensionPixelSize(R.dimen.widget_padding) * (1f + scale) / 2f)
+          .roundToInt()
+      views.setViewPadding(R.id.widget_content, padding, padding, padding, padding)
+    }
     when (content) {
       null ->
         views.slot(
           context,
           R.id.widget_empty,
           context.getString(emptyText),
-          Sizes.EMPTY,
+          Sizes.EMPTY * scale,
           R.color.widget_foreground,
           wrap = true,
         )
       is Content.Card -> {
         val room = roomPx(context, widgetId)
-        views.slot(context, R.id.widget_title, content.title, Sizes.TITLE, R.color.widget_foreground, room = room)
-        views.slot(context, R.id.widget_detail, content.detail, Sizes.DETAIL, R.color.widget_secondary, room = room)
-        views.slot(context, R.id.widget_small, content.small, Sizes.CHANGE, content.smallColor, room = room)
-        views.slot(context, R.id.widget_big, content.big, Sizes.VALUE, content.bigColor, room = room)
-        views.slot(context, R.id.widget_date, content.date, Sizes.DATE, R.color.widget_secondary, room = room)
+        views.slot(context, R.id.widget_title, content.title, Sizes.TITLE * scale, R.color.widget_foreground, room = room)
+        views.slot(context, R.id.widget_detail, content.detail, Sizes.DETAIL * scale, R.color.widget_secondary, room = room)
+        views.slot(context, R.id.widget_small, content.small, Sizes.CHANGE * scale, content.smallColor, room = room)
+        views.slot(context, R.id.widget_big, content.big, Sizes.VALUE * scale, content.bigColor, room = room)
+        views.slot(context, R.id.widget_date, content.date, Sizes.DATE * scale, R.color.widget_secondary, room = room)
       }
       is Content.Rows -> {
         val room = roomPx(context, widgetId)
@@ -319,31 +346,31 @@ abstract class WidgetProvider : AppWidgetProvider() {
           views.setViewVisibility(ids[0], visibility)
           views.setViewVisibility(ids[1], visibility)
           if (row == null) {
-            views.slot(context, ids[2], " ", Sizes.ROW_NAME, R.color.widget_foreground)
-            views.slot(context, ids[3], " ", Sizes.ROW_VALUE, R.color.widget_foreground)
-            views.slot(context, ids[4], " ", Sizes.DATE, R.color.widget_secondary)
-            views.slot(context, ids[5], " ", Sizes.ROW_CHANGE, R.color.widget_secondary)
+            views.slot(context, ids[2], " ", Sizes.ROW_NAME * scale, R.color.widget_foreground)
+            views.slot(context, ids[3], " ", Sizes.ROW_VALUE * scale, R.color.widget_foreground)
+            views.slot(context, ids[4], " ", Sizes.DATE * scale, R.color.widget_secondary)
+            views.slot(context, ids[5], " ", Sizes.ROW_CHANGE * scale, R.color.widget_secondary)
           } else {
             views.slot(
               context,
               ids[2],
               row.name,
-              Sizes.ROW_NAME,
+              Sizes.ROW_NAME * scale,
               R.color.widget_foreground,
               room = room,
               floor = SHRINK_FLOOR,
             )
-            views.slot(context, ids[3], row.price, Sizes.ROW_VALUE, R.color.widget_foreground, room = room)
+            views.slot(context, ids[3], row.price, Sizes.ROW_VALUE * scale, R.color.widget_foreground, room = room)
             views.slot(
               context,
               ids[4],
               row.date,
-              Sizes.DATE,
+              Sizes.DATE * scale,
               R.color.widget_secondary,
               room = room,
               floor = SHRINK_FLOOR,
             )
-            views.slot(context, ids[5], row.change, Sizes.ROW_CHANGE, row.changeColor, room = room)
+            views.slot(context, ids[5], row.change, Sizes.ROW_CHANGE * scale, row.changeColor, room = room)
           }
         }
       }
@@ -373,6 +400,17 @@ abstract class WidgetProvider : AppWidgetProvider() {
   companion object {
     // how many cards wide a text may be before it is cut, see roomPx
     private const val CEILING = 2
+
+    // the card width Sizes was calibrated against, and the rule for it is to stay under the
+    // narrowest report of a device where the widget already renders right, so that every one of
+    // them lands over 1 and the coerce leaves it at exactly 1. Measured: a galaxy s9 reports 174
+    // and looks right, an android 12 emulator reports 175 and looks right, an android 10 emulator
+    // reports 130 and overflows. 170 clears the first two with room and still corrects the third
+    private const val REFERENCE_DP = 170f
+
+    // past this the card is so small that shrinking further reads worse than letting the ellipsis
+    // do its work, which TextBitmap already does through room and floor
+    private const val SCALE_FLOOR = 0.7f
 
     // where setWidgetPreview starts existing
     private const val PREVIEW_SDK = 35

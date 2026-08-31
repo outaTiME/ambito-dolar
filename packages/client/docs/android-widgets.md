@@ -11,12 +11,27 @@ Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews
 - **Three providers over one base.** `WidgetProvider` holds the machinery: `goAsync`, the executor, the fetch, the empty state, the deep link, the android 15 preview, the cleanup on delete. `RateWidget`, `ListWidget` and `SpreadWidget` only declare their defaults, label, empty text, layout and how they fill the slots. A fourth widget writes no machinery, only that declaration, plus the registrations listed below.
 - **Two layouts, not three.** `widget_card.xml` is the six slots every ios systemSmall card lays out, title / detail / gap / small / big / date, and serves the rate and the spread: what changes is which value lands on which slot and which one carries the change color. `widget_list.xml` is the three rate one. `Content.Card` and `Content.Rows` pick between them.
 - **The card is square** through an ImageView with `adjustViewBounds` over a 1:1 shape drawable. Never `match_parent` on the card. Sizing the card from what the launcher reports is unreliable, measured on two phones: a Moto Edge 30 Ultra cropped 16dp and a Galaxy S9 scaled to 78%.
+- **The sizes scale to the card, `scaleFor` in `WidgetProvider.kt`.** `Sizes` is a proportion of the
+  card, glyph height over card width, so it holds only while the card is the width it was calibrated
+  at, and that width is the launcher decision, not the android version. Every size is multiplied by
+  `reported / REFERENCE_DP`, coerced into `SCALE_FLOOR .. 1`, and the content padding follows at
+  `(1 + scale) / 2`, since left fixed it reads as a frame around a card that shrank around it.
+  The cap at 1 is what keeps every card at or over the reference rendering exactly as it does today,
+  and `REFERENCE_DP` stays **under the narrowest report of a device that renders right** so that it
+  lands there: 170 against the 174 of an s9, and raising it past 174 would start shrinking that
+  phone. `SCALE_FLOOR` is 0.7, past which the ellipsis reads better than more shrinking and
+  `TextBitmap` already does it through `room` and `floor`. With no widget to ask, the picker preview
+  gets 1 and is not scaled.
+  Measured with `uiautomator dump` against the reported width: a galaxy s9 on android 10 with one ui
+  reports 174dp and draws 144 and renders right, an android 12 emulator reports 175 and draws 176
+  and renders right, an android 10 emulator reports 130 and draws 130 and the content overflows it.
+  The two numbers do not track each other, so the ratio is the signal and not the difference.
 - **One role, one size, in `Sizes.kt`.** The ios point sizes times `1.05`, measured as glyph height over card width, which is independent of screen and density: android then lands inside the spread ios already has between an iPhone Air and a 15 Pro Max. In dp and not sp, so the system font scale cannot move them, which is what `sizeCategory large` does on ios. A new widget picks roles from there and adds none, or the same date drifts to two sizes as it once did, 12.1 on the card against 12.7 on the list.
 - **One role, one color.** `widget_foreground` for names, titles and values, `widget_secondary` for subtitles and dates, the change color only on the percentage. The roles live in `views()`; each widget declares only which slot carries the change color, because ios colors the small one on the rate and the big one on the spread. They are `fgColor`, `fgSecondaryColor` and `changeColor` on the ios side, and the date is `#8E8E93` on all three widgets. A date that looks lighter on one is antialiasing or the launcher scaling it down, never a different color.
 - **The box is the one a TextView reserves by default**, top to bottom of the font and not just ascent to descent, which `setIncludePad` keeps. The list lines used to turn that padding off because Roboto reserved room ios does not, and once the text is drawn with FiraGO the two boxes are within two pixels, so there is no exception left to carry.
 - **Gated to api 26** with `android:enabled="@bool/widget_supported"` plus a `values-v26` override, because `Resources.getFont` is api 26 and the text is drawn with it. Below that the launcher never lists the widgets.
 - **`android:fontFamily` does NOT work here.** The launcher builds the views in its own process and resolves only system typefaces, so the font falls back with no error and no log line. Measured on four devices: holds on One UI, fails on pixel, motorola and the emulator. Not a format problem, a `.ttf` fails the same.
-- **The text is drawn here and travels as a bitmap.** `TextBitmap.of()` is the one routine every slot goes through, so a fourth widget writes no render code. Only the glyphs are pixels, the card and the layout stay real views, so the launcher lays the row out and the reported width is only a ceiling for the ellipsis, twice the card in `roomPx`, never a measurement anything depends on. Around 325 KB per list redraw against a 1 MB binder ceiling; `ALPHA_8` plus a tint would cut it to a quarter if it ever gets close.
+- **The text is drawn here and travels as a bitmap.** `TextBitmap.of()` is the one routine every slot goes through, so a fourth widget writes no render code. Only the glyphs are pixels, the card and the layout stay real views, so the launcher lays the row out. The reported width feeds two things: the ellipsis ceiling in `roomPx`, at twice the card, and the size scaling above, which is the one measurement the render does depend on. Around 325 KB per list redraw against a 1 MB binder ceiling; `ALPHA_8` plus a tint would cut it to a quarter if it ever gets close.
 - The font file is not duplicated, a Copy task in the module `build.gradle` brings it from `packages/client/assets/fonts/` at build time, the same way the ios pbxproj references it once for two targets. It is referenced from exactly one place now, `TextBitmap`, and `Resources.getFont` is api 26, so the gate still holds.
 - **A restore does hand out new ids**, so `onRestored` moves the config keys across and is not dead code. `allowBackup` is false in `packages/client/app.config.ts`, which used to settle it, but from android 12 that flag no longer covers a device to device transfer: that one is `dataExtractionRules`, there is none, so the default applies and the widgets come across with new ids.
 - **Redraw triggers**: `APPWIDGET_UPDATE`, `MY_PACKAGE_REPLACED`, `LOCALE_CHANGED` and `TIMEZONE_CHANGED`, all through `goAsync` and all hitting `/fetch`, plus `reloadWidgets()` from `AppContainer` and the config save. The locale and zone ones matter because separators and time are read at render, so without them a change leaves the widget wrong for half an hour.
@@ -67,7 +82,7 @@ one side alone is the bug that gets shipped.
   `WidgetConfigurationIntent` with its parameters in `packages/client/targets/RateWidgets/_shared/Intents.swift`,
   which compiles into the app target as well as the widget one.
 - **Android**: a `WidgetProvider` subclass, one line in `Widgets.ALL`, a `<receiver>`, an
-  `res/xml/widget_x_info.xml` in the module, label and description in `strings.xml`, the preview png in
+  `packages/client/modules/widgets/android/src/main/res/xml/widget_x_info.xml`, label and description in `strings.xml`, the preview png in
   `packages/client/assets/widgets/` and its line in the module `build.gradle`. Four of those are static
   registrations android demands and cannot be factored away. Reusing `widget_card.xml` or
   `widget_list.xml` costs nothing more; a new shape needs a `Content` subtype and a branch in
