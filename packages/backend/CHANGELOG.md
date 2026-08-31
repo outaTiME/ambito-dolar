@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.1](https://github.com/outaTiME/ambito-dolar/compare/%40ambito-dolar%2Fbackend%405.2.0...%40ambito-dolar%2Fbackend%405.2.1) (2026-08-31)
+
+**Note:** Version bump only for package @ambito-dolar/backend
+
 # [5.2.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/backend@5.1.1...@ambito-dolar/backend@5.2.0) (2026-07-26)
 
 ### Features

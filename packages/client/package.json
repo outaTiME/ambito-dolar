@@ -13,7 +13,7 @@
     "check": "expo install --check"
   },
   "dependencies": {
-    "@ambito-dolar/core": "^5.2.1",
+    "@ambito-dolar/core": "^5.2.2",
     "@amplitude/analytics-react-native": "^1.8.0",
     "@bacons/apple-targets": "^5.0.0",
     "@expo/ui": "~57.0.14",
@@ -90,7 +90,7 @@
     "pngjs": "^7.0.0",
     "typescript": "~6.0.3"
   },
-  "version": "14.0.0",
+  "version": "14.1.0",
   "installConfig": {
     "hoistingLimits": "workspaces"
   },

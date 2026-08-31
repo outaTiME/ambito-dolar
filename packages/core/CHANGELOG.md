@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.2](https://github.com/outaTiME/ambito-dolar/compare/%40ambito-dolar%2Fcore%405.2.1...%40ambito-dolar%2Fcore%405.2.2) (2026-08-31)
+
+**Note:** Version bump only for package @ambito-dolar/core
+
 ## [5.2.1](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/core@5.2.0...@ambito-dolar/core@5.2.1) (2026-07-26)
 
 **Note:** Version bump only for package @ambito-dolar/core

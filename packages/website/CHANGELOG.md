@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/outaTiME/ambito-dolar/compare/%40ambito-dolar%2Fwebsite%402.0.2...%40ambito-dolar%2Fwebsite%402.1.0) (2026-08-31)
+
+### Features
+
+- migrate website to astro ([51ab806](https://github.com/outaTiME/ambito-dolar/commit/51ab806f6a56267c27be68191003be7721441689))
+
 ## [2.0.2](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/website@2.0.1...@ambito-dolar/website@2.0.2) (2026-07-26)
 
 **Note:** Version bump only for package @ambito-dolar/website

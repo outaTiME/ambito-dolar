@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [14.1.0](https://github.com/outaTiME/ambito-dolar/compare/%40ambito-dolar%2Fclient%4014.0.0...%40ambito-dolar%2Fclient%4014.1.0) (2026-08-31)
+
+### Bug Fixes
+
+- android widgets left stale for a period after a failed fetch ([b2a18fa](https://github.com/outaTiME/ambito-dolar/commit/b2a18faa5506b14029914682f0497126d7a6d8ae))
+- android widgets not retrying an unreachable service ([4535c6a](https://github.com/outaTiME/ambito-dolar/commit/4535c6a25f3b071396420bd3813879a3384c6a87))
+- blank android widget on a first run with no network ([ce607cb](https://github.com/outaTiME/ambito-dolar/commit/ce607cbdbe22da5ec51e3372f9a6a07bbba88ae8))
+- iOS widget rate pickers opening with no selection ([3e48396](https://github.com/outaTiME/ambito-dolar/commit/3e4839670ad8f6473c41ae7302ed01f9f4e3cedf))
+- prevent the empty text from replacing rates already on a widget ([8f5c558](https://github.com/outaTiME/ambito-dolar/commit/8f5c55878d5eb8ddf69d4ad898422be7b3eec135))
+- prevent the iOS widget from stalling or crashing on a bad payload ([8b0be5d](https://github.com/outaTiME/ambito-dolar/commit/8b0be5d7804635976c94d8916c7f47a801669c4c))
+- stop reassigning props in client components ([fbfaf2c](https://github.com/outaTiME/ambito-dolar/commit/fbfaf2c439e5ede56b9c246fdf3a408cd792005b))
+- transparent header in the rates screen on iOS 27 ([4d7da3d](https://github.com/outaTiME/ambito-dolar/commit/4d7da3de3b0f982e23f52a90a12201e566a09a0b))
+- unpadded hour in rate dates ([ae1a9f5](https://github.com/outaTiME/ambito-dolar/commit/ae1a9f5b6c3f8ad4a5d56f1eaaef5d07a175d59b))
+- wrong spread date and blank widget when a rate is missing ([222ae23](https://github.com/outaTiME/ambito-dolar/commit/222ae23858e6185753c082f6e997ac8cb82148a0))
+
+### Features
+
+- add android widgets ([b028a73](https://github.com/outaTiME/ambito-dolar/commit/b028a7385a9d605dabb2ddec10c3fcda73480bd1))
+- migrate the android widgets to a native module ([db04d37](https://github.com/outaTiME/ambito-dolar/commit/db04d373c4e002cb2d2e9d4e52bdedd9c52c9df2))
+- move the iOS widgets to CNG ([48f92ae](https://github.com/outaTiME/ambito-dolar/commit/48f92ae9bed4bd2db835254c7965c0e6e169893d))
+
 # [14.0.0](https://github.com/outaTiME/ambito-dolar/compare/@ambito-dolar/client@13.2.0...@ambito-dolar/client@14.0.0) (2026-07-26)
 
 ### Bug Fixes
