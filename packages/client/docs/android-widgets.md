@@ -20,8 +20,13 @@ Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews
   and `REFERENCE_DP` stays **under the narrowest report of a device that renders right** so that it
   lands there: 170 against the 174 of an s9, and raising it past 174 would start shrinking that
   phone. `SCALE_FLOOR` is 0.7, past which the ellipsis reads better than more shrinking and
-  `TextBitmap` already does it through `room` and `floor`. With no widget to ask, the picker preview
-  gets 1 and is not scaled.
+  `TextBitmap` already does it through `room` and `floor`. With no widget to ask, the picker preview gets 1 and is not
+  scaled. That could differ from the placed widget on a launcher with small cards, but the two
+  ranges do not overlap: a small card comes from placing by `minWidth` below api 31, and the live
+  preview is api 35, where `targetCellWidth` already hands over the full cell. Falling back to the
+  declared `minWidth` would not help either, 110dp lands under `SCALE_FLOOR` and would shrink every
+  preview on every phone. Worst case here is a cramped card in the picker while the placed one is
+  right, which is cosmetic.
   Measured with `uiautomator dump` against the reported width: a galaxy s9 on android 10 with one ui
   reports 174dp and draws 144 and renders right, an android 12 emulator reports 175 and draws 176
   and renders right, an android 10 emulator reports 130 and draws 130 and the content overflows it.

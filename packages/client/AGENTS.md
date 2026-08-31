@@ -4,10 +4,10 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 
 ## Native code
 
-- **Both platforms CNG**: `packages/client/android/` and `packages/client/ios/` are regen by `expo prebuild`. Build output, gitignored, no hand-edit. Modify via `app.config.ts` / config plugins.
-- **iOS widgets live in `packages/client/targets/`**, generated into the Xcode project by the `@bacons/apple-targets` plugin. Source, committed. `RateWidgets/` is the widget extension, `_shared/` holds what must compile into the app target too. Read `packages/client/docs/ios-widgets.md` before touching it.
+- **Both platforms CNG**: `packages/client/android/` and `packages/client/ios/` are regen by `expo prebuild`. Build output, gitignored, no hand-edit. Modify via `packages/client/app.config.ts` or a config plugin.
+- **iOS widgets live in `packages/client/targets/`**, generated into the Xcode project by the `@bacons/apple-targets` plugin. Source, committed. `packages/client/targets/RateWidgets/` is the widget extension. Two `_shared/` folders, both for what has to compile into the app target as well: `packages/client/targets/_shared/` reaches every target, `packages/client/targets/RateWidgets/_shared/` only that one and the app, and the intents live there. Read `packages/client/docs/ios-widgets.md` before touching it.
 - **Always `--clean` on iOS prebuild.** It is the SDK 57 default and `expo prebuild -p ios` without it crashes the apple-targets plugin.
-- **After a version, dep or SDK bump**: `yarn run client:prebuild:ios`, nothing else. It regenerates `ios/` and runs `pod install`, there is nothing left in there to preserve. What used to be hand-edited in the Xcode project now lives in `app.config.ts` and in `packages/client/targets/RateWidgets/expo-target.config.js`.
+- **After a version, dep or SDK bump**: `yarn run client:prebuild:ios`, nothing else. It regenerates `packages/client/ios/` and runs `pod install`, there is nothing left in there to preserve. What used to be hand-edited in the Xcode project now lives in `packages/client/app.config.ts` and in `packages/client/targets/RateWidgets/expo-target.config.js`.
 - **Android nav bar (edge-to-edge)**: framework does not set button appearance. Use `expo-navigation-bar` — `<NavigationBar style="auto" />` in `RootLayout` + plugin `['expo-navigation-bar', { enforceContrast: true }]` for os scrim behind 3-button nav.
 
 ## Lint
@@ -22,7 +22,7 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 ## Donation modal
 
 Cooldown counted in distinct usage days and not wall clock, one escalating schedule, and only two
-persisted fields. New fields need a strong reason. Read `docs/product-policies.md` at the repo root before touching
+persisted fields. New fields need a strong reason. Read `docs/product-policies.md` before touching
 the flow, the re-ask of a donor and the Developer screen bypass are there too.
 
 ## TypeScript discipline
