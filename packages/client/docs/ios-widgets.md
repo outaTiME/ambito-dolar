@@ -114,16 +114,17 @@ at is real but was measured and does not happen: a widget configured under the S
 its rates after updating onto the non optional parameter, tested on device with four widgets, two
 hand configured and two on defaults. Re-test that whenever Xcode or the deployment target moves.
 
-**`placeholder(in:)` goes to the network, leave it.** Apple asks that callback to return immediately
-and ours can block five seconds in `getRates()`, so it reads like a bug. Reading `storedRates()`
-instead was tried and made the widget show "Cotizaciones no disponibles" right after an install:
-WidgetKit paints the placeholder as the widget content until the first timeline arrives, and the
-blocking fetch is what fills that gap. Rewriting `getRates()` as `async` works and would be the
-correct shape, since `snapshot` and `timeline` are async now and a blocked semaphore holds a
-cooperative pool thread, but it drags a synthesised placeholder with it, so it was left for its own
-change. It is also why a widget preview in the gallery sometimes paints empty: the three previews
-race the same five second fetch. If revisited, the check is to install and look at the widgets
-before opening the app.
+**`placeholder(in:)` is synchronous and must stay off the network.** Apple documents it as
+returning a `TimelineEntry` immediately, and `AppIntentTimelineProvider` makes only `snapshot` and
+`timeline` async. So `getRates()` is `async` and awaited from those two, never blocked on a
+`DispatchSemaphore`, which is what Apple asks of anything running from a task. `placeholder` reads
+`storedRates()` and nothing else.
+
+Returning no rates there is not an option: WidgetKit paints the placeholder as the widget content
+until the first timeline lands, so an empty one shows "Cotizaciones no disponibles" right after an
+install. `placeholderEntry` falls back to synthesised values, and they are **equal and non zero on
+purpose**: `SpreadWidgetEntryView` divides one price by the other, so a pair of zeros gives NaN.
+If revisited, the check is to install and look at the widgets before opening the app.
 
 ## Widget configuration
 
@@ -157,21 +158,11 @@ are there for good. Once per placed widget, only on widgets that existed before 
 on one added new, and the widget itself renders the right rates throughout. The stored
 configuration is intact: the rates the user picked survive the update.
 
-This is the cost of the SiriKit to App Intents transition and it is not worth more device builds.
-It is not the same defect as the "Seleccionar" one, which was ours and is fixed above, and there is
-no evidence it is a bug in iOS either.
-
-On the open that paints blank the query does answer, measured with `os_log` on device:
-
-```
-entities(for:) asked=3 -> got=3
-displayRepresentation   x3
-```
-
-Three identifiers in, three entities out, three display representations handed over, three empty
-rows drawn. Closing the sheet untouched leaves the widget unchanged, so nothing was persisted over
-the stored configuration. Good evidence the selection was there and only the labels failed to draw,
-but it stays an inference.
+Accepted, and not the same defect as the "Seleccionar" one, which was ours and is fixed above.
+There is no evidence it is a bug in iOS either. On the open that paints blank the query does answer,
+measured with `os_log` on device: three identifiers in, three entities out, three display
+representations handed over, three empty rows drawn. Closing the sheet untouched leaves the widget
+unchanged, so nothing was written over the stored configuration.
 
 Tested on device and fallen, do not re-run:
 
@@ -179,7 +170,6 @@ Tested on device and fallen, do not re-run:
 |---|---|
 | Lazy migration that never consults the query | `entities(for:)` is called on the first pass |
 | `compactMap` dropping legacy identifiers | `asked=3 -> got=3`, nothing was dropped |
-| The blocking network call in `placeholder(in:)` | a freshly added widget runs the same code and never fails |
 | `AppIntentTimelineProvider.recommendations()` | returned two visibly different entries, the gallery showed neither |
 | `static var parameterSummary { Summary() }` | lands in the metadata as `actionConfiguration`, no change |
 | A custom `init()` on the intent assigning the rates | no change |

@@ -91,7 +91,7 @@ private func storedRates() -> [String: Any]? {
   return try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
 }
 
-private func getRates() -> [String: Any]? {
+private func getRates() async -> [String: Any]? {
   // a clock moved backwards makes the age negative, and negative passes any upper bound, which
   // would freeze the widget on the stored payload until the clock catches up
   let age = Date().timeIntervalSince1970 - UserDefaults.standard.double(forKey: ratesCacheAtKey)
@@ -104,22 +104,14 @@ private func getRates() -> [String: Any]? {
   let configuration = URLSessionConfiguration.default
   configuration.timeoutIntervalForRequest = ratesTimeout
   configuration.timeoutIntervalForResource = ratesTimeout
-  let semaphore = DispatchSemaphore(value: 0)
   var rates: [String: Any]?
-  let task = URLSession(configuration: configuration).dataTask(with: url) { (data, response, error) in
-    // an error body is json too, so the status is what says whether this is rates at all
-    if error == nil,
-       let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status),
-       let data = data,
-       let parsed = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-      rates = parsed
-    }
-    semaphore.signal()
-  }
-  task.resume()
-  // a bounded wait, otherwise a stalled connection holds the extension past the timeouts above
-  if semaphore.wait(timeout: .now() + ratesTimeout + 1) == .timedOut {
-    task.cancel()
+  // awaited, never waited on. snapshot and timeline are async since AppIntentTimelineProvider,
+  // and Apple asks not to block on a semaphore from a task
+  if let (data, response) = try? await URLSession(configuration: configuration).data(from: url),
+     // an error body is json too, so the status is what says whether this is rates at all
+     let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status),
+     let parsed = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+    rates = parsed
   }
   // what is kept is what is well formed, so nothing that could be indexed by force ever reaches
   // lookupRateValues or the stored payload. An answer that yields nothing usable is a failure
@@ -200,8 +192,7 @@ extension ValueType {
   }
 }
 
-private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes(), valueType: ValueType = ValueType.sell) -> [RateValue]? {
-  let rates = getRates()
+private func lookupRateValues(rates: [String: Any]?, rateTypes: [RateType], valueType: ValueType = ValueType.sell) -> [RateValue]? {
   return rateTypes.map {
     if let type = $0.identifier {
       let name = $0.displayString
@@ -262,6 +253,33 @@ private func lookupRateValues(rateTypes: [RateType] = Helper.getDefaultRateTypes
   }.compactMap{ $0 }
 }
 
+private let placeholderPrice: Double = 1000
+
+// placeholder is synchronous by protocol and Apple asks it to return immediately, so it never
+// goes to the network. WidgetKit paints it as the widget content until the first timeline lands,
+// so returning nothing shows the unavailable text right after an install. Equal and non zero
+// prices on purpose: the spread widget divides one by the other
+private func placeholderEntry(rateTypes: [RateType]) -> SimpleEntry {
+  if let stored = lookupRateValues(rates: storedRates(), rateTypes: rateTypes), !stored.isEmpty {
+    return SimpleEntry(date: Date(), rates: stored)
+  }
+  let rates = rateTypes.map { rateType in
+    RateValue(
+      id: rateType.id,
+      name: rateType.displayString,
+      change: formatRateChange(num: 0, type: .percentage),
+      plainChange: formatRateChange(num: 0, type: .percentage, symbol: false),
+      changeColor: getChangeColor(num: 0),
+      changeValue: 0,
+      price: formatRateCurrency(num: placeholderPrice),
+      priceValue: placeholderPrice,
+      date: "",
+      dateValue: 0
+    )
+  }
+  return SimpleEntry(date: Date(), rates: rates)
+}
+
 struct SimpleEntry: TimelineEntry {
   let date: Date
   let rates: [RateValue]?
@@ -289,16 +307,15 @@ struct RateProvider: AppIntentTimelineProvider {
     [configuration.rateType]
   }
   func placeholder(in context: Context) -> SimpleEntry {
-    let rates = lookupRateValues()
-    return SimpleEntry(date: Date(), rates: rates)
+    placeholderEntry(rateTypes: [Helper.getDefaultRateType()])
   }
   func snapshot(for configuration: SelectRateTypeIntent, in context: Context) async -> SimpleEntry {
-    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
+    let rates = lookupRateValues(rates: await getRates(), rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
     return SimpleEntry(date: Date(), rates: rates)
   }
   func timeline(for configuration: SelectRateTypeIntent, in context: Context) async -> Timeline<SimpleEntry> {
     let date = Date()
-    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
+    let rates = lookupRateValues(rates: await getRates(), rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
     let entry = SimpleEntry(date: date, rates: rates)
     let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
     return Timeline(entries: [entry], policy: .after(reloadDate))
@@ -447,16 +464,15 @@ struct ListRatesProvider: AppIntentTimelineProvider {
     return selected.isEmpty ? Helper.getDefaultRateTypes() : selected
   }
   func placeholder(in context: Context) -> SimpleEntry {
-    let rates = lookupRateValues()
-    return SimpleEntry(date: Date(), rates: rates)
+    placeholderEntry(rateTypes: Helper.getDefaultRateTypes())
   }
   func snapshot(for configuration: SelectRateTypesIntent, in context: Context) async -> SimpleEntry {
-    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
+    let rates = lookupRateValues(rates: await getRates(), rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
     return SimpleEntry(date: Date(), rates: rates)
   }
   func timeline(for configuration: SelectRateTypesIntent, in context: Context) async -> Timeline<SimpleEntry> {
     let date = Date()
-    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
+    let rates = lookupRateValues(rates: await getRates(), rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
     let entry = SimpleEntry(date: date, rates: rates)
     let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
     return Timeline(entries: [entry], policy: .after(reloadDate))
@@ -578,16 +594,15 @@ struct SpreadProvider: AppIntentTimelineProvider {
     return selected.isEmpty ? Helper.getDefaultSpreadRateTypes() : selected
   }
   func placeholder(in context: Context) -> SimpleEntry {
-    let rates = lookupRateValues()
-    return SimpleEntry(date: Date(), rates: rates)
+    placeholderEntry(rateTypes: Helper.getDefaultSpreadRateTypes())
   }
   func snapshot(for configuration: SelectSpreadRateTypesIntent, in context: Context) async -> SimpleEntry {
-    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration))
+    let rates = lookupRateValues(rates: await getRates(), rateTypes: rateTypes(for: configuration))
     return SimpleEntry(date: Date(), rates: rates)
   }
   func timeline(for configuration: SelectSpreadRateTypesIntent, in context: Context) async -> Timeline<SimpleEntry> {
     let date = Date()
-    let rates = lookupRateValues(rateTypes: rateTypes(for: configuration))
+    let rates = lookupRateValues(rates: await getRates(), rateTypes: rateTypes(for: configuration))
     let entry = SimpleEntry(date: date, rates: rates)
     let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
     return Timeline(entries: [entry], policy: .after(reloadDate))
@@ -790,8 +805,7 @@ struct RateWidgets: WidgetBundle {
 
 struct RateWidgets_Previews: PreviewProvider {
   static var previews: some View {
-    let rates = lookupRateValues()
-    let entry = SimpleEntry(date: Date(), rates: rates)
+    let entry = placeholderEntry(rateTypes: Helper.getDefaultRateTypes())
     Group {
       RateWidgetEntryView(entry: entry)
         .previewContext(WidgetPreviewContext(family: .systemSmall))
