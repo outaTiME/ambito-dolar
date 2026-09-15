@@ -7,112 +7,6 @@ import sharp from 'sharp';
 
 import Shared from './shared';
 
-/* eslint-disable no-unused-vars */
-
-// imgur blocks telegram
-const storeImgurFile = (imageBase64) =>
-  // AmbitoDolar.fetch('https://api.imgur.com/3/image', {
-  AmbitoDolar.fetch('https://api.imgur.com/3/upload', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
-    },
-    body: JSON.stringify({
-      image: imageBase64,
-      type: 'base64',
-    }),
-  }).then(async (response) => {
-    const { data } = await response.json();
-    return data.link;
-  });
-
-const storeImgbbFile = (imageBase64) =>
-  AmbitoDolar.fetch('https://api.imgbb.com/1/upload', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-    },
-    body: new URLSearchParams({
-      key: process.env.IMGBB_KEY,
-      image: imageBase64,
-    }),
-  }).then(async (response) => {
-    const { data } = await response.json();
-    return data.url;
-  });
-
-// instagram does not accept imghippo links
-const storeImghippoFile = async (buffer) => {
-  const type = await imageType(buffer);
-  if (!type) {
-    throw new Error('Unsupported or unknown image type');
-  }
-  const form = new FormData();
-  form.append(
-    'file',
-    new Blob([buffer], { type: type.mime }),
-    `upload.${type.ext}`,
-  );
-  form.append('api_key', process.env.IMGHIPPO_API_KEY);
-  const response = await AmbitoDolar.fetch(
-    'https://api.imghippo.com/v1/upload',
-    {
-      method: 'POST',
-      body: form,
-    },
-  );
-  const { data } = await response.json();
-  return data.url || data.view_url;
-};
-
-// service is unstable
-const storeCatboxFile = async (buffer) => {
-  const type = await imageType(buffer);
-  if (!type) {
-    throw new Error('Unsupported or unknown image type');
-  }
-  return Shared.promiseRetry(async (retry) => {
-    const form = new FormData();
-    form.append('reqtype', 'fileupload');
-    form.append(
-      'fileToUpload',
-      new Blob([buffer], { type: type.mime }),
-      `upload.${type.ext}`,
-    );
-    const res = await AmbitoDolar.fetch('https://catbox.moe/user/api.php', {
-      method: 'POST',
-      body: form,
-    });
-    const url = (await res.text()).trim();
-    if (!url.startsWith('http')) {
-      return retry(new Error('Invalid Catbox response'));
-    }
-    return url;
-  });
-};
-
-// reddit does not accept freeimage links
-const storeFreeimageFile = async (buffer) => {
-  const type = await imageType(buffer);
-  if (!type) {
-    throw new Error('Unsupported or unknown image type');
-  }
-  const form = new FormData();
-  form.append('key', process.env.FREEIMAGE_API_KEY);
-  form.append(
-    'source',
-    new Blob([buffer], { type: type.mime }),
-    `upload.${type.ext}`,
-  );
-  const res = await AmbitoDolar.fetch('https://freeimage.host/api/1/upload', {
-    method: 'POST',
-    body: form,
-  });
-  const { image } = await res.json();
-  return image.url;
-};
-
 const storeS3File = async (buffer, isStory = false) => {
   const { ext = 'jpg', mime = 'image/jpeg' } = (await imageType(buffer)) || {};
   const folder = isStory ? 'social-images/stories' : 'social-images';
@@ -122,8 +16,6 @@ const storeS3File = async (buffer, isStory = false) => {
     CacheControl: 'public, max-age=31536000',
   }).then(({ url }) => url);
 };
-
-/* eslint-enable no-unused-vars */
 
 // jpeg compression settings optimized for instagram
 const JPEG_OPTIONS = {
@@ -188,17 +80,6 @@ export const generateScreenshot = async (url, opts) => {
   // parallelize image upload
   const [target_url, target_story_url, ig_sharp_file, ig_sharp_story_file] =
     await Promise.all([
-      // image hosting service
-      // storeImgurFile(sharp_file.toString('base64')),
-      // storeImgurFile(sharp_story_file.toString('base64')),
-      // storeImgbbFile(sharp_file.toString('base64')),
-      // storeImgbbFile(sharp_story_file.toString('base64')),
-      // storeImghippoFile(sharp_file),
-      // storeImghippoFile(sharp_story_file),
-      // storeCatboxFile(sharp_file),
-      // storeCatboxFile(sharp_story_file),
-      // storeFreeimageFile(sharp_file),
-      // storeFreeimageFile(sharp_story_file),
       storeS3File(sharp_file),
       storeS3File(sharp_story_file, true),
       sharp_file,

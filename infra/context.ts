@@ -36,8 +36,6 @@ export function createContext({ app, dev }: ContextInput) {
 
   const socialEnv = {
     IFTTT_KEY: requiredEnv('IFTTT_KEY'),
-    IMGUR_CLIENT_ID: requiredEnv('IMGUR_CLIENT_ID'),
-    IMGBB_KEY: requiredEnv('IMGBB_KEY'),
     MASTODON_URL: requiredEnv('MASTODON_URL'),
     MASTODON_ACCESS_TOKEN: requiredEnv('MASTODON_ACCESS_TOKEN'),
     REDDIT_USERNAME: requiredEnv('REDDIT_USERNAME'),
@@ -50,8 +48,6 @@ export function createContext({ app, dev }: ContextInput) {
     WHAPI_TOKEN: requiredEnv('WHAPI_TOKEN'),
     IG_PAGE_TOKEN: requiredEnv('IG_PAGE_TOKEN'),
     IG_USER_ID: requiredEnv('IG_USER_ID'),
-    IMGHIPPO_API_KEY: requiredEnv('IMGHIPPO_API_KEY'),
-    FREEIMAGE_API_KEY: requiredEnv('FREEIMAGE_API_KEY'),
   };
 
   const baseRuntimeEnv = {
