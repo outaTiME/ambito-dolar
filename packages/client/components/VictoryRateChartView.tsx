@@ -34,12 +34,10 @@ const AXIS_OFFSET = AXIS_TICK_SIZE + AXIS_LABEL_PADDING;
 const RateChartHeaderView = ({ stats, selectionIndex }) => {
   const { theme, fonts } = Helper.useTheme();
   // force valid index using clamp to avoid errors on fast change between details
-  const selected_stat = useDerivedValue(
-    () =>
-      selectionIndex.value === null
-        ? stats[stats.length - 1]
-        : stats[clamp(selectionIndex.value, 0, stats.length - 1)],
-    [stats],
+  const selected_stat = useDerivedValue(() =>
+    selectionIndex.value === null
+      ? stats[stats.length - 1]
+      : stats[clamp(selectionIndex.value, 0, stats.length - 1)],
   );
   const timestamp_props = useAnimatedProps(() => ({
     text: selected_stat.value.timestamp,

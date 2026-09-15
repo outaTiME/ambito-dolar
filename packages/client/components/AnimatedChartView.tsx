@@ -130,14 +130,13 @@ export default ({ data, domain, color, selectionIndex, width, height }) => {
       coord,
       index: Math.round(scaleInvert(coord.x, domain.x, range.x)),
     };
-  }, [path, domain, range]);
+  });
   useAnimatedReaction(
     () => point.value,
     ({ index }) => {
       // reset selection when last data point
       selectionIndex.value = index === data.length - 1 ? null : index;
     },
-    [data],
   );
   return (
     <>

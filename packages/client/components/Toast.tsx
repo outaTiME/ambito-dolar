@@ -43,7 +43,7 @@ export default ({ isVisible, text, onCompleted, hiddenOffset = undefined }) => {
         },
       ],
     };
-  }, [isVisible]);
+  });
   const { invertedTheme } = Helper.useTheme();
   return (
     <Animated.View style={animatedStyle} pointerEvents="none">

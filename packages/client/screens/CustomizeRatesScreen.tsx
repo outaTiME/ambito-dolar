@@ -39,7 +39,7 @@ const GridItem = ({ id, isModal }) => {
     const isFirst = idx === 0;
     const isLast = idx === count - 1;
     return { isFirst, isLast };
-  }, [itemKey]);
+  });
   const radiusStyle = useAnimatedStyle(() => {
     const R = Settings.BORDER_RADIUS;
     const first = edgeInfo.value.isFirst;

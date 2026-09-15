@@ -131,21 +131,7 @@ export default function AnimatedSegmentedControl({
       borderCurve: 'continuous',
       transform: [{ translateX: withSpring(clamped, SPRING) }],
     };
-  }, [
-    hasSegments,
-    arrowMode,
-    isRTL,
-    cols,
-    tileWidth,
-    step,
-    posA,
-    posB,
-    startInset,
-    maxX,
-    travelRange,
-    epsilon,
-    selectorRadius,
-  ]);
+  });
 
   const activeText = {
     fontSize: 15,
