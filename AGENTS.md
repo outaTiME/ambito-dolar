@@ -139,6 +139,34 @@ touching any of that.
 Voseo everywhere, rioplatense: `Elegí`, `verificá`, `Tenés`. No tuteo. Applies to the ios swift
 strings too. The widget picker has its own register, see `packages/client/docs/android-widgets.md`.
 
+The error strings follow Apple's `es_419`, which is where they came from: `Imposible <verb>` and
+`No se pudieron <verb>` are both its shapes, verified against the `.lproj` bundles on macOS. What
+that variant never uses is the peninsular compound, so `no se han seleccionado` is wrong where `no
+se pudieron seleccionar` is right. Apple's `es_419` addresses the reader with tuteo and this app
+does not, voseo wins there because the audience is Argentina and not the whole region.
+
+Every string is one sentence. A failure that needs a remedy carries it in the same sentence or
+leaves it to the button beside it.
+
+A neutral `lo` after a plural subject points at the action and not at the items, which is why
+`donate_choose_note` reads `Son de cobro único y podés hacerlo`. Apple writes it the same way in
+both variants, `Los elementos seleccionados no se eliminarán. Para hacerlo, edítalos`, reaching for
+the agreeing plural only when it does mean the items. What repeats here is the act of donating, so
+turning that `lo` into `los` would say the three rows repeat instead.
+
+A note says what happens or what the reader can do, and never opens on a negation. Every negative
+string is an error state, so a note shaped like one reads as a failure. State the fact instead of
+denying the alternative.
+
+`donar` and `aporte` are not the same word twice. `Donar` is the action and `Donaciones` counts
+them in the stats, `aporte` is the thing the reader picks and gives. Every string keeps them in
+their own role, so a word count that reports them as rivals is reading the wrong thing. Those two
+are the whole vocabulary for it, there is no `colaborar` and no `contribución` in the catalog.
+
+One word per concept where the concept is really one: `conexión` never `conectividad`. No `módulo`
+or any other word borrowed from the source, it is the only technical term in the catalog. No
+commercial vocabulary either, so no `pago` and no `suscripción`.
+
 ## Agent Operating Defaults
 
 - No rename/move files unless task needs. Run the most relevant scoped lint/test for touched code before handoff, report what ran.

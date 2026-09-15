@@ -34,24 +34,38 @@ The client polls `Settings.RATES_URI` from `packages/client/components/withRateU
   refetch fails instead of raising the alert, so it cannot be blacklisted out of the store to keep
   the blob small. The cost is that it rides along on every rewrite of the rates slice.
 - **An empty screen belongs to the retry button.** With no rates in the store and a failed attempt
-  behind it, neither the tick nor the connectivity listener fetches again.
+  behind it the tick is not blocked, it does not run: `useTickProvider` takes the same test
+  `AppContainer` makes, so the interval stops exactly where the button appears. It comes back when
+  the button clears the error, which is before its fetch answers, and the in-flight guard absorbs the
+  tick calls that land in between. The guard inside `fetchRates` still covers the other triggers.
 - **`NetInfo` covers the fast failure only**, a hung socket still takes the whole `timeout` from
-  `packages/core`. That window is why `still_loading` exists, at half of it so the message always
-  lands first. Do not add a retry layer on top of ky.
+  `packages/core` before the retry button appears. Do not add a retry layer on top of ky.
+- **`FOREGROUND_TOAST_WINDOW` is the toast's only job.** An update landing within it of the app
+  reaching foreground reads as belonging to that open, so `Actualizado` announces it, and anything
+  later arrives silently. The ten seconds are a judgement about what still feels like the same open,
+  not a number derived from anything else, so there is nothing to recompute it from.
 
 ## Notification body and social caption
 
 `getBodyMessage` (`packages/backend/src/subscribers/notify.js`) feeds push body + social caption.
 
-- Cap 300 chars: bsky `text` graphemes, reddit `title` chars. Reddit error misleading: `NO_TEXT: title required` when title >300.
+- Cap 300 chars: bsky `text` graphemes, reddit `title` chars, both published through IFTTT. Reddit error misleading: `NO_TEXT: title required` when title >300.
 - Format: `LABEL VALOR ↑PCT%` / `↓PCT%`. No colon, no parens, no trailing period. No-change rates (CRIPTO) drop arrow+pct.
 - Separator `, ` (cleanest in iOS push vs `·` or `|`). Sort by absolute pct DESC, biggest movers first, no-change rates land last.
 - Arrows ↑↓ over `+/-` for peripheral scan (SF Pro native). Before adding a rate: simulate caption with all active + new, must ≤300 with ≥10 headroom. Headroom <10 → compact (drop "de jornada", shorter labels) before merge.
 
 ## Donation modal policy
 
+- `donate_choose_note` on the DonateScreen card says the charge is one time and repeatable, which
+  answers a question a user sent to support. `PRODUCT_CATEGORY.NON_SUBSCRIPTION` in
+  `packages/client/hooks/useDonationProducts.ts` is what makes it true. Do not drop it.
 - Cooldown in distinct usage days, not wall-clock. Heavy users steady cadence, casual users + sleepers respected.
 - Single escalating schedule `getCooldownDays` (`packages/client/utilities/Donation.ts`) governs first appearance + post-dismiss cooldown.
 - Post-donate re-ask `getReAskMs` date-based, tiered by lifetime donated. Donors never penalized for low usage.
 - Forced opens via Developer screen bypass cooldown but don't increment dismiss counter.
 - Only two state fields: `ignore_donation_days_used` (snapshot of `days_used` at last dismiss), `ignore_donation_count` (consecutive dismisses, resets on donate). New fields only with strong reason.
+- The steps are 15, 30, 45, 60 and 75 usage days, capped, and the re-ask is 3, 6 or 12 months for a lifetime under 2, under 10, or over. Both live in `packages/client/utilities/Donation.ts`.
+- The usage day gate runs before the re-ask, so a donor under 15 usage days waits for both. Donating resets the snapshot to `0` and not to the current `days_used`, so `elapsedDays` becomes the whole history and anyone past 15 days clears it at once. The deviation from "never penalized" only reaches someone who donated that early, and it asks them less rather than more.
+- `computeLifetime` sums today's prices in the store's own currency, and the 2 and 10 thresholds read as USD. A storefront in another currency lands every donor on the 12 month step. `currencyCode` comes back from the catalog and nothing reads it.
+- Closing the sheet with a purchase in flight or just finished is not a dismiss, `donatedRef` and `loadingRef` hold it back. Without that, donating and closing would count against the donor.
+- `USE_NATIVE_DONATION_SHEET` is the way out of `@gorhom/bottom-sheet` and both paths are kept alive on purpose. It is `false`, so the `BottomSheetModal` in `AppContainer` is what ships and `goToDonateModal()` on the `app/donate.tsx` route sits dormant. That route is not dead code, deleting it burns the escape hatch, and a change to the donation modal has to land on both sides.

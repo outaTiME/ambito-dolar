@@ -21,12 +21,24 @@ SST v4, Lambda handlers.
   match the Chrome major that puppeteer ships, from https://pptr.dev/supported-browsers, to the
   chromium package major.
 - **One `timeout` in `packages/core` and no per call override.** Every source was measured before it
-  was set and only one is above a second, so a second number would be a guess. A success body read
-  with `.then(r => r.json())` is outside that timer, and a timeout is never retried.
-- **ky skips POST and PATCH**, so those wrap in `promiseRetry` instead: every social target, the
-  nested one in `social/instagram.js` that waits out a media still processing, and `getBusinessDay`.
-  Retrying a publish can repeat it, and with lambda retries off in `infra/defaults.ts` that is the
-  only way a post goes out twice.
+  was set and only one is above a second, so a second number would be a guess. A body read with
+  `.then(r => r.json())` sits outside that timer, the `.json()` shortcut gets one of its own.
+- **ky retries neither a timeout nor a parse.** A hung source costs one attempt and not three, and
+  a malformed body fails the call where a `promiseRetry` around the parse would have asked again.
+  `getBusinessDay` took that trade so six retries could not outlast the minute `Process` gets.
+- **ky skips POST and PATCH.** A POST that is a query opts back in per call with
+  `retry: { methods: ['post'] }`, the way `getBusinessDay` does. `promiseRetry` covers what ky
+  cannot reach: `notify.js`, the media still processing in `social/instagram.js`, and the social
+  targets in `shared.js`. Retrying a publish can repeat it, and with lambda retries off in
+  `infra/defaults.ts` that is the only way a post goes out twice.
+- **The expo push retries on 429 and 503, never on 504.** The sdk only retries 429 itself, so an
+  upstream 503 otherwise loses the whole chunk. Expo's docs say to retry every 5xx and
+  `expo/expo#18650` is what happens when you do: a 504 means the gateway gave up on a request expo
+  may already have sent, and there is no idempotency key to catch the duplicate. The ticket count
+  error is out for the same reason, thrown after expo accepted the push and carrying no
+  `statusCode`.
+- **An unknown social target is dropped without a word.** `triggerSocials` compacts away whatever
+  the switch did not match, and the route already answered 200 over SNS before any of it runs.
 - **Every lambda timeout in `infra/` is twice its observed duration and says so.** Move the pair
   together.
 - **What survives a slow source is the `catch`, not the timeout.** `getRate` catches and

@@ -37,6 +37,10 @@ Everything that keeps the rates in sync is in
   counter which would then count polls.
 - **Do not remove the seeding `setNow` in `useTickProvider`** to stop the tick effect firing twice
   on mount. Without it the swr cache stays empty and the effect fires on every render for a minute.
+- **The `enabled` argument of `useTickProvider` has to keep mirroring what `AppContainer` renders.**
+  It reads `Helper.isValid(props.rates)`, the same call, so the interval is off only while the retry
+  button is on screen. Gating it on `updated_at` instead leaves a payload that carries rates without
+  one showing the main screen with no tick and no button, stale for good.
 
 ## TypeScript discipline
 
