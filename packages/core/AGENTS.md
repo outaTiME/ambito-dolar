@@ -2,12 +2,9 @@
 
 Rules for `packages/core`, loaded on top of the root `AGENTS.md` when working here.
 
-ESM (`"type": "module"`). Shared domain utils: rates, dates, formatting, fetch helpers. Consumed by
-the client, the backend and the website, so a change here reaches all three.
+A change here reaches the client, the backend and the website.
 
 ## Tests
-
-The only automated tests in the repo.
 
 ```bash
 yarn test                                                # from the root, through lerna

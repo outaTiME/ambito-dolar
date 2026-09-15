@@ -34,8 +34,8 @@ yarn workspace @ambito-dolar/website run build|preview
 
 ### Lint
 
-- From repo root: `yarn eslint packages` lints all fast (~6s; generated dirs ignored in config). Or scope: `yarn eslint "packages/<ws>/<path>"`.
-- **`eslint` and `prettier` run from the repo root only.** `packages/client` sets `installConfig.hoistingLimits: workspaces`, so its `.bin` holds `tsc` and nothing else. Calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. Mirror case: `tsc` needs the client, `yarn workspace @ambito-dolar/client exec tsc --noEmit`.
+- From repo root: `yarn eslint packages`, or scope it, `yarn eslint "packages/<ws>/<path>"`.
+- **`eslint` and `prettier` resolve from the repo root only**, `packages/client` sets `installConfig.hoistingLimits: workspaces` and does not get them. Calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. Mirror case: `tsc` resolves only from the client, `yarn workspace @ambito-dolar/client exec tsc --noEmit`.
 - Fallback if the root call itself fails: `yarn node ./node_modules/eslint/bin/eslint.js <paths>`.
 
 ### Tests
@@ -46,39 +46,22 @@ yarn workspace @ambito-dolar/website run build|preview
 
 ### Formatting
 
-- Prettier (`.prettierrc.json`): single quotes, semicolons, 2 spaces, bracket spacing. `.astro` via `prettier-plugin-astro` (plugin + `*.astro` parser override).
-- EditorConfig (`.editorconfig`): LF, UTF-8, trim trailing whitespace, final newline.
+- Prettier and EditorConfig read their own config, run them instead of applying them by hand.
 - Match nearby style before broad reformat.
 - Comments: lowercase default, keep existing uppercase unless editing that line. Terse, ASCII-only, no arrows/em-dash/checkmarks/special chars. No trailing period. One sentence per `//`. Multi-line: consecutive `//`, not prose-with-semicolons.
 - No label-prefix comments (`// feature flag:`, `// android:`, `// <tag>:`). Plain sentence describing what or why.
 - Contiguous related statements compact, no blank lines within decls/guards/memo/returns. Blank line only between distinct logical phases.
 - Always brace `if/else/for/while`. No inline (`if (x) { return; }`, not `if (x) return;`).
 
-### ESLint presets
-
-- Flat config `eslint.config.js` (ESLint 9). Base `universe/node`. Client `universe/native`. Website `.astro` via `eslint-plugin-astro`.
-- Ignores the generated trees, `web-build`, `android`, `.sst`, `dist` and `build` (gitignored, and flat config ignores none of them by default).
-
-### Imports
-
-- Groups, single blank line between: 1) third-party, 2) workspace/internal, 3) relative.
-- Follow the file's extension/alias conventions.
-
 ### Naming and modules
 
-- `camelCase` vars/fns, `PascalCase` components, `UPPER_SNAKE_CASE` constants.
 - Persisted keys, analytics events, API fields may be `snake_case`, keep stable.
 - File naming mixed, match neighbors, no forced renames. New code in existing file when it fits, new file only when no natural home.
 - JS-first (`.js`). Many config files CommonJS. No module-system conversions unless asked.
 
 ### Validation
 
-- Runtime validation at boundaries (API input, env vars, external payloads). Patterns: `joi`, `yn`, lodash guards.
-- Preserve public response shapes + persisted storage schema.
-
-### Error handling and logging
-
-- `try/catch` or `.catch(...)` on async. Log actionable serializable metadata (`console.info/warn`). No silent swallow unless intentional fallback.
+- Validate at boundaries with `joi` or `yn`, and preserve public response shapes and the persisted storage schema.
 
 ## Git, commits, and releases
 
@@ -126,6 +109,12 @@ A new rate in development before the stores approve the client release has to be
 backend, the client and the version check, or socials publish it before anyone can render it.
 See `docs/product-policies.md`.
 
+## Where the rates payload is served from
+
+The app polls `quotes.json` off the bucket and not CloudFront: CloudFront bills per viewer request
+whatever the cache does, a 304 like a 200, and past its free tier it charges several times what S3
+does per request. Cadence contract in `docs/product-policies.md`.
+
 ## Notification body and social caption
 
 `getBodyMessage` feeds the push body and the social caption. Hard cap of 300 characters, and
@@ -134,18 +123,13 @@ Simulate the caption with every active rate before adding one. See `docs/product
 
 ## Widgets
 
-Native on android in the local expo module `packages/client/modules/widgets/`, RemoteViews and
-XML layouts, no react-native. SwiftUI on ios under `packages/client/targets/RateWidgets/`, linked
-into the generated Xcode project by the `@bacons/apple-targets` plugin. They are written twice, so
-a rate, a label, a font size or a `/fetch` schema change has to move on both sides.
+Written twice: native android in `packages/client/modules/widgets/`, SwiftUI on ios in
+`packages/client/targets/RateWidgets/`. A rate, a label, a font size or a `/fetch` schema change
+has to move on both sides.
 
-Four things outside the widgets break them when moved, and none of them is in a widget file:
-`packages/client/assets/fonts/FiraGO-Regular.otf`, the `API_URL` env var, the `ambito-dolar`
-scheme with its `/rates[/type]` route, and the app `AppTheme`. Only the font is loud on android,
-it fails the build at aapt; on ios and for the other three the failure is silent. The ios side
-reaches that same font file through a symlink, never copy it, and it reaches `API_URL` not at all:
-that one only wires into android, so a build pointed at another host still has ios reading
-production.
+Four things outside the widgets break them when moved, and none is in a widget file:
+`packages/client/assets/fonts/FiraGO-Regular.otf`, the `API_URL` env var, the `ambito-dolar` scheme
+with its `/rates[/type]` route, and the app `AppTheme`. Only the font is loud, and only on android.
 
 Read `packages/client/docs/android-widgets.md` and `packages/client/docs/ios-widgets.md` before
 touching any of that.
@@ -157,30 +141,9 @@ strings too. The widget picker has its own register, see `packages/client/docs/a
 
 ## Agent Operating Defaults
 
-- `CLAUDE.md` imports this via `@AGENTS.md`. New rule files (`.cursor/rules/`, `.cursorrules`, `.github/copilot-instructions.md`) → treat high-priority, update this guide.
 - No rename/move files unless task needs. Run the most relevant scoped lint/test for touched code before handoff, report what ran.
 
 ### Reading and writing these files
 
-Three levels. What decides where a rule goes is not how important it is, it is who could break it.
-
-- **This file** loads on every session, so what sits here is paid on every session whatever the
-  task is. It holds what someone could break without ever opening the subtree that owns it.
-- **`packages/<name>/AGENTS.md`** loads on its own, on top of this one, when working in that
-  subtree. Nobody has to remember it, so anything that can only be broken from inside goes there
-  and not here.
-- **`docs/`** is the depth, with its measurements and what was tried and failed. Nothing here loads
-  on its own, it is read when a pointer says to, so it sits next to what it describes:
-  `packages/client/docs/` for what only that package can break, the root `docs/` for what crosses
-  packages, the way the rollout of a rate crosses the backend and the client.
-- **A pointer** is one line that names the trap and where the detail is. It goes wherever the
-  reader who could break the rule will be: the same trap can be worth writing twice with a
-  different audience, once here for a backend session changing `/fetch` and once in the client file
-  for whoever opens the widget itself.
-
-Every path with a slash is written complete from the repo root, `packages/client/config/settings.ts`
-and not `config/settings.ts`. A bare filename with no slash is fine as shorthand.
-
-Follow a pointer before touching what it names, not after. A `docs/` file opens with the line that
-says when it applies, and it is the record of why something is the way it is, which is what keeps a
-settled decision from being reopened.
+Rules live at three levels: this file, `packages/<name>/AGENTS.md` and `docs/`. What decides where
+one goes is who could break it. Read `docs/agents-doc-layout.md` before adding or moving a rule.

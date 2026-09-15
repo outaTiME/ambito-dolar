@@ -74,7 +74,7 @@ object Format {
   private fun shown(value: OffsetDateTime?): String =
     value?.atZoneSameInstant(ZoneId.systemDefault())?.format(date()) ?: ""
 
-  // ios/RateWidgets/Utils/Helper.swift keeps the same list, in the same order
+  // packages/client/targets/RateWidgets/_shared/Helper.swift keeps the same list and order
   val RATE_TYPES =
     listOf(
       "oficial" to "Oficial",

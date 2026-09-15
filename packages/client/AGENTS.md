@@ -6,24 +6,37 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 
 - **Both platforms CNG**: `packages/client/android/` and `packages/client/ios/` are regen by `expo prebuild`. Build output, gitignored, no hand-edit. Modify via `packages/client/app.config.ts` or a config plugin.
 - **iOS widgets live in `packages/client/targets/`**, generated into the Xcode project by the `@bacons/apple-targets` plugin. Source, committed. `packages/client/targets/RateWidgets/` is the widget extension. Two `_shared/` folders, both for what has to compile into the app target as well: `packages/client/targets/_shared/` reaches every target, `packages/client/targets/RateWidgets/_shared/` only that one and the app, and the intents live there. Read `packages/client/docs/ios-widgets.md` before touching it.
-- **Always `--clean` on iOS prebuild.** It is the SDK 57 default and `expo prebuild -p ios` without it crashes the apple-targets plugin.
-- **After a version, dep or SDK bump**: `yarn run client:prebuild:ios`, nothing else. It regenerates `packages/client/ios/` and runs `pod install`, there is nothing left in there to preserve. What used to be hand-edited in the Xcode project now lives in `packages/client/app.config.ts` and in `packages/client/targets/RateWidgets/expo-target.config.js`.
+- **After a version, dep or SDK bump**: `yarn run client:prebuild -p ios`, nothing else. It regenerates `packages/client/ios/` and runs `pod install`, there is nothing left in there to preserve. What used to be hand-edited in the Xcode project now lives in `packages/client/app.config.ts` and in `packages/client/targets/RateWidgets/expo-target.config.js`. Never `--no-clean`, see `packages/client/docs/ios-widgets.md`.
+- **An `Alert` carries one sentence as its title and an empty message**, under two lines because
+  RN's `DialogTitle` caps it there and ellipsizes. Moving the copy to the message is not the way out,
+  RN always sends a title key and an empty one still costs its band.
 - **Android nav bar (edge-to-edge)**: framework does not set button appearance. Use `expo-navigation-bar` — `<NavigationBar style="auto" />` in `RootLayout` + plugin `['expo-navigation-bar', { enforceContrast: true }]` for os scrim behind 3-button nav.
 
 ## Lint
 
-- `expo lint` fails here with `Couldn't find a script named "eslint"`: eslint only resolves from the
-  repo root, so scope it from there, `yarn eslint "packages/client/<path>"`. `tsc` is the mirror
-  case and only resolves here, `yarn workspace @ambito-dolar/client exec tsc --noEmit`.
+- `expo lint` fails here, scope it from the root instead, `yarn eslint "packages/client/<path>"`.
 - React Compiler rules are off on purpose (`react-hooks/{immutability,refs,set-state-in-effect,purity}`):
   the project is not on the compiler and they false positive on Reanimated `.value` and on
   intentional ref and effect patterns. Fix a real prop reassign, do not mute those rules.
 
 ## Donation modal
 
-Cooldown counted in distinct usage days and not wall clock, one escalating schedule, and only two
-persisted fields. New fields need a strong reason. Read `docs/product-policies.md` before touching
-the flow, the re-ask of a donor and the Developer screen bypass are there too.
+Read `docs/product-policies.md` before touching the flow, the re-ask of a donor and the Developer
+screen bypass are there too.
+
+## Rate updates
+
+Everything that keeps the rates in sync is in
+`packages/client/components/withRateUpdates.tsx`, contract in `docs/product-policies.md`.
+
+- **Do not put a "no network, do not bother" check in front of `fetchRates`.** The failed attempt
+  is what arms the connectivity listener, and `isConnected` is wrong in both directions.
+- **`reloadWidgets()`, `reloadAllTimelines()` and `registerApplicationDownloadRates` hang off the
+  `updated_at` change and not off the poll.** A reload can cost a `/fetch`, android collapses a
+  burst within 10s and ios within 60s, and the last one feeds the user visible "Actualizaciones"
+  counter which would then count polls.
+- **Do not remove the seeding `setNow` in `useTickProvider`** to stop the tick effect firing twice
+  on mount. Without it the swr cache stays empty and the effect fires on every render for a minute.
 
 ## TypeScript discipline
 
@@ -46,7 +59,7 @@ Keep (load-bearing):
 - `useSelector((state:any) => state.x)` required unless file has `// @ts-nocheck`.
 - `useState<any>()` only if consumers read fields off state (else narrows to undefined). `useRef<any>` only if union defeats inference, else `useRef(null)`.
 - `useAnimatedStyle<any>`, `.line<any>()` + `(datum:any)` — transform array literals / d3 datum create union types that don't match. Don't drop.
-- `as any` for: `Collapsible` children (untyped class), `Text`/`TextInput` `.defaultProps`, `MaterialCommunityIcons` for `NativeTabs.Trigger.VectorIcon`.
+- `as any` for `Collapsible` children (untyped class).
 - Single-call internal callbacks (`onHandlerStateChange`, `useAnimatedReaction` reducers) drop `:any`, the wrapping API types the arg.
 
 forwardRef:

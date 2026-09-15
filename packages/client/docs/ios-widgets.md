@@ -63,9 +63,9 @@ A colorset can reference a system color
 Doing it properly would take a config plugin of our own running after `apple-targets`. Not worth it
 for a difference that only shows under increased contrast.
 
-**Never prebuild iOS without `--clean`.** It is the SDK 57 default anyway. Upstream issues 201 and
-202 report `--no-clean` crashing the plugin and duplicating targets; not reproduced here, and not
-worth reproducing.
+**Never pass `--no-clean`.** Cleaning is the default. Upstream issues 201 and 202 report
+`--no-clean` crashing the plugin and duplicating targets; not reproduced here, and not worth
+reproducing.
 
 **Deployment target is 17.0**, above the app's 16.4, because `AppIntentConfiguration` requires it.
 Deliberate. It costs widgets on iOS 16.4 to 16.7 only, the app itself needs 16.4.
@@ -94,7 +94,7 @@ Apple states the rule plainly in `widgetkit/making-a-configurable-widget`: "If y
 nonoptional parameters, you must supply a default value... A second option is to use a query type
 that implements `defaultResult()`." `DefaultValue` is an associated type, one per query, which is
 why Lista and Brechas each need their own `EntityQuery` to keep their own defaults. Per parameter
-queries exist for collections, `AppIntents.swiftinterface` line 11216.
+queries exist for collections, declared in `AppIntents.swiftinterface`.
 
 Only the collections actually needed this: the single rate parameter opened on Oficial while it was
 still `RateType?`. Why they differ was never established. It is non optional too, for symmetry, and
@@ -114,6 +114,9 @@ at is real but was measured and does not happen: a widget configured under the S
 its rates after updating onto the non optional parameter, tested on device with four widgets, two
 hand configured and two on defaults. Re-test that whenever Xcode or the deployment target moves.
 
+**The endpoint is hardcoded** in `getRates()`, so unlike android this side never reads `API_URL`. A
+build pointed at another host ships ios widgets still reading production, silently.
+
 **`placeholder(in:)` is synchronous and must stay off the network.** Apple documents it as
 returning a `TimelineEntry` immediately, and `AppIntentTimelineProvider` makes only `snapshot` and
 `timeline` async. So `getRates()` is `async` and awaited from those two, never blocked on a
@@ -125,6 +128,30 @@ until the first timeline lands, so an empty one shows "Cotizaciones no disponibl
 install. `placeholderEntry` falls back to synthesised values, and they are **equal and non zero on
 purpose**: `SpreadWidgetEntryView` divides one price by the other, so a pair of zeros gives NaN.
 If revisited, the check is to install and look at the widgets before opening the app.
+
+**Unverified**: `getRates()` reads the cache at the top and writes it once the response lands, with
+nothing serialising the three providers, so a concurrent reload may cost three requests instead of
+one. Settle it with a temporary log, three widgets on one device, one reload from the app. Android
+has no hole here, `RatesApi.fetch` is `@Synchronized` on a single thread executor.
+
+`@bacons/apple-targets` is in `expo.autolinking.exclude` in `packages/client/package.json`, so its
+`ExtensionStorageModule` is not linked. Nothing uses it today, but that is the App Group bridge: the
+app already holds fresh rates, and `setObject` into the shared suite would let the widget render
+without a request of its own, which is where the traffic is. Taking it out of that list also retires
+`packages/client/modules/widgetkit/`, since the same module ships `reloadWidget`.
+
+Four things stand in the way, none of them the entitlement:
+
+- The shapes differ. The app holds `{type: {stats: [...]}}` and both widgets parse
+  `{type: [ts, value, change]}`, so an adapter has to run before the write.
+- Provenance. The app reads `quotes.json` and the widgets read `/fetch`, so an injected payload
+  renders from one source while the fallback still renders from the other. A rate gated in one and
+  not the other becomes a silent widget corruption with no build error.
+- Validation. `usableRates` here and `parse` on android are the single choke point that keeps a
+  malformed payload off a widget. An injected one has to go through them too.
+- Android has no `ExtensionStorage`, but it is closer: `WidgetConfig.setLastPayload` already stores
+  the raw body in the same process, so it needs a module entry point and not a bridge. Both
+  platforms or neither, as always.
 
 ## Widget configuration
 
