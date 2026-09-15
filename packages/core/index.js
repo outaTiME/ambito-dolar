@@ -59,8 +59,6 @@ const SOCIAL_IMAGE_HEIGHT = (SOCIAL_IMAGE_WIDTH / 4) * 5;
 const VIEWPORT_PORTRAIT_STORY_HEIGHT = (VIEWPORT_PORTRAIT_WIDTH / 9) * 16;
 const SOCIAL_STORY_IMAGE_HEIGHT = (SOCIAL_IMAGE_WIDTH / 9) * 16;
 
-const FETCH_TIMEOUT = 30 * 1000; // 30 secs
-
 const getCapitalized = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 // https://github.com/moment/moment/pull/4129#issuecomment-339201996
@@ -351,14 +349,13 @@ const getRateChange = (stat, include_symbol = false) => {
 };
 
 const fetcher = ky.create({
-  // https://github.com/sindresorhus/ky?tab=readme-ov-file#timeout
-  timeout: FETCH_TIMEOUT,
+  // over the slowest call measured, a cold stats query, the rest sit under a second
+  timeout: 15 * 1000,
 });
 
 const promiseRetry = (fn, opts) =>
   pRetry(fn, {
     retries: 5,
-    factor: 2,
     minTimeout: 100,
     randomize: true,
     ...opts,
@@ -392,7 +389,6 @@ export default {
   SOCIAL_IMAGE_HEIGHT,
   VIEWPORT_PORTRAIT_STORY_HEIGHT,
   SOCIAL_STORY_IMAGE_HEIGHT,
-  FETCH_TIMEOUT,
   getCapitalized,
   getDate,
   getTimezoneDate,

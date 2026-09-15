@@ -16,10 +16,12 @@ const numberValidator = (value, helpers) => {
 };
 
 const getBusinessDay = async () => {
-  const response = await AmbitoDolar.fetch(process.env.BUSINESS_DAY_URL, {
-    method: 'POST',
-  });
-  const data = await response.json();
+  // ky skips post, and this one is a query so it is safe to retry
+  const data = await Shared.promiseRetry((retry) =>
+    AmbitoDolar.fetch(process.env.BUSINESS_DAY_URL, { method: 'POST' })
+      .then((response) => response.json())
+      .catch(retry),
+  );
   const { value, error } = Joi.object({
     isWorkingDay: Joi.boolean().required(),
   })
@@ -35,8 +37,6 @@ const getRate = (type) => {
   const start_time = Date.now();
   const url = Shared.getRateUrl(type);
   return AmbitoDolar.fetch(url, {
-    // 15 over default of 30 secs
-    timeout: 45 * 1000,
     headers: {
       'user-agent': USER_AGENT,
     },
