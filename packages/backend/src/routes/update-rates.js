@@ -14,6 +14,15 @@ export const handler = Shared.wrapHandler(async (event) => {
     const processed_at_unix = processed_at.unix();
     // add / override updated_at field
     base_rates.updated_at = processed_at_fmt;
+    // the body has no is_open, and a missing flag means fast polling
+    const stored_rates = await Shared.getRatesJsonObject().catch((error) => {
+      console.warn(
+        'Unable to read the stored rates',
+        JSON.stringify({ error: error.message }),
+      );
+      return {};
+    });
+    base_rates.is_open = stored_rates.is_open;
     // TODO: review the update of processed_at field (should be updated only by processor)
     // add / override processed_at field
     // base_rates.processed_at = processed_at_fmt;
