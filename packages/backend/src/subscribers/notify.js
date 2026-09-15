@@ -256,8 +256,9 @@ const sendPushNotifications = async (
               }),
             )
             .catch((error) => {
-              // https://github.com/expo/expo-server-sdk-node/blob/main/src/ExpoClient.ts#L87
-              if (error.statusCode === 429) {
+              // the sdk only retries 429, so an upstream 503 otherwise loses the whole chunk
+              // 504 stays out, the gateway gave up on a request expo may have already sent
+              if (error.statusCode === 429 || error.statusCode === 503) {
                 console.info(
                   'Retrying to send message chunk',
                   JSON.stringify({
