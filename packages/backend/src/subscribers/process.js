@@ -16,12 +16,11 @@ const numberValidator = (value, helpers) => {
 };
 
 const getBusinessDay = async () => {
-  // ky skips post, and this one is a query so it is safe to retry
-  const data = await Shared.promiseRetry((retry) =>
-    AmbitoDolar.fetch(process.env.BUSINESS_DAY_URL, { method: 'POST' })
-      .then((response) => response.json())
-      .catch(retry),
-  );
+  // ky skips post by default, and this one is a query so it opts back in
+  const data = await AmbitoDolar.fetch(process.env.BUSINESS_DAY_URL, {
+    method: 'POST',
+    retry: { methods: ['post'] },
+  }).json();
   const { value, error } = Joi.object({
     isWorkingDay: Joi.boolean().required(),
   })
