@@ -59,17 +59,15 @@ const links = [
 ---
 
 <p class="social">
-  {
-    links.map(({ href, icon, label, me }) => (
-      <a
-        class="icon"
-        href={href}
-        target="_blank"
-        rel={me ? 'noopener noreferrer me' : 'noopener noreferrer'}
-        aria-label={label}
-      >
-        <Icon name={icon} aria-hidden="true" />
-      </a>
-    ))
-  }
+  {links.map(({ href, icon, label, me }) => (
+    <a
+      class="icon"
+      href={href}
+      target="_blank"
+      rel={me ? 'noopener noreferrer me' : 'noopener noreferrer'}
+      aria-label={label}
+    >
+      <Icon name={icon} aria-hidden="true" />
+    </a>
+  ))}
 </p>
