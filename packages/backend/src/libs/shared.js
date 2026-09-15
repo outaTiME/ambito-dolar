@@ -23,11 +23,8 @@ import { Resource } from 'sst';
 import yn from 'yn';
 import zlib from 'zlib';
 
-import { publish as publishToBsky } from './social/bsky';
 import { publish as publishToInstagram } from './social/instagram';
 import { publish as publishToMastodon } from './social/mastodon';
-import { publish as publishToReddit } from './social/reddit';
-import { publish as publishToWhatsapp } from './social/whatsapp';
 
 // defaults
 
@@ -711,16 +708,7 @@ const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
       },
     ]);
   }
-  const promises = _.chain(
-    targets ?? [
-      'ifttt',
-      'instagram',
-      'mastodon',
-      // 'reddit',
-      // 'bsky',
-      // 'whatsapp',
-    ],
-  )
+  const promises = _.chain(targets ?? ['ifttt', 'instagram', 'mastodon'])
     .map((target) => {
       let factory;
       switch (target) {
@@ -734,16 +722,6 @@ const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
           break;
         case 'mastodon':
           factory = () => publishToMastodon(caption, file);
-          break;
-        case 'reddit':
-          factory = () => publishToReddit(caption, url);
-          break;
-        case 'bsky':
-          factory = () => publishToBsky(caption, file);
-          break;
-        case 'whatsapp':
-          // promise = publishToWhatsapp(caption, url);
-          factory = () => publishToWhatsapp(caption, file);
           break;
       }
       if (factory) {
