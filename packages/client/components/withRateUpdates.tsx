@@ -17,12 +17,8 @@ import Sentry from '@/utilities/Sentry';
 const SLACK = Settings.RATES_REFRESH_INTERVAL / 2;
 
 const withRateUpdates = (Component) => (props) => {
-  // not deeper, withLocalization renders nothing at first
-  Helper.useTickProvider();
   const dispatch = useDispatch();
-  const [stillLoading, setStillLoading] = React.useState(false);
   const [loadingError, setLoadingError] = React.useState(false);
-  const stillLoadingRef = React.useRef();
   const inFlightRef = React.useRef(false);
   const failedRef = React.useRef(false);
   const lastFetchAtRef = React.useRef();
@@ -34,6 +30,9 @@ const withRateUpdates = (Component) => (props) => {
   );
   const showActivityToast = Helper.useActivityToast();
   const isOpenRef = Helper.useSelectorRef((state) => state.rates.is_open);
+  // not deeper, withLocalization renders nothing at first
+  // the tick stops exactly where the retry button takes over, same test AppContainer makes
+  Helper.useTickProvider(!loadingError || Helper.isValid(props.rates));
   // through refs, the tick effect needs a stable identity
   const fetchRates = React.useCallback(
     async ({ force = false } = {}) => {
@@ -61,17 +60,12 @@ const withRateUpdates = (Component) => (props) => {
       const shouldShowToast =
         previousUpdatedAt &&
         timeInForeground.current &&
-        fetchedAt - timeInForeground.current <= Settings.STILL_LOADING_TIMEOUT;
+        fetchedAt - timeInForeground.current <=
+          Settings.FOREGROUND_TOAST_WINDOW;
       Helper.debug('💫 Fetching rates', { initial });
       inFlightRef.current = true;
       lastFetchAtRef.current = fetchedAt;
       setLoadingError(false);
-      clearTimeout(stillLoadingRef.current);
-      if (initial) {
-        stillLoadingRef.current = setTimeout(() => {
-          setStillLoading(true);
-        }, Settings.STILL_LOADING_TIMEOUT);
-      }
       try {
         const data = await Helper.getRates();
         if (initial) {
@@ -110,11 +104,13 @@ const withRateUpdates = (Component) => (props) => {
       } catch (error) {
         console.warn('Unable to get rates', error);
         failedRef.current = true;
+        if (initial) {
+          // same wait as the success path, a fast failure would flash the retry button back in
+          await Helper.delay();
+        }
         setLoadingError(true);
       } finally {
         inFlightRef.current = false;
-        setStillLoading(false);
-        clearTimeout(stillLoadingRef.current);
       }
     },
     [dispatch, isOpenRef, showActivityToast, showUpdateToastRef],
@@ -160,16 +156,10 @@ const withRateUpdates = (Component) => (props) => {
       }
     });
   }, [fetchRates]);
-  React.useEffect(() => {
-    return () => {
-      clearTimeout(stillLoadingRef.current);
-    };
-  }, []);
   return (
     <Component
       {...{
         ...props,
-        stillLoading,
         loadingError,
         fetchRates,
       }}

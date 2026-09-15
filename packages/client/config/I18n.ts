@@ -15,10 +15,6 @@ const i18n = new I18n({
     website: 'Sitio web',
     no_available_rates: 'Sin cotizaciones disponibles.',
     no_available_stats: 'Sin métricas disponibles.',
-    // still_loading: 'Conectividad limitada, la carga se reanudará automáticamente.',
-    // still_loading: 'Las cotizaciones se mostrarán en cuanto se restablezca tu conexión.',
-    still_loading:
-      'Conectividad limitada, verás las cotizaciones cuando se recupere la conexión.',
     rates_loading_error: 'Imposible obtener las cotizaciones.',
     retry: 'Reintentar',
     developer: 'Desarrollador',
@@ -71,6 +67,8 @@ const i18n = new I18n({
     share: 'Compartir',
     donate: 'Donar',
     donate_choose_title: 'Elegí tu aporte',
+    donate_choose_note:
+      'Son de cobro único y podés hacerlo cuantas veces quieras.',
     donate_modal_note:
       'Elegí tu aporte y acompañá el mantenimiento y desarrollo continuo de esta aplicación.',
     donate_product_small_contribution: 'Pequeño',

@@ -52,6 +52,7 @@ const debug = (...args) => {
 
 const getJson = (url, opts = {}) => {
   debug('Get json', url, opts);
+  // the ky shortcut below, a native response.json() reads outside the timeout and can hang forever
   return AmbitoDolar.fetch(url, {
     // method: 'GET',
     headers: {
@@ -59,7 +60,7 @@ const getJson = (url, opts = {}) => {
       'Content-Type': 'application/json; charset=utf-8',
     },
     ...opts,
-  }).then((response) => response.json());
+  }).json();
 };
 
 const FRACTION_DIGITS = AmbitoDolar.FRACTION_DIGITS;
@@ -372,11 +373,11 @@ export default {
     const [now] = this.useSharedState('now', Date.now());
     return now;
   },
-  useTickProvider() {
+  useTickProvider(enabled = true) {
     const [, setNow] = this.useSharedState('now', Date.now());
     const isActive = useAppState('active');
     React.useEffect(() => {
-      if (!isActive) {
+      if (!isActive || !enabled) {
         return;
       }
       // seeds the swr cache, fallbackData does not and now would drift
@@ -387,7 +388,7 @@ export default {
       return () => {
         clearInterval(id);
       };
-    }, [setNow, isActive]);
+    }, [setNow, isActive, enabled]);
   },
   useTheme(forcedColorScheme = undefined) {
     const context = React.useContext(ThemeContext);
