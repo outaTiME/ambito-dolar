@@ -151,12 +151,21 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
   const prev_base_stats = Helper.usePrevious(base_stats);
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
+  const inFlightRef = React.useRef();
+  // both effects can fire on one render, the shared promise keeps it to one
   const updateHistoricalRates = React.useCallback(() => {
-    Helper.debug('💫 Fetching historical rates');
-    return Helper.getHistoricalRates().then((rates) => {
-      dispatch(actions.updateHistoricalRates(rates));
-      dispatch(actions.registerApplicationDownloadHistoricalRates());
-    });
+    if (!inFlightRef.current) {
+      Helper.debug('💫 Fetching historical rates');
+      inFlightRef.current = Helper.getHistoricalRates()
+        .then((rates) => {
+          dispatch(actions.updateHistoricalRates(rates));
+          dispatch(actions.registerApplicationDownloadHistoricalRates());
+        })
+        .finally(() => {
+          inFlightRef.current = undefined;
+        });
+    }
+    return inFlightRef.current;
   }, [dispatch]);
   const [chartStats, setChartStats] = React.useState(base_stats);
   React.useEffect(() => {
@@ -194,8 +203,6 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
                 console.warn(`No historical stats for ${type} rate`);
               }
             }
-          } else {
-            // leave the chart with the previous data until the update
           }
         } else {
           setChartStats(base_stats);
@@ -204,7 +211,7 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
       return () => clearTimeout(timer_id);
     }
   }, [rangeIndex, historical_rates, type, base_stats]);
-  // re-fetch historical rates when focus
+  // re-fetch when the rates moved, the cached one keeps drawing meanwhile
   React.useEffect(() => {
     const must_revalidate =
       prev_base_stats !== undefined && base_stats !== prev_base_stats;
@@ -218,13 +225,20 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
   React.useEffect(() => {
     const range_updated =
       prev_rangeIndex !== undefined && prev_rangeIndex !== rangeIndex;
-    if (range_updated && rangeIndex > 0 && !historical_rates) {
+    // the cache is good while it ends on the stat we hold, written together
+    const historical_stats = historical_rates?.[type] ?? [];
+    const historical_stat = historical_stats[historical_stats.length - 1];
+    if (range_updated && rangeIndex > 0 && historical_stat?.[0] !== stat[0]) {
       setLoading(true);
       // wait at least ANIMATION_DURATION before request to prevent fast dialogs on fails
       Helper.delay().then(() =>
         updateHistoricalRates()
           .catch(() => {
-            setRangeIndex(prev_rangeIndex);
+            // a stale cache still draws the new range, the alert is for having none
+            if (historical_stat) {
+              return;
+            }
+            setRangeIndex(0);
             Alert.alert(
               I18n.t('detail_loading_error'),
               '',

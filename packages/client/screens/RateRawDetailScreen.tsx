@@ -65,12 +65,9 @@ const RateRawDetailScreen = ({ rates }) => {
     }
   }, [excluded_rates, type]);
   const base_stats = rate.stats;
-  const prev_historical_rates = Helper.usePrevious(historical_rates);
   const chartStats = React.useMemo(() => {
-    // prevent back and forth on chart when revalidation
-    const current_historical_rates = historical_rates || prev_historical_rates;
-    if (current_historical_rates && rangeIndex > 0) {
-      const stats = current_historical_rates[type] || [];
+    if (historical_rates && rangeIndex > 0) {
+      const stats = historical_rates[type] || [];
       if (stats.length > 0) {
         const moment_to = DateUtils.get(stats[stats.length - 1][0]);
         const moment_from =
