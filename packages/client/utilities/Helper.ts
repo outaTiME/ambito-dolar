@@ -1,6 +1,5 @@
 // @ts-nocheck
 import AmbitoDolar from '@ambito-dolar/core';
-import { init } from '@instantdb/react-native';
 import rgba from 'color-rgba';
 import * as d3Array from 'd3-array';
 import * as Application from 'expo-application';
@@ -109,9 +108,6 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
   }
   return formatted;
 };
-
-const instatDB =
-  Settings.INSTANT_APP_ID && init({ appId: Settings.INSTANT_APP_ID });
 
 const TABBAR_HEIGHT_UIKIT = 49;
 
@@ -383,11 +379,11 @@ export default {
       if (!isActive) {
         return;
       }
-      // immediate refresh on mount and foreground entry, then 60s interval
+      // seeds the swr cache, fallbackData does not and now would drift
       setNow(Date.now());
       const id = setInterval(() => {
         setNow(Date.now());
-      }, 60 * 1000);
+      }, Settings.RATES_REFRESH_INTERVAL);
       return () => {
         clearInterval(id);
       };
@@ -474,7 +470,6 @@ export default {
     }
   },
   debug,
-  getInstantDB: () => instatDB,
   forceException(message) {
     throw new Error(message ?? 'Forced exception signal');
   },

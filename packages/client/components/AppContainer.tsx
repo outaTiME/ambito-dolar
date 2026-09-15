@@ -7,7 +7,6 @@ import {
 } from '@gorhom/bottom-sheet';
 import { compose } from '@reduxjs/toolkit';
 import * as Device from 'expo-device';
-import * as Haptics from 'expo-haptics';
 import * as Localization from 'expo-localization';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
@@ -20,13 +19,12 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 import * as actions from '@/actions';
 import ActionButton from '@/components/ActionButton';
+import withRateUpdates from '@/components/withRateUpdates';
 import withRates from '@/components/withRates';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import useAppState from '@/hooks/useAppState';
 import { useDonationProducts } from '@/hooks/useDonationProducts';
-import * as WidgetKit from '@/modules/widgetkit';
-import { reloadWidgets } from '@/modules/widgets';
 import InitialScreen from '@/screens/InitialScreen';
 import Amplitude from '@/utilities/Amplitude';
 import DateUtils from '@/utilities/Date';
@@ -42,9 +40,12 @@ import Helper from '@/utilities/Helper';
 import { goToDonateModal } from '@/utilities/Navigation';
 import Sentry from '@/utilities/Sentry';
 
-// suppress RevenueCat dev-overlay banners, errors still print to console
+// dev overlay noise, the reanimated one is @gorhom/bottom-sheet issue #2758
 if (__DEV__) {
-  LogBox.ignoreLogs([/\[RevenueCat\]/]);
+  LogBox.ignoreLogs([
+    /\[RevenueCat\]/,
+    /\[Reanimated\] dependencies should only be used/,
+  ]);
 }
 
 const DONATION_PURCHASE_SLUGS = [
@@ -62,11 +63,18 @@ const DONATION_PURCHASE_SLUGS = [
   '¡No hay quien te gane usando {APP_NAME}!',
 ];
 
-const AppContainer = ({ children, rates, stillLoading = false }) => {
-  Helper.useTickProvider();
+const AppContainer = ({
+  children,
+  rates,
+  stillLoading,
+  loadingError,
+  fetchRates,
+}) => {
   const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
   if (!hasRates) {
-    return <InitialScreen rates={rates} stillLoading={stillLoading} />;
+    return (
+      <InitialScreen {...{ rates, stillLoading, loadingError, fetchRates }} />
+    );
   }
   return children;
 };
@@ -80,146 +88,6 @@ const withAppIdentifier = (Component) => (props) => {
       {...{
         ...props,
         installationId,
-      }}
-    />
-  );
-};
-
-const db = Helper.getInstantDB();
-
-const withRealtime = (Component) => (props) => {
-  const dispatch = useDispatch();
-  const [stillLoading, setStillLoading] = React.useState(false);
-  const stillLoadingRef = React.useRef();
-  const updateLocalRates = React.useCallback(
-    (rates) => {
-      Helper.debug('💫 Updating local rates', { withRates: !!rates });
-      return Promise.resolve(rates ?? Helper.getRates())
-        .then((data) => {
-          dispatch(actions.addRates(data));
-          dispatch(actions.registerApplicationDownloadRates());
-          // force reload of widgets
-          WidgetKit.reloadAllTimelines();
-          reloadWidgets();
-        })
-        .catch(console.warn);
-    },
-    [dispatch],
-  );
-  // UPDATE CHECK
-  const updatedAt = useSelector((state) => state.rates.updated_at);
-  const updatedAtRef = React.useRef(updatedAt);
-  const [forceUpdate, setForceUpdate] = React.useState();
-  React.useEffect(() => {
-    if (updatedAtRef.current && !updatedAt) {
-      // force re-render when clear rates
-      Helper.debug('💨 Store cleared');
-      setForceUpdate(Date.now());
-    }
-    updatedAtRef.current = updatedAt;
-  }, [updatedAt]);
-  const isActiveAppState = useAppState('active');
-  const { isLocal, isLoading, data } = db
-    ? db.useQuery(
-        // force disconnect when app goes to background
-        isActiveAppState && {
-          boards: {
-            $: {
-              // avoid fixed record identifier
-              limit: 1,
-            },
-          },
-        },
-      )
-    : {
-        // no real-time updates
-        isLocal: true,
-      };
-  const timeInForeground = React.useRef();
-  React.useEffect(() => {
-    if (isActiveAppState) {
-      // app comes from background
-      timeInForeground.current = Date.now();
-    }
-  }, [isActiveAppState]);
-  const showUpdateToastRef = Helper.useSelectorRef(
-    (state) => state.application.show_update_toast,
-  );
-  const showActivityToast = Helper.useActivityToast();
-  React.useEffect(() => {
-    if (!isLocal) {
-      if (isLoading) {
-        // only for initial load
-        setStillLoading(false);
-        clearTimeout(stillLoadingRef.current);
-        stillLoadingRef.current = setTimeout(() => {
-          setStillLoading(true);
-        }, Settings.STILL_LOADING_TIMEOUT);
-      } else {
-        const board = data?.boards?.[0]?.data;
-        if (board) {
-          const updated_at = board.updated_at;
-          if (updated_at !== updatedAtRef.current) {
-            Sentry.addBreadcrumb({
-              message: 'Instant update event',
-              data: updated_at,
-            });
-            // show toast when update is within 10s of app in foreground (skip on init)
-            const shouldShowToast =
-              updatedAtRef.current &&
-              timeInForeground.current &&
-              DateUtils.get().diff(timeInForeground.current, 'milliseconds') <=
-                Settings.STILL_LOADING_TIMEOUT;
-            Helper.debug(
-              '⚡️ Instant updated',
-              updated_at,
-              updatedAtRef.current,
-              shouldShowToast,
-            );
-            Promise.resolve(
-              // only for initial load or when clear rates
-              !updatedAtRef.current && Helper.delay(),
-            )
-              .then(() => updateLocalRates(board))
-              .then(() => {
-                if (shouldShowToast) {
-                  if (Settings.NEW_HEADER_SCHEME) {
-                    Settings.HAPTICS_ENABLED && Haptics.notificationAsync();
-                  } else if (showUpdateToastRef.current !== false) {
-                    showActivityToast(I18n.t('rates_updated'), true);
-                  }
-                  // force a single toast per app foreground entry
-                  timeInForeground.current = null;
-                }
-                // initial load completed
-                setStillLoading(false);
-                clearTimeout(stillLoadingRef.current);
-              });
-          } else {
-            Helper.debug('✅ Rates already updated', updated_at);
-          }
-        } else {
-          // silent fail
-        }
-      }
-    } else {
-      Helper.debug('❄️ No real-time updates');
-      setStillLoading(false);
-      clearTimeout(stillLoadingRef.current);
-      updateLocalRates();
-    }
-  }, [isLocal, isLoading, data, forceUpdate, updateLocalRates]);
-  React.useEffect(() => {
-    return () => {
-      clearTimeout(stillLoadingRef.current);
-      setStillLoading(false);
-    };
-  }, []);
-  return (
-    <Component
-      {...{
-        ...props,
-        stillLoading,
       }}
     />
   );
@@ -740,7 +608,7 @@ const withAppDonation = (Component) => (props) => {
 export default compose(
   withRates(),
   withAppIdentifier,
-  withRealtime,
+  withRateUpdates,
   withAppUpdateCheck,
   withAppStatistics,
   withUserActivity,

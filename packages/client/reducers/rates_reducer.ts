@@ -10,24 +10,30 @@ import {
 const INITIAL_STATE = {
   rates: null,
   updated_at: null,
+  is_open: null,
   historical_rates: null,
 };
 
 export default (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
     case ADD_RATES: {
-      const { rates, updated_at } = payload;
-      // rates should update only on real-time changes
-      if (!_.isEqual(state.rates, rates)) {
-        return {
-          ...state,
-          rates,
-          updated_at,
-          // remove historical data to force refetch
-          historical_rates: null,
-        };
+      const { rates, updated_at, is_open } = payload;
+      const same_rates = _.isEqual(state.rates, rates);
+      // the flag moves on its own, with no change on the rates
+      if (
+        same_rates &&
+        state.updated_at === updated_at &&
+        state.is_open === is_open
+      ) {
+        return state;
       }
-      return state;
+      // same identity so the rows do not re-render
+      return {
+        ...state,
+        rates: same_rates ? state.rates : rates,
+        updated_at,
+        is_open,
+      };
     }
     case UPDATE_HISTORICAL_RATES:
       return {

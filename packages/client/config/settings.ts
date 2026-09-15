@@ -30,7 +30,11 @@ const DASH_SEPARATOR = '‒';
 const MAX_DAYS_FOR_REVIEW = 5;
 // TODO: leave 6 days like "Ámbito Financiero" website?
 const MAX_NUMBER_OF_STATS = 6; // 1 week
-const STILL_LOADING_TIMEOUT = 10 * 1000; // 10 secs
+// half the fetch timeout in packages/core, so the message lands before it gives up
+const STILL_LOADING_TIMEOUT = 7.5 * 1000;
+// the backend writes every 5 minutes, a minute is already finer than that
+const RATES_REFRESH_INTERVAL = 60 * 1000;
+const RATES_CLOSED_REFRESH_INTERVAL = RATES_REFRESH_INTERVAL * 5;
 const ANIMATION_DURATION = 250;
 // half from longPress default
 // const INTERACTION_DELAY = 185;
@@ -55,14 +59,12 @@ const {
         ios: REVENUECAT_IOS_API_KEY,
         android: REVENUECAT_ANDROID_API_KEY,
       },
-      instantApiId: INSTANT_APP_ID,
     },
   },
 } = Constants;
 // force local fixtures
 // const RATES_URI = null;
 // const HISTORICAL_RATES_URI = null;
-// const INSTANT_APP_ID = null;
 const APP_COPYRIGHT = `© ${new Date().getFullYear()} ${APP_NAME}`;
 const APP_DOMAIN = 'ambito-dolar.app';
 const WEBSITE_URL = `https://${APP_DOMAIN}`;
@@ -113,12 +115,13 @@ const Settings: any = {
     ios: REVENUECAT_IOS_API_KEY,
     android: REVENUECAT_ANDROID_API_KEY,
   }),
-  INSTANT_APP_ID,
   SPACE_SEPARATOR,
   DASH_SEPARATOR,
   MAX_DAYS_FOR_REVIEW,
   MAX_NUMBER_OF_STATS,
   STILL_LOADING_TIMEOUT,
+  RATES_REFRESH_INTERVAL,
+  RATES_CLOSED_REFRESH_INTERVAL,
   ANIMATION_DURATION,
   INTERACTION_DELAY,
   ICON_SIZE,

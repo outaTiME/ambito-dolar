@@ -2,6 +2,7 @@
 import { compose } from '@reduxjs/toolkit';
 import { ActivityIndicator } from 'react-native';
 
+import ActionButton from '@/components/ActionButton';
 import ContentView from '@/components/ContentView';
 import MessageView from '@/components/MessageView';
 import withContainer from '@/components/withContainer';
@@ -9,10 +10,27 @@ import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
-const InitialScreen = ({ rates, stillLoading }) => {
+const InitialScreen = ({ rates, stillLoading, loadingError, fetchRates }) => {
   const { theme } = Helper.useTheme();
   // only on initial when nil rates
   if (!rates) {
+    if (loadingError) {
+      return (
+        <ContentView>
+          <MessageView
+            style={{
+              marginBottom: Settings.PADDING,
+            }}
+            message={I18n.t('rates_loading_error')}
+          />
+          <ActionButton
+            title={I18n.t('retry')}
+            handleOnPress={() => fetchRates({ force: true })}
+            alternativeBackground
+          />
+        </ContentView>
+      );
+    }
     return (
       <ContentView>
         <ActivityIndicator

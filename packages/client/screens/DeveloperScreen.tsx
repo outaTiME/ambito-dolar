@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { tx, id } from '@instantdb/react-native';
 import { compose } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 
@@ -8,7 +7,6 @@ import CardItemView from '@/components/CardItemView';
 import CardView from '@/components/CardView';
 import FixedScrollView from '@/components/FixedScrollView';
 import withContainer from '@/components/withContainer';
-import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
 import { goToConversion, goToRatesWithPopToTop } from '@/utilities/Navigation';
 
@@ -73,48 +71,6 @@ const DeveloperScreen = () => {
           chevron={false}
           onAction={() => {
             showActivityToast('Toast de actividad');
-          }}
-        />
-      </CardView>
-      <CardView title="InstantDB" plain>
-        <CardItemView
-          title="Crear nuevo tablero"
-          useSwitch={false}
-          chevron={false}
-          onAction={() => {
-            const db = Helper.getInstantDB();
-            const boardId = id();
-            const data = {
-              // empty
-            };
-            const updated_at = DateUtils.get();
-            db.transact([
-              tx.boards[boardId].update({ data, updated_at }),
-            ]).catch(console.warn);
-          }}
-        />
-        <CardItemView
-          title="Eliminar tablero existente"
-          useSwitch={false}
-          chevron={false}
-          onAction={() => {
-            const db = Helper.getInstantDB();
-            db.queryOnce({
-              boards: {
-                $: {
-                  // avoid fixed record identifier
-                  limit: 1,
-                },
-              },
-            })
-              .then(({ data }) => {
-                const boardId = data?.boards?.[0]?.id;
-                if (boardId) {
-                  return db.transact(tx.boards[boardId].delete());
-                }
-                throw new Error('No board found');
-              })
-              .catch(console.warn);
           }}
         />
       </CardView>

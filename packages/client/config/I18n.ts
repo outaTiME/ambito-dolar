@@ -19,6 +19,8 @@ const i18n = new I18n({
     // still_loading: 'Las cotizaciones se mostrarán en cuanto se restablezca tu conexión.',
     still_loading:
       'Conectividad limitada, verás las cotizaciones cuando se recupere la conexión.',
+    rates_loading_error: 'Imposible obtener las cotizaciones.',
+    retry: 'Reintentar',
     developer: 'Desarrollador',
     generic_error: 'Imposible completar la operación seleccionada.',
     rates_updated: '􀁣 Actualizado',
@@ -43,8 +45,7 @@ const i18n = new I18n({
     previous_close: 'Cierre anterior',
     'all-time_high': 'Máximo histórico',
     source: 'Fuente',
-    detail_loading_error:
-      'Imposible obtener las cotizaciones para el periodo seleccionado.',
+    detail_loading_error: 'Imposible obtener las cotizaciones del periodo.',
     // rates
     rates: 'Cotizaciones',
     // conversion
