@@ -53,7 +53,11 @@ const DonateScreen = () => {
       {products.length === 0 ? (
         <MessageView message={I18n.t('donate_unavailable')} />
       ) : (
-        <CardView title={I18n.t('donate_choose_title')} plain>
+        <CardView
+          title={I18n.t('donate_choose_title')}
+          note={I18n.t('donate_choose_note')}
+          plain
+        >
           {products.map((product) => (
             <CardItemView
               key={product.identifier}
