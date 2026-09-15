@@ -10,7 +10,7 @@ import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
-const InitialScreen = ({ rates, stillLoading, loadingError, fetchRates }) => {
+const InitialScreen = ({ rates, loadingError, fetchRates }) => {
   const { theme } = Helper.useTheme();
   // only on initial when nil rates
   if (!rates) {
@@ -38,14 +38,6 @@ const InitialScreen = ({ rates, stillLoading, loadingError, fetchRates }) => {
           color={Settings.getForegroundColor(theme)}
           size="small"
         />
-        {stillLoading && (
-          <MessageView
-            style={{
-              marginTop: Settings.PADDING,
-            }}
-            message={I18n.t('still_loading')}
-          />
-        )}
       </ContentView>
     );
   }

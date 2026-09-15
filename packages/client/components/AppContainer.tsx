@@ -63,18 +63,10 @@ const DONATION_PURCHASE_SLUGS = [
   '¡No hay quien te gane usando {APP_NAME}!',
 ];
 
-const AppContainer = ({
-  children,
-  rates,
-  stillLoading,
-  loadingError,
-  fetchRates,
-}) => {
+const AppContainer = ({ children, rates, loadingError, fetchRates }) => {
   const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
   if (!hasRates) {
-    return (
-      <InitialScreen {...{ rates, stillLoading, loadingError, fetchRates }} />
-    );
+    return <InitialScreen {...{ rates, loadingError, fetchRates }} />;
   }
   return children;
 };

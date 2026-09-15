@@ -30,8 +30,8 @@ const DASH_SEPARATOR = '‒';
 const MAX_DAYS_FOR_REVIEW = 5;
 // TODO: leave 6 days like "Ámbito Financiero" website?
 const MAX_NUMBER_OF_STATS = 6; // 1 week
-// half the fetch timeout in packages/core, so the message lands before it gives up
-const STILL_LOADING_TIMEOUT = 7.5 * 1000;
+// an update landing inside this belongs to the open, so the toast announces it
+const FOREGROUND_TOAST_WINDOW = 10 * 1000;
 // the backend writes every 5 minutes, a minute is already finer than that
 const RATES_REFRESH_INTERVAL = 60 * 1000;
 const RATES_CLOSED_REFRESH_INTERVAL = RATES_REFRESH_INTERVAL * 5;
@@ -119,7 +119,7 @@ const Settings: any = {
   DASH_SEPARATOR,
   MAX_DAYS_FOR_REVIEW,
   MAX_NUMBER_OF_STATS,
-  STILL_LOADING_TIMEOUT,
+  FOREGROUND_TOAST_WINDOW,
   RATES_REFRESH_INTERVAL,
   RATES_CLOSED_REFRESH_INTERVAL,
   ANIMATION_DURATION,
