@@ -4,19 +4,19 @@ import { RectButton } from 'react-native-gesture-handler';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
-const ButtonText = ({ title, small = false, colorScheme, loading }) => {
+const ButtonText = ({ title, colorScheme, loading }) => {
   const { theme, fonts } = Helper.useTheme(colorScheme);
   return (
     <View
       style={{
         paddingVertical: Settings.PADDING / 2,
-        paddingHorizontal: Settings.PADDING + Settings.CONTENT_MARGIN,
+        paddingHorizontal: Settings.PADDING,
         justifyContent: 'center',
       }}
     >
       <Text
         style={[
-          small === true ? fonts.footnote : fonts.subhead,
+          fonts.subhead,
           {
             textAlign: 'center',
             textTransform: 'uppercase',
@@ -46,7 +46,6 @@ export default ({
   borderless,
   style,
   alternativeBackground,
-  small,
   colorScheme,
   loading = false,
 }) => {
@@ -61,7 +60,7 @@ export default ({
           style,
         ]}
       >
-        <ButtonText {...{ title, small, colorScheme, loading }} />
+        <ButtonText {...{ title, colorScheme, loading }} />
       </Pressable>
     );
   }
@@ -90,7 +89,7 @@ export default ({
         rippleColor={Settings.getRippleColor(theme)}
         enabled={!loading}
       >
-        <ButtonText {...{ title, small, colorScheme, loading }} />
+        <ButtonText {...{ title, colorScheme, loading }} />
       </RectButton>
     </View>
   );
