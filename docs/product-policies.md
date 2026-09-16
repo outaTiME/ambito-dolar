@@ -57,8 +57,15 @@ The client polls `Settings.RATES_URI` from `packages/client/components/withRateU
 ## Donation modal policy
 
 - `donate_choose_note` on the DonateScreen card says the charge is one time and repeatable, which
-  answers a question a user sent to support. `PRODUCT_CATEGORY.NON_SUBSCRIPTION` in
-  `packages/client/hooks/useDonationProducts.ts` is what makes it true. Do not drop it.
+  answers a question a user sent to support. `getOfferings` in
+  `packages/client/hooks/useDonationProducts.ts` reads whichever offering is current, so the ladder is
+  whatever that one holds and `donations` has to stay the current one. Nothing in the code filters by
+  product category any more, so a subscription dropped into the current offering would render and the
+  note would lie. Keep it consumables only.
+- The offering is the catalog and the dashboard is where the ladder changes, with no release. A
+  package removed from it also drops its key from `priceMap`, so past transactions of that product
+  stop counting in `computeLifetime`, and a donor whose reduced total falls into a lower step gets
+  re-asked sooner. Add steps, do not remove them.
 - Cooldown in distinct usage days, not wall-clock. Heavy users steady cadence, casual users + sleepers respected.
 - Single escalating schedule `getCooldownDays` (`packages/client/utilities/Donation.ts`) governs first appearance + post-dismiss cooldown.
 - Post-donate re-ask `getReAskMs` date-based, tiered by lifetime donated. Donors never penalized for low usage.
