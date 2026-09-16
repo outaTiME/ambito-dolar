@@ -74,6 +74,7 @@ const i18n = new I18n({
     donate_product_small_contribution: 'Pequeño',
     donate_product_medium_contribution: 'Mediano',
     donate_product_large_contribution: 'Grande',
+    donate_product_extra_large_contribution: 'Enorme',
     donate_unavailable:
       'No se pudieron cargar las donaciones, verificá tu conexión e intentá nuevamente.',
     installation_id: 'ID',

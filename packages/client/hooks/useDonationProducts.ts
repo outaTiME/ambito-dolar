@@ -2,7 +2,6 @@
 import React from 'react';
 import Purchases from 'react-native-purchases';
 
-import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
 // module-level state dedupes parallel fetches, boot attempt runs once per session
@@ -13,46 +12,50 @@ const fetchProductsOnce = () => {
   if (inflight) {
     return inflight;
   }
-  // mock products in dev so the donation modal renders on emulators
-  // and simulators without live store billing
+  // mock products in dev, emulators and simulators have no live store billing
   if (__DEV__) {
-    const mockCatalog = {
-      small_contribution: {
+    const mockProducts = [
+      {
         identifier: 'small_contribution',
         price: 0.99,
         priceString: 'US$0,99',
         title: 'Small',
         currencyCode: 'USD',
       },
-      medium_contribution: {
+      {
         identifier: 'medium_contribution',
         price: 2.99,
         priceString: 'US$2,99',
         title: 'Medium',
         currencyCode: 'USD',
       },
-      large_contribution: {
+      {
         identifier: 'large_contribution',
         price: 4.99,
         priceString: 'US$4,99',
         title: 'Large',
         currencyCode: 'USD',
       },
-    };
-    inflight = Promise.resolve(
-      Settings.DONATION_PRODUCT_IDS.map((id) => mockCatalog[id]).filter(
-        Boolean,
-      ),
-    ).finally(() => {
+      {
+        identifier: 'extra_large_contribution',
+        price: 9.99,
+        priceString: 'US$9,99',
+        title: 'Extra large',
+        currencyCode: 'USD',
+      },
+    ];
+    inflight = Promise.resolve(mockProducts).finally(() => {
       inflight = null;
     });
     return inflight;
   }
-  inflight = Purchases.getProducts(
-    Settings.DONATION_PRODUCT_IDS,
-    Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
-  )
-    .then((items) => (items ?? []).sort((a, b) => a.price - b.price))
+  // the current offering drives the ladder, so tiers move without a release
+  inflight = Purchases.getOfferings()
+    .then((offerings) =>
+      (offerings?.current?.availablePackages ?? [])
+        .map((item) => item.product)
+        .sort((a, b) => a.price - b.price),
+    )
     .catch(() => [])
     .finally(() => {
       inflight = null;

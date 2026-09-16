@@ -82,11 +82,6 @@ const CHART_STROKE_WIDTH = 3 - 0.5;
 const USE_NATIVE_DONATION_SHEET = false;
 // toggle NativeTabs (true, parity with iOS) or classic Tabs (false) on android
 const USE_NATIVE_TABS_ANDROID = true;
-const DONATION_PRODUCT_IDS = [
-  'small_contribution',
-  'medium_contribution',
-  'large_contribution',
-];
 
 const Settings: any = {
   PADDING,
@@ -136,7 +131,6 @@ const Settings: any = {
   CAFECITO_URL,
   USE_NATIVE_DONATION_SHEET,
   USE_NATIVE_TABS_ANDROID,
-  DONATION_PRODUCT_IDS,
   CHART_STROKE_WIDTH,
   IS_TABLET,
   IS_HANDSET,
