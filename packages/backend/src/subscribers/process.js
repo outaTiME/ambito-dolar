@@ -56,6 +56,11 @@ const getRate = (type) => {
         .unknown(true);
       const { value, error } = schema.validate(data);
       if (error) {
+        // sometimes 0 as numbers on date and prices on FUTURE_TYPE
+        if (data?.compra === 0 && data?.venta === 0) {
+          console.info('Skipping empty rate', JSON.stringify({ type, data }));
+          return;
+        }
         // log error and continue processing
         console.warn(
           'Invalid schema validation on rate',
