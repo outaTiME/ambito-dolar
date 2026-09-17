@@ -4,9 +4,8 @@ import Purchases from 'react-native-purchases';
 
 import Helper from '@/utilities/Helper';
 
-// module-level state dedupes parallel fetches, boot attempt runs once per session
+// module-level state dedupes parallel fetches
 let inflight = null;
-let autoAttempted = false;
 
 const fetchProductsOnce = () => {
   if (inflight) {
@@ -79,8 +78,7 @@ export const useDonationProducts = () => {
     return items;
   }, [setProducts]);
   React.useEffect(() => {
-    if (purchasesConfigured && !products.length && !autoAttempted) {
-      autoAttempted = true;
+    if (purchasesConfigured && !products.length) {
       fetchAndCache();
     }
   }, [purchasesConfigured, products.length, fetchAndCache]);
