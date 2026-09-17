@@ -74,5 +74,14 @@ The client polls `Settings.RATES_URI` from `packages/client/components/withRateU
 - The steps are 15, 30, 45, 60 and 75 usage days, capped, and the re-ask is 3, 6 or 12 months for a lifetime under 2, under 10, or over. Both live in `packages/client/utilities/Donation.ts`.
 - The usage day gate runs before the re-ask, so a donor under 15 usage days waits for both. Donating resets the snapshot to `0` and not to the current `days_used`, so `elapsedDays` becomes the whole history and anyone past 15 days clears it at once. The deviation from "never penalized" only reaches someone who donated that early, and it asks them less rather than more.
 - `computeLifetime` sums today's prices in the store's own currency, and the 2 and 10 thresholds read as USD. A storefront in another currency lands every donor on the 12 month step. `currencyCode` comes back from the catalog and nothing reads it.
+- The donation history belongs to `installation_id`, the RevenueCat App User ID. It is persisted in
+  the app container, so an app update keeps it and a clean install mints a new one that reads zero.
+  That is the store answering for a different user, not a failed read.
+- Restoring does not bring it back. Consumables drop out of the store history once finished, so a
+  `restorePurchases` on a fresh id posted the receipt and transferred nothing, verified on device.
+  Buying again did transfer the whole history, because that purchase carries a transaction. Android
+  has no in-app path either, Play Billing 8 stopped returning consumed one-time purchases and
+  `allowBackup: false` rules out the backup.
+- When someone asks for their donations back, transfer by Order ID from the RevenueCat dashboard.
 - Closing the sheet with a purchase in flight or just finished is not a dismiss, `donatedRef` and `loadingRef` hold it back. Without that, donating and closing would count against the donor.
 - `USE_NATIVE_DONATION_SHEET` is the way out of `@gorhom/bottom-sheet` and both paths are kept alive on purpose. It is `false`, so the `BottomSheetModal` in `AppContainer` is what ships and `goToDonateModal()` on the `app/donate.tsx` route sits dormant. That route is not dead code, deleting it burns the escape hatch, and a change to the donation modal has to land on both sides.
