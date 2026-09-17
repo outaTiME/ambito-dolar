@@ -48,7 +48,7 @@ yarn workspace @ambito-dolar/website run build|preview
 
 - Prettier and EditorConfig read their own config, run them instead of applying them by hand.
 - Match nearby style before broad reformat.
-- Comments: lowercase default, keep existing uppercase unless editing that line. Terse, ASCII-only, no arrows/em-dash/checkmarks/special chars. No trailing period. One sentence per `//`. Multi-line: consecutive `//`, not prose-with-semicolons.
+- Comments: lowercase default, keep existing uppercase unless editing that line. Terse, ASCII-only, no arrows/em-dash/checkmarks/special chars. No trailing period. One sentence per `//`, on one line. Multi-line only when one sentence does not fit, consecutive `//`, never prose-with-semicolons.
 - No label-prefix comments (`// feature flag:`, `// android:`, `// <tag>:`). Plain sentence describing what or why.
 - Contiguous related statements compact, no blank lines within decls/guards/memo/returns. Blank line only between distinct logical phases.
 - Always brace `if/else/for/while`. No inline (`if (x) { return; }`, not `if (x) return;`).
