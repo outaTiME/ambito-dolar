@@ -62,8 +62,7 @@ const fetchProductsOnce = () => {
   return inflight;
 };
 
-// shared cache plus silent boot fetch
-// consumers call ensureProducts() on tap to await in-flight or trigger a fresh attempt when empty
+// shared cache, filled by a silent boot fetch or by ensureProducts() on tap
 export const useDonationProducts = () => {
   const [purchasesConfigured] = Helper.useSharedState(
     'purchasesConfigured',
