@@ -30,24 +30,29 @@ const DonateScreen = () => {
     false,
   );
   const [loadingProductId, setLoadingProductId] = React.useState(null);
-  // ref so unmount cleanup reads the latest value
+  // captured on mount, the trigger is spent right below
   const forcedRef = React.useRef(appDonationModal);
-  forcedRef.current = appDonationModal;
   // skip ignore dispatch on unmount when user already donated
   const donatedRef = React.useRef(false);
   // mirrors loadingProductId so unmount cleanup sees the latest value
   const loadingRef = React.useRef(false);
+  // spend the trigger here, an unmount that never runs would leave it armed
+  React.useEffect(() => {
+    if (forcedRef.current) {
+      setAppDonationModal(false);
+    }
+  }, [setAppDonationModal]);
   React.useEffect(() => {
     return () => {
       // purchase in flight resolves on its own, skip ignore dispatch
       if (donatedRef.current || loadingRef.current) {
         return;
       }
+      // a forced open must not spend the cooldown
       if (forcedRef.current) {
-        setAppDonationModal(false);
-      } else {
-        dispatch(actions.ignoreApplicationDonation());
+        return;
       }
+      dispatch(actions.ignoreApplicationDonation());
     };
   }, []);
   const handleDonate = React.useCallback(
@@ -58,10 +63,6 @@ const DonateScreen = () => {
         await purchaseDonation(product);
         donatedRef.current = true;
         dispatch(actions.registerApplicationDonation());
-        // prevent parent effect from reopening after register reset
-        if (forcedRef.current) {
-          setAppDonationModal(false);
-        }
         goBack();
       } catch (e) {
         showPurchaseErrorAlert(e);
@@ -70,7 +71,7 @@ const DonateScreen = () => {
         loadingRef.current = false;
       }
     },
-    [dispatch, setAppDonationModal],
+    [dispatch],
   );
   // mirror bottom inset on top plus breathing room
   // iOS sheet absorbs the bottom inset, android does not so paddingBottom keeps it

@@ -63,6 +63,9 @@ const DONATION_PURCHASE_SLUGS = [
   '¡No hay quien te gane usando {APP_NAME}!',
 ];
 
+// last usage day the modal was asked for, module scope so a remount does not re-arm it
+let donationShownDay = null;
+
 const AppContainer = ({ children, rates, loadingError, fetchRates }) => {
   const hasRates = React.useMemo(() => Helper.isValid(rates), [rates]);
   if (!hasRates) {
@@ -350,8 +353,10 @@ const withAppDonation = (Component) => (props) => {
     'appDonationModal',
     false,
   );
-  // shared with native formSheet route (app/donate.tsx)
+  // shared with the native formSheet route (packages/client/app/donate.tsx)
   const [, setDonationSlug] = Helper.useSharedState('donationSlug');
+  // the open on screen came from the developer screen
+  const forcedRef = React.useRef(false);
   React.useEffect(() => {
     if (!purchasesConfigured || !donationProducts?.length) {
       return;
@@ -374,6 +379,11 @@ const withAppDonation = (Component) => (props) => {
       });
       return;
     }
+    if (!forced && donationShownDay === daysUsed) {
+      return;
+    }
+    // a dep change or an unmount drops a check left in flight
+    let cancelled = false;
     Purchases.getCustomerInfo()
       .then((customerInfo) => {
         const transactions = customerInfo?.nonSubscriptionTransactions ?? [];
@@ -391,52 +401,46 @@ const withAppDonation = (Component) => (props) => {
           : null;
         const shouldAsk =
           forced || !lastPurchaseDate || elapsedSinceLast >= reAskMs;
-        return [
-          lastPurchaseDate,
+        Helper.debug('💖 Donation modal may be required', {
+          daysUsed,
+          ignoreDonationDaysUsed,
+          ignoreDonationCount,
+          cooldownDays,
+          elapsedDays,
+          remainingDays,
+          forced,
+          lastPurchaseAt: Helper.formatTimestamp(lastPurchaseDate),
           lifetimeTotal,
+          reAsk: AmbitoDolar.formatDuration(reAskMs),
+          reAskRemaining: AmbitoDolar.formatDuration(reAskRemainingMs),
+          reAskExpiresAt: Helper.formatTimestamp(reAskExpiresAt),
           shouldAsk,
-          reAskMs,
-          reAskRemainingMs,
-          reAskExpiresAt,
-        ];
+          native: !!Settings.USE_NATIVE_DONATION_SHEET,
+        });
+        if (!shouldAsk || cancelled) {
+          return;
+        }
+        donationShownDay = daysUsed;
+        // a forced open stays forced until it is dismissed
+        // an automatic check crossing a usage day must not downgrade it
+        if (forced) {
+          forcedRef.current = true;
+        }
+        if (Settings.USE_NATIVE_DONATION_SHEET) {
+          setDonationSlug(purchaseSlug);
+          goToDonateModal();
+        } else {
+          // spend the trigger here, a dismiss that never fires would leave it armed
+          if (forced) {
+            setAppDonationModal(false);
+          }
+          bottomSheetRef.current?.present();
+        }
       })
-      .catch(console.warn)
-      .then(
-        ([
-          lastPurchaseDate,
-          lifetimeTotal,
-          shouldAsk,
-          reAskMs,
-          reAskRemainingMs,
-          reAskExpiresAt,
-        ] = []) => {
-          Helper.debug('💖 Donation modal may be required', {
-            daysUsed,
-            ignoreDonationDaysUsed,
-            ignoreDonationCount,
-            cooldownDays,
-            elapsedDays,
-            remainingDays,
-            forced,
-            lastPurchaseAt: Helper.formatTimestamp(lastPurchaseDate),
-            lifetimeTotal,
-            reAsk: AmbitoDolar.formatDuration(reAskMs),
-            reAskRemaining: AmbitoDolar.formatDuration(reAskRemainingMs),
-            reAskExpiresAt: Helper.formatTimestamp(reAskExpiresAt),
-            shouldAsk,
-            native: !!Settings.USE_NATIVE_DONATION_SHEET,
-          });
-          if (!shouldAsk) {
-            return;
-          }
-          if (Settings.USE_NATIVE_DONATION_SHEET) {
-            setDonationSlug(purchaseSlug);
-            goToDonateModal();
-          } else {
-            bottomSheetRef.current?.present();
-          }
-        },
-      );
+      .catch(console.warn);
+    return () => {
+      cancelled = true;
+    };
   }, [
     purchasesConfigured,
     donationProducts,
@@ -461,23 +465,20 @@ const withAppDonation = (Component) => (props) => {
   const donatedRef = React.useRef(false);
   // mirrors loadingProductId so dismiss callbacks see the latest value
   const loadingRef = React.useRef(false);
-  const handleSheetChanges = React.useCallback(
-    (index) => {
-      if (index === -1) {
-        // purchase in flight resolves on its own, skip ignore dispatch
-        if (donatedRef.current || loadingRef.current) {
-          donatedRef.current = false;
-          return;
-        }
-        if (appDonationModal) {
-          setAppDonationModal(false);
-        } else {
-          dispatch(actions.ignoreApplicationDonation());
-        }
-      }
-    },
-    [appDonationModal, setAppDonationModal, dispatch],
-  );
+  // onChange skips a close that interrupts the opening animation, teardown always reaches this one
+  const handleDismiss = React.useCallback(() => {
+    const forcedOpen = forcedRef.current;
+    forcedRef.current = false;
+    // purchase in flight resolves on its own, skip ignore dispatch
+    if (donatedRef.current || loadingRef.current) {
+      donatedRef.current = false;
+      return;
+    }
+    // a forced open must not spend the cooldown
+    if (!forcedOpen) {
+      dispatch(actions.ignoreApplicationDonation());
+    }
+  }, [dispatch]);
   const safeAreaInsets = useSafeAreaInsets();
   // force light
   const colorScheme = 'light';
@@ -491,10 +492,6 @@ const withAppDonation = (Component) => (props) => {
         await purchaseDonation(product);
         donatedRef.current = true;
         dispatch(actions.registerApplicationDonation());
-        // prevent the effect from reopening after register reset
-        if (appDonationModal) {
-          setAppDonationModal(false);
-        }
         bottomSheetRef.current?.dismiss();
       } catch (e) {
         showPurchaseErrorAlert(e);
@@ -503,7 +500,7 @@ const withAppDonation = (Component) => (props) => {
         loadingRef.current = false;
       }
     },
-    [appDonationModal, setAppDonationModal, dispatch],
+    [dispatch],
   );
   return (
     <>
@@ -521,7 +518,7 @@ const withAppDonation = (Component) => (props) => {
           // borderRadius: Settings.BORDER_RADIUS,
         }}
         bottomInset={safeAreaInsets.bottom + Settings.CONTENT_MARGIN * 2}
-        onChange={handleSheetChanges}
+        onDismiss={handleDismiss}
         handleComponent={null}
         backdropComponent={renderBackdrop}
       >
