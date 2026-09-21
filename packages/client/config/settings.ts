@@ -34,7 +34,6 @@ const MAX_NUMBER_OF_STATS = 6; // 1 week
 const FOREGROUND_TOAST_WINDOW = 10 * 1000;
 // the backend writes every 5 minutes, a minute is already finer than that
 const RATES_REFRESH_INTERVAL = 60 * 1000;
-const RATES_CLOSED_REFRESH_INTERVAL = RATES_REFRESH_INTERVAL * 5;
 const ANIMATION_DURATION = 250;
 // half from longPress default
 // const INTERACTION_DELAY = 185;
@@ -116,7 +115,6 @@ const Settings: any = {
   MAX_NUMBER_OF_STATS,
   FOREGROUND_TOAST_WINDOW,
   RATES_REFRESH_INTERVAL,
-  RATES_CLOSED_REFRESH_INTERVAL,
   ANIMATION_DURATION,
   INTERACTION_DELAY,
   ICON_SIZE,

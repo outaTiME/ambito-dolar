@@ -15,6 +15,8 @@ import Sentry from '@/utilities/Sentry';
 
 // absorbs the tick drift, a flat 30s so a foreground entry can refresh early
 const SLACK = Settings.RATES_REFRESH_INTERVAL / 2;
+// ceiling for the remote cadence, and the longest a client waits to see it lifted
+const MAX_INTERVAL = 60 * 60 * 1000;
 
 const withRateUpdates = (Component) => (props) => {
   const dispatch = useDispatch();
@@ -22,6 +24,8 @@ const withRateUpdates = (Component) => (props) => {
   const inFlightRef = React.useRef(false);
   const failedRef = React.useRef(false);
   const lastFetchAtRef = React.useRef();
+  // what the last payload asked for, read by the next fetch
+  const cadenceRef = React.useRef();
   const updatedAt = useSelector((state) => state.rates.updated_at);
   const updatedAtRef = React.useRef(updatedAt);
   const timeInForeground = React.useRef();
@@ -41,10 +45,16 @@ const withRateUpdates = (Component) => (props) => {
         return;
       }
       const fetchedAt = Date.now();
-      const interval =
-        isOpenRef.current === false
-          ? Settings.RATES_CLOSED_REFRESH_INTERVAL
-          : Settings.RATES_REFRESH_INTERVAL;
+      // the payload can slow the polling without a release, never speed it up
+      const remote = Number.isFinite(cadenceRef.current)
+        ? cadenceRef.current
+        : 0;
+      const base = Math.max(remote, Settings.RATES_REFRESH_INTERVAL);
+      // five times slower with the market closed
+      const interval = Math.min(
+        isOpenRef.current === false ? base * 5 : base,
+        MAX_INTERVAL,
+      );
       // negative elapsed would freeze polling, same as the ios widget
       const elapsed = fetchedAt - lastFetchAtRef.current;
       if (!force && elapsed >= 0 && elapsed < interval - SLACK) {
@@ -68,6 +78,7 @@ const withRateUpdates = (Component) => (props) => {
       setLoadingError(false);
       try {
         const data = await Helper.getRates();
+        cadenceRef.current = data?.cadence;
         if (initial) {
           await Helper.delay();
         }
