@@ -134,6 +134,48 @@ test('Rate should be of the current day', (t) => {
   t.false(AmbitoDolar.isRateFromToday([yesterday]));
 });
 
+test('Rates should be from today when any of them is', (t) => {
+  const today = AmbitoDolar.getTimezoneDate();
+  const yesterday = AmbitoDolar.getTimezoneDate().subtract(1, 'day');
+  const midnight = AmbitoDolar.getTimezoneDate().startOf('day');
+  t.false(AmbitoDolar.hasRatesFromToday());
+  t.false(AmbitoDolar.hasRatesFromToday({ oficial: [yesterday] }));
+  t.true(AmbitoDolar.hasRatesFromToday({ oficial: [today] }));
+  // any and not every, one late rate must not silence the others
+  t.true(
+    AmbitoDolar.hasRatesFromToday({ oficial: [yesterday], informal: [today] }),
+  );
+  t.true(AmbitoDolar.hasRatesFromToday({ oficial: [midnight] }));
+  t.false(
+    AmbitoDolar.hasRatesFromToday({
+      oficial: [midnight.clone().subtract(1, 'millisecond')],
+    }),
+  );
+});
+
+test('Rates should keep the canonical order and drop the unknown ones', (t) => {
+  const stat = [AmbitoDolar.getTimezoneDate(), 1];
+  t.deepEqual(
+    Object.keys(
+      AmbitoDolar.getAvailableRates({ real: stat, zzz: stat, oficial: stat }),
+    ),
+    ['oficial', 'real'],
+  );
+  // false and not an empty object, the callers branch on truthiness
+  t.false(AmbitoDolar.getAvailableRates({ zzz: stat }));
+});
+
+test('Notification settings should keep the types independent', (t) => {
+  const settings = AmbitoDolar.getNotificationSettings({
+    open: { rates: { oficial: false } },
+  });
+  t.false(settings.open.rates.oficial);
+  t.true(settings.close.rates.oficial);
+  t.true(settings.variation.rates.oficial);
+  t.false(settings.open.enabled);
+  t.true(settings.close.enabled);
+});
+
 test('Fetch should timeout with error', (t) =>
   t.throwsAsync(
     AmbitoDolar.fetch('https://httpbin.org/delay/2', {
