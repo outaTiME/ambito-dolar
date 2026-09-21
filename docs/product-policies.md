@@ -24,6 +24,9 @@ The client polls `Settings.RATES_URI` from `packages/client/components/withRateU
   early. That covers nights, weekends and holidays with no calendar on the client. The guard
   preserves the value and never repairs it, so a missed close leaves the app polling fast until the
   next open.
+- **`cadence` in the payload slows that polling, clamped so it can only slow and never speed up.** It
+  carries the open market value and the client derives the closed one, so an already resolved value
+  must never be sent. It does not reach the widgets, which keep their own.
 - **Never derive a market date from the device.** `DateUtils.get` parses without a timezone, so a
   comparison at `'day'` follows the phone and not the market. `getTimezoneDate` in `packages/core`
   is the one that knows about Argentina.
