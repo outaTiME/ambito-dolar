@@ -4,7 +4,6 @@
   "version": "5.2.2",
   "type": "module",
   "dependencies": {
-    "@jsonurl/jsonurl": "^1.1.8",
     "ky": "^2.1.0",
     "lodash": "^4.18.1",
     "moment-timezone": "^0.6.4",
@@ -14,7 +13,7 @@
   },
   "devDependencies": {
     "ava": "^8.0.1",
-    "undici": "^7.29.1"
+    "undici": "^8.10.2"
   },
   "scripts": {
     "test": "eslint . && ava"
