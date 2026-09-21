@@ -9,11 +9,11 @@ SST v4, Lambda handlers.
 - Public response shapes are contracts: the client, the website and both widget implementations
   read them. A `/fetch` change reaches the ios widgets first, see
   `packages/client/docs/android-widgets.md`.
-- `is_open` in `quotes.json` drives how often the client asks for rates. Dropping it or changing
+- `is_open` in the rates payload drives how often the client asks for rates. Dropping it or changing
   its meaning fails silently, see `docs/product-policies.md`. It must not go into `/fetch` while
   `storeFetchJsonObject` is gated on `is_updated`: a gated write leaves it stale on exactly the
-  close and the open, the two runs that move it without new rates. Anything that writes
-  `quotes.json` outside `Process` has to carry the flag over,
+  close and the open, the two runs that move it without new rates. Anything that writes the rates
+  payload outside `Process` has to carry the flag over,
   `packages/backend/src/routes/update-rates.js` reads the stored one for that.
 - **`puppeteer-core` and `@sparticuz/chromium` move together or not at all**, both only used in
   `packages/backend/src/libs/chrome.js`. A mismatch fails when the social lambda launches Chrome,

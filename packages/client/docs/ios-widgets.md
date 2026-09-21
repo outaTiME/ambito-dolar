@@ -144,7 +144,7 @@ Four things stand in the way, none of them the entitlement:
 
 - The shapes differ. The app holds `{type: {stats: [...]}}` and both widgets parse
   `{type: [ts, value, change]}`, so an adapter has to run before the write.
-- Provenance. The app reads `quotes.json` and the widgets read `/fetch`, so an injected payload
+- Provenance. The app and the widgets read different objects, so an injected payload
   renders from one source while the fallback still renders from the other. A rate gated in one and
   not the other becomes a silent widget corruption with no build error.
 - Validation. `usableRates` here and `parse` on android are the single choke point that keeps a

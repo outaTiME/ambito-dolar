@@ -18,7 +18,7 @@ Release after approval: delete only the `// TODO:` line + that rate entry. Prese
 
 The client polls `Settings.RATES_URI` from `packages/client/components/withRateUpdates.tsx`.
 
-- Cadence comes from `is_open` in `quotes.json`, `base_rates.is_open = !close_day`
+- Cadence comes from `is_open` in the rates payload, `base_rates.is_open = !close_day`
   (`packages/backend/src/subscribers/process.js`): true on every 5 minute run, false from
   `ProcessClose` at 18:00, and false through a non-working day because the business day guard returns
   early. That covers nights, weekends and holidays with no calendar on the client. The guard
