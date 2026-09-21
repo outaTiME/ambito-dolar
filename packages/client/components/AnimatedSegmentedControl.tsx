@@ -192,8 +192,8 @@ export default function AnimatedSegmentedControl({
       />
       {arrowMode && (
         <Animated.View
-          pointerEvents="none"
           style={[
+            { pointerEvents: 'none' },
             styles.arrowWrapper,
             { left: arrowLeft },
             arrowAnimatedStyle,

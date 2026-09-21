@@ -46,8 +46,8 @@ const SocialPortraitView = ({
         {children}
         {__DEV__ && (
           <View
-            pointerEvents="none"
             style={[
+              { pointerEvents: 'none' },
               StyleSheet.absoluteFill,
               {
                 borderColor: Settings.getSeparatorColor(theme),

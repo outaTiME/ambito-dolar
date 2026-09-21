@@ -304,7 +304,7 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
   );
   return (
     <>
-      <View pointerEvents="none">
+      <View style={{ pointerEvents: 'none' }}>
         <VictoryChart
           width={width}
           height={height}

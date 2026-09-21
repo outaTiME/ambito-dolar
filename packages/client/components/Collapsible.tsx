@@ -212,8 +212,12 @@ export default class Collapsible extends Component {
         (this._animating || measuring || measured));
     return (
       <Animated.View
-        style={style}
-        pointerEvents={!enablePointerEvents && collapsed ? 'none' : 'auto'}
+        style={[
+          style,
+          {
+            pointerEvents: !enablePointerEvents && collapsed ? 'none' : 'auto',
+          },
+        ]}
       >
         <Animated.View
           ref={this._handleRef}

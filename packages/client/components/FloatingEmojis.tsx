@@ -98,8 +98,8 @@ const FloatingEmojis = ({
     <View style={[{ zIndex: 1 }, style]} {...props}>
       {typeof children === 'function' ? children({ onNewEmoji }) : children}
       <Animated.View
-        pointerEvents="none"
         style={{
+          pointerEvents: 'none',
           opacity,
           ...StyleSheet.absoluteFill,
         }}

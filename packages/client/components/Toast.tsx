@@ -46,7 +46,7 @@ export default ({ isVisible, text, onCompleted, hiddenOffset = undefined }) => {
   });
   const { invertedTheme } = Helper.useTheme();
   return (
-    <Animated.View style={animatedStyle} pointerEvents="none">
+    <Animated.View style={[animatedStyle, { pointerEvents: 'none' }]}>
       <View
         style={{
           alignSelf: 'center',
