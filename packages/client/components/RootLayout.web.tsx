@@ -1,4 +1,3 @@
-import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
 import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -24,7 +23,6 @@ const ThemedLayoutWeb = () => {
 };
 
 const RootLayoutWeb = () => {
-  useAssets([require('../assets/about-icon-borderless.png')]);
   const [fontsLoaded] = useFonts({
     'FiraGO-Regular': require('../assets/fonts/FiraGO-Regular.otf'),
   });
