@@ -148,11 +148,9 @@ does not, voseo wins there because the audience is Argentina and not the whole r
 Every string is one sentence. A failure that needs a remedy carries it in the same sentence or
 leaves it to the button beside it.
 
-A neutral `lo` after a plural subject points at the action and not at the items, which is why
-`donate_choose_note` reads `Son de cobro único y podés hacerlo`. Apple writes it the same way in
-both variants, `Los elementos seleccionados no se eliminarán. Para hacerlo, edítalos`, reaching for
-the agreeing plural only when it does mean the items. What repeats here is the act of donating, so
-turning that `lo` into `los` would say the three rows repeat instead.
+`donate_choose_note` reads `Los aportes son de cobro único y podés hacerlos cuantas veces quieras.`
+Here `los` refers to `aportes`. Neutral `lo` refers to an action, even when a plural noun is nearby.
+Do not change an action-referring `lo` to `los` just to match that noun.
 
 A note says what happens or what the reader can do, and never opens on a negation. Every negative
 string is an error state, so a note shaped like one reads as a failure. State the fact instead of
@@ -175,3 +173,12 @@ commercial vocabulary either, so no `pago` and no `suscripción`.
 
 Rules live at three levels: this file, `packages/<name>/AGENTS.md` and `docs/`. What decides where
 one goes is who could break it. Read `docs/agents-doc-layout.md` before adding or moving a rule.
+
+The repo is public, so no `.md` in it carries billing, usage volumes, user counts, revenue or an
+attack surface analysis. Sanitized versions included: stripping the numbers off an attack analysis
+still leaves the map, and a published alarm threshold says how much someone can burn before anyone
+notices. That material lives outside the repo. What does get committed is the rule that keeps
+someone from breaking something, written so it stands on its own, because a pointer from here to a
+private file is worse than no rule at all. Product behaviour, public catalog prices and thresholds the
+code already carries are fine, the way `docs/product-policies.md` reads. What stays out is the
+real operating cost, the traffic, the user count, the revenue and the alarm thresholds.
