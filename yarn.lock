@@ -45,7 +45,6 @@ __metadata:
     "@ambito-dolar/core": "npm:^5.2.2"
     "@amplitude/analytics-react-native": "npm:^1.10.0"
     "@bacons/apple-targets": "npm:^5.0.0"
-    "@expo/ui": "npm:~57.0.19"
     "@gorhom/bottom-sheet": "npm:^5.2.14"
     "@react-native-async-storage/async-storage": "npm:^3.1.1"
     "@react-native-community/hooks": "npm:^100.1.0"
@@ -2995,7 +2994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/ui@npm:^57.0.19, @expo/ui@npm:~57.0.19":
+"@expo/ui@npm:^57.0.19":
   version: 57.0.19
   resolution: "@expo/ui@npm:57.0.19"
   dependencies:
