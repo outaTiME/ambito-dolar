@@ -9,10 +9,9 @@ export default () => {
   // https://codepen.io/dudleystorey/pen/PqBLjd/
   return (
     <Svg
-      style={StyleSheet.absoluteFill}
+      style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}
       width="100%"
       height="100%"
-      pointerEvents="none"
     >
       <Defs>
         <Pattern
