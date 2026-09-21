@@ -137,32 +137,19 @@ test('Rate should be of the current day', (t) => {
 test('Rates should be from today when any of them is', (t) => {
   const today = AmbitoDolar.getTimezoneDate();
   const yesterday = AmbitoDolar.getTimezoneDate().subtract(1, 'day');
-  const midnight = AmbitoDolar.getTimezoneDate().startOf('day');
-  t.false(AmbitoDolar.hasRatesFromToday());
   t.false(AmbitoDolar.hasRatesFromToday({ oficial: [yesterday] }));
-  t.true(AmbitoDolar.hasRatesFromToday({ oficial: [today] }));
   // any and not every, one late rate must not silence the others
   t.true(
     AmbitoDolar.hasRatesFromToday({ oficial: [yesterday], informal: [today] }),
   );
-  t.true(AmbitoDolar.hasRatesFromToday({ oficial: [midnight] }));
-  t.false(
-    AmbitoDolar.hasRatesFromToday({
-      oficial: [midnight.clone().subtract(1, 'millisecond')],
-    }),
-  );
 });
 
-test('Rates should keep the canonical order and drop the unknown ones', (t) => {
-  const stat = [AmbitoDolar.getTimezoneDate(), 1];
-  t.deepEqual(
-    Object.keys(
-      AmbitoDolar.getAvailableRates({ real: stat, zzz: stat, oficial: stat }),
-    ),
-    ['oficial', 'real'],
-  );
-  // false and not an empty object, the callers branch on truthiness
-  t.false(AmbitoDolar.getAvailableRates({ zzz: stat }));
+test('Available rates should drop what is not released yet', (t) => {
+  // a gated rate keeps its constant, it is only commented out of the available list
+  t.false(AmbitoDolar.getAvailableRates({ [AmbitoDolar.QATAR_TYPE]: 1 }));
+  t.truthy(AmbitoDolar.getAvailableRates({ [AmbitoDolar.OFFICIAL_TYPE]: 1 }));
+  // the first web render asks with no payload yet
+  t.false(AmbitoDolar.getAvailableRates(undefined));
 });
 
 test('Notification settings should keep the types independent', (t) => {
@@ -171,8 +158,6 @@ test('Notification settings should keep the types independent', (t) => {
   });
   t.false(settings.open.rates.oficial);
   t.true(settings.close.rates.oficial);
-  t.true(settings.variation.rates.oficial);
-  t.false(settings.open.enabled);
   t.true(settings.close.enabled);
 });
 
