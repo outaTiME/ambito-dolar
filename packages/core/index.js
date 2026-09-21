@@ -226,18 +226,11 @@ const getAvailableRateTypes = () => [
   FUTURE_TYPE,
 ];
 
-const getAvailableRates = (rates, check = false) => {
+const getAvailableRates = (rates) => {
   // respect the order from getAvailableRateTypes
   const available_rate_types = getAvailableRateTypes();
   // leave only the available rates sorted
   rates = _.pick(rates, available_rate_types);
-  /* if (
-    check === false ||
-    (check === true &&
-      Object.keys(rates).length === available_rate_types.length)
-  ) {
-    return rates;
-  } */
   return _.isEmpty(rates) ? false : rates;
 };
 
