@@ -1,6 +1,6 @@
 import JsonURL from '@jsonurl/jsonurl';
 import ky from 'ky';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import moment from 'moment-timezone';
 import numeral from 'numeral';
 import prettyMilliseconds from 'pretty-ms';
