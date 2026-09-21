@@ -21,8 +21,8 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 
 ## Donation modal
 
-Read `docs/product-policies.md` before touching the flow, the re-ask of a donor and the Developer
-screen bypass are there too.
+Read `packages/client/docs/donation-modal.md` before touching the flow, donor re-asks or the
+Developer screen bypass.
 
 ## Rate updates
 
