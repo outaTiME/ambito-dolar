@@ -9,6 +9,7 @@ module.exports = (async () => {
     {
       ignores: [
         '.sst/**',
+        '**/sst-env.d.ts',
         '**/dist/**',
         '**/build/**',
         '**/web-build/**',
