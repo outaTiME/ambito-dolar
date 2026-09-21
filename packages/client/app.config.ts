@@ -192,7 +192,7 @@ export default {
     ...(process.env.GOOGLE_SERVICES_FILE && {
       googleServicesFile: process.env.GOOGLE_SERVICES_FILE,
     }),
-    // prevents restore of auto-generated IDs
+    // blocks the cloud backup, a device to device transfer can still carry the ids
     allowBackup: false,
   },
 };

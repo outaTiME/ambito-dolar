@@ -45,7 +45,7 @@ object WidgetConfig {
   // onRestored and this is the only chance to use it.
   // allowBackup is false, which used to mean this could never run, but from android 12 that flag
   // stopped covering a device to device transfer: that one is dataExtractionRules and there is
-  // none here, so the default applies and the widgets do come across
+  // none here, so on the manufacturers that still allow it the widgets do come across
   fun move(context: Context, from: Int, to: Int, slots: Int) {
     val prefs = prefs(context)
     val editor = prefs.edit()
