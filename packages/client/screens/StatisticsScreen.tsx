@@ -46,22 +46,17 @@ const StatisticsScreen = () => {
     }),
     shallowEqual,
   );
-  const [lastDonation, setLastDonation] = React.useState(null);
   const [transactions, setTransactions] = React.useState([]);
+  const lastDonation =
+    transactions[transactions.length - 1]?.purchaseDate ?? null;
   const { priceMap } = useDonationProducts();
   const lifetimeTotal = React.useMemo(
     () => computeLifetime(transactions, priceMap),
     [transactions, priceMap],
   );
-  const avgDailyOpens = React.useMemo(
-    () => (daysUsed > 0 ? usages / daysUsed : 0),
-    [usages, daysUsed],
-  );
+  const avgDailyOpens = daysUsed > 0 ? usages / daysUsed : 0;
   const applyCustomerInfo = React.useCallback((customerInfo) => {
-    const tx = customerInfo?.nonSubscriptionTransactions ?? [];
-    const lastTransaction = tx[tx.length - 1];
-    setTransactions(tx);
-    setLastDonation(lastTransaction?.purchaseDate ?? null);
+    setTransactions(customerInfo?.nonSubscriptionTransactions ?? []);
   }, []);
   const [purchasesConfigured] = Helper.useSharedState(
     'purchasesConfigured',
