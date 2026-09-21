@@ -61,6 +61,7 @@ __metadata:
     d3-shape: "npm:^3.2.0"
     expo: "npm:^57.0.24"
     expo-application: "npm:~57.0.3"
+    expo-asset: "npm:~57.0.18"
     expo-clipboard: "npm:~57.0.2"
     expo-constants: "npm:~57.0.19"
     expo-dev-client: "npm:~57.0.19"

@@ -30,6 +30,7 @@
     "d3-shape": "^3.2.0",
     "expo": "^57.0.24",
     "expo-application": "~57.0.3",
+    "expo-asset": "~57.0.18",
     "expo-clipboard": "~57.0.2",
     "expo-constants": "~57.0.19",
     "expo-dev-client": "~57.0.19",
