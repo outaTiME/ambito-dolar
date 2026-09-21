@@ -1,4 +1,3 @@
-import JsonURL from '@jsonurl/jsonurl';
 import ky from 'ky';
 import _ from 'lodash';
 import moment from 'moment-timezone';
@@ -411,8 +410,6 @@ export default {
   getNotificationSettings,
   getRateValue,
   getRateChange,
-  crushJson: (obj) => JsonURL.stringify(obj, { AQF: true }),
-  uncrushJson: (str) => JsonURL.parse(str, { AQF: true }),
   fetch: fetcher,
   promiseRetry,
 };
