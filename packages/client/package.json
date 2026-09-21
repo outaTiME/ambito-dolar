@@ -29,7 +29,6 @@
     "d3-shape": "^3.2.0",
     "expo": "^57.0.24",
     "expo-application": "~57.0.3",
-    "expo-asset": "~57.0.18",
     "expo-clipboard": "~57.0.2",
     "expo-constants": "~57.0.19",
     "expo-dev-client": "~57.0.19",
@@ -83,13 +82,9 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.18",
-    "pngjs": "^7.0.0",
-    "typescript": "~6.0.3"
+    "pngjs": "^7.0.0"
   },
   "version": "14.1.1",
-  "installConfig": {
-    "hoistingLimits": "workspaces"
-  },
   "expo": {
     "autolinking": {
       "exclude": [
