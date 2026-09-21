@@ -111,9 +111,9 @@ See `docs/product-policies.md`.
 
 ## Where the rates payload is served from
 
-The app polls `quotes.json` off the bucket and not CloudFront: CloudFront bills per viewer request
-whatever the cache does, a 304 like a 200, and past its free tier it charges several times what S3
-does per request. Cadence contract in `docs/product-policies.md`.
+The URI the app reads is an env var and what it points at is a settled decision, re-litigated more
+than once and recorded outside this repo. Do not change it as an optimization. Cadence contract in
+`docs/product-policies.md`.
 
 ## Notification body and social caption
 
