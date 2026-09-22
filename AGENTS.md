@@ -27,6 +27,7 @@ Guide for coding agents. Minimal targeted edits. Preserve behavior unless asked.
 ```bash
 yarn install / yarn test / yarn depcheck                          # root
 yarn client:start / client:run:ios / client:run:android / client:doctor
+yarn client:typecheck / client:prebuild / client:check             # client
 yarn infra:start / infra:deploy / infra:remove                    # backend
 yarn website:start / website:clean                                # website
 yarn workspace @ambito-dolar/website run build|preview
