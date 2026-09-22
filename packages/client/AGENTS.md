@@ -19,6 +19,13 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
   the project is not on the compiler and they false positive on Reanimated `.value` and on
   intentional ref and effect patterns. Fix a real prop reassign, do not mute those rules.
 
+## Charts
+
+The metro alias `victory-native` to `victory` in `packages/client/metro.config.js` is not optional.
+`victory-native` is native only and on web it renders `react-native-svg` primitives that react-dom
+rejects, so the rate detail breaks there. Verified by removing it. The alias resolves the package
+instead of joining a path, because it is hoisted and does not sit under the client.
+
 ## Donation modal
 
 Read `packages/client/docs/donation-modal.md` before touching the flow, donor re-asks or the
