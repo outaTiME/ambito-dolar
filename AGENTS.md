@@ -35,7 +35,7 @@ yarn workspace @ambito-dolar/website run build|preview
 ### Lint
 
 - From repo root: `yarn eslint packages`, or scope it, `yarn eslint "packages/<ws>/<path>"`.
-- **`eslint` and `prettier` resolve from the repo root only**, `packages/client` sets `installConfig.hoistingLimits: workspaces` and does not get them. Calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. Mirror case: `tsc` resolves only from the client, `yarn workspace @ambito-dolar/client exec tsc --noEmit`.
+- **`eslint`, `prettier` and `tsc` are root devDependencies and resolve from the repo root only.** A workspace only sees what it declares itself, so calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. Typecheck the client with `yarn client:typecheck` from the root.
 - Fallback if the root call itself fails: `yarn node ./node_modules/eslint/bin/eslint.js <paths>`.
 
 ### Tests
