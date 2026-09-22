@@ -34,6 +34,7 @@
     "client:build": "yarn workspace @ambito-dolar/client exec eas build --clear-cache",
     "client:check": "yarn workspace @ambito-dolar/client run check",
     "client:doctor": "yarn workspace @ambito-dolar/client exec npx expo-doctor@latest",
+    "client:typecheck": "tsc --noEmit -p packages/client/tsconfig.json",
     "infra:start": "yarn sst dev",
     "infra:deploy": "yarn sst deploy",
     "infra:remove": "yarn sst remove",

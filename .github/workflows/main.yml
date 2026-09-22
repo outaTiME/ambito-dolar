@@ -22,5 +22,7 @@ jobs:
       #   run: yarn
       - name: Install dependencies (immutable)
         run: yarn install --inline-builds --immutable
+      - name: Typecheck the client
+        run: yarn client:typecheck
       - name: Run tests
         run: yarn test
