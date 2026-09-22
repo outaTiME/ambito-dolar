@@ -77,7 +77,6 @@
     "semver": "^7.8.5",
     "styled-components": "^6.5.3",
     "swr": "^2.5.1",
-    "victory": "^37.3.6",
     "victory-native": "^36.9.2"
   },
   "devDependencies": {
