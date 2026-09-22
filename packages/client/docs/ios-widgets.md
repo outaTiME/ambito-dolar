@@ -114,6 +114,33 @@ at is real but was measured and does not happen: a widget configured under the S
 its rates after updating onto the non optional parameter, tested on device with four widgets, two
 hand configured and two on defaults. Re-test that whenever Xcode or the deployment target moves.
 
+**A stale `DerivedData` can ship the extension without its AppIntents metadata**, and the symptom
+reads like a code bug. Every gallery preview renders redacted, and the log says:
+
+```
+Failed to instantiate type SelectRateTypeIntent by name (9mbitoDlar20SelectRateTypeIntentV).
+The type with this mangled name does not exist in the process's memory space.
+Returned view collection was either nil or empty.
+```
+
+`mbitoDlar` there is the app's Swift module and the `9` is its length, so the extension is being
+asked for the app executable's copy of the intent, which its own process does not carry. Measured in
+that build: `RateWidgetsExtension.appex` shipped with no `Metadata.appintents` while the app's
+declared all three. Deleting `~/Library/Developer/Xcode/DerivedData/mbitoDlar-*` and building again
+produced it, with `RateWidgetsExtension` mangled names, and the widgets rendered.
+
+Why the task did not run is not settled. XCBuild had `ExtractAppIntentsMetadata` in its manifest for
+that exact output and the file was absent, after a prebuild had regenerated the project underneath.
+The build database was never inspected, so the cache is the working diagnosis and not a proven one.
+Check the product before touching any source, the embedded copy and the standalone one both:
+
+```
+ls ~/Library/Developer/Xcode/DerivedData/mbitoDlar-*/Build/Products/*/{mbitoDlar.app/PlugIns/,}RateWidgetsExtension.appex/
+```
+
+Both targets compiling `_shared/Intents.swift` is the design and was not the fault here. Moving the
+file out of `_shared/` was tried and did not help, it only drops the app's copy.
+
 **The endpoint is hardcoded** in `getRates()`, so unlike android this side never reads `API_URL`. A
 build pointed at another host ships ios widgets still reading production, silently.
 
