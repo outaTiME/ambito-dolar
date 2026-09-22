@@ -76,7 +76,7 @@ Direct use, no wrappers:
 - Drop component aliases (`const Foo = Bar as any`) when underlying exports `(props:any)=>JSX`; keep alias only for `.defaultProps`/class/upstream-typed.
 - `Stack screenOptions` no `} as any` if `getStackScreenOptions` returns literals via `as const`.
 
-Verify before stripping: drop one cast, run `yarn workspace @ambito-dolar/client exec tsc --noEmit`, revert if fails (cast was load-bearing). Never swap 1 `any` for 2. `as const` keep only if consumer needs literal (verify by removing + tsc).
+Verify before stripping: drop one cast, run `yarn client:typecheck` from the repo root, revert if fails (cast was load-bearing). Never swap 1 `any` for 2. `as const` keep only if consumer needs literal (verify by removing + tsc).
 
 ## React Native
 
