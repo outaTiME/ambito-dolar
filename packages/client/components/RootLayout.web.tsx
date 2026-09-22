@@ -28,8 +28,11 @@ const RootLayoutWeb = () => {
   });
   const constantsLoaded = Helper.useApplicationConstants();
   const isReady = fontsLoaded && constantsLoaded;
+  // onLayout also fires on every resize, the splash is hidden once
+  const splashHiddenRef = React.useRef(false);
   const onLayoutRootView = React.useCallback(() => {
-    if (isReady) {
+    if (isReady && !splashHiddenRef.current) {
+      splashHiddenRef.current = true;
       Helper.debug(
         '👌 Web application loading is completed',
         Date.now() - start_time,

@@ -147,8 +147,11 @@ const ThemedLayout = () => {
 
 const RootLayout = () => {
   const isReady = Helper.useApplicationConstants();
+  // onLayout also fires on every layout change, the splash is hidden once
+  const splashHiddenRef = React.useRef(false);
   const onLayoutRootView = React.useCallback(() => {
-    if (isReady) {
+    if (isReady && !splashHiddenRef.current) {
+      splashHiddenRef.current = true;
       SplashScreen.hideAsync().catch(console.warn);
     }
   }, [isReady]);
