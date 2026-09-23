@@ -8,7 +8,6 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "eas-build-pre-install": "corepack enable && yarn set version 4",
     "check": "expo install --check"
   },
   "dependencies": {

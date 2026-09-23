@@ -4,6 +4,7 @@
   },
   "build": {
     "base": {
+      "corepack": true
     },
     "development": {
       "extends": "base",
