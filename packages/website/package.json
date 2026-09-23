@@ -13,15 +13,12 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^7.3.3",
+    "astro": "^7.3.4",
     "astro-icon": "^1.2.0",
-    "sass": "^1.104.1"
+    "sass": "^1.105.0"
   },
   "devDependencies": {
     "@iconify-json/fa6-brands": "^1.2.6",
     "@iconify-json/fa6-solid": "^1.2.4"
-  },
-  "installConfig": {
-    "hoistingLimits": "workspaces"
   }
 }
