@@ -78,6 +78,10 @@ const withRateUpdates = (Component) => (props) => {
       setLoadingError(false);
       try {
         const data = await Helper.getRates();
+        // an answer with nothing renderable is a failure, the same rule both widgets apply
+        if (!Helper.isValid(Helper.getAvailableRates(data?.rates))) {
+          throw new Error('Rates payload has nothing renderable');
+        }
         cadenceRef.current = data?.cadence;
         if (initial) {
           await Helper.delay();

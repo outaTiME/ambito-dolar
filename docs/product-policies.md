@@ -27,6 +27,12 @@ The client polls `Settings.RATES_URI` from `packages/client/components/withRateU
 - **`cadence` in the payload slows that polling, clamped so it can only slow and never speed up.** It
   carries the open market value and the client derives the closed one, so an already resolved value
   must never be sent. It does not reach the widgets, which keep their own.
+- **An answer that yields nothing renderable is a failure**, not an empty screen. `fetchRates`
+  throws before the dispatch so a bad payload cannot replace rates that were working, which is the
+  rule both widgets already apply before replacing their stored payload.
+- **The effective interval is the cadence minus `SLACK`**, a flat 30 seconds that absorbs the tick
+  drift and lets a foreground entry refresh early. A backend that sends a cadence to shed load has
+  to count on the client asking that much sooner.
 - **Never derive a market date from the device.** `DateUtils.get` parses without a timezone, so a
   comparison at `'day'` follows the phone and not the market. `getTimezoneDate` in `packages/core`
   is the one that knows about Argentina.

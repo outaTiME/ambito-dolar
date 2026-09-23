@@ -12,25 +12,26 @@ import Helper from '@/utilities/Helper';
 
 const InitialScreen = ({ rates, loadingError, fetchRates }) => {
   const { theme } = Helper.useTheme();
-  // only on initial when nil rates
+  // a failed fetch owns the screen, an empty rates object is truthy and fell through
+  if (loadingError) {
+    return (
+      <ContentView>
+        <MessageView
+          style={{
+            marginBottom: Settings.PADDING,
+          }}
+          message={I18n.t('rates_loading_error')}
+        />
+        <ActionButton
+          title={I18n.t('retry')}
+          handleOnPress={() => fetchRates({ force: true })}
+          alternativeBackground
+        />
+      </ContentView>
+    );
+  }
+  // nil rates is the initial load
   if (!rates) {
-    if (loadingError) {
-      return (
-        <ContentView>
-          <MessageView
-            style={{
-              marginBottom: Settings.PADDING,
-            }}
-            message={I18n.t('rates_loading_error')}
-          />
-          <ActionButton
-            title={I18n.t('retry')}
-            handleOnPress={() => fetchRates({ force: true })}
-            alternativeBackground
-          />
-        </ContentView>
-      );
-    }
     return (
       <ContentView>
         <ActivityIndicator
@@ -41,7 +42,7 @@ const InitialScreen = ({ rates, loadingError, fetchRates }) => {
       </ContentView>
     );
   }
-  // when emtpy or invalid object
+  // an empty or invalid object, the payload came and nothing is renderable
   return (
     <ContentView>
       <MessageView message={I18n.t('no_available_rates')} />
