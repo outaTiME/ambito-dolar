@@ -27,7 +27,7 @@ npm-debug.log
 yarn-error.log
 lerna-debug.log
 
-# Yarn 2
+# Yarn
 .pnp.*
 .yarn/*
 !.yarn/patches

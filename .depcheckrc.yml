@@ -1,0 +1,24 @@
+# depcheck reads the nearest config walking up, and a workspace one would replace this file
+# instead of adding to it, so every ignore in the monorepo lives here.
+ignores:
+  # sst-env.d.ts is generated in every workspace and sst is a root devDependency
+  - sst
+  # core/index.js imports moment/locale/es.js directly, moment-timezone brings moment in
+  # and has since the first commit
+  - moment
+  # config plugin, referenced by name from packages/client/app.config.ts
+  - '@bacons/apple-targets'
+  # applied by prebuild-config as a default plugin, reads backgroundColor and userInterfaceStyle
+  - expo-system-ui
+  # astro compiles packages/website/src/styles/*.scss, nothing imports sass
+  - sass
+  # astro-icon resolves fa6-brands: and fa6-solid: at build time
+  - '@iconify-json/fa6-brands'
+  - '@iconify-json/fa6-solid'
+  # commitlint.config.js and the husky commit-msg hook, neither is an import
+  - '@commitlint/cli'
+  - '@commitlint/config-conventional'
+  # required by eslint-plugin-astro through its flat/recommended config
+  - astro-eslint-parser
+  # declared in .prettierrc.json under plugins
+  - prettier-plugin-astro

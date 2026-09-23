@@ -27,7 +27,7 @@ npm-debug.log
 yarn-error.log
 lerna-debug.log
 
-# Yarn 2
+# Yarn
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -50,7 +50,6 @@ packages/client/targets/*/Assets.xcassets/*.colorset/
 google-services.json
 
 # Astro
-dist/
 .astro/
 
 # SST build output
@@ -87,9 +86,10 @@ eslint.config.js
 .gitattributes
 .gitignore
 .prettierrc.json
+.prettierignore
+.depcheckrc.yml
 /commitlint.config.js
 /lerna.json
-/scriptable-widget.js
 /sst.config.ts
 README.md
 CHANGELOG.md
