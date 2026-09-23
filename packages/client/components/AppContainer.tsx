@@ -189,7 +189,6 @@ const withUserActivity = (Component) => (props) => {
               }
             }
             allowNotifications = hasNotificationPermissions(finalSettings);
-            // update shared state
             setAllowNotifications(allowNotifications);
             // pushToken is null on initial and undefined on rehydrate
             if (!pushToken && !sendingPushToken && allowNotifications) {
@@ -357,6 +356,10 @@ const withAppDonation = (Component) => (props) => {
   const [, setDonationSlug] = Helper.useSharedState('donationSlug');
   // the open on screen came from the developer screen
   const forcedRef = React.useRef(false);
+  // this presentation ended in a purchase, reset when the next one opens
+  const donatedRef = React.useRef(false);
+  // mirrors loadingProductId so dismiss callbacks see the latest value
+  const loadingRef = React.useRef(false);
   React.useEffect(() => {
     if (!purchasesConfigured || !donationProducts?.length) {
       return;
@@ -365,21 +368,19 @@ const withAppDonation = (Component) => (props) => {
     const now = Date.now();
     const cooldownDays = getCooldownDays(ignoreDonationCount);
     const elapsedDays = Math.max(0, daysUsed - (ignoreDonationDaysUsed ?? 0));
-    const remainingDays = Math.max(0, cooldownDays - elapsedDays);
     const shouldShowModal = forced || elapsedDays >= cooldownDays;
     if (!shouldShowModal) {
-      Helper.debug('💖 Donation modal not required', {
+      Helper.debug('💖 Donation not due', {
         daysUsed,
         ignoreDonationDaysUsed,
         ignoreDonationCount,
         cooldownDays,
         elapsedDays,
-        remainingDays,
-        forced,
       });
       return;
     }
     if (!forced && donationShownDay === daysUsed) {
+      Helper.debug('💖 Donation already asked today', { daysUsed });
       return;
     }
     // a dep change or an unmount drops a check left in flight
@@ -393,33 +394,23 @@ const withAppDonation = (Component) => (props) => {
           ? now - new Date(lastPurchaseDate).getTime()
           : Infinity;
         const reAskMs = lastPurchaseDate ? getReAskMs(lifetimeTotal) : null;
-        const reAskRemainingMs = lastPurchaseDate
-          ? Math.max(0, reAskMs - elapsedSinceLast)
-          : null;
-        const reAskExpiresAt = lastPurchaseDate
-          ? new Date(lastPurchaseDate).getTime() + reAskMs
-          : null;
         const shouldAsk =
           forced || !lastPurchaseDate || elapsedSinceLast >= reAskMs;
-        Helper.debug('💖 Donation modal may be required', {
-          daysUsed,
-          ignoreDonationDaysUsed,
-          ignoreDonationCount,
-          cooldownDays,
-          elapsedDays,
-          remainingDays,
-          forced,
-          lastPurchaseAt: Helper.formatTimestamp(lastPurchaseDate),
-          lifetimeTotal,
-          reAsk: AmbitoDolar.formatDuration(reAskMs),
-          reAskRemaining: AmbitoDolar.formatDuration(reAskRemainingMs),
-          reAskExpiresAt: Helper.formatTimestamp(reAskExpiresAt),
-          shouldAsk,
-          native: !!Settings.USE_NATIVE_DONATION_SHEET,
-        });
         if (!shouldAsk || cancelled) {
+          Helper.debug('💖 Donation skipped', {
+            lastPurchaseAt: Helper.formatTimestamp(lastPurchaseDate),
+            lifetimeTotal,
+            reAsk: AmbitoDolar.formatDuration(reAskMs),
+            cancelled,
+          });
           return;
         }
+        Helper.debug('💖 Donation modal shown', {
+          daysUsed,
+          ignoreDonationCount,
+          forced,
+          native: !!Settings.USE_NATIVE_DONATION_SHEET,
+        });
         donationShownDay = daysUsed;
         // a forced open stays forced until it is dismissed
         // an automatic check crossing a usage day must not downgrade it
@@ -434,6 +425,7 @@ const withAppDonation = (Component) => (props) => {
           if (forced) {
             setAppDonationModal(false);
           }
+          donatedRef.current = false;
           bottomSheetRef.current?.present();
         }
       })
@@ -461,17 +453,16 @@ const withAppDonation = (Component) => (props) => {
     [],
   );
   const dispatch = useDispatch();
-  // skip ignore dispatch when dismiss follows a successful donation
-  const donatedRef = React.useRef(false);
-  // mirrors loadingProductId so dismiss callbacks see the latest value
-  const loadingRef = React.useRef(false);
   // onChange skips a close that interrupts the opening animation, teardown always reaches this one
   const handleDismiss = React.useCallback(() => {
     const forcedOpen = forcedRef.current;
     forcedRef.current = false;
+    const donated = donatedRef.current;
+    const loading = loadingRef.current;
+    // the other half of the check above, it says whether the dismiss spent the cooldown
+    Helper.debug('💖 Donation dismissed', { forcedOpen, donated, loading });
     // purchase in flight resolves on its own, skip ignore dispatch
-    if (donatedRef.current || loadingRef.current) {
-      donatedRef.current = false;
+    if (donated || loading) {
       return;
     }
     // a forced open must not spend the cooldown
@@ -480,7 +471,6 @@ const withAppDonation = (Component) => (props) => {
     }
   }, [dispatch]);
   const safeAreaInsets = useSafeAreaInsets();
-  // force light
   const colorScheme = 'light';
   const { fonts } = Helper.useTheme(colorScheme);
   const [loadingProductId, setLoadingProductId] = React.useState(null);
