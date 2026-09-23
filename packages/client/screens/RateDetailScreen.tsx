@@ -225,19 +225,13 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
   React.useEffect(() => {
     const range_updated =
       prev_rangeIndex !== undefined && prev_rangeIndex !== rangeIndex;
-    // the cache is good while it ends on the stat we hold, written together
-    const historical_stats = historical_rates?.[type] ?? [];
-    const historical_stat = historical_stats[historical_stats.length - 1];
-    if (range_updated && rangeIndex > 0 && historical_stat?.[0] !== stat[0]) {
+    if (range_updated && rangeIndex > 0 && !historical_rates) {
       setLoading(true);
       // wait at least ANIMATION_DURATION before request to prevent fast dialogs on fails
       Helper.delay().then(() =>
         updateHistoricalRates()
           .catch(() => {
-            // a stale cache still draws the new range, the alert is for having none
-            if (historical_stat) {
-              return;
-            }
+            // back to the week, the previous range would fetch again and bounce alerts
             setRangeIndex(0);
             Alert.alert(
               I18n.t('detail_loading_error'),

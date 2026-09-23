@@ -33,6 +33,8 @@ export default (state = INITIAL_STATE, { type, payload }) => {
         rates: same_rates ? state.rates : rates,
         updated_at,
         is_open,
+        // the cached historical ends on the old stat, drop it so the next range refetches
+        historical_rates: same_rates ? state.historical_rates : null,
       };
     }
     case UPDATE_HISTORICAL_RATES:
