@@ -33,7 +33,6 @@ const Cursor = ({ length, point, width, color }) => {
   const isActive = useSharedValue(false);
   React.useEffect(() => {
     if (isActive.value === false) {
-      // update only when no active selection
       length.value = width;
     }
   }, [width]);
@@ -134,7 +133,6 @@ export default ({ data, domain, color, selectionIndex, width, height }) => {
   useAnimatedReaction(
     () => point.value,
     ({ index }) => {
-      // reset selection when last data point
       selectionIndex.value = index === data.length - 1 ? null : index;
     },
   );

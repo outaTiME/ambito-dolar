@@ -42,7 +42,6 @@ export default ({
   const row_items = React.useMemo(
     () =>
       React.Children.toArray(children)
-        // exclude null
         .filter((child) => child !== null)
         // add separator for each item
         .map((child, index, array) => {

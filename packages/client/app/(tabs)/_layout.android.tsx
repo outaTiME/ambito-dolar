@@ -9,7 +9,7 @@ import Helper from '@/utilities/Helper';
 import { goToConversionWithFocus } from '@/utilities/Navigation';
 
 // classic Tabs path gives hairline divider NativeTabs cannot render on android
-// Settings.USE_NATIVE_TABS_ANDROID also gates ToastOverlay and header hairline
+// Settings.USE_NATIVE_TABS_ANDROID also gates ToastOverlay
 export default function TabsLayout() {
   const { theme } = Helper.useTheme();
   if (Settings.USE_NATIVE_TABS_ANDROID) {

@@ -44,39 +44,24 @@ Everything that keeps the rates in sync is in
 
 ## TypeScript discipline
 
-`tsconfig`: `strict:false`, `noImplicitAny:false`. Implicit `any` OK.
+`tsconfig`: `strict:false`, `noImplicitAny:false`. Implicit `any` is fine, and real types come with
+the TS migration, never as a side effect of cleaning one up.
 
-Core principle:
+`yarn client:typecheck` from the repo root already tells you which casts are load bearing: drop one,
+run it, put it back if it fails. What it cannot tell you is that the repair was worse than the
+error, and that is the whole of this section.
 
-- Drop annotations tsc infers fine. Never force a type just to remove an `any` — if `:any` is the only annotation tsc needs, keep it (no `:View`, `:TextInput`, `<{x:number;y:number}>`). Real types come in the TS migration, not as any-cleanup side-effect.
-- Never add code to remove an `any`: no fake defaults (`= undefined`/`= false`), fake fields (`DEVICE_WIDTH: 0`), or optional params (`_theme?`) methods ignore. 1 char `:any` beats 5 lines of shim.
-
-Drop (tsc infers fine):
-
-- Primitive annotations (`:number/:string/:boolean`), `Record/Promise/Array<>` on params/returns. Default values beat `name:string=''`.
-- `useRef<ReturnType<typeof setTimeout>|null>(null)` to `useRef(null)`. Cosmetic callback param annotations.
-
-Keep (load-bearing):
-
-- `Settings:any` (`packages/client/config/settings.ts`) — `updateSettings` mutates dynamic fields (`CONTENT_WIDTH` etc.), methods called with args outside inferred sig. Never drop. Never wrap callsites `(Settings as any).foo`, `Settings.foo` already returns `any`.
-- Exported component `({a,b}:any)` — dropping forces all props required, breaks callers. Drop `:any` only on internal same-file helpers (`const ButtonBase = ({onPress,children}) => ...`).
-- `useSelector((state:any) => state.x)` required unless file has `// @ts-nocheck`.
-- `useState<any>()` only if consumers read fields off state (else narrows to undefined). `useRef<any>` only if union defeats inference, else `useRef(null)`.
-- `useAnimatedStyle<any>`, `.line<any>()` + `(datum:any)` — transform array literals / d3 datum create union types that don't match. Don't drop.
-- `as any` for `Collapsible` children (untyped class).
-- Single-call internal callbacks (`onHandlerStateChange`, `useAnimatedReaction` reducers) drop `:any`, the wrapping API types the arg.
-
-forwardRef:
-
-- `forwardRef((props:any, ref:any))` stays. Don't add `<any,any>`/`<View,any>` generics to kill `ref:any`, 2-for-1 wash. Drop existing redundant `<any,any>` only if callsites still typecheck.
-
-Direct use, no wrappers:
-
-- RN platform APIs (`Linking.openURL`, `Alert.alert`, `Share.share`).
-- Drop component aliases (`const Foo = Bar as any`) when underlying exports `(props:any)=>JSX`; keep alias only for `.defaultProps`/class/upstream-typed.
-- `Stack screenOptions` no `} as any` if `getStackScreenOptions` returns literals via `as const`.
-
-Verify before stripping: drop one cast, run `yarn client:typecheck` from the repo root, revert if fails (cast was load-bearing). Never swap 1 `any` for 2. `as const` keep only if consumer needs literal (verify by removing + tsc).
+- **Never add code to remove an `any`**: no fake defaults (`= undefined`/`= false`), fake fields
+  (`DEVICE_WIDTH: 0`), or optional params (`_theme?`) the method ignores. Never swap one for two.
+- **Never force a type in its place.** If `:any` is the only annotation tsc needs, that is the
+  annotation: no `:View`, no `:TextInput`, no `<{x:number;y:number}>`.
+- **`Settings` (`packages/client/config/settings.ts`) is `any`.** Dropping it is 14 typecheck errors
+  and the repair that passes is the wrong one: never wrap callsites as `(Settings as any).foo`,
+  `Settings.foo` already returns `any`.
+- **`forwardRef((props:any, ref:any))` stays.** Adding `<any,any>` or `<View,any>` generics to kill
+  `ref:any` trades one for another, and tsc accepts both.
+- An exported component's `({a,b}:any)` stays, dropping it forces every prop required. Only internal
+  same-file helpers lose it.
 
 ## React Native
 

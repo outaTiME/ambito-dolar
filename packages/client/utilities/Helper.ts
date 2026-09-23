@@ -88,8 +88,7 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
   if (parsed.indexOf(decimalSeparator) === 0) {
     head = 0;
   }
-  // avoid rounding errors at toLocaleString as when user enters 1.239 and maxDigits=2 we
-  // must not to convert it to 1.24, it must stay 1.23
+  // toLocaleString rounds and this must not, 1.239 with maxDigits 2 stays 1.23
   const scaledTail = tail != null ? tail.slice(0, maxDigits) : '';
   const number = Number.parseFloat(`${head}.${scaledTail}`);
   if (Number.isNaN(number)) {
@@ -98,9 +97,8 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
   const formatted = formatNumber(number, maxDigits, false);
   if (parsed.includes(decimalSeparator)) {
     const [formattedHead] = formatted.split(decimalSeparator);
-    // skip zero at digits position for non fixed floats
-    // as at digits 2 for non fixed floats numbers like 1.50 has no sense, just 1.5 allowed
-    // but 1.0 has sense as otherwise you will not be able to enter 1.05 for example
+    // skip a zero at the digits position for non fixed floats
+    // 1.50 makes no sense where 1.5 does, and 1.0 stays so 1.05 can still be typed
     const formattedTail =
       scaledTail !== '' && scaledTail[maxDigits - 1] === '0'
         ? scaledTail.slice(0, -1)
@@ -441,7 +439,6 @@ export default {
         setContactAvailable(contactAvailable);
         setStoreAvailable(storeAvailable);
         setInstallationTime(installationTime);
-        // done
         setConstantsLoaded(true);
       });
     }, []);

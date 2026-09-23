@@ -139,7 +139,6 @@ const withAxisDimension = (Component) => (props) => {
     // fire updates together to keep the data / render in sync
     setLayoutData({
       ...props,
-      // add aditional data
       axis_y_width,
       axis_font_height,
     });
@@ -161,7 +160,7 @@ const withAxisDimension = (Component) => (props) => {
         }}
         key={reloadKey}
       >
-        {/* WARNING: same as tickFormat */}
+        {/* keep this formatting identical to tickFormat */}
         {Helper.getCurrency(max_y)}
       </Text>
       {layoutData && (

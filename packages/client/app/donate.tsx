@@ -19,7 +19,6 @@ import { goBack } from '@/utilities/Navigation';
 
 const DonateScreen = () => {
   const dispatch = useDispatch();
-  // force light
   const colorScheme = 'light';
   const { fonts } = Helper.useTheme(colorScheme);
   const safeAreaInsets = useSafeAreaInsets();

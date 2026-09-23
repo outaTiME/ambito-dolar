@@ -17,7 +17,7 @@ const IS_TABLET = DEVICE_TYPE === Device.DeviceType.TABLET;
 const IS_HANDSET = DEVICE_TYPE === Device.DeviceType.PHONE;
 const HAPTICS_ENABLED = Platform.OS === 'ios';
 
-// Liquid Glass availability (iOS 26+ capability check). cached once.
+// cache the Liquid Glass availability once, it is an ios 26 capability check
 const IS_LIQUID_GLASS = isLiquidGlassAvailable();
 
 const BORDER_RADIUS = IS_LIQUID_GLASS ? 16 : PADDING / 2;
@@ -38,7 +38,6 @@ const ANIMATION_DURATION = 250;
 // half from longPress default
 // const INTERACTION_DELAY = 185;
 const INTERACTION_DELAY = 120;
-// same as header fonts.title size
 const ICON_SIZE = 24;
 const SOCIAL_ICON_SIZE = 17;
 const {
@@ -91,8 +90,7 @@ const Settings: any = {
   APP_ICON_RADIUS_RATIO,
   BORDER_WIDTH,
   IS_LIQUID_GLASS,
-  // partial shrink to offset Liquid Glass scrollEdge overhead while keeping
-  // breathing room between header and first content row
+  // partial shrink to offset the Liquid Glass scrollEdge overhead without closing the gap
   CONTENT_TOP_SHRINK_STYLE: IS_LIQUID_GLASS
     ? { marginTop: -CONTENT_MARGIN / 1.5 }
     : null,

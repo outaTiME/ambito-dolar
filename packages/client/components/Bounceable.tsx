@@ -101,7 +101,6 @@ export default ({
               activeScaleTimeoutRef.current = null;
             }, delayActiveScale);
           }
-          // onLongPress
           if (onLongPress) {
             onLongPressTimeoutId.value = setTimeout(() => {
               if (isActive.value === 1) {

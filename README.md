@@ -7,7 +7,6 @@
 
 > A free, open-source and ad-free mobile app to follow the most important exchange rates in Argentina.
 
-
 ## Preview
 
 <p>

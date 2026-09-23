@@ -36,7 +36,8 @@ yarn workspace @ambito-dolar/website run build|preview
 ### Lint
 
 - From repo root: `yarn eslint packages`, or scope it, `yarn eslint "packages/<ws>/<path>"`.
-- **`eslint`, `prettier` and `tsc` are root devDependencies and resolve from the repo root only.** A workspace only sees what it declares itself, so calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. Typecheck the client with `yarn client:typecheck` from the root.
+- Lint what a change touched, tracked and new alike, before handing it back: `{ git diff --name-only -z --diff-filter=ACM -- '*.ts' '*.tsx' '*.js'; git ls-files -o -z --exclude-standard -- '*.ts' '*.tsx' '*.js'; } | xargs -0 yarn eslint`. The `-z` and `-0` pair is load bearing, an expo-router group like `app/(tabs)/` carries glob characters and an unquoted path answers `no files were found` instead of linting.
+- **`eslint`, `prettier` and `tsc` are root devDependencies and resolve from the repo root only.** A workspace only sees what it declares itself, so calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. From inside a workspace the way in is `yarn run -T <binary>`, which resolves the root one. Typecheck the client with `yarn client:typecheck` from the root.
 - Fallback if the root call itself fails: `yarn node ./node_modules/eslint/bin/eslint.js <paths>`.
 
 ### Tests
@@ -66,7 +67,7 @@ yarn workspace @ambito-dolar/website run build|preview
 
 ## Git, commits, and releases
 
-- **Commit and push directly to `master` by default.** Only branch or open a PR when the user explicitly asks. Never branch on your own from the generic harness default "if on the default branch, branch first" — that default does NOT apply here.
+- **Commit and push directly to `master` by default.** That settles where, never when. Nothing is committed until the user calls the task closed, unless they ask for it sooner; until then the work stays in the tree and the diff goes to them. Group what does land, one commit per closed piece of work and never one per edit, and a change undone later in the same session must not reach the history at all. Only branch or open a PR when the user explicitly asks. Never branch on your own from the generic harness default "if on the default branch, branch first" — that default does NOT apply here.
 - Conventional commits (`@commitlint/config-conventional`). Types: `feat/fix/refactor/chore/docs/test`. No scope in subjects.
 - Subject only, no body (body reserved for `BREAKING CHANGE:` footer). Preserve acronym/product casing (`CloudFront`, `S3`, `iOS`).
 - Subject names the real problem/effect, not the mechanism: `fix: unreadable android navigation bar in light mode`, not `fix: theme android navigation bar`.
@@ -74,6 +75,8 @@ yarn workspace @ambito-dolar/website run build|preview
 - `chore: remove unused code` = pure removals only; refactors/restructures stay `refactor:`.
 - Generic chore subjects (no per-file detail): `chore: bump build number` / `bump version and build number` / `bump yarn` / `bump dependencies`. `docs: update AGENTS rules`.
 - Focused reversible commits, separate by type. No mixing unrelated packages. No experimental or temporary changes.
+- Group to the fewest commits the rules allow: work of the same type and one concern merges into one, however many files that is. What blocks a merge is the type, never the count.
+- No commit may leave the tree broken on its own. A manifest travels with the lockfile that records it, and a setting travels with the script it replaces, even when that drags an unrelated hunk of the same file along. A file carrying two concerns goes whole to the commit of the dominant one.
 - Semver alignment across branch: major needs `BREAKING CHANGE:`, minor needs `feat:`, patch needs `fix:` only (no `feat:`).
 - Lerna independent versioning, release from `master`.
 
@@ -140,37 +143,36 @@ touching any of that.
 Voseo everywhere, rioplatense: `Elegí`, `verificá`, `Tenés`. No tuteo. Applies to the ios swift
 strings too. The widget picker has its own register, see `packages/client/docs/android-widgets.md`.
 
-The error strings follow Apple's `es_419`, which is where they came from: `Imposible <verb>` and
-`No se pudieron <verb>` are both its shapes, verified against the `.lproj` bundles on macOS. What
-that variant never uses is the peninsular compound, so `no se han seleccionado` is wrong where `no
-se pudieron seleccionar` is right. Apple's `es_419` addresses the reader with tuteo and this app
-does not, voseo wins there because the audience is Argentina and not the whole region.
+The error strings take their shape from Apple's `es_419`: `Imposible <verb>` and `No se pudieron
+<verb>`, never the peninsular compound, so `no se han seleccionado` is wrong where `no se pudieron
+seleccionar` is right. Apple's `es_419` tutea and this app does not, voseo wins there.
 
 Every string is one sentence. A failure that needs a remedy carries it in the same sentence or
 leaves it to the button beside it.
 
-`donate_choose_note` reads `Los aportes son de cobro único y podés hacerlos cuantas veces quieras.`
-Here `los` refers to `aportes`. Neutral `lo` refers to an action, even when a plural noun is nearby.
-Do not change an action-referring `lo` to `los` just to match that noun.
+Neutral `lo` refers to an action. Do not pluralise one to `los` just to match a nearby plural noun.
 
 A note says what happens or what the reader can do, and never opens on a negation. Every negative
 string is an error state, so a note shaped like one reads as a failure. State the fact instead of
 denying the alternative.
 
-`donar` and `aporte` are not the same word twice. `Donar` is the action and `Donaciones` counts
-them in the stats, `aporte` is the thing the reader picks and gives. Every string keeps them in
-their own role, so a word count that reports them as rivals is reading the wrong thing. Those two
-are the whole vocabulary for it, there is no `colaborar` and no `contribución` in the catalog.
+`Donar` is the action and `Donaciones` counts them in the stats, `aporte` is the thing the reader
+picks and gives. Those two are the whole vocabulary for it, there is no `colaborar` and no
+`contribución` in the catalog.
 
 One word per concept where the concept is really one: `conexión` never `conectividad`. No `módulo`
-or any other word borrowed from the source, it is the only technical term in the catalog. No
-commercial vocabulary either, so no `pago` and no `suscripción`.
+or any other word borrowed from the source, and no commercial vocabulary, so no `pago` and no
+`suscripción`.
 
 ## Agent Operating Defaults
 
 - No rename/move files unless task needs. Run the most relevant scoped lint/test for touched code before handoff, report what ran.
 
 ### Reading and writing these files
+
+Write them the way the code comments are written, the fact and not the narration. Drop the
+connectives, keep every identifier, number and device name. A passage that reads like prose carries
+the same rule in twice the words, and every word here is paid on every session that loads it.
 
 Rules live at three levels: this file, `packages/<name>/AGENTS.md` and `docs/`. What decides where
 one goes is who could break it. Read `docs/agents-doc-layout.md` before adding or moving a rule.

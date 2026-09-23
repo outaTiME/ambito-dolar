@@ -49,22 +49,16 @@ bypass.
   not: consumables drop out of the receipt once finished, so `restorePurchases` on a fresh id posted
   and transferred nothing, verified on device. Android has no in-app path either and Play Billing 8
   stopped returning consumed one-time purchases. `allowBackup: false` in
-  `packages/client/app.config.ts` disables the cloud backup. For apps running on and targeting
-  android 12 or later some manufacturers still permit a device to device transfer, and this app
-  declares no `dataExtractionRules`, so keeping `installation_id` through a migration is not
-  guaranteed either way.
-- Explicit `<device-transfer>` rules would define which app data is eligible for a transfer, not
-  guarantee a recovery. This is a CNG project and expo exposes no app config field for them, so they
-  would go in an expo config plugin. Before deciding, audit what the restored state carries:
-  `packages/client/store/index.ts` keeps `push_token` and `sending_push_token` out, but it does
-  persist `last_register_hash`, which is derived from the token. The widget side of the same flag is
-  in `packages/client/docs/android-widgets.md`.
-- The RevenueCat transfer makes two installs on one store account take turns, whichever bought last holds
-  the history and the other reads zero. Do not try to fix it from the app. Without a login there is
-  no identifier for the store account and StoreKit does not expose one, the alias behavior is legacy
-  and closed to new projects, and `Keep with original App User ID` would stop the turn taking by
-  killing the transfer that recovers a reinstalled donor, the more common case. Syncing the id through
-  the icloud keychain is the one technique that works, ios only and a native module.
+  `packages/client/app.config.ts` disables the cloud backup, but from android 12 that flag no longer
+  covers a device to device transfer, and this app declares no `dataExtractionRules`, so keeping
+  `installation_id` through a migration is not guaranteed either way. Explicit `<device-transfer>`
+  rules would make it eligible, not guarantee it, and expo exposes no config field for them, so they
+  would take a config plugin.
+- The RevenueCat transfer makes two installs on one store account take turns, whichever bought last
+  holds the history and the other reads zero. Do not try to fix it from the app: without a login
+  there is no identifier for the store account, and `Keep with original App User ID` would stop the
+  turn taking by killing the transfer that recovers a reinstalled donor, the more common case. The
+  icloud keychain is the one technique that works, ios only and a native module.
 - When someone asks for their donations back, transfer by Order ID from the RevenueCat dashboard.
 - Closing the sheet with a purchase in flight or just finished is not a dismiss, `donatedRef` and `loadingRef` hold it back. Without that, donating and closing would count against the donor.
 - The two paths agree on the gating, on spending the trigger at show time, on the purchase in

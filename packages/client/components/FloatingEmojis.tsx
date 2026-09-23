@@ -53,9 +53,6 @@ const FloatingEmojis = ({
   const hideMoneyMouthFace =
     disableMoneyMouthFace ||
     (Platform.OS === 'android' && Platform.Version < 24);
-  // 🚧️ TODO: 🚧️
-  // Clear emojis if page navigatorPosition falls below 0.93 (which we should call like `pageTransitionThreshold` or something)
-  // otherwise, the FloatingEmojis look weird during stack transitions
   const onNewEmoji = useCallback(
     (x, y) => {
       // Set timeout to automatically clearEmojis after the latest one has finished animating

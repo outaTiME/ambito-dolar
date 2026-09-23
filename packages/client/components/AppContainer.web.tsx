@@ -106,7 +106,6 @@ const withStats =
 
 const StatView = ({ title, current, change }) => {
   const { theme, fonts } = Helper.useTheme();
-  // convert change to number
   const changeValue = parseFloat(change);
   const color = React.useMemo(
     () => Helper.getChangeColor(changeValue, theme),
