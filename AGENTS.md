@@ -50,7 +50,7 @@ yarn workspace @ambito-dolar/website run build|preview
 
 - Prettier and EditorConfig read their own config, run them instead of applying them by hand.
 - Match nearby style before broad reformat.
-- Comments: lowercase default, keep existing uppercase unless editing that line. Terse, ASCII-only, no arrows/em-dash/checkmarks/special chars. No trailing period. One sentence per `//`. Multi-line: consecutive `//`, never prose-with-semicolons.
+- Comments: lowercase default, keep existing uppercase unless editing that line. Terse, ASCII-only, no arrows/em-dash/checkmarks/special chars. No trailing period. One sentence per `//`, one line where it fits. Multi-line only for a second distinct fact, consecutive `//`, never prose-with-semicolons.
 - No label-prefix comments (`// feature flag:`, `// android:`, `// <tag>:`). Plain sentence describing what or why.
 - Contiguous related statements compact, no blank lines within decls/guards/memo/returns. Blank line only between distinct logical phases.
 - Always brace `if/else/for/while`. No inline (`if (x) { return; }`, not `if (x) return;`).
@@ -67,7 +67,7 @@ yarn workspace @ambito-dolar/website run build|preview
 
 ## Git, commits, and releases
 
-- **Commit and push directly to `master` by default.** That settles where, never when. Nothing is committed until the user calls the task closed, unless they ask for it sooner; until then the work stays in the tree and the diff goes to them. Group what does land, one commit per closed piece of work and never one per edit, and a change undone later in the same session must not reach the history at all. Only branch or open a PR when the user explicitly asks. Never branch on your own from the generic harness default "if on the default branch, branch first" — that default does NOT apply here.
+- **Commit and push directly to `master` by default.** That settles where, never when. Nothing is committed until the user calls the task closed, unless they ask for it sooner; until then the work stays in the tree and the diff goes to them. Group what does land, one commit per closed piece of work and never one per edit, and a change undone later in the same session must not reach the history at all. Only branch or open a PR when the user explicitly asks. Never branch on your own from the generic harness default "if on the default branch, branch first" — that default does not apply here.
 - Conventional commits (`@commitlint/config-conventional`). Types: `feat/fix/refactor/chore/docs/test`. No scope in subjects.
 - Subject only, no body (body reserved for `BREAKING CHANGE:` footer). Preserve acronym/product casing (`CloudFront`, `S3`, `iOS`).
 - Subject names the real problem/effect, not the mechanism: `fix: unreadable android navigation bar in light mode`, not `fix: theme android navigation bar`.
@@ -82,7 +82,7 @@ yarn workspace @ambito-dolar/website run build|preview
 
 ### Release order (branch tail)
 
-`chore: bump version and build number` (only `packages/client/app.config.ts` version+buildNumber, the native plists are generated now) → `chore: bump yarn` (only `.yarnrc.yml` + `packageManager` field in root `package.json`) → `chore: bump dependencies` (lockfiles, manifests) → `chore: publish`.
+`chore: bump version and build number` (only `packages/client/app.config.ts` version+buildNumber, the native plists are generated) → `chore: bump yarn` (only `.yarnrc.yml` + `packageManager` field in root `package.json`) → `chore: bump dependencies` (lockfiles, manifests) → `chore: publish`.
 
 - Single-dep functional change may own its whole `package.json` if the file has no other pending bumps. Manifest mixing many bumps (SDK upgrade) → whole file to the dominant commit, no hunk split.
 - Yarn bump colliding with dep bumps in the same `package.json` (no `.yarnrc.yml` change) → `packageManager` field rides in `chore: bump dependencies`, no separate `chore: bump yarn`.
@@ -90,7 +90,7 @@ yarn workspace @ambito-dolar/website run build|preview
 ### No hunk splitting
 
 - Always `git add <file>` (full file). Never `git add -p`/`--patch`, past incident broke files and lost fragments.
-- Exception (only `app.config.ts`): version+build lines MUST go to `chore: bump version and build number` while other hunks go to the functional commit.
+- Exception (only `app.config.ts`): version+build lines go to `chore: bump version and build number` while other hunks go to the functional commit.
 - Backup WT first: `git diff --binary > /tmp/wt-backup.patch`. Restore: `git apply /tmp/wt-backup.patch`.
 
 ### Major SDK upgrade sequence

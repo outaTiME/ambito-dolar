@@ -14,8 +14,8 @@ bypass.
   stop counting in `computeLifetime`, and a donor whose reduced total falls into a lower step gets
   re-asked sooner. Add steps, do not remove them.
 - Cooldown in distinct usage days, not wall-clock. Heavy users steady cadence, casual users + sleepers respected.
-- Single escalating schedule `getCooldownDays` (`packages/client/utilities/Donation.ts`) governs first appearance + post-dismiss cooldown.
-- Post-donate re-ask `getReAskMs` date-based, tiered by the total donated. Donors not penalized for low usage, with the one exception spelled out further down.
+- Both schedules live in `packages/client/utilities/Donation.ts`. `getCooldownDays` governs the first appearance and every post-dismiss wait: 15, 30, 45, 60 and 75 usage days, capped. `getReAskMs` governs the ask after a donation, date based so a donor is not penalized for low usage, with the one exception spelled out further down: 90, 180 or 360 days for a total donated under 2, under 10, or 10 and over. The top step stretches the wait, it does not end it, and there is no amount that stops the asking.
+- The re-ask measures from `customerInfo.requestDate`, the server time of that snapshot, and the device clock only when it is missing. A clock months ahead would re-ask a donor the next day, one behind would never re-ask. A cached snapshot carries an older time, so it can only push the ask to the next usage day and never bring it forward.
 - Forced opens via Developer screen bypass cooldown but don't increment dismiss counter.
 - The forced open is a one shot trigger and it is spent where the modal is shown, never where it is
   dismissed: next to `present()` in `packages/client/components/AppContainer.tsx` and on mount in
@@ -38,7 +38,6 @@ bypass.
   change mid check cannot present against state that already moved, and a failing `getCustomerInfo`
   leaves the day unspent on purpose so a later dependency change retries.
 - Only two persisted state fields: `ignore_donation_days_used` (snapshot of `days_used` at last dismiss), `ignore_donation_count` (consecutive dismisses, resets on donate). New fields only with strong reason.
-- The steps are 15, 30, 45, 60 and 75 usage days, capped, and the re-ask is 90, 180 or 360 days for a total donated under 2, under 10, or 10 and over. The top step stretches the wait, it does not end it, and there is no amount that stops the asking. Both live in `packages/client/utilities/Donation.ts`.
 - The usage day gate runs before the re-ask, so a donor under 15 usage days waits for both. Donating resets the snapshot to `0` and not to the current `days_used`, so `elapsedDays` becomes the whole history and anyone past 15 days clears it at once. The deviation from "never penalized" only reaches someone who donated that early, and it asks them less rather than more.
 - `computeLifetime` sums today's prices in the store's own currency, and the 2 and 10 thresholds read as USD. A storefront in another currency applies the same numeric thresholds without converting, so the step a donor lands on follows the raw number and not what it is worth. `currencyCode` comes back from the catalog and nothing reads it.
 - The donation history belongs to `installation_id`, the RevenueCat App User ID, and RevenueCat holds
@@ -61,6 +60,8 @@ bypass.
   icloud keychain is the one technique that works, ios only and a native module.
 - When someone asks for their donations back, transfer by Order ID from the RevenueCat dashboard.
 - Closing the sheet with a purchase in flight or just finished is not a dismiss, `donatedRef` and `loadingRef` hold it back. Without that, donating and closing would count against the donor.
+- A pending purchase (ask to buy, a pending store payment) rejects with `PAYMENT_PENDING_ERROR` and is not a failure: no alert and no Sentry. Its close still counts as a dismiss on purpose: nothing registers a donation until the transaction lands, so a close that spent no cooldown would ask again on the next usage day while the approval is pending. Once it lands the re-ask gate reads the transaction.
+- A failed boot fetch of the catalog leaves no dep changed, so `useDonationProducts` retries on the next foreground. Without it a launch without network skips the automatic modal for as long as the process lives.
 - The two paths agree on the gating, on spending the trigger at show time, on the purchase in
   flight guard and on hanging the dismiss accounting off the teardown, the sheet on `onDismiss` and
   the route on its unmount cleanup. Where they part is which ancestor owns them. Clearing the rates
