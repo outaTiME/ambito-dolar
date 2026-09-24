@@ -89,6 +89,24 @@ const ThemedLayout = () => {
   React.useEffect(() => {
     Appearance.setColorScheme(appearance ?? 'unspecified');
   }, [appearance]);
+  // explicit style follows the rendered scheme instead of the Appearance cache
+  React.useEffect(() => {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+    NavigationBar.setStyle(Helper.getInvertedTheme(colorScheme));
+  }, [colorScheme]);
+  // the root lays out empty and a layout event only means yoga measured
+  const splashHiddenRef = React.useRef(false);
+  const onContentLayout = React.useCallback(() => {
+    if (!splashHiddenRef.current) {
+      splashHiddenRef.current = true;
+      // expo-router hides on its own readiness, the content lays out later
+      requestAnimationFrame(() => {
+        SplashScreen.hideAsync().catch(console.warn);
+      });
+    }
+  }, []);
   // set background color early to avoid white flash on Android
   const backgroundColor = Settings.getBackgroundColor(colorScheme, true);
   const stackScreenOptions = React.useMemo(
@@ -100,46 +118,47 @@ const ThemedLayout = () => {
   );
   return (
     <View style={{ flex: 1, backgroundColor }}>
-      <NavigationBar style="auto" />
       {layoutKey && (
-        <ThemeProvider theme={theme}>
-          <NavigationThemeProvider value={navigationTheme}>
-            <BottomSheetModalProvider>
-              <AppContainer>
-                <Stack key={layoutKey} screenOptions={stackScreenOptions}>
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen
-                    name="(modals)"
-                    options={{
-                      presentation: 'modal',
-                      gestureEnabled: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="donate"
-                    options={{
-                      presentation: 'formSheet',
-                      headerShown: false,
-                      sheetAllowedDetents: 'fitToContents',
-                      sheetGrabberVisible: true,
-                      gestureEnabled: true,
-                      // forced light to match the prior gorhom modal
-                      // android stays transparent so the inner view corner radius shows
-                      contentStyle: {
-                        backgroundColor:
-                          Platform.OS === 'android'
-                            ? 'transparent'
-                            : Settings.getContentColor('light'),
-                      },
-                    }}
-                  />
-                </Stack>
-                <NavigationTracker />
-                <ToastOverlay />
-              </AppContainer>
-            </BottomSheetModalProvider>
-          </NavigationThemeProvider>
-        </ThemeProvider>
+        <View style={{ flex: 1 }} onLayout={onContentLayout}>
+          <ThemeProvider theme={theme}>
+            <NavigationThemeProvider value={navigationTheme}>
+              <BottomSheetModalProvider>
+                <AppContainer>
+                  <Stack key={layoutKey} screenOptions={stackScreenOptions}>
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen
+                      name="(modals)"
+                      options={{
+                        presentation: 'modal',
+                        gestureEnabled: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="donate"
+                      options={{
+                        presentation: 'formSheet',
+                        headerShown: false,
+                        sheetAllowedDetents: 'fitToContents',
+                        sheetGrabberVisible: true,
+                        gestureEnabled: true,
+                        // forced light to match the prior gorhom modal
+                        // android stays transparent so the inner view corner radius shows
+                        contentStyle: {
+                          backgroundColor:
+                            Platform.OS === 'android'
+                              ? 'transparent'
+                              : Settings.getContentColor('light'),
+                        },
+                      }}
+                    />
+                  </Stack>
+                  <NavigationTracker />
+                  <ToastOverlay />
+                </AppContainer>
+              </BottomSheetModalProvider>
+            </NavigationThemeProvider>
+          </ThemeProvider>
+        </View>
       )}
     </View>
   );
@@ -147,21 +166,13 @@ const ThemedLayout = () => {
 
 const RootLayout = () => {
   const isReady = Helper.useApplicationConstants();
-  // onLayout also fires on every layout change, the splash is hidden once
-  const splashHiddenRef = React.useRef(false);
-  const onLayoutRootView = React.useCallback(() => {
-    if (isReady && !splashHiddenRef.current) {
-      splashHiddenRef.current = true;
-      SplashScreen.hideAsync().catch(console.warn);
-    }
-  }, [isReady]);
   if (!isReady) {
     return null;
   }
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <GestureHandlerRootView onLayout={onLayoutRootView}>
+        <GestureHandlerRootView>
           <ThemedLayout />
         </GestureHandlerRootView>
       </PersistGate>

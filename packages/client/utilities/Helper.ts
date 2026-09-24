@@ -429,13 +429,17 @@ export default {
     const [, setStoreAvailable] = this.useSharedState('storeAvailable');
     const [, setInstallationTime] = this.useSharedState('installationTime');
     React.useEffect(() => {
-      Promise.all([
+      // a rejected constant hides its own row without blocking startup
+      Promise.allSettled([
         MailComposer.isAvailableAsync(),
         Linking.canOpenURL(Settings.APP_STORE_URI),
         Application.getInstallationTimeAsync(),
-      ]).then((data) => {
-        debug('Application constants', data);
-        const [contactAvailable, storeAvailable, installationTime] = data;
+      ]).then((results) => {
+        debug('Application constants', results);
+        const [contactAvailable, storeAvailable, installationTime] =
+          results.map((result) =>
+            result.status === 'fulfilled' ? result.value : undefined,
+          );
         setContactAvailable(contactAvailable);
         setStoreAvailable(storeAvailable);
         setInstallationTime(installationTime);
