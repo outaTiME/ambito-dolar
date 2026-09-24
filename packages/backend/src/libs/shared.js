@@ -112,7 +112,7 @@ const fetchFirebaseData = async (uri, opts) => {
   const url = new URL(`${process.env.FIREBASE_DATABASE_URL}/${uri}`);
   url.pathname = url.pathname + '.json';
   url.searchParams.set('access_token', access_token);
-  return AmbitoDolar.fetch(url.href, opts).then((response) => response.json());
+  return AmbitoDolar.fetch(url.href, opts).json();
 };
 
 // remove data from payload

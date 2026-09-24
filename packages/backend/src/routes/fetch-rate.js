@@ -11,8 +11,8 @@ export const handler = Shared.wrapHandler(async (event) => {
       'user-agent': USER_AGENT,
     },
   })
-    .then(async (response) => {
-      const data = await response.json();
+    .json()
+    .then((data) => {
       const duration = AmbitoDolar.formatDuration(Date.now() - start_time);
       console.info(
         'Rate fetch completed',

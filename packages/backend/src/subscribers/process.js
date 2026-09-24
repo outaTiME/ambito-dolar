@@ -40,8 +40,8 @@ const getRate = (type) => {
       'user-agent': USER_AGENT,
     },
   })
-    .then(async (response) => {
-      const data = await response.json();
+    .json()
+    .then((data) => {
       // validate
       // https://joi.dev/tester/
       const schema = Joi.object()
