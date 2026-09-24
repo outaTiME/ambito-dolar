@@ -14,14 +14,14 @@
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
-    "astro-eslint-parser": "^3.1.0",
+    "astro-eslint-parser": "^3.2.0",
     "eslint": "^9.39.5",
     "eslint-config-universe": "^16.1.1",
     "eslint-plugin-astro": "^3.2.1",
     "husky": "^9.1.7",
     "lerna": "^10.0.1",
-    "prettier": "^3.9.8",
-    "prettier-plugin-astro": "^1.0.1",
+    "prettier": "^3.9.9",
+    "prettier-plugin-astro": "^1.1.0",
     "sst": "^4.17.1",
     "typescript": "~6.0.3"
   },

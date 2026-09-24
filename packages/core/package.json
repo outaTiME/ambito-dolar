@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "ava": "^8.0.1",
-    "undici": "^8.11.0"
+    "undici": "^8.11.2"
   },
   "scripts": {
     "test": "eslint . && ava"

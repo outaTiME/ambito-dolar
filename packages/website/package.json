@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^7.3.4",
+    "astro": "^7.3.5",
     "astro-icon": "^1.2.0",
     "sass": "^1.105.0"
   },
