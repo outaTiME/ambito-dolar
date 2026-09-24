@@ -52,8 +52,12 @@ export const showGenericErrorAlert = () => {
   });
 };
 
+// ask to buy or a pending store payment, it completes outside the app
+const isPurchasePending = (e) =>
+  e?.code === Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR;
+
 export const showPurchaseErrorAlert = (e) => {
-  if (e?.userCancelled) {
+  if (e?.userCancelled || isPurchasePending(e)) {
     return;
   }
   Sentry.captureException(new Error('Purchase error', { cause: e }));

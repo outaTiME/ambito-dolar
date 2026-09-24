@@ -2,6 +2,7 @@
 import React from 'react';
 import Purchases from 'react-native-purchases';
 
+import useAppState from '@/hooks/useAppState';
 import Helper from '@/utilities/Helper';
 
 // module-level state dedupes parallel fetches
@@ -76,11 +77,13 @@ export const useDonationProducts = () => {
     }
     return items;
   }, [setProducts]);
+  // a failed boot fetch changes no dep, the next foreground retries it
+  const isActive = useAppState('active');
   React.useEffect(() => {
-    if (purchasesConfigured && !products.length) {
+    if (isActive && purchasesConfigured && !products.length) {
       fetchAndCache();
     }
-  }, [purchasesConfigured, products.length, fetchAndCache]);
+  }, [isActive, purchasesConfigured, products.length, fetchAndCache]);
   const ensureProducts = React.useCallback(
     async () => (products.length ? products : fetchAndCache()),
     [products, fetchAndCache],

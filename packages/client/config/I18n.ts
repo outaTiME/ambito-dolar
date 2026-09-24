@@ -68,7 +68,7 @@ const i18n = new I18n({
     donate: 'Donar',
     donate_choose_title: 'Elegí tu aporte',
     donate_choose_note:
-      'Los aportes son de cobro único y podés hacerlos cuantas veces quieras.',
+      'Cada aporte se hace una sola vez y podés repetirlo cuantas veces quieras.',
     donate_modal_note:
       'Elegí tu aporte y acompañá el mantenimiento y desarrollo continuo de esta aplicación.',
     donate_product_small_contribution: 'Pequeño',

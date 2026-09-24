@@ -365,7 +365,6 @@ const withAppDonation = (Component) => (props) => {
       return;
     }
     const forced = !!appDonationModal;
-    const now = Date.now();
     const cooldownDays = getCooldownDays(ignoreDonationCount);
     const elapsedDays = Math.max(0, daysUsed - (ignoreDonationDaysUsed ?? 0));
     const shouldShowModal = forced || elapsedDays >= cooldownDays;
@@ -387,6 +386,8 @@ const withAppDonation = (Component) => (props) => {
     let cancelled = false;
     Purchases.getCustomerInfo()
       .then((customerInfo) => {
+        // server time of the snapshot, a cached one only delays the ask
+        const now = Date.parse(customerInfo?.requestDate) || Date.now();
         const transactions = customerInfo?.nonSubscriptionTransactions ?? [];
         const lastPurchaseDate = _.last(transactions)?.purchaseDate;
         const lifetimeTotal = computeLifetime(transactions, priceMap);
