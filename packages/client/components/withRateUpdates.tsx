@@ -28,7 +28,8 @@ const withRateUpdates = (Component) => (props) => {
   const cadenceRef = React.useRef();
   const updatedAt = useSelector((state) => state.rates.updated_at);
   const updatedAtRef = React.useRef(updatedAt);
-  const timeInForeground = React.useRef();
+  // a cold start is an open too, the first render can see the app as not active yet
+  const timeInForeground = React.useRef(Date.now());
   const showUpdateToastRef = Helper.useSelectorRef(
     (state) => state.application.show_update_toast,
   );
