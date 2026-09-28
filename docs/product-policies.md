@@ -30,9 +30,9 @@ The client polls `Settings.RATES_URI` from `packages/client/components/withRateU
 - **An answer that yields nothing renderable is a failure**, not an empty screen. `fetchRates`
   throws before the dispatch so a bad payload cannot replace rates that were working, which is the
   rule both widgets already apply before replacing their stored payload.
-- **The effective interval is the cadence minus `SLACK`**, a flat 30 seconds that absorbs the tick
-  drift and lets a foreground entry refresh early. A backend that sends a cadence to shed load has
-  to count on the client asking that much sooner.
+- **The effective interval is the cadence minus `SLACK`**, half the tick and flat across cadences,
+  30 seconds today, which absorbs the tick drift and lets a foreground entry refresh early. A
+  backend that sends a cadence to shed load has to count on the client asking that much sooner.
 - **Never derive a market date from the device.** `DateUtils.get` parses without a timezone, so a
   comparison at `'day'` follows the phone and not the market. `getTimezoneDate` in `packages/core`
   is the one that knows about Argentina.

@@ -37,6 +37,11 @@ bypass.
   usage day in the same runtime. The effect also drops a check left in flight, so a dependency
   change mid check cannot present against state that already moved, and a failing `getCustomerInfo`
   leaves the day unspent on purpose so a later dependency change retries.
+- `donationModal.open` in `packages/client/utilities/Donation.ts` blocks the automatic ask while a
+  modal is on screen. A modal left open past midnight crosses a usage day with the cooldown still
+  due, and without it the check presents again: the sheet resets `donatedRef` and the route swaps
+  its slug, `router.navigate` reuses the open one. Stamped once the modal opens, cleared on
+  the sheet `onDismiss` and on the route unmount. A forced open ignores it.
 - Only two persisted state fields: `ignore_donation_days_used` (snapshot of `days_used` at last dismiss), `ignore_donation_count` (consecutive dismisses, resets on donate). New fields only with strong reason.
 - The usage day gate runs before the re-ask, so a donor under 15 usage days waits for both. Donating resets the snapshot to `0` and not to the current `days_used`, so `elapsedDays` becomes the whole history and anyone past 15 days clears it at once. The deviation from "never penalized" only reaches someone who donated that early, and it asks them less rather than more.
 - `computeLifetime` sums today's prices in the store's own currency, and the 2 and 10 thresholds read as USD. A storefront in another currency applies the same numeric thresholds without converting, so the step a donor lands on follows the raw number and not what it is worth. `currencyCode` comes back from the catalog and nothing reads it.
@@ -60,7 +65,7 @@ bypass.
   icloud keychain is the one technique that works, ios only and a native module.
 - When someone asks for their donations back, transfer by Order ID from the RevenueCat dashboard.
 - Closing the sheet with a purchase in flight or just finished is not a dismiss, `donatedRef` and `loadingRef` hold it back. Without that, donating and closing would count against the donor.
-- A pending purchase (ask to buy, a pending store payment) rejects with `PAYMENT_PENDING_ERROR` and is not a failure: no alert and no Sentry. Its close still counts as a dismiss on purpose: nothing registers a donation until the transaction lands, so a close that spent no cooldown would ask again on the next usage day while the approval is pending. Once it lands the re-ask gate reads the transaction.
+- `purchaseDonation` resolves `true` once charged and reports any failure itself, callers only branch on it. A pending purchase (ask to buy, a pending store payment) rejects with `PAYMENT_PENDING_ERROR` and is not a failure: no alert and no Sentry. Its close still counts as a dismiss on purpose: nothing registers a donation until the transaction lands, so a close that spent no cooldown would ask again on the next usage day while the approval is pending. Once it lands the re-ask gate reads the transaction.
 - A failed boot fetch of the catalog leaves no dep changed, so `useDonationProducts` retries on the next foreground. Without it a launch without network skips the automatic modal for as long as the process lives.
 - The two paths agree on the gating, on spending the trigger at show time, on the purchase in
   flight guard and on hanging the dismiss accounting off the teardown, the sheet on `onDismiss` and

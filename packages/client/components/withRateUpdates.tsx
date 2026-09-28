@@ -13,7 +13,7 @@ import { reloadWidgets } from '@/modules/widgets';
 import Helper from '@/utilities/Helper';
 import Sentry from '@/utilities/Sentry';
 
-// absorbs the tick drift, a flat 30s so a foreground entry can refresh early
+// half the tick and flat across cadences, absorbs its drift so a foreground entry can refresh early
 const SLACK = Settings.RATES_REFRESH_INTERVAL / 2;
 // ceiling for the remote cadence, and the longest a client waits to see it lifted
 const MAX_INTERVAL = 60 * 60 * 1000;
