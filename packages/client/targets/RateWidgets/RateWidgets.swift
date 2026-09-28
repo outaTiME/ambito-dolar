@@ -12,28 +12,15 @@ import AppIntents
 struct RateValue: Identifiable, Equatable {
   let id: String
   let name: String
-  let detail: String?
-  let change: String?
-  let plainChange: String?
-  let changeColor: Color?
-  let changeValue: Double?
+  var detail: String? = nil
+  let change: String
+  let plainChange: String
+  let changeColor: Color
+  let changeValue: Double
   let price: String
   let priceValue: Double
   let date: String
   let dateValue: Double
-  init(id: String, name: String, detail: String? = nil, change: String?, plainChange: String?, changeColor: Color?, changeValue: Double?, price: String, priceValue: Double, date: String, dateValue: Double) {
-    self.id = id
-    self.name = name
-    self.detail = detail
-    self.change = change
-    self.plainChange = plainChange
-    self.changeColor = changeColor
-    self.changeValue = changeValue
-    self.price = price
-    self.priceValue = priceValue
-    self.date = date
-    self.dateValue = dateValue
-  }
 }
 
 private let ratesCacheKey = "last_rates"
@@ -41,9 +28,16 @@ private let ratesCacheAtKey = "last_rates_at"
 // the three widgets reload in the same batch and every one of them asks through here for its
 // timeline, its snapshot and its placeholder, which is one request each. Inside the window the
 // first one pays and the rest read what it brought, which is still the real rates and not a
-// sample, so the preview keeps showing live numbers. Same window the android widgets use
+// sample, so the preview keeps showing live numbers
 private let ratesCacheWindow: TimeInterval = 60
-private let ratesTimeout: TimeInterval = 4
+// the default is a minute, which is long enough for the system to kill the extension while it
+// waits, the android widgets bound the same call to four seconds for the same reason
+private let ratesSession: URLSession = {
+  let configuration = URLSessionConfiguration.default
+  configuration.timeoutIntervalForRequest = 4
+  configuration.timeoutIntervalForResource = 4
+  return URLSession(configuration: configuration)
+}()
 
 // an error body is valid json too, so taking any dictionary as success would blank the widgets
 // and leave that body as the fallback for the next failure, which is what android avoids by
@@ -74,11 +68,8 @@ private func wellFormed(_ value: Any) -> Bool {
 private func usableRates(_ rates: [String: Any]) -> [String: Any] {
   var kept: [String: Any] = [:]
   for type in Helper.getRateTypes() {
-    guard let identifier = type.identifier, let rate = rates[identifier] else {
-      continue
-    }
-    if wellFormed(rate) {
-      kept[identifier] = rate
+    if let rate = rates[type.id], wellFormed(rate) {
+      kept[type.id] = rate
     }
   }
   return kept
@@ -88,7 +79,11 @@ private func storedRates() -> [String: Any]? {
   guard let data = UserDefaults.standard.data(forKey: ratesCacheKey) else {
     return nil
   }
-  return try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+  // filtered like a fresh answer, a payload stored by an older build may predate usableRates
+  guard let rates = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+    return nil
+  }
+  return usableRates(rates)
 }
 
 private func getRates() async -> [String: Any]? {
@@ -99,15 +94,10 @@ private func getRates() async -> [String: Any]? {
     return fresh
   }
   let url = URL(string: "https://api.ambito-dolar.app/fetch")!
-  // the default is a minute, which is long enough for the system to kill the extension while it
-  // waits, the android widgets bound the same call to four seconds for the same reason
-  let configuration = URLSessionConfiguration.default
-  configuration.timeoutIntervalForRequest = ratesTimeout
-  configuration.timeoutIntervalForResource = ratesTimeout
   var rates: [String: Any]?
   // awaited, never waited on. snapshot and timeline are async since AppIntentTimelineProvider,
   // and Apple asks not to block on a semaphore from a task
-  if let (data, response) = try? await URLSession(configuration: configuration).data(from: url),
+  if let (data, response) = try? await ratesSession.data(from: url),
      // an error body is json too, so the status is what says whether this is rates at all
      let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status),
      let parsed = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
@@ -134,17 +124,13 @@ private func getRates() async -> [String: Any]? {
   return storedRates()
 }
 
-private func formatNumber(num: Double) -> String {
+private func formatRateCurrency(num: Double) -> String {
   let nf = NumberFormatter()
   nf.numberStyle = .decimal
   nf.minimumFractionDigits = 2
   nf.maximumFractionDigits = 2
   nf.roundingMode = .down
   return nf.string(for: num)!
-}
-
-private func formatRateCurrency(num: Double) -> String {
-  return formatNumber(num: num)
 }
 
 private func getChangeSymbol(num: Double) -> String {
@@ -181,76 +167,66 @@ private func getWidgetUrl(id: String? = nil) -> URL? {
 }
 
 extension ValueType {
-  var displayName: String? {
-    let mapping: [ValueType: String] = [
-      .buy: "Compra",
-      .avg: "Promedio",
-      .sell: "Venta"
-    ]
-    // unknown case returns nil
-    return mapping[self]
+  var displayName: String {
+    switch self {
+    case .buy: "Compra"
+    case .avg: "Promedio"
+    case .sell: "Venta"
+    }
   }
 }
 
-private func lookupRateValues(rates: [String: Any]?, rateTypes: [RateType], valueType: ValueType = ValueType.sell) -> [RateValue]? {
-  return rateTypes.map {
-    if let type = $0.identifier {
-      let name = $0.displayString
-      // check if the rate is available
-      if Helper.getRateTypes().contains(where: { $0.identifier == type }), rates != nil, let rate = rates![type] as? [Any] {
-        let rateValue = rate[1]
-        let value: Double
-        var detail: String?
-        if rateValue is Double {
-          value = rateValue as! Double
-        } else {
-          var arr = [Double]()
-          for item in rateValue as! NSArray {
-            arr.append(item as! Double)
-          }
-          let buy = arr[0]
-          let sell = arr[1]
-          if valueType == ValueType.buy {
-            value = buy
-          } else if valueType == ValueType.avg {
-            value = (buy + sell) / 2
-          } else {
-            value = sell
-          }
-          detail = valueType.displayName
-        }
-        let price = formatRateCurrency(num: value)
-        let rateChange = rate[2] as! Double
-        let change = formatRateChange(num: rateChange, type: .percentage)
-        let plainChange = formatRateChange(num: rateChange, type: .percentage, symbol: false)
-        let changeColor = getChangeColor(num: rateChange)
-        // the default options reject fractional seconds, so a timestamp that grows milliseconds
-        // parses to nil and unwrapping it would take the extension down, the android side drops
-        // the rate instead
-        guard let timestamp = rate[0] as? String,
-              let rateDate = ISO8601DateFormatter().date(from: timestamp) else {
-          return nil
-        }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd/MM HH:mm"
-        let date = dateFormatter.string(from: rateDate)
-        return RateValue(
-          id: type,
-          name: name,
-          detail: detail,
-          change: change,
-          plainChange: plainChange,
-          changeColor: changeColor,
-          changeValue: rateChange,
-          price: price,
-          priceValue: value,
-          date: date,
-          dateValue: rateDate.timeIntervalSince1970 * 1000.0
-        )
-      }
+// usableRates already dropped the unknown types, so a missing entry is a rate not available
+private func lookupRateValues(rates: [String: Any]?, rateTypes: [RateType], valueType: ValueType = ValueType.sell) -> [RateValue] {
+  return rateTypes.compactMap { rateType in
+    guard let rate = rates?[rateType.id] as? [Any] else {
+      return nil
     }
-    return nil
-  }.compactMap{ $0 }
+    let rateValue = rate[1]
+    let value: Double
+    var detail: String?
+    if rateValue is Double {
+      value = rateValue as! Double
+    } else {
+      var arr = [Double]()
+      for item in rateValue as! NSArray {
+        arr.append(item as! Double)
+      }
+      let buy = arr[0]
+      let sell = arr[1]
+      if valueType == ValueType.buy {
+        value = buy
+      } else if valueType == ValueType.avg {
+        value = (buy + sell) / 2
+      } else {
+        value = sell
+      }
+      detail = valueType.displayName
+    }
+    let rateChange = rate[2] as! Double
+    // the default options reject fractional seconds, so a timestamp that grows milliseconds
+    // parses to nil and unwrapping it would take the extension down, the android side drops
+    // the rate instead
+    guard let timestamp = rate[0] as? String,
+          let rateDate = ISO8601DateFormatter().date(from: timestamp) else {
+      return nil
+    }
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd/MM HH:mm"
+    return RateValue(
+      id: rateType.id,
+      name: rateType.displayString,
+      detail: detail,
+      change: formatRateChange(num: rateChange, type: .percentage),
+      plainChange: formatRateChange(num: rateChange, type: .percentage, symbol: false),
+      changeColor: getChangeColor(num: rateChange),
+      changeValue: rateChange,
+      price: formatRateCurrency(num: value),
+      priceValue: value,
+      date: dateFormatter.string(from: rateDate),
+      dateValue: rateDate.timeIntervalSince1970 * 1000.0
+    )
+  }
 }
 
 private let placeholderPrice: Double = 1000
@@ -260,7 +236,8 @@ private let placeholderPrice: Double = 1000
 // so returning nothing shows the unavailable text right after an install. Equal and non zero
 // prices on purpose: the spread widget divides one by the other
 private func placeholderEntry(rateTypes: [RateType]) -> SimpleEntry {
-  if let stored = lookupRateValues(rates: storedRates(), rateTypes: rateTypes), !stored.isEmpty {
+  let stored = lookupRateValues(rates: storedRates(), rateTypes: rateTypes)
+  if !stored.isEmpty {
     return SimpleEntry(date: Date(), rates: stored)
   }
   let rates = rateTypes.map { rateType in
@@ -280,25 +257,20 @@ private func placeholderEntry(rateTypes: [RateType]) -> SimpleEntry {
   return SimpleEntry(date: Date(), rates: rates)
 }
 
+// postscript name
+private let fontName = "FiraGO-Regular"
+// https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
+private let fgColor = Color(UIColor.label)
+private let fgSecondaryColor = Color(UIColor.secondaryLabel)
+
 struct SimpleEntry: TimelineEntry {
   let date: Date
-  let rates: [RateValue]?
+  let rates: [RateValue]
 }
 
 extension View {
-  @ViewBuilder
-  func widgetBackground(backgroundView: some View = Color.black) -> some View {
-    containerBackground(for: .widget) {
-      backgroundView
-    }
-  }
-  @ViewBuilder
-  func conditionalContentTransition(value: Double? = nil) -> some View {
-    if let value = value {
-      self.contentTransition(.numericText(value: value))
-    } else {
-      self.contentTransition(.numericText())
-    }
+  func widgetBackground() -> some View {
+    containerBackground(Color.black, for: .widget)
   }
 }
 
@@ -325,16 +297,11 @@ struct RateProvider: AppIntentTimelineProvider {
 struct RateWidgetEntryView : View {
   @Environment(\.widgetFamily) var widgetFamily
   let entry: RateProvider.Entry
-  // postscript name
-  let fontName = "FiraGO-Regular"
-  // https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
-  let fgColor = Color(UIColor.label)
-  let fgSecondaryColor = Color(UIColor.secondaryLabel)
   var body: some View {
     let rates = entry.rates
     switch widgetFamily {
     case .accessoryCircular:
-      if rates?.isEmpty == false, let rate = rates?[0] {
+      if let rate = rates.first {
         ZStack {
           AccessoryWidgetBackground()
           VStack {
@@ -345,20 +312,14 @@ struct RateWidgetEntryView : View {
             Text(rate.price)
               .font(.custom(fontName, size: 13))
               .lineLimit(1)
-              .conditionalContentTransition(value: rate.priceValue)
+              .contentTransition(.numericText(value: rate.priceValue))
               .padding(.horizontal, 2)
               .widgetAccentable()
-            if let plainChange = rate.plainChange {
-              Text(plainChange)
-                .font(.custom(fontName, size: 10))
-                .lineLimit(1)
-                .conditionalContentTransition(value: rate.changeValue)
-                .padding(.horizontal, 8)
-            } else {
-              Text(" ")
-                .font(.custom(fontName, size: 10))
-                .lineLimit(1)
-            }
+            Text(rate.plainChange)
+              .font(.custom(fontName, size: 10))
+              .lineLimit(1)
+              .contentTransition(.numericText(value: rate.changeValue))
+              .padding(.horizontal, 8)
           }
         }
         .widgetURL(getWidgetUrl(id: rate.id))
@@ -378,7 +339,7 @@ struct RateWidgetEntryView : View {
         .widgetBackground()
       }
     default:
-      if rates?.isEmpty == false, let rate = rates?[0] {
+      if let rate = rates.first {
         VStack(alignment: .leading) {
           Text(rate.name)
             .font(.custom(fontName, size: 20))
@@ -391,24 +352,21 @@ struct RateWidgetEntryView : View {
               .lineLimit(1)
           }
           Spacer()
-          if let change = rate.change {
-            Text(change)
-              .font(.custom(fontName, size: 14))
-              .foregroundColor(rate.changeColor)
-              .lineLimit(1)
-              .conditionalContentTransition(value: rate.changeValue)
-          }
+          Text(rate.change)
+            .font(.custom(fontName, size: 14))
+            .foregroundColor(rate.changeColor)
+            .lineLimit(1)
+            .contentTransition(.numericText(value: rate.changeValue))
           Text(rate.price)
             .font(.custom(fontName, size: 26))
             .foregroundColor(fgColor)
             .lineLimit(1)
-            .conditionalContentTransition(value: rate.priceValue)
-          // Spacer().frame(height: 4)
+            .contentTransition(.numericText(value: rate.priceValue))
           Text(rate.date)
             .font(.custom(fontName, size: 11))
             .foregroundColor(fgSecondaryColor)
             .lineLimit(1)
-            .conditionalContentTransition(value: rate.dateValue)
+            .contentTransition(.numericText(value: rate.dateValue))
         }
         .frame(
           maxWidth: .infinity,
@@ -439,12 +397,6 @@ struct RateWidgetEntryView : View {
 
 struct RateWidget: Widget {
   let kind: String = "RateWidget"
-  private var supportedFamilies: [WidgetFamily] {
-    return [
-      .systemSmall,
-      .accessoryCircular,
-    ]
-  }
   var body: some WidgetConfiguration {
     AppIntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateProvider()) { entry in
       RateWidgetEntryView(entry: entry)
@@ -453,7 +405,7 @@ struct RateWidget: Widget {
     }
     .configurationDisplayName("Cotizaciones")
     .description("Consultá las cotizaciones a lo largo del día.")
-    .supportedFamilies(supportedFamilies)
+    .supportedFamilies([.systemSmall, .accessoryCircular])
     .contentMarginsDisabled()
   }
 }
@@ -480,101 +432,85 @@ struct ListRatesProvider: AppIntentTimelineProvider {
 }
 
 struct ListRatesWidgetEntryView : View {
-  @Environment(\.widgetFamily) var widgetFamily
   let entry: ListRatesProvider.Entry
-  // postscript name
-  let fontName = "FiraGO-Regular"
-  // https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
-  let fgColor = Color(UIColor.label)
-  let fgSecondaryColor = Color(UIColor.secondaryLabel)
   var body: some View {
     let rates = entry.rates
-    switch widgetFamily {
-    default:
-      if rates?.isEmpty == false {
-        VStack(alignment: .leading) {
-          ForEach(rates!) { rate in
-            HStack {
-              Text(rate.name)
-                .font(.custom(fontName, size: 14))
-                .foregroundColor(fgColor)
-                .minimumScaleFactor(0.9) // ~ 12.6
-                .lineLimit(1)
-              Spacer()
-              Text(rate.price)
-                .font(.custom(fontName, size: 16))
-                .foregroundColor(fgColor)
-                .lineLimit(1)
-                .conditionalContentTransition(value: rate.priceValue)
-            }
-            HStack {
-              Text(rate.date)
-                .font(.custom(fontName, size: 11))
-                .foregroundColor(fgSecondaryColor)
-                .minimumScaleFactor(0.9) // ~ 9.9
-                .lineLimit(1)
-                .conditionalContentTransition(value: rate.dateValue)
-              Spacer()
-              if let change = rate.change {
-                Text(change)
-                  .font(.custom(fontName, size: 11))
-                  .foregroundColor(rate.changeColor)
+    if !rates.isEmpty {
+      VStack(alignment: .leading) {
+        ForEach(rates) { rate in
+          HStack {
+            Text(rate.name)
+              .font(.custom(fontName, size: 14))
+              .foregroundColor(fgColor)
+              .minimumScaleFactor(0.9) // ~ 12.6
+              .lineLimit(1)
+            Spacer()
+            Text(rate.price)
+              .font(.custom(fontName, size: 16))
+              .foregroundColor(fgColor)
+              .lineLimit(1)
+              .contentTransition(.numericText(value: rate.priceValue))
+          }
+          HStack {
+            Text(rate.date)
+              .font(.custom(fontName, size: 11))
+              .foregroundColor(fgSecondaryColor)
+              .minimumScaleFactor(0.9) // ~ 9.9
+              .lineLimit(1)
+              .contentTransition(.numericText(value: rate.dateValue))
+            Spacer()
+            Text(rate.change)
+              .font(.custom(fontName, size: 11))
+              .foregroundColor(rate.changeColor)
+              .lineLimit(1)
+              .contentTransition(.numericText(value: rate.changeValue))
+          }
+          if rate != rates.last {
+            Spacer()
+          } else {
+            if (rates.count < 3) {
+              // complete the remaining slots
+              ForEach(0..<3-rates.count, id: \.self) { _ in
+                Spacer()
+                Text(" ")
+                  .font(.custom(fontName, size: 16))
                   .lineLimit(1)
-                  .conditionalContentTransition(value: rate.changeValue)
-              }
-            }
-            if rate != rates?.last {
-              Spacer()
-            } else {
-              if (rates!.count < 3) {
-                // complete the remaining slots
-                ForEach(0..<3-rates!.count, id: \.self) { _ in
-                  Spacer()
-                  Text(" ")
-                    .font(.custom(fontName, size: 16))
-                    .lineLimit(1)
-                  Text(" ")
-                    .font(.custom(fontName, size: 11))
-                    .lineLimit(1)
-                }
+                Text(" ")
+                  .font(.custom(fontName, size: 11))
+                  .lineLimit(1)
               }
             }
           }
         }
-        .frame(
-          maxWidth: .infinity,
-          maxHeight: .infinity,
-          alignment: .topLeading
-        )
-        .padding(16)
-        .widgetURL(getWidgetUrl())
-        .widgetBackground()
-      } else {
-        VStack {
-          Text("Cotizaciones no disponibles")
-            .font(.custom(fontName, size: 14))
-            .foregroundColor(fgColor)
-            .multilineTextAlignment(.center)
-        }
-        .frame(
-          maxWidth: .infinity,
-          maxHeight: .infinity
-        )
-        .padding(16)
-        .widgetURL(getWidgetUrl())
-        .widgetBackground()
       }
+      .frame(
+        maxWidth: .infinity,
+        maxHeight: .infinity,
+        alignment: .topLeading
+      )
+      .padding(16)
+      .widgetURL(getWidgetUrl())
+      .widgetBackground()
+    } else {
+      VStack {
+        Text("Cotizaciones no disponibles")
+          .font(.custom(fontName, size: 14))
+          .foregroundColor(fgColor)
+          .multilineTextAlignment(.center)
+      }
+      .frame(
+        maxWidth: .infinity,
+        maxHeight: .infinity
+      )
+      .padding(16)
+      .widgetURL(getWidgetUrl())
+      .widgetBackground()
     }
   }
 }
 
 struct ListRatesWidget: Widget {
   let kind: String = "ListRatesWidget"
-  private var supportedFamilies: [WidgetFamily] {
-    return [
-      .systemSmall,
-    ]
-  }
   var body: some WidgetConfiguration {
     AppIntentConfiguration(kind: kind, intent: SelectRateTypesIntent.self, provider: ListRatesProvider()) { entry in
       ListRatesWidgetEntryView(entry: entry)
@@ -583,7 +519,7 @@ struct ListRatesWidget: Widget {
     }
     .configurationDisplayName("Lista de cotizaciones")
     .description("Consultá las cotizaciones a lo largo del día.")
-    .supportedFamilies(supportedFamilies)
+    .supportedFamilies([.systemSmall])
     .contentMarginsDisabled()
   }
 }
@@ -612,17 +548,11 @@ struct SpreadProvider: AppIntentTimelineProvider {
 struct SpreadWidgetEntryView : View {
   @Environment(\.widgetFamily) var widgetFamily
   let entry: SpreadProvider.Entry
-  // postscript name
-  let fontName = "FiraGO-Regular"
-  // https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
-  let fgColor = Color(UIColor.label)
-  let fgSecondaryColor = Color(UIColor.secondaryLabel)
   var body: some View {
     let rates = entry.rates
-    // optional chaining only covers a nil array, a rate that stopped coming back leaves
-    // it short and the subscript would trap
-    let firstRate = rates?.first
-    let secondRate = rates?.dropFirst().first
+    // a rate that stopped coming back leaves the array short and a subscript would trap
+    let firstRate = rates.first
+    let secondRate = rates.dropFirst().first
     var spreadRate: RateValue? {
       if let firstRate = firstRate, let secondRate = secondRate {
         let detail =  "\(firstRate.name) → \(secondRate.name)"
@@ -630,7 +560,6 @@ struct SpreadWidgetEntryView : View {
         let price = formatRateChange(num: value, symbol: false)
         let rateChange = (firstRate.priceValue / secondRate.priceValue - 1) * 100
         let changeType = ChangeType.percentage
-        let change = formatRateChange(num: rateChange, type: changeType)
         let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false)
         let changeColor = getChangeColor(num: rateChange)
         let (date, dateValue) = {
@@ -643,7 +572,8 @@ struct SpreadWidgetEntryView : View {
           id: "spread",
           name: "Brecha",
           detail: detail,
-          change: change,
+          // the spread renders no arrow on either layout, so both carry the plain form
+          change: plainChange,
           plainChange: plainChange,
           changeColor: changeColor,
           changeValue: rateChange,
@@ -665,16 +595,16 @@ struct SpreadWidgetEntryView : View {
               .font(.custom(fontName, size: 10))
               .lineLimit(1)
               .padding(.horizontal, 8)
-            Text(spreadRate.plainChange!)
+            Text(spreadRate.plainChange)
               .font(.custom(fontName, size: 13))
               .lineLimit(1)
-              .conditionalContentTransition(value: spreadRate.changeValue)
+              .contentTransition(.numericText(value: spreadRate.changeValue))
               .padding(.horizontal, 2)
               .widgetAccentable()
             Text(spreadRate.price)
               .font(.custom(fontName, size: 10))
               .lineLimit(1)
-              .conditionalContentTransition(value: spreadRate.priceValue)
+              .contentTransition(.numericText(value: spreadRate.priceValue))
               .padding(.horizontal, 8)
           }
         }
@@ -712,20 +642,17 @@ struct SpreadWidgetEntryView : View {
             .font(.custom(fontName, size: 14))
             .foregroundColor(fgColor)
             .lineLimit(1)
-            .conditionalContentTransition(value: spreadRate.priceValue)
-          if let change = spreadRate.plainChange {
-            Text(change)
-              .font(.custom(fontName, size: 26))
-              .foregroundColor(spreadRate.changeColor)
-              .lineLimit(1)
-              .conditionalContentTransition(value: spreadRate.changeValue)
-          }
-          // Spacer().frame(height: 4)
+            .contentTransition(.numericText(value: spreadRate.priceValue))
+          Text(spreadRate.plainChange)
+            .font(.custom(fontName, size: 26))
+            .foregroundColor(spreadRate.changeColor)
+            .lineLimit(1)
+            .contentTransition(.numericText(value: spreadRate.changeValue))
           Text(spreadRate.date)
             .font(.custom(fontName, size: 11))
             .foregroundColor(fgSecondaryColor)
             .lineLimit(1)
-            .conditionalContentTransition(value: spreadRate.dateValue)
+            .contentTransition(.numericText(value: spreadRate.dateValue))
         }
         .frame(
           maxWidth: .infinity,
@@ -756,12 +683,6 @@ struct SpreadWidgetEntryView : View {
 
 struct SpreadWidget: Widget {
   let kind: String = "SpreadWidget"
-  private var supportedFamilies: [WidgetFamily] {
-    return [
-      .systemSmall,
-      .accessoryCircular,
-    ]
-  }
   var body: some WidgetConfiguration {
     AppIntentConfiguration(kind: kind, intent: SelectSpreadRateTypesIntent.self, provider: SpreadProvider()) { entry in
       SpreadWidgetEntryView(entry: entry)
@@ -770,7 +691,7 @@ struct SpreadWidget: Widget {
     }
     .configurationDisplayName("Brechas")
     .description("Consultá las brechas entre cotizaciones a lo largo del día.")
-    .supportedFamilies(supportedFamilies)
+    .supportedFamilies([.systemSmall, .accessoryCircular])
     .contentMarginsDisabled()
   }
 }
@@ -782,7 +703,6 @@ struct LaunchControlWidget: ControlWidget {
     StaticControlConfiguration(kind: Self.kind) {
       ControlWidgetButton(action: LaunchAppIntent()) {
         Label("Ámbito Dólar", image: "AppWidgetIcon")
-          // .controlWidgetActionHint("Abrir Ámbito Dólar")
       }
     }
     .displayName("Ámbito Dólar")

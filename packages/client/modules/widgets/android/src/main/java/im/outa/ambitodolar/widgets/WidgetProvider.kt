@@ -253,14 +253,12 @@ abstract class WidgetProvider : AppWidgetProvider() {
   // declares as its minimum, which is ours and not a guess. A host that answers something absurd
   // can drive this to zero, and zero reads as no ceiling: nothing is truncated, which beats a
   // ceiling of a few pixels that would truncate everything
-  private fun roomPx(context: Context, widgetId: Int?): Int {
-    val manager = AppWidgetManager.getInstance(context)
-    val reported = widgetId?.let { widthDp(manager.getAppWidgetOptions(it)) } ?: 0
+  private fun roomPx(context: Context, reported: Int): Int {
     val card =
       if (reported > 0) {
         (reported * context.resources.displayMetrics.density).roundToInt()
       } else {
-        manager
+        AppWidgetManager.getInstance(context)
           .getInstalledProvidersForPackage(context.packageName, null)
           .firstOrNull { it.provider.className == javaClass.name }
           ?.minWidth ?: 0
@@ -293,9 +291,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
   // content to fit in the first.
   // Never above 1: a card at or over the reference keeps exactly the sizes it was drawn for, so
   // everywhere the widget renders right today nothing moves
-  private fun scaleFor(context: Context, widgetId: Int?): Float {
-    val manager = AppWidgetManager.getInstance(context)
-    val reported = widgetId?.let { widthDp(manager.getAppWidgetOptions(it)) } ?: 0
+  private fun scaleFor(reported: Int): Float {
     if (reported <= 0) {
       return 1f
     }
@@ -306,7 +302,10 @@ abstract class WidgetProvider : AppWidgetProvider() {
     val views = RemoteViews(context.packageName, layout)
     views.setViewVisibility(R.id.widget_content, if (content == null) View.GONE else View.VISIBLE)
     views.setViewVisibility(R.id.widget_empty, if (content == null) View.VISIBLE else View.GONE)
-    val scale = scaleFor(context, widgetId)
+    // the width the host reports for this widget, 0 for the picker preview which has none
+    val reported =
+      widgetId?.let { widthDp(AppWidgetManager.getInstance(context).getAppWidgetOptions(it)) } ?: 0
+    val scale = scaleFor(reported)
     // the padding follows the text but at half its rate: fixed it turns into a frame around a
     // card that shrank around it, and at the full rate it gives away more room than the content
     // needs back
@@ -327,7 +326,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
           wrap = true,
         )
       is Content.Card -> {
-        val room = roomPx(context, widgetId)
+        val room = roomPx(context, reported)
         views.slot(context, R.id.widget_title, content.title, Sizes.TITLE * scale, R.color.widget_foreground, room = room)
         views.slot(context, R.id.widget_detail, content.detail, Sizes.DETAIL * scale, R.color.widget_secondary, room = room)
         views.slot(context, R.id.widget_small, content.small, Sizes.CHANGE * scale, content.smallColor, room = room)
@@ -335,7 +334,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
         views.slot(context, R.id.widget_date, content.date, Sizes.DATE * scale, R.color.widget_secondary, room = room)
       }
       is Content.Rows -> {
-        val room = roomPx(context, widgetId)
+        val room = roomPx(context, reported)
         SLOTS.forEachIndexed { slot, ids ->
           val row = content.rows.getOrNull(slot)
           // a slot without a rate stays invisible and not gone, so the rows that do have one

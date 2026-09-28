@@ -6,7 +6,6 @@
 //
 
 import AppIntents
-// import SwiftUICore
 
 @available(iOS 18.0, *)
 struct LaunchAppIntent: ControlConfigurationIntent {
@@ -16,9 +15,6 @@ struct LaunchAppIntent: ControlConfigurationIntent {
   static let openAppWhenRun = true
   @MainActor
   func perform() async throws -> some IntentResult & OpensIntent {
-    // https://stackoverflow.com/a/78978941
-    // EnvironmentValues().openURL(URL(string: "ambito-dolar://rates")!)
-    // return .result(opensIntent: OpenURLIntent(URL(string: "ambito-dolar://rates")!))
     return .result(opensIntent: OpenURLIntent(URL(string: "https://www.ambito-dolar.app/rates")!))
   }
 }
