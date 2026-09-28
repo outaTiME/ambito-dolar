@@ -43,9 +43,6 @@ export const computeLifetime = (transactions = [], priceMap = {}) =>
     0,
   );
 
-export const purchaseDonation = (product) =>
-  Purchases.purchaseStoreProduct(product);
-
 export const showGenericErrorAlert = () => {
   Alert.alert(I18n.t('generic_error'), '', [{ text: I18n.t('accept') }], {
     cancelable: false,
@@ -56,13 +53,26 @@ export const showGenericErrorAlert = () => {
 const isPurchasePending = (e) =>
   e?.code === Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR;
 
-export const showPurchaseErrorAlert = (e) => {
+const showPurchaseErrorAlert = (e) => {
   if (e?.userCancelled || isPurchasePending(e)) {
     return;
   }
   Sentry.captureException(new Error('Purchase error', { cause: e }));
   showGenericErrorAlert();
 };
+
+// true once the store charged, a failure is already reported here
+export const purchaseDonation = (product) =>
+  Purchases.purchaseStoreProduct(product).then(
+    () => true,
+    (e) => {
+      showPurchaseErrorAlert(e);
+      return false;
+    },
+  );
+
+// one donation modal at a time, a usage day crossing midnight must not present another
+export const donationModal = { open: false };
 
 // rounded localized currency to avoid toFixedNoRounding truncation (e.g. 2.99 to 2.98)
 export const formatProductPrice = (product) =>

@@ -11,11 +11,7 @@ import MessageView from '@/components/MessageView';
 import withContainer from '@/components/withContainer';
 import I18n from '@/config/I18n';
 import { useDonationProducts } from '@/hooks/useDonationProducts';
-import {
-  formatProductPrice,
-  purchaseDonation,
-  showPurchaseErrorAlert,
-} from '@/utilities/Donation';
+import { formatProductPrice, purchaseDonation } from '@/utilities/Donation';
 
 // fall back to store-provided title when i18n key missing
 const getLocalTitle = (product) => {
@@ -37,10 +33,9 @@ const DonateScreen = () => {
       loadingRef.current = true;
       setLoadingProductId(product.identifier);
       try {
-        await purchaseDonation(product);
-        dispatch(actions.registerApplicationDonation());
-      } catch (e) {
-        showPurchaseErrorAlert(e);
+        if (await purchaseDonation(product)) {
+          dispatch(actions.registerApplicationDonation());
+        }
       } finally {
         loadingRef.current = false;
         setLoadingProductId(null);

@@ -21,7 +21,6 @@ import {
   formatProductPrice,
   purchaseDonation,
   showGenericErrorAlert,
-  showPurchaseErrorAlert,
 } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import {
@@ -110,11 +109,8 @@ const SettingsScreen = () => {
         goToDonate();
         return;
       }
-      try {
-        await purchaseDonation(items[0]);
+      if (await purchaseDonation(items[0])) {
         dispatch(actions.registerApplicationDonation());
-      } catch (e) {
-        showPurchaseErrorAlert(e);
       }
     } finally {
       purchaseLoadingRef.current = false;

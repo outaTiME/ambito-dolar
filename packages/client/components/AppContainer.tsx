@@ -30,11 +30,11 @@ import Amplitude from '@/utilities/Amplitude';
 import DateUtils from '@/utilities/Date';
 import {
   computeLifetime,
+  donationModal,
   formatProductPrice,
   getCooldownDays,
   getReAskMs,
   purchaseDonation,
-  showPurchaseErrorAlert,
 } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import { goToDonateModal } from '@/utilities/Navigation';
@@ -382,6 +382,10 @@ const withAppDonation = (Component) => (props) => {
       Helper.debug('💖 Donation already asked today', { daysUsed });
       return;
     }
+    if (!forced && donationModal.open) {
+      Helper.debug('💖 Donation already on screen', { daysUsed });
+      return;
+    }
     // a dep change or an unmount drops a check left in flight
     let cancelled = false;
     Purchases.getCustomerInfo()
@@ -429,6 +433,8 @@ const withAppDonation = (Component) => (props) => {
           donatedRef.current = false;
           bottomSheetRef.current?.present();
         }
+        // after the open, a navigation that throws must not leave it set
+        donationModal.open = true;
       })
       .catch(console.warn);
     return () => {
@@ -458,6 +464,7 @@ const withAppDonation = (Component) => (props) => {
   const handleDismiss = React.useCallback(() => {
     const forcedOpen = forcedRef.current;
     forcedRef.current = false;
+    donationModal.open = false;
     const donated = donatedRef.current;
     const loading = loadingRef.current;
     // the other half of the check above, it says whether the dismiss spent the cooldown
@@ -480,12 +487,11 @@ const withAppDonation = (Component) => (props) => {
       setLoadingProductId(productId);
       loadingRef.current = true;
       try {
-        await purchaseDonation(product);
-        donatedRef.current = true;
-        dispatch(actions.registerApplicationDonation());
-        bottomSheetRef.current?.dismiss();
-      } catch (e) {
-        showPurchaseErrorAlert(e);
+        if (await purchaseDonation(product)) {
+          donatedRef.current = true;
+          dispatch(actions.registerApplicationDonation());
+          bottomSheetRef.current?.dismiss();
+        }
       } finally {
         setLoadingProductId(null);
         loadingRef.current = false;

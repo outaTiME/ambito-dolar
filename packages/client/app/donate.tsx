@@ -10,9 +10,9 @@ import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import { useDonationProducts } from '@/hooks/useDonationProducts';
 import {
+  donationModal,
   formatProductPrice,
   purchaseDonation,
-  showPurchaseErrorAlert,
 } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import { goBack } from '@/utilities/Navigation';
@@ -43,6 +43,7 @@ const DonateScreen = () => {
   }, [setAppDonationModal]);
   React.useEffect(() => {
     return () => {
+      donationModal.open = false;
       // purchase in flight resolves on its own, skip ignore dispatch
       if (donatedRef.current || loadingRef.current) {
         return;
@@ -59,12 +60,11 @@ const DonateScreen = () => {
       setLoadingProductId(productId);
       loadingRef.current = true;
       try {
-        await purchaseDonation(product);
-        donatedRef.current = true;
-        dispatch(actions.registerApplicationDonation());
-        goBack();
-      } catch (e) {
-        showPurchaseErrorAlert(e);
+        if (await purchaseDonation(product)) {
+          donatedRef.current = true;
+          dispatch(actions.registerApplicationDonation());
+          goBack();
+        }
       } finally {
         setLoadingProductId(null);
         loadingRef.current = false;
