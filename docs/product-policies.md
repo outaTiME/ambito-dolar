@@ -51,8 +51,10 @@ The client polls `Settings.RATES_URI` from `packages/client/components/withRateU
   `packages/core` before the retry button appears. Do not add a retry layer on top of ky.
 - **`FOREGROUND_TOAST_WINDOW` is the toast's only job.** An update landing within it of the app
   reaching foreground reads as belonging to that open, so `Actualizado` announces it, and anything
-  later arrives silently. The ten seconds are a judgement about what still feels like the same open,
-  not a number derived from anything else, so there is nothing to recompute it from.
+  later arrives silently. The mount counts as an open, the first render of a cold start can see
+  the app as `background` or `inactive` before `active` lands. The ten seconds are a judgement about
+  what still feels like the same open, not a number derived from anything else, so there is nothing
+  to recompute it from.
 
 ## Notification body and social caption
 
