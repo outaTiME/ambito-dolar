@@ -57,7 +57,8 @@ gets shipped.
   each provider's `rateTypes(for:)` fallback for the two lists; android in each provider's
   `defaultRates`.
 - **A /fetch schema change**: ios first, always. `lookupRateValues` reads the array by index and
-  forces its casts, surviving only because `wellFormed` filters ahead of it, while android drops the
+  forces its casts, surviving only because `wellFormed` filters ahead of it, the stored payload
+  included, while android drops the
   rate and keeps the rest. The timestamp is already guarded, `ISO8601DateFormatter` with default
   options rejects fractional seconds.
 

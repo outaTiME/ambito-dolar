@@ -24,7 +24,8 @@ need a prebuild. Adding, renaming or removing a file in a `_shared/` does.
 
 The intents live in `packages/client/targets/RateWidgets/_shared/` and not next to the views, so the
 **main app target compiles them too**, which the plugin README asks for. The app target is 16.4
-against the extension's 17.0, which is why the intents carry `@available` annotations.
+against the extension's 17.0, which is why the three `WidgetConfigurationIntent` carry
+`@available(iOS 17.0, *)`. The entity, the enum and the queries are iOS 16 API and need none.
 
 ## Traps
 
@@ -177,8 +178,8 @@ together, all of it load bearing:
 
 A rate retired from `Helper.getRateTypes()` no longer resolves, so `entities(for:)` drops it from
 the selection. The provider only substitutes defaults when that leaves the selection empty,
-otherwise the remaining rates stay. It already rendered nothing before, since `lookupRateValues`
-filters unknown types.
+otherwise the remaining rates stay. It already rendered nothing before, since `usableRates`
+drops unknown types before `lookupRateValues` reads them.
 
 ### The blank rows on the first open of a migrated widget
 
