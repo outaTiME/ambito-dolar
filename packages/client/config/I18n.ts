@@ -48,7 +48,7 @@ const i18n = new I18n({
     // rates
     rates: 'Cotizaciones',
     // markets
-    markets: 'Mercados',
+    markets: 'Indicadores',
     // conversion
     conversion: 'Conversor',
     currency: 'Divisa',

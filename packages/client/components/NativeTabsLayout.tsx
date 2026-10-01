@@ -47,7 +47,7 @@ export default function NativeTabsLayout() {
           src={
             <NativeTabs.Trigger.VectorIcon
               family={MaterialCommunityIcons}
-              name="finance"
+              name="chart-timeline-variant"
             />
           }
         />

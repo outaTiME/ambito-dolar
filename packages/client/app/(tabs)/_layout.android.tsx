@@ -59,7 +59,7 @@ export default function TabsLayout() {
           href: marketsEnabled ? undefined : null,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
-              name="finance"
+              name="chart-timeline-variant"
               color={color}
               size={size}
             />

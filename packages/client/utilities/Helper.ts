@@ -295,10 +295,9 @@ export default {
   },
   // the tab shows once the payload carries markets core knows
   useMarketsEnabled() {
-    const markets = useSelector(({ rates: { markets } }) => markets);
-    return React.useMemo(
-      () => !_.isEmpty(this.getAvailableMarkets(markets)),
-      [markets],
+    // the boolean alone, a market tick that keeps it does not re-render
+    return useSelector(
+      ({ rates: { markets } }) => !_.isEmpty(this.getAvailableMarkets(markets)),
     );
   },
   useMarkets(customized = false) {
