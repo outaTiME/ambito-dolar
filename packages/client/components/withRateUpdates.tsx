@@ -1,6 +1,7 @@
 // @ts-nocheck
 import NetInfo from '@react-native-community/netinfo';
 import * as Haptics from 'expo-haptics';
+import * as Notifications from 'expo-notifications';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -152,6 +153,16 @@ const withRateUpdates = (Component) => (props) => {
   React.useEffect(() => {
     fetchRates();
   }, [now, fetchRates]);
+  React.useEffect(() => {
+    // a push says the rates moved, the tap must not wait out the polling window
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      () => {
+        Helper.debug('🔔 Notification tapped');
+        fetchRates({ force: true });
+      },
+    );
+    return () => subscription.remove();
+  }, [fetchRates]);
   const offlineRef = React.useRef(false);
   React.useEffect(() => {
     // isConnected is nullable, unknown must not count as offline
