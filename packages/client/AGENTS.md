@@ -36,6 +36,9 @@ Everything that keeps the rates in sync is in
   `updated_at` change and not off the poll.** A reload can cost a `/fetch`, android collapses a
   burst within 10s and ios within 60s, and the last one feeds the user visible "Actualizaciones"
   counter which would then count polls.
+- **The foreground mark is taken on the native `AppState` event and the toast decision when the
+  update lands.** A render between them let a push tap fetch and answer against the previous open's
+  mark, so do not move the stamp back into `useAppState`.
 - **Do not remove the seeding `setNow` in `useTickProvider`** to stop the tick effect firing twice
   on mount. Without it the swr cache stays empty and the effect fires on every render for a minute.
 - **The `enabled` argument of `useTickProvider` has to keep mirroring what `AppContainer` renders.**
@@ -84,5 +87,9 @@ error, and that is the whole of this section.
 - **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Tabs`, `Slot`, `Redirect`, `useNavigation` (setOptions), `useLocalSearchParams`, `useFocusEffect`, `usePathname`, plus `NativeTabs` from `expo-router/unstable-native-tabs`, `HeaderButton` from `expo-router/react-navigation` and `BottomTabBar` from `expo-router/js-tabs`.
 - **`SplashScreen` comes from `expo-splash-screen`, never from `expo-router`.** The router ships its own wrapper marked `@hidden`.
 - Helpers: `goToX` (nav), `goBack` (guarded), `dismissToTop` (guarded pop), `clearRouteParam(name)`.
+- **A new route goes into `SCREENS` in `packages/client/hooks/app/useNavigationTrackingRouter.ts`** too,
+  by its route pattern (`markets/[type]/raw`, groups left out). An unknown pattern is dropped without a
+  word, so the screen never reaches the Sentry breadcrumbs or Amplitude. A screen that is no route, like the donation
+  sheet, reports itself through `trackScreen` from the same file.
 - New route to a `goToX` helper. Modal variant = separate helper (`goToDonate` settings tab vs `goToDonateModal` root modal). Use `router.navigate` not `push` (dedupes, prevents double-tap stacks).
 - Clear a consumed deeplink/intent param (`focus=true`, `popToTop=true`) via `clearRouteParam('focus')`, not inline `router.setParams({focus: undefined})`.
