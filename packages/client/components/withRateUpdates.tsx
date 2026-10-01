@@ -3,12 +3,12 @@ import NetInfo from '@react-native-community/netinfo';
 import * as Haptics from 'expo-haptics';
 import * as Notifications from 'expo-notifications';
 import React from 'react';
+import { AppState } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import * as actions from '@/actions';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
-import useAppState from '@/hooks/useAppState';
 import * as WidgetKit from '@/modules/widgetkit';
 import { reloadWidgets } from '@/modules/widgets';
 import Helper from '@/utilities/Helper';
@@ -69,11 +69,6 @@ const withRateUpdates = (Component) => (props) => {
       }
       const previousUpdatedAt = updatedAtRef.current;
       const initial = !previousUpdatedAt;
-      const shouldShowToast =
-        previousUpdatedAt &&
-        timeInForeground.current &&
-        fetchedAt - timeInForeground.current <=
-          Settings.FOREGROUND_TOAST_WINDOW;
       Helper.debug('💫 Fetching rates', { initial });
       inFlightRef.current = true;
       lastFetchAtRef.current = fetchedAt;
@@ -97,6 +92,12 @@ const withRateUpdates = (Component) => (props) => {
           Helper.debug('✅ Rates already updated', updated_at);
           return;
         }
+        // measured when the update lands, a slow answer past the window arrives silently
+        const shouldShowToast =
+          previousUpdatedAt &&
+          timeInForeground.current &&
+          Date.now() - timeInForeground.current <=
+            Settings.FOREGROUND_TOAST_WINDOW;
         Sentry.addBreadcrumb({
           message: 'Rates update event',
           data: updated_at,
@@ -141,27 +142,33 @@ const withRateUpdates = (Component) => (props) => {
       fetchRates({ force: true });
     }
   }, [updatedAt, fetchRates]);
-  const isActiveAppState = useAppState('active');
   React.useEffect(() => {
-    if (isActiveAppState) {
-      // the mark the toast window is measured from, at the fetch start and not its answer
-      timeInForeground.current = Date.now();
-    }
-  }, [isActiveAppState]);
+    // the mark the toast window is measured from, taken on the native event so no render lets an answer land first
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        timeInForeground.current = Date.now();
+      }
+    });
+    return () => subscription.remove();
+  }, []);
   // the only periodic trigger, the in-flight guard drops its second mount call
   const now = Helper.useNow();
   React.useEffect(() => {
     fetchRates();
   }, [now, fetchRates]);
   React.useEffect(() => {
-    // a push says the rates moved, the tap must not wait out the polling window
-    const subscription = Notifications.addNotificationResponseReceivedListener(
-      () => {
+    // a push brings rates the screen may not show yet, received with the app open or tapped
+    const subscriptions = [
+      Notifications.addNotificationReceivedListener(() => {
+        Helper.debug('🔔 Notification received');
+        fetchRates({ force: true });
+      }),
+      Notifications.addNotificationResponseReceivedListener(() => {
         Helper.debug('🔔 Notification tapped');
         fetchRates({ force: true });
-      },
-    );
-    return () => subscription.remove();
+      }),
+    ];
+    return () => subscriptions.forEach((subscription) => subscription.remove());
   }, [fetchRates]);
   const offlineRef = React.useRef(false);
   React.useEffect(() => {

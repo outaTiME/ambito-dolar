@@ -38,7 +38,7 @@ The client polls `Settings.RATES_URI` from `packages/client/components/withRateU
   is the one that knows about Argentina.
 - **The cadence gate lives inside `fetchRates`, not in the effects**, so every trigger shares it.
   The callers that bypass it with `{ force: true }` are the store clear, the retry button, the
-  connectivity listener and the push tap.
+  connectivity listener and a push, received with the app open or tapped.
 - **`historical_rates` is persisted on purpose.** It is what draws yesterday's chart when the
   refetch fails instead of raising the alert, so it cannot be blacklisted out of the store to keep
   the blob small. The cost is that it rides along on every rewrite of the rates slice.
