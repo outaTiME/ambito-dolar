@@ -16,7 +16,7 @@
     "@commitlint/config-conventional": "^21.2.3",
     "astro-eslint-parser": "^3.2.0",
     "eslint": "^9.39.5",
-    "eslint-config-universe": "^16.1.1",
+    "eslint-config-universe": "^16.1.2",
     "eslint-plugin-astro": "^3.2.1",
     "husky": "^9.1.7",
     "lerna": "^10.0.1",
@@ -45,7 +45,7 @@
     "depcheck": "yarn workspaces foreach -A --verbose exec npx depcheck",
     "postinstall": "husky"
   },
-  "packageManager": "yarn@4.18.0",
+  "packageManager": "yarn@4.18.1",
   "engines": {
     "node": "22.x"
   }
