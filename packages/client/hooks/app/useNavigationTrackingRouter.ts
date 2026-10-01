@@ -1,73 +1,63 @@
-import { usePathname } from 'expo-router';
+import { useSegments } from 'expo-router';
 import React from 'react';
 
 import Amplitude from '@/utilities/Amplitude';
 import Helper from '@/utilities/Helper';
 import Sentry from '@/utilities/Sentry';
 
-const EXACT_ROUTE_MAP = {
-  '/': 'Main',
-  '/(tabs)': 'Main',
-  '/rates': 'Main',
-  '/(tabs)/rates': 'Main',
-  '/conversion': 'Conversion',
-  '/(tabs)/conversion': 'Conversion',
-  '/settings': 'Settings',
-  '/(tabs)/settings': 'Settings',
-  '/settings/notifications': 'Notifications',
-  '/settings/appearance': 'Appearance',
-  '/settings/customize-rates': 'CustomizeRates',
-  '/customize-rates': 'CustomizeRates',
-  '/settings/customize-rates/order': 'RateOrder',
-  '/customize-rates/order': 'RateOrder',
-  '/settings/statistics': 'Statistics',
-  '/settings/about': 'About',
-  '/settings/developer': 'Developer',
+// keyed by route pattern, groups left out and dynamic segments as written, so a param never moves the name
+const SCREENS = {
+  rates: 'Main',
+  'rates/[type]': 'RateDetail',
+  'rates/[type]/raw': 'RateRawDetail',
+  markets: 'Markets',
+  'markets/[type]': 'MarketDetail',
+  'markets/[type]/raw': 'MarketRawDetail',
+  conversion: 'Conversion',
+  settings: 'Settings',
+  'settings/notifications': 'Notifications',
+  'settings/notifications/[type]': 'AdvancedNotifications',
+  'settings/appearance': 'Appearance',
+  'settings/customize-rates': 'CustomizeRates',
+  'customize-rates': 'CustomizeRates',
+  'settings/customize-rates/order': 'RateOrder',
+  'customize-rates/order': 'RateOrder',
+  'settings/customize-markets': 'CustomizeMarkets',
+  'customize-markets': 'CustomizeMarkets',
+  'settings/donate': 'Donate',
+  donate: 'DonationModal',
+  'settings/statistics': 'Statistics',
+  'settings/about': 'About',
+  'settings/developer': 'Developer',
 };
 
-const getTrackedScreenFromPathname = (pathname) => {
-  if (!pathname) {
-    return null;
-  }
-  const normalizedPathname =
-    pathname.length > 1 && pathname.endsWith('/')
-      ? pathname.slice(0, -1)
-      : pathname;
-  if (EXACT_ROUTE_MAP[normalizedPathname]) {
-    return EXACT_ROUTE_MAP[normalizedPathname];
-  }
-  if (normalizedPathname.startsWith('/settings/notifications/')) {
-    return 'AdvancedNotifications';
-  }
-  if (
-    normalizedPathname.startsWith('/rates/') &&
-    normalizedPathname.endsWith('/raw')
-  ) {
-    return 'RateRawDetail';
-  }
-  if (normalizedPathname.startsWith('/rates/')) {
-    return 'RateDetail';
-  }
-  return null;
+const getScreenPattern = (segments) =>
+  segments
+    .filter((segment) => !(segment.startsWith('(') && segment.endsWith(')')))
+    .join('/');
+
+// a screen that is not a route, like the donation sheet, reports itself through here too
+export const trackScreen = (name) => {
+  Helper.debug('👀 Track screen', name);
+  Sentry.addBreadcrumb({
+    message: `${name} screen`,
+    data: {},
+  });
+  Amplitude.track(`${name} screen`);
 };
 
 export default function useNavigationTrackingRouter() {
-  const pathname = usePathname();
+  const pattern = getScreenPattern(useSegments());
   const previousRouteNameRef = React.useRef(null);
   React.useEffect(() => {
-    const currentRouteName = getTrackedScreenFromPathname(pathname);
+    const currentRouteName = SCREENS[pattern];
     if (
       !currentRouteName ||
       previousRouteNameRef.current === currentRouteName
     ) {
       return;
     }
-    Helper.debug('👀 Track screen', currentRouteName);
-    Sentry.addBreadcrumb({
-      message: `${currentRouteName} screen`,
-      data: {},
-    });
-    Amplitude.track(`${currentRouteName} screen`);
+    trackScreen(currentRouteName);
     previousRouteNameRef.current = currentRouteName;
-  }, [pathname]);
+  }, [pattern]);
 }

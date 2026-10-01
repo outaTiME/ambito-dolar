@@ -23,6 +23,7 @@ import withRateUpdates from '@/components/withRateUpdates';
 import withRates from '@/components/withRates';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
+import { trackScreen } from '@/hooks/app/useNavigationTrackingRouter';
 import useAppState from '@/hooks/useAppState';
 import { useDonationProducts } from '@/hooks/useDonationProducts';
 import InitialScreen from '@/screens/InitialScreen';
@@ -431,6 +432,8 @@ const withAppDonation = (Component) => (props) => {
             setAppDonationModal(false);
           }
           donatedRef.current = false;
+          // the sheet is no route, the native one is tracked as /donate
+          trackScreen('DonationModal');
           bottomSheetRef.current?.present();
         }
         // after the open, a navigation that throws must not leave it set
