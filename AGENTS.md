@@ -144,8 +144,7 @@ Voseo everywhere, rioplatense: `Elegí`, `verificá`, `Tenés`. No tuteo. Applie
 strings too. The widget picker has its own register, see `packages/client/docs/android-widgets.md`.
 
 The error strings take their shape from Apple's `es_419`: `Imposible <verb>` and `No se pudieron
-<verb>`, never the peninsular compound, so `no se han seleccionado` is wrong where `no se pudieron
-seleccionar` is right. Apple's `es_419` tutea and this app does not, voseo wins there.
+<verb>`. Apple's `es_419` tutea and this app does not, voseo wins there.
 
 Every string is one sentence. A failure that needs a remedy carries it in the same sentence or
 leaves it to the button beside it.
@@ -160,9 +159,8 @@ denying the alternative.
 picks and gives. Those two are the whole vocabulary for it, there is no `colaborar` and no
 `contribución` in the catalog.
 
-One word per concept where the concept is really one: `conexión` never `conectividad`. No `módulo`
-or any other word borrowed from the source, and no commercial vocabulary, so no `pago` and no
-`suscripción`.
+One word per concept where the concept is really one: `conexión` never `conectividad`. No
+commercial vocabulary, so no `pago` and no `suscripción`.
 
 ## Agent Operating Defaults
 

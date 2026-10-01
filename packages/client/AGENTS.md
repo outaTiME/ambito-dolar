@@ -43,6 +43,14 @@ Everything that keeps the rates in sync is in
   button is on screen. Gating it on `updated_at` instead leaves a payload that carries rates without
   one showing the main screen with no tick and no button, stale for good.
 
+## Rates and markets
+
+- **The shared screens tell rates and markets apart only through `getKind`** in
+  `packages/client/config/kinds.ts`. A per type display rule (unit, `decimals`, `points`, `dated`,
+  `inverse`, ranges) goes in its `MARKETS` catalog, never a `type ===` in a screen.
+- **A value that is already a percentage moves in points, everything else in percent**, the way the
+  quote panels show it. The absolute difference lives in the detail's `Variación` row.
+
 ## TypeScript discipline
 
 `tsconfig`: `strict:false`, `noImplicitAny:false`. Implicit `any` is fine, and real types come with

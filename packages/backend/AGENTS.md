@@ -14,7 +14,19 @@ SST v4, Lambda handlers.
   `storeFetchJsonObject` is gated on `is_updated`: a gated write leaves it stale on exactly the
   close and the open, the two runs that move it without new rates. Anything that writes the rates
   payload outside `Process` has to carry the flag over,
-  `packages/backend/src/routes/update-rates.js` reads the stored one for that.
+  `packages/backend/src/routes/update-rates.js` reads the stored one for that, and the stored
+  `markets` when the body has none.
+- **Markets live in `quotes.json` under `markets` and in both historical-quotes files, nowhere
+  else.** `rates*.json`, `rate-stats`, `/fetch`, the realtime board and `notify` stay rates only. A
+  new market enters core `getAvailableMarketTypes` and `getDataProviderForMarket` before the
+  processor fetches it: the legacy historical omit reads that list, a type missing from it leaks
+  into `historical-rates*.json` on its first tick.
+- **The repair routes rewrite history.** `/update-rates` keeps each type's history before the
+  body's first stat and replaces the rest with the body, so a body older than the stored
+  `quotes.json` loses every day after its last stat; build it from a download taken after the 18:00
+  close. Types the body does not carry stay as they are. `/update-historical-rates` replaces
+  `full-historical-quotes.json` with the body, no merge, and regenerates `historical-quotes` and
+  both legacy historicals from it.
 - **`puppeteer-core` and `@sparticuz/chromium` move together or not at all**, both only used in
   `packages/backend/src/libs/chrome.js`. A mismatch fails when the social lambda launches Chrome,
   which surfaces as a missing post and not as an error. The chromium README prescribes the check:
