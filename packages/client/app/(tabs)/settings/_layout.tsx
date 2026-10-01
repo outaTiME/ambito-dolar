@@ -50,6 +50,12 @@ export default function SettingsStackLayout() {
         }}
       />
       <Stack.Screen
+        name="customize-markets/index"
+        options={{
+          title: Helper.getScreenTitle(I18n.t('markets')),
+        }}
+      />
+      <Stack.Screen
         name="customize-rates/order"
         options={{
           title: Helper.getScreenTitle(I18n.t('rate_order')),

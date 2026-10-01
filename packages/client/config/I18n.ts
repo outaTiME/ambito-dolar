@@ -39,11 +39,16 @@ const i18n = new I18n({
     variation: 'Variación',
     spreads: 'Brechas',
     previous_close: 'Cierre anterior',
+    summary: 'Resumen',
+    previous_value: 'Valor anterior',
     'all-time_high': 'Máximo histórico',
     source: 'Fuente',
-    detail_loading_error: 'Imposible obtener las cotizaciones del periodo.',
+    detail_loading_error:
+      'Imposible obtener los datos del periodo seleccionado.',
     // rates
     rates: 'Cotizaciones',
+    // markets
+    markets: 'Mercados',
     // conversion
     conversion: 'Conversor',
     currency: 'Divisa',
@@ -58,7 +63,7 @@ const i18n = new I18n({
     share_message: `Te recomiendo descargar %{appName}, es la app que uso siempre para seguir el mercado cambiario en la Argentina de forma simple, elegante y efectiva. ¡Está buenísima! %{websiteUrl}`,
     opts_general: 'General',
     opts_general_note:
-      'Las cotizaciones se actualizarán automáticamente durante la jornada cambiaria. Última actualización: %{lastUpdate}',
+      'Los datos se actualizan automáticamente durante la jornada. Última actualización: %{lastUpdate}',
     opts_support: 'Soporte y difusión',
     opts_support_note:
       'Tu aporte es fundamental para el mantenimiento y desarrollo continuo de esta aplicación.',
@@ -91,12 +96,12 @@ const i18n = new I18n({
     notification_variation_note:
       'Recibirás una notificación cuando varíe alguna cotización durante la jornada cambiaria.',
     // advanced notifications
-    opts_rates: 'Cotizaciones',
     notification_choose_rates_note:
       'Elegí las cotizaciones que querés incluir en esta notificación.',
     // statistics
     statistics: 'Estadísticas',
     opts_app: 'Aplicación',
+    opts_data: 'Datos',
     // app_installation_time: 'Fecha de instalación',
     app_installation_time: 'Instalación',
     app_last_review: 'Reseña',
@@ -134,8 +139,7 @@ const i18n = new I18n({
     select_rates: 'Seleccionar',
     rate_order_and_display: 'Orden y visualización',
     reset: 'Restablecer',
-    // no_selected_rates: 'Agregá las cotizaciones que deseas visualizar.',
-    no_selected_rates: 'No se han seleccionado cotizaciones a visualizar.',
+    no_selected_items: 'No se han seleccionado elementos a visualizar.',
     // widgets
     show_toast: 'Mostrar actualización',
   },

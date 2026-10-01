@@ -1,6 +1,4 @@
 // @ts-nocheck
-import AmbitoDolar from '@ambito-dolar/core';
-import { compose } from '@reduxjs/toolkit';
 import * as Haptics from 'expo-haptics';
 import * as _ from 'lodash';
 import React from 'react';
@@ -19,15 +17,16 @@ import ContentView from '@/components/ContentView';
 import { HeaderComponent, FooterComponent } from '@/components/FixedFlatList';
 import FixedScrollView from '@/components/FixedScrollView';
 import withContainer from '@/components/withContainer';
-import withRates from '@/components/withRates';
 import I18n from '@/config/I18n';
+import { getKind } from '@/config/kinds';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 import { goToRateOrder } from '@/utilities/Navigation';
 
-const GridItem = ({ id, isModal }) => {
+const GridItem = ({ kind, id, isModal }) => {
+  const { excludedKey, getTitle, exclude } = getKind(kind);
   const included = useSelector(
-    ({ application: { excluded_rates } }) => !excluded_rates?.includes(id),
+    ({ application }) => !application[excludedKey]?.includes(id),
   );
   const { theme } = Helper.useTheme();
   const dispatch = useDispatch();
@@ -74,9 +73,9 @@ const GridItem = ({ id, isModal }) => {
         ]}
       >
         <CardItemView
-          title={AmbitoDolar.getRateTitle(id)}
+          title={getTitle(id)}
           value={included}
-          onValueChange={(value) => dispatch(actions.excludeRate(id, value))}
+          onValueChange={(value) => dispatch(exclude(id, value))}
           chevron={false}
           draggable
           isModal={isModal}
@@ -89,12 +88,14 @@ const GridItem = ({ id, isModal }) => {
   );
 };
 
-const CustomizeRatesScreen = ({ isModal, rates }) => {
+const CustomizeRatesScreen = ({ kind, isModal }) => {
+  const { useItems, typesKey, hasOrder, updateTypes, restore } = getKind(kind);
+  const rates = useItems();
   const scrollableRef = useAnimatedRef();
   const { rate_order, rate_types } = useSelector(
-    ({ application: { rate_order, rate_types } }) => ({
-      rate_order,
-      rate_types,
+    ({ application }) => ({
+      rate_order: application.rate_order,
+      rate_types: application[typesKey],
     }),
     shallowEqual,
   );
@@ -124,26 +125,29 @@ const CustomizeRatesScreen = ({ isModal, rates }) => {
     ({ item: { id } }) => (
       <GridItem
         {...{
+          kind,
           id,
           isModal,
         }}
       />
     ),
-    [isModal],
+    [kind, isModal],
   );
   return (
     <FixedScrollView ref={scrollableRef} isModal={isModal}>
-      <CardView {...{ plain: true, isModal }}>
-        <CardItemView
-          title={I18n.t('rate_order')}
-          useSwitch={false}
-          value={Helper.getRateOrderString(rate_order)}
-          onAction={() => {
-            goToRateOrder(isModal);
-          }}
-          isModal={isModal}
-        />
-      </CardView>
+      {hasOrder && (
+        <CardView {...{ plain: true, isModal }}>
+          <CardItemView
+            title={I18n.t('rate_order')}
+            useSwitch={false}
+            value={Helper.getRateOrderString(rate_order)}
+            onAction={() => {
+              goToRateOrder(isModal);
+            }}
+            isModal={isModal}
+          />
+        </CardView>
+      )}
       <HeaderComponent title={I18n.t('rate_order_and_display')} />
       <Sortable.Grid
         activeItemScale={1}
@@ -167,9 +171,11 @@ const CustomizeRatesScreen = ({ isModal, rates }) => {
           const customRateTypes = _.map(newData, 'id');
           // force manual order on update
           if (!_.isEqual(rateTypes, customRateTypes)) {
-            dispatch(actions.changeRateOrder('custom'));
-            dispatch(actions.changeRateOrderDirection(null));
-            dispatch(actions.updateRateTypes(customRateTypes));
+            if (hasOrder) {
+              dispatch(actions.changeRateOrder('custom'));
+              dispatch(actions.changeRateOrderDirection(null));
+            }
+            dispatch(updateTypes(customRateTypes));
           }
           Settings.HAPTICS_ENABLED &&
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -186,7 +192,7 @@ const CustomizeRatesScreen = ({ isModal, rates }) => {
           useSwitch={false}
           chevron={false}
           onAction={() => {
-            dispatch(actions.restoreCustomization());
+            dispatch(restore());
           }}
         />
       </CardView>
@@ -194,4 +200,4 @@ const CustomizeRatesScreen = ({ isModal, rates }) => {
   );
 };
 
-export default compose(withContainer, withRates())(CustomizeRatesScreen);
+export default withContainer(CustomizeRatesScreen);

@@ -8,17 +8,21 @@ import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import { goToCustomizeRatesModal } from '@/utilities/Navigation';
 
-export default ({ edges, backgroundColor, alternativeBackground }: any) => {
+export default ({
+  edges,
+  backgroundColor,
+  alternativeBackground,
+  // markets reuse the view with their own customize screen
+  onSelect = goToCustomizeRatesModal,
+}: any) => {
   const content = (
     <>
       <MessageView
         style={{ marginBottom: Settings.PADDING }}
-        message={I18n.t('no_selected_rates')}
+        message={I18n.t('no_selected_items')}
       />
       <ActionButton
-        handleOnPress={() => {
-          goToCustomizeRatesModal();
-        }}
+        handleOnPress={onSelect}
         title={I18n.t('select_rates')}
         alternativeBackground={alternativeBackground}
       />

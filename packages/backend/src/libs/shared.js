@@ -62,7 +62,7 @@ export const MIN_CLIENT_VERSION_FOR_QATAR = '6.4.0';
 export const MIN_CLIENT_VERSION_FOR_BNA = '6.11.0';
 export const MIN_CLIENT_VERSION_FOR_EURO_AND_REAL = '10.1.0';
 export const MIN_CLIENT_VERSION_FOR_FUTURE = '13.2.0';
-export const MAX_NUMBER_OF_STATS = 7; // 1 week
+export const MAX_NUMBER_OF_STATS = 6; // 1 week, same as the client
 export const IS_LOCAL = process.env.IS_LOCAL === 'true';
 export const IS_PRODUCTION = process.env.IS_PRODUCTION === 'true';
 // prevents 403 errors when fetching rates
@@ -146,7 +146,11 @@ const updateInstantData = ({ data } = {}) => {
       .then((res) => {
         const boardId = res.boards?.[0]?.id;
         if (boardId) {
-          const payload = { data, updated_at: data?.updated_at };
+          // the boards feed releases that never read markets
+          const payload = {
+            data: _.omit(data, ['markets']),
+            updated_at: data?.updated_at,
+          };
           return db.transact([tx.boards[boardId].update(payload)]).then(() => {
             console.info(
               'Board updated on instant',
@@ -393,8 +397,8 @@ const storeRateStats = (rates) => {
 
 const storeHistoricalRatesJsonObject = async (rates) => {
   let base_rates = rates;
-  // when rates comes from storeRatesJsonObject
-  if (rates?.rates) {
+  // when rates comes from storeRatesJsonObject, a first run may carry markets only
+  if (rates?.rates || rates?.markets) {
     // merge
     base_rates = await getJsonObject(FULL_HISTORICAL_QUOTES_OBJECT_KEY).catch(
       (error) => {
@@ -405,7 +409,11 @@ const storeHistoricalRatesJsonObject = async (rates) => {
         throw error;
       },
     );
-    Object.entries(rates.rates || {}).forEach(([type, { stats }]) => {
+    Object.entries({
+      ..._.mapValues(rates.markets, 'stats'),
+      // a rate always wins a collision
+      ..._.mapValues(rates.rates, 'stats'),
+    }).forEach(([type, stats]) => {
       const moment_from = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
       base_rates[type] = (base_rates[type] || [])
         // leave rates not present on base_rates
@@ -436,6 +444,8 @@ const storeHistoricalRatesJsonObject = async (rates) => {
     (obj, [type, rate]) => {
       // ignore
       if (
+        // markets only travel on quotes
+        AmbitoDolar.getAvailableMarketTypes().includes(type) ||
         type === AmbitoDolar.WHOLESALE_TYPE ||
         type === AmbitoDolar.CCB_TYPE ||
         type === AmbitoDolar.SAVING_TYPE ||
@@ -474,13 +484,16 @@ const storeHistoricalRatesJsonObject = async (rates) => {
         AmbitoDolar.EURO_INFORMAL_TYPE,
         AmbitoDolar.REAL_TYPE,
         AmbitoDolar.FUTURE_TYPE,
+        ...AmbitoDolar.getAvailableMarketTypes(),
       ]),
     ),
     storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_year_rates),
   ]);
 };
 
-const storeRatesJsonObject = (rates, is_updated) => {
+const storeRatesJsonObject = (quotes, is_updated) => {
+  // markets only travel on quotes
+  const rates = _.omit(quotes, ['markets']);
   const legacy_rates = Object.entries(rates.rates || {}).reduce(
     (obj, [type, rate]) => {
       // ignore
@@ -528,11 +541,11 @@ const storeRatesJsonObject = (rates, is_updated) => {
         AmbitoDolar.FUTURE_TYPE,
       ]),
     }),
-    storePublicJsonObject(QUOTES_OBJECT_KEY, rates),
+    storePublicJsonObject(QUOTES_OBJECT_KEY, quotes),
     // keep a non-suffixed key to serve GET /fetch from cloudfront+s3
     is_updated && storeFetchJsonObject(rates),
     // save historical rates
-    is_updated && storeHistoricalRatesJsonObject(rates),
+    is_updated && storeHistoricalRatesJsonObject(quotes),
   ]);
 };
 
@@ -545,6 +558,19 @@ const getDataProviderForRate = (type) => {
     return 'CriptoYa';
   } */
   return 'Ámbito Financiero';
+};
+
+const getDataProviderForMarket = (type) => {
+  if (
+    type === AmbitoDolar.INFLATION_TYPE ||
+    type === AmbitoDolar.INFLATION_ANNUAL_TYPE ||
+    type === AmbitoDolar.TERM_DEPOSIT_TYPE ||
+    type === AmbitoDolar.UVA_TYPE ||
+    type === AmbitoDolar.RESERVES_TYPE
+  ) {
+    return 'BCRA';
+  }
+  return getDataProviderForRate(type);
 };
 
 const getPathForRate = (type) => {
@@ -827,6 +853,7 @@ export default {
   storeHistoricalRatesJsonObject,
   storeRatesJsonObject,
   getDataProviderForRate,
+  getDataProviderForMarket,
   getRateUrl,
   getCryptoRatesUrl,
   getSocialScreenshotUrl,

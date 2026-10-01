@@ -10,7 +10,7 @@ import Settings from '@/config/settings';
 import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
 
-const InlineRateView = ({ type, value, onSelected, compact }) => {
+const InlineRateView = ({ title, value, onSelected, compact }) => {
   const { theme, fonts } = Helper.useTheme();
   const title_font = fonts.title;
   return (
@@ -41,7 +41,7 @@ const InlineRateView = ({ type, value, onSelected, compact }) => {
           ]}
           numberOfLines={1}
         >
-          {AmbitoDolar.getRateTitle(type)}
+          {title}
         </Text>
         {onSelected && (
           <View style={{ marginLeft: Settings.PADDING / 2 }}>
@@ -120,13 +120,15 @@ const InlineRateDetailView = ({
             marginTop: 0,
           }}
         >
-          <MiniRateChartView
-            {...{
-              stats,
-              color,
-              borderless: true,
-            }}
-          />
+          {stats.length > 1 && (
+            <MiniRateChartView
+              {...{
+                stats,
+                color,
+                borderless: true,
+              }}
+            />
+          )}
         </View>
       </>
     );
@@ -135,9 +137,11 @@ const InlineRateDetailView = ({
     140 *
       Math.min(PixelRatio.getFontScale(), Settings.MAX_FONT_SIZE_MULTIPLIER),
   );
+  // a single stat draws no line
   const showMiniRateChart =
+    stats.length > 1 &&
     changeWidth + Settings.CONTENT_MARGIN * 2 + Settings.PADDING <=
-    Helper.roundToNearestEven(Settings.CONTENT_WIDTH / 2);
+      Helper.roundToNearestEven(Settings.CONTENT_WIDTH / 2);
   return (
     <View
       style={{
@@ -189,6 +193,13 @@ const InlineRateDetailView = ({
   );
 };
 
+const formatRateValue = (value) => Helper.getInlineRateValue(value);
+
+const formatRateChange = (stat) => AmbitoDolar.getRateChange(stat, true);
+
+const formatRateDate = (timestamp, style) =>
+  DateUtils.humanize(timestamp, style);
+
 const RateView = ({
   type,
   stats,
@@ -198,6 +209,12 @@ const RateView = ({
   compact = null,
   smallPadding = false,
   relativeDates = false,
+  // markets bring their own title, formats and color sense
+  title = AmbitoDolar.getRateTitle(type),
+  formatValue = formatRateValue,
+  formatChange = formatRateChange,
+  inverse = false,
+  formatDate = formatRateDate,
 }) => {
   const { theme } = Helper.useTheme();
   const now = Helper.useNow();
@@ -206,20 +223,20 @@ const RateView = ({
     [stats],
   );
   const color = React.useMemo(
-    () => Helper.getChangeColor(change, theme),
-    [change, theme],
+    () => Helper.getChangeColor(inverse ? -change : change, theme),
+    [change, inverse, theme],
   );
   const value_fmt = React.useMemo(
-    () => Helper.getInlineRateValue(value),
-    [value],
+    () => formatValue(value),
+    [formatValue, value],
   );
   const timestamp_fmt = React.useMemo(
-    () => DateUtils.humanize(timestamp, relativeDates ? 7 : 1),
-    [timestamp, now, relativeDates],
+    () => formatDate(timestamp, relativeDates ? 7 : 1),
+    [timestamp, now, relativeDates, formatDate],
   );
   const change_fmt = React.useMemo(
-    () => AmbitoDolar.getRateChange(stats[stats.length - 1], true),
-    [stats],
+    () => formatChange(stats[stats.length - 1]),
+    [formatChange, stats],
   );
   const onPress = React.useCallback(() => onSelected(type), [onSelected, type]);
   return (
@@ -246,7 +263,7 @@ const RateView = ({
       <>
         <InlineRateView
           {...{
-            type,
+            title,
             value: value_fmt,
             onSelected,
             compact,

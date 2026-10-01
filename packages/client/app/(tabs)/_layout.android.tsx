@@ -12,6 +12,7 @@ import { goToConversionWithFocus } from '@/utilities/Navigation';
 // Settings.USE_NATIVE_TABS_ANDROID also gates ToastOverlay
 export default function TabsLayout() {
   const { theme } = Helper.useTheme();
+  const marketsEnabled = Helper.useMarketsEnabled();
   if (Settings.USE_NATIVE_TABS_ANDROID) {
     return <NativeTabsLayout />;
   }
@@ -45,6 +46,20 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="cards-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="markets"
+        options={{
+          // classic tabs add every route folder, hiding needs a null href
+          href: marketsEnabled ? undefined : null,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="finance"
               color={color}
               size={size}
             />

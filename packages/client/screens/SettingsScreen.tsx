@@ -26,6 +26,7 @@ import Helper from '@/utilities/Helper';
 import {
   goToAbout,
   goToAppearance,
+  goToCustomizeMarkets,
   goToCustomizeRates,
   goToDeveloper,
   goToDonate,
@@ -84,6 +85,7 @@ const SettingsScreen = () => {
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
   // subscribe to shared tick so relative time string stays fresh
   Helper.useNow();
+  const marketsEnabled = Helper.useMarketsEnabled();
   const updatedAtFromNow = DateUtils.get(updatedAt).calendar();
   const dispatch = useDispatch();
   const [purchasesConfigured] = Helper.useSharedState(
@@ -159,6 +161,15 @@ const SettingsScreen = () => {
             goToCustomizeRates();
           }}
         />
+        {marketsEnabled && (
+          <CardItemView
+            title={I18n.t('markets')}
+            useSwitch={false}
+            onAction={() => {
+              goToCustomizeMarkets();
+            }}
+          />
+        )}
         {!Settings.NEW_HEADER_SCHEME && (
           <CardItemView
             title={I18n.t('show_toast')}

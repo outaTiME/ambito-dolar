@@ -46,6 +46,23 @@ export const goToRateRawDetail = (type, rangeIndex) => {
   });
 };
 
+export const goToMarketRawDetail = (type, rangeIndex) => {
+  navigateRoute({
+    pathname: '/markets/[type]/raw',
+    params: {
+      type,
+      ...(rangeIndex !== undefined && { rangeIndex: String(rangeIndex) }),
+    },
+  });
+};
+
+export const goToMarketDetail = (type) => {
+  navigateRoute({
+    pathname: '/markets/[type]',
+    params: { type },
+  });
+};
+
 export const goToConversion = () => {
   navigateRoute('/conversion');
 };
@@ -98,6 +115,14 @@ export const goToAbout = () => {
 
 export const goToCustomizeRatesModal = () => {
   goToCustomizeRates(true);
+};
+
+export const goToCustomizeMarkets = (modal = false) => {
+  navigateRoute(modal ? '/customize-markets' : '/settings/customize-markets');
+};
+
+export const goToCustomizeMarketsModal = () => {
+  goToCustomizeMarkets(true);
 };
 
 export const goToDonate = () => {

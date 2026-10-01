@@ -17,6 +17,8 @@ export const handler = Shared.wrapHandler(async (event) => {
     // the body has no is_open, a failed read fails the update instead of dropping it
     const stored_rates = await Shared.getRatesJsonObject();
     base_rates.is_open = stored_rates.is_open;
+    // a body without markets keeps the stored ones
+    base_rates.markets ??= stored_rates.markets;
     // TODO: review the update of processed_at field (should be updated only by processor)
     // add / override processed_at field
     // base_rates.processed_at = processed_at_fmt;

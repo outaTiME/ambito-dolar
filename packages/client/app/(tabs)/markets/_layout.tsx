@@ -9,7 +9,7 @@ export const unstable_settings = {
   initialRouteName: 'index',
 };
 
-export default function RatesStackLayout() {
+export default function MarketsStackLayout() {
   const { theme, fonts } = Helper.useTheme();
   return (
     <Stack
@@ -21,7 +21,7 @@ export default function RatesStackLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: Helper.getScreenTitle(I18n.t('rates')),
+          title: Helper.getScreenTitle(I18n.t('markets')),
         }}
       />
       <Stack.Screen
@@ -29,7 +29,7 @@ export default function RatesStackLayout() {
         options={({ route }) => ({
           title: Helper.getScreenTitle(
             (route as any)?.params?.type
-              ? AmbitoDolar.getRateTitle((route as any).params.type)
+              ? AmbitoDolar.getMarketTitle((route as any).params.type)
               : I18n.t('detail'),
           ),
         })}

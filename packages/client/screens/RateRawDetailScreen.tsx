@@ -1,6 +1,5 @@
 // @ts-nocheck
 import AmbitoDolar from '@ambito-dolar/core';
-import { compose } from '@reduxjs/toolkit';
 import { useLocalSearchParams } from 'expo-router';
 import * as _ from 'lodash';
 import React from 'react';
@@ -9,11 +8,10 @@ import { shallowEqual, useSelector } from 'react-redux';
 import CardItemView from '@/components/CardItemView';
 import FixedFlatList from '@/components/FixedFlatList';
 import withContainer from '@/components/withContainer';
-import withRates from '@/components/withRates';
+import { getKind } from '@/config/kinds';
 import Settings from '@/config/settings';
 import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
-import { goToRatesWithPopToTop } from '@/utilities/Navigation';
 
 // fonts.body + fonts.footnote (lineheight)
 /* const ITEM_HEIGHT = Math.round(
@@ -21,16 +19,31 @@ import { goToRatesWithPopToTop } from '@/utilities/Navigation';
 ); */
 const ITEM_HEIGHT = Settings.PADDING * 2 + 22 + Settings.SMALL_PADDING + 18;
 
-const RateRawDetailItem = ({ timestamp, value, change }) => {
+const formatRateValue = (value) => Helper.getInlineRateValue(value);
+
+const formatRateDate = (timestamp, style) =>
+  DateUtils.humanize(timestamp, style);
+
+const formatRateChange = (stat) => AmbitoDolar.getRateChange(stat[2], true);
+
+// markets bring their own formats and color sense, rates keep these
+const RateRawDetailItem = ({
+  stat,
+  formatValue = formatRateValue,
+  formatDate = formatRateDate,
+  formatRowChange = formatRateChange,
+  inverse = false,
+}) => {
   const { theme } = Helper.useTheme();
+  const change = stat[2];
   return (
     <CardItemView
-      title={Helper.getInlineRateValue(value)}
-      titleDetail={DateUtils.humanize(timestamp, 5)}
+      title={formatValue(stat[1])}
+      titleDetail={formatDate(stat[0], 5)}
       useSwitch={false}
-      value={AmbitoDolar.getRateChange(change, true)}
+      value={formatRowChange(stat)}
       valueStyle={{
-        color: Helper.getChangeColor(change, theme),
+        color: Helper.getChangeColor(inverse ? -change : change, theme),
       }}
       containerStyle={
         {
@@ -47,24 +60,33 @@ const RateRawDetailItem = ({ timestamp, value, change }) => {
   );
 };
 
-const RateRawDetailScreen = ({ rates }) => {
+// no stats keeps the hooks running until the redirect lands
+const EMPTY_STATS = [];
+
+const RateRawDetailScreen = ({ kind }) => {
+  const { useItems, excludedKey, goToRoot } = getKind(kind);
+  const rates = useItems();
   const params = useLocalSearchParams();
   const type = params?.type as string;
   const rangeIndex = Number(params?.rangeIndex || 0);
-  const rate = React.useMemo(() => rates[type], [rates, type]);
+  const rate = React.useMemo(() => rates?.[type], [rates, type]);
+  const viewProps = React.useMemo(
+    () => getKind(kind).getViewProps(type),
+    [kind, type],
+  );
   const { historical_rates, excluded_rates } = useSelector(
-    ({ rates: { historical_rates }, application: { excluded_rates } }) => ({
+    ({ rates: { historical_rates }, application }) => ({
       historical_rates,
-      excluded_rates,
+      excluded_rates: application[excludedKey],
     }),
     shallowEqual,
   );
   React.useEffect(() => {
-    if (!type || (excluded_rates || []).includes(type)) {
-      goToRatesWithPopToTop();
+    if (!type || !rate || (excluded_rates || []).includes(type)) {
+      goToRoot();
     }
-  }, [excluded_rates, type]);
-  const base_stats = rate.stats;
+  }, [excluded_rates, type, rate, goToRoot]);
+  const base_stats = rate?.stats ?? EMPTY_STATS;
   const prev_historical_rates = Helper.usePrevious(historical_rates);
   const chartStats = React.useMemo(() => {
     // the historical is dropped on a rate change, hold the previous one meanwhile
@@ -73,16 +95,12 @@ const RateRawDetailScreen = ({ rates }) => {
       const stats = current_historical_rates[type] || [];
       if (stats.length > 0) {
         const moment_to = DateUtils.get(stats[stats.length - 1][0]);
-        const moment_from =
-          rangeIndex === 1
-            ? moment_to.clone().subtract(1, 'month')
-            : rangeIndex === 2
-              ? moment_to.clone().subtract(3, 'months')
-              : rangeIndex === 3
-                ? moment_to.clone().subtract(6, 'months')
-                : rangeIndex === 4
-                  ? moment_to.clone().startOf('year')
-                  : DateUtils.get(stats[0][0]);
+        // same ranges as the detail that opened this one, a deep link past them takes the widest
+        const ranges = getKind(kind).getRanges(type);
+        const moment_from = (ranges[rangeIndex] ?? _.last(ranges)).from(
+          moment_to,
+          DateUtils.get(stats[0][0]),
+        );
         return stats.filter(([timestamp]) =>
           DateUtils.get(timestamp).isBetween(
             moment_from,
@@ -98,33 +116,38 @@ const RateRawDetailScreen = ({ rates }) => {
       }
     }
     return base_stats;
-  }, [rangeIndex, historical_rates, type, base_stats]);
+  }, [kind, rangeIndex, historical_rates, type, base_stats]);
   const title = React.useMemo(
     () =>
-      DateUtils.formatRange(
-        chartStats[0][0],
-        chartStats[chartStats.length - 1][0],
-      ),
+      chartStats.length > 0
+        ? DateUtils.formatRange(
+            chartStats[0][0],
+            chartStats[chartStats.length - 1][0],
+          )
+        : undefined,
     [chartStats],
   );
   // reverse the order and normalize
   const data = React.useMemo(
     () =>
-      _.orderBy(chartStats, ([timestamp]) => new Date(timestamp).getTime(), [
-        'desc',
-      ]).map(([timestamp, value, change], index) => ({
-        component: (
-          <RateRawDetailItem
-            {...{
-              timestamp,
-              value,
-              change,
-            }}
-          />
-        ),
+      _.orderBy(
+        // the previous point closes the difference, the history keeps no close of its own
+        chartStats.map((stat, index) => [
+          stat[0],
+          stat[1],
+          stat[2],
+          chartStats[index - 1]?.[1] ?? stat[3],
+        ]),
+        ([timestamp]) => new Date(timestamp).getTime(),
+        ['desc'],
+      ).map((stat) => ({
+        component: <RateRawDetailItem {...viewProps} stat={stat} />,
       })),
-    [chartStats],
+    [chartStats, viewProps],
   );
+  if (!rate) {
+    return null;
+  }
   return (
     <FixedFlatList
       {...{
@@ -136,4 +159,4 @@ const RateRawDetailScreen = ({ rates }) => {
   );
 };
 
-export default compose(withContainer, withRates())(RateRawDetailScreen);
+export default withContainer(RateRawDetailScreen);

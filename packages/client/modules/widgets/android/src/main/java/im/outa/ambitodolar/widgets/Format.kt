@@ -94,7 +94,7 @@ object Format {
   fun rateTitle(type: String): String = RATE_TYPES.firstOrNull { it.first == type }?.second ?: type
 
   // the same check as the ios Helper.getRateTypes().contains: a type it retired is dropped even
-  // while the service keeps sending it, which is the case of qatar and ahorro today
+  // while the service keeps sending it
   fun isKnown(type: String): Boolean = RATE_TYPES.any { it.first == type }
 
   // ValueType.displayName on ios

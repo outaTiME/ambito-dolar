@@ -37,6 +37,13 @@ const EURO_TYPE = 'euro';
 const EURO_INFORMAL_TYPE = 'euro_informal';
 const REAL_TYPE = 'real';
 const FUTURE_TYPE = 'futuro';
+const INFLATION_TYPE = 'inflacion';
+const INFLATION_ANNUAL_TYPE = 'inflacion_interanual';
+const TERM_DEPOSIT_TYPE = 'plazo_fijo';
+const UVA_TYPE = 'uva';
+const COUNTRY_RISK_TYPE = 'riesgo_pais';
+const MERVAL_TYPE = 'merval';
+const RESERVES_TYPE = 'reservas';
 
 const NOTIFICATION_OPEN_TYPE = 'open';
 const NOTIFICATION_CLOSE_TYPE = 'close';
@@ -226,6 +233,17 @@ const getAvailableRateTypes = () => [
   FUTURE_TYPE,
 ];
 
+// default display order
+const getAvailableMarketTypes = () => [
+  INFLATION_TYPE,
+  INFLATION_ANNUAL_TYPE,
+  TERM_DEPOSIT_TYPE,
+  UVA_TYPE,
+  COUNTRY_RISK_TYPE,
+  MERVAL_TYPE,
+  RESERVES_TYPE,
+];
+
 const getAvailableRates = (rates) => {
   // respect the order from getAvailableRateTypes
   const available_rate_types = getAvailableRateTypes();
@@ -268,6 +286,24 @@ const getRateTitle = (type) => {
     return 'Real';
   } else if (type === FUTURE_TYPE) {
     return 'Futuro';
+  }
+};
+
+const getMarketTitle = (type) => {
+  if (type === INFLATION_TYPE) {
+    return 'Inflación';
+  } else if (type === INFLATION_ANNUAL_TYPE) {
+    return 'Inflación interanual';
+  } else if (type === TERM_DEPOSIT_TYPE) {
+    return 'Plazo fijo';
+  } else if (type === UVA_TYPE) {
+    return 'UVA';
+  } else if (type === COUNTRY_RISK_TYPE) {
+    return 'Riesgo país';
+  } else if (type === MERVAL_TYPE) {
+    return 'Merval';
+  } else if (type === RESERVES_TYPE) {
+    return 'Reservas';
   }
 };
 
@@ -372,6 +408,13 @@ export default {
   EURO_INFORMAL_TYPE,
   REAL_TYPE,
   FUTURE_TYPE,
+  INFLATION_TYPE,
+  INFLATION_ANNUAL_TYPE,
+  TERM_DEPOSIT_TYPE,
+  UVA_TYPE,
+  COUNTRY_RISK_TYPE,
+  MERVAL_TYPE,
+  RESERVES_TYPE,
   NOTIFICATION_OPEN_TYPE,
   NOTIFICATION_CLOSE_TYPE,
   NOTIFICATION_VARIATION_TYPE,
@@ -398,7 +441,9 @@ export default {
   hasRatesFromToday,
   getAvailableRateTypes,
   getAvailableRates,
+  getAvailableMarketTypes,
   getRateTitle,
+  getMarketTitle,
   getNotificationTitle,
   getNotificationSettings,
   getRateValue,

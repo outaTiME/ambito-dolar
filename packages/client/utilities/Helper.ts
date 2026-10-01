@@ -279,6 +279,59 @@ export default {
       return availableRates;
     }, [customized, rates, order, orderDirection, excludedRates, rateTypes]);
   },
+  getAvailableMarkets(markets) {
+    return (
+      _.chain(markets)
+        // core decides which markets exist and their default order
+        .pick(AmbitoDolar.getAvailableMarketTypes())
+        // a new market has a single stat until its next value
+        .pickBy(({ stats }) => stats?.length > 0)
+        .mapValues(({ stats, ...market }) => ({
+          ...market,
+          stats: _.takeRight(stats, Settings.MAX_NUMBER_OF_STATS),
+        }))
+        .value()
+    );
+  },
+  // the tab shows once the payload carries markets core knows
+  useMarketsEnabled() {
+    const markets = useSelector(({ rates: { markets } }) => markets);
+    return React.useMemo(
+      () => !_.isEmpty(this.getAvailableMarkets(markets)),
+      [markets],
+    );
+  },
+  useMarkets(customized = false) {
+    const {
+      markets,
+      excluded_markets: excludedMarkets,
+      market_types: marketTypes,
+    } = useSelector(
+      ({
+        rates: { markets },
+        application: { excluded_markets, market_types },
+      }) => ({
+        markets,
+        excluded_markets,
+        market_types,
+      }),
+      shallowEqual,
+    );
+    return React.useMemo(() => {
+      const availableMarkets = this.getAvailableMarkets(markets);
+      if (customized === true) {
+        // without a saved order the custom one falls back to the core order
+        return this.getSortedRates(
+          availableMarkets,
+          'custom',
+          undefined,
+          excludedMarkets,
+          marketTypes,
+        );
+      }
+      return availableMarkets;
+    }, [customized, markets, excludedMarkets, marketTypes]);
+  },
   isValid: (obj) => !_.isEmpty(obj),
   usePrevious(value) {
     const ref = React.useRef();

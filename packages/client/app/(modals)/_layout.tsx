@@ -35,6 +35,19 @@ export default function ModalsLayout() {
         }}
       />
       <Stack.Screen
+        name="customize-markets/index"
+        initialParams={{ modal: 'true' }}
+        options={{
+          title: Helper.getScreenTitle(I18n.t('markets')),
+          // android headerLeft comes from parent customHeaderBackOptions spread
+          ...(Platform.OS === 'ios' && {
+            headerRight: () => (
+              <HeaderButton.Text title={I18n.t('done')} onPress={goBack} />
+            ),
+          }),
+        }}
+      />
+      <Stack.Screen
         name="customize-rates/order"
         initialParams={{ modal: 'true' }}
         options={{

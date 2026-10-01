@@ -8,6 +8,7 @@ import Helper from '@/utilities/Helper';
 
 export default function NativeTabsLayout() {
   const { theme } = Helper.useTheme();
+  const marketsEnabled = Helper.useMarketsEnabled();
   return (
     <NativeTabs
       disableTransparentOnScrollEdge
@@ -39,6 +40,19 @@ export default function NativeTabsLayout() {
         />
         <NativeTabs.Trigger.Label hidden>
           {I18n.t('rates')}
+        </NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="markets" hidden={!marketsEnabled}>
+        <NativeTabs.Trigger.Icon
+          src={
+            <NativeTabs.Trigger.VectorIcon
+              family={MaterialCommunityIcons}
+              name="finance"
+            />
+          }
+        />
+        <NativeTabs.Trigger.Label hidden>
+          {I18n.t('markets')}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="conversion">

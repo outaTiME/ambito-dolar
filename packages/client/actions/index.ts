@@ -23,6 +23,9 @@ import {
   EXCLUDE_RATE,
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
+  EXCLUDE_MARKET,
+  UPDATE_MARKET_TYPES,
+  RESTORE_MARKETS_CUSTOMIZATION,
   SHOW_UPDATE_TOAST,
   USE_RELATIVE_DATES,
   APP_IGNORE_DONATION,
@@ -214,6 +217,23 @@ export const updateRateTypes = (payload) => ({
 
 export const restoreCustomization = () => ({
   type: RESTORE_CUSTOMIZATION,
+});
+
+export const excludeMarket = (type, value) => ({
+  type: EXCLUDE_MARKET,
+  payload: {
+    type,
+    value,
+  },
+});
+
+export const updateMarketTypes = (payload) => ({
+  type: UPDATE_MARKET_TYPES,
+  payload,
+});
+
+export const restoreMarketsCustomization = () => ({
+  type: RESTORE_MARKETS_CUSTOMIZATION,
 });
 
 export const showUpdateToast = (payload) => ({

@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { compose } from '@reduxjs/toolkit';
 import { Stack, useNavigation } from 'expo-router';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,14 +9,27 @@ import FixedScrollView from '@/components/FixedScrollView';
 import HeaderButton from '@/components/HeaderButton';
 import RateView from '@/components/RateView';
 import withContainer from '@/components/withContainer';
-import withRates from '@/components/withRates';
+import { getKind } from '@/config/kinds';
 import Settings from '@/config/settings';
-import {
-  goToRateDetail,
-  goToCustomizeRatesModal,
-} from '@/utilities/Navigation';
 
-const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
+// markets bring their own formats, rates keep the card defaults
+const QuoteView = ({ kind, type, ...props }) => {
+  const viewProps = React.useMemo(
+    () => getKind(kind).getViewProps(type),
+    [kind, type],
+  );
+  return (
+    <RateView
+      {...{ type, ...props, ...viewProps }}
+      title={getKind(kind).getTitle(type)}
+    />
+  );
+};
+
+const MainScreen = ({ kind, backgroundColor }) => {
+  const { useItems, goToCustomize } = getKind(kind);
+  const rates = useItems(true);
+  const rateTypes = React.useMemo(() => Object.keys(rates || {}), [rates]);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const relativeDates = useSelector(
@@ -26,9 +38,9 @@ const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
   const onRateSelected = React.useCallback(
     (type) => {
       dispatch(actions.registerApplicationRateDetail());
-      goToRateDetail(type);
+      getKind(kind).goToDetail(type);
     },
-    [dispatch],
+    [dispatch, kind],
   );
   // non-LG header right (Material on android, pre-iOS 26 fallback)
   React.useLayoutEffect(() => {
@@ -40,11 +52,11 @@ const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
         <HeaderButton.Icon
           iconName="filter-list"
           // iconName="tune"
-          onPress={goToCustomizeRatesModal}
+          onPress={goToCustomize}
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, goToCustomize]);
   return (
     <>
       {Settings.IS_LIQUID_GLASS && (
@@ -52,7 +64,7 @@ const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
           <Stack.Toolbar.Button
             icon="line.3.horizontal.decrease"
             // icon="slider.horizontal.3"
-            onPress={goToCustomizeRatesModal}
+            onPress={goToCustomize}
           />
         </Stack.Toolbar>
       )}
@@ -60,6 +72,7 @@ const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
         <EmptyRatesView
           edges={{ top: true, bottom: true }}
           backgroundColor={backgroundColor}
+          onSelect={goToCustomize}
         />
       ) : (
         <FixedScrollView
@@ -67,8 +80,9 @@ const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
           backgroundColor={backgroundColor}
         >
           {rateTypes.map((type) => (
-            <RateView
+            <QuoteView
               key={type}
+              kind={kind}
               type={type}
               stats={rates[type].stats}
               onSelected={onRateSelected}
@@ -81,4 +95,4 @@ const MainScreen = ({ rates, rateTypes, backgroundColor }) => {
   );
 };
 
-export default compose(withContainer, withRates(true))(MainScreen);
+export default withContainer(MainScreen);

@@ -125,6 +125,7 @@ const withAxisDimension = (Component) => (props) => {
     domain: {
       y: [, max_y],
     },
+    formatAxis,
   } = props;
   // force onLayout on every data update
   const reloadKey = React.useMemo(() => Date.now(), [data]);
@@ -161,7 +162,7 @@ const withAxisDimension = (Component) => (props) => {
         key={reloadKey}
       >
         {/* keep this formatting identical to tickFormat */}
-        {Helper.getCurrency(max_y)}
+        {formatAxis(max_y)}
       </Text>
       {layoutData && (
         <Component
@@ -181,6 +182,7 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
   data,
   domain,
   selectionIndex,
+  formatAxis,
   // extras
   axis_y_width: axis_y_width_rounded,
   axis_font_height: axis_font_height_rounded,
@@ -188,7 +190,12 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
   const { theme } = Helper.useTheme();
   const ticks_x = React.useMemo(() => {
     const [min_x, max_x] = domain.x;
-    return Helper.getTickValues(min_x, max_x, TICKS_X);
+    // one tick per point at most, a fractional one repeats the date of its neighbor
+    return Helper.getTickValues(
+      min_x,
+      max_x,
+      Math.min(TICKS_X, max_x - min_x + 1),
+    );
   }, [domain]);
   const ticks_y = React.useMemo(() => {
     const [min_y, max_y] = domain.y;
@@ -248,8 +255,8 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
     [theme],
   );
   const axis_y_format = React.useCallback(
-    (value) => Helper.getCurrency(value),
-    [],
+    (value) => formatAxis(value),
+    [formatAxis],
   );
   const axis_y_style = React.useMemo(
     () => ({
@@ -402,7 +409,24 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
   );
 });
 
-export default ({ stats }) => {
+const formatRateValue = (value) => Helper.getInlineRateValue(value);
+
+const formatRateDate = (timestamp, style) =>
+  DateUtils.humanize(timestamp, style);
+
+const formatRateAxis = (value) => Helper.getCurrency(value);
+
+const formatRateChange = (stat) =>
+  stat[2] === undefined ? undefined : AmbitoDolar.getRateChange(stat[2], true);
+
+export default ({
+  stats,
+  formatValue = formatRateValue,
+  inverse = false,
+  formatDate = formatRateDate,
+  formatChange = formatRateChange,
+  formatAxis = formatRateAxis,
+}) => {
   const data = React.useMemo(
     () =>
       stats.map((datum, index) => ({
@@ -430,17 +454,29 @@ export default ({ stats }) => {
   const { theme } = Helper.useTheme();
   const new_stats = React.useMemo(
     () =>
-      stats.map((stat) => ({
-        timestamp: DateUtils.humanize(stat[0], 2),
-        timestamp_axis: DateUtils.humanize(stat[0], 3),
-        value: Helper.getInlineRateValue(stat[1]),
-        // ignore when empty
-        ...(stat[2] !== undefined && {
-          change: AmbitoDolar.getRateChange(stat[2], true),
-          change_color: Helper.getChangeColor(stat[2], theme),
-        }),
-      })),
-    [stats, theme],
+      stats.map((stat, index) => {
+        // the previous point closes the difference, the history keeps no close of its own
+        const change = formatChange([
+          stat[0],
+          stat[1],
+          stat[2],
+          stats[index - 1]?.[1] ?? stat[3],
+        ]);
+        return {
+          timestamp: formatDate(stat[0], 2),
+          timestamp_axis: formatDate(stat[0], 3),
+          value: formatValue(stat[1]),
+          // ignore when empty
+          ...(change !== undefined && {
+            change,
+            change_color: Helper.getChangeColor(
+              inverse ? -stat[2] : stat[2],
+              theme,
+            ),
+          }),
+        };
+      }),
+    [stats, theme, formatValue, inverse, formatDate, formatChange],
   );
   // shared
   const selection_index = useSharedValue(null);
@@ -452,26 +488,30 @@ export default ({ stats }) => {
       <RateChartHeaderView
         {...{ stats: new_stats, selectionIndex: selection_index }}
       />
-      <View
-        style={{
-          flex: 1,
-          marginTop: Settings.PADDING,
-        }}
-        {...(!hasLayout && { onLayout })}
-      >
-        {hasLayout ? (
-          <InteractiveRateChartView
-            {...{
-              width: Helper.roundToNearestEven(width),
-              height: Helper.roundToNearestEven(height),
-              stats: new_stats,
-              data,
-              domain,
-              selectionIndex: selection_index,
-            }}
-          />
-        ) : null}
-      </View>
+      {/* a single stat has no line to draw, the header alone still tells the value */}
+      {stats.length > 1 && (
+        <View
+          style={{
+            flex: 1,
+            marginTop: Settings.PADDING,
+          }}
+          {...(!hasLayout && { onLayout })}
+        >
+          {hasLayout ? (
+            <InteractiveRateChartView
+              {...{
+                width: Helper.roundToNearestEven(width),
+                height: Helper.roundToNearestEven(height),
+                stats: new_stats,
+                data,
+                domain,
+                selectionIndex: selection_index,
+                formatAxis,
+              }}
+            />
+          ) : null}
+        </View>
+      )}
     </>
   );
 };

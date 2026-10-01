@@ -5,25 +5,27 @@ import { Platform } from 'react-native';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 
-const shortRelative = (date) => {
+// a series dated by day goes without the time, it would read as midnight
+const shortRelative = (date, time = true) => {
   const now = AmbitoDolar.getDate();
   const diffMin = now.diff(date, 'minute');
-  if (diffMin < 1) {
+  if (time && diffMin < 1) {
     return I18n.t('now');
   }
-  if (diffMin < 60) {
+  if (time && diffMin < 60) {
     return I18n.t('ago_minutes', { count: diffMin });
   }
+  const hour = time ? ` ${date.format('HH:mm')}` : '';
   if (date.isSame(now, 'day')) {
-    return `${I18n.t('today')} ${date.format('HH:mm')}`;
+    return `${I18n.t('today')}${hour}`;
   }
   // clone now to avoid moment mutation poisoning subsequent checks
   const yesterday = now.clone().subtract(1, 'day');
   if (date.isSame(yesterday, 'day')) {
-    return `${I18n.t('yesterday')} ${date.format('HH:mm')}`;
+    return `${I18n.t('yesterday')}${hour}`;
   }
   if (now.diff(date, 'day') < 7) {
-    return AmbitoDolar.getCapitalized(date.format('ddd HH:mm'));
+    return AmbitoDolar.getCapitalized(date.format(time ? 'ddd HH:mm' : 'ddd'));
   }
   return date.format(date.isSame(now, 'year') ? 'DD/MM' : 'DD/MM/YY');
 };
@@ -105,5 +107,19 @@ export default {
     }
     // rate raw detail, screenshot and statistics
     return date.format('DD/MM/YY H:mm');
+  },
+  // the humanize styles for a series dated by day, in the market timezone
+  humanizeDay(date, style) {
+    date = AmbitoDolar.getTimezoneDate(date);
+    if (style === 7 && Platform.OS !== 'web') {
+      return shortRelative(date, false);
+    } else if (style === 2) {
+      return date.format('dddd, D [de] MMM [de] YYYY');
+    } else if (style === 3) {
+      return date.format('D/M');
+    } else if (style === 5) {
+      return date.format('ddd, D MMM YYYY');
+    }
+    return date.format('DD/MM');
   },
 };

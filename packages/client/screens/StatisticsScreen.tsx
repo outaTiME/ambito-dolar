@@ -110,7 +110,7 @@ const StatisticsScreen = () => {
           />
         )}
       </CardView>
-      <CardView title={I18n.t('opts_rates')} plain>
+      <CardView title={I18n.t('opts_data')} plain>
         <CardItemView
           title={I18n.t('app_downloaded_rates')}
           useSwitch={false}

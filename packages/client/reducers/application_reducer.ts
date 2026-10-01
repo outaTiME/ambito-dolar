@@ -22,6 +22,9 @@ import {
   EXCLUDE_RATE,
   UPDATE_RATE_TYPES,
   RESTORE_CUSTOMIZATION,
+  EXCLUDE_MARKET,
+  UPDATE_MARKET_TYPES,
+  RESTORE_MARKETS_CUSTOMIZATION,
   SHOW_UPDATE_TOAST,
   USE_RELATIVE_DATES,
   APP_IGNORE_DONATION,
@@ -51,6 +54,8 @@ const INITIAL_STATE = {
   rate_order_direction: null,
   excluded_rates: null,
   rate_types: null,
+  excluded_markets: null,
+  market_types: null,
   show_update_toast: true,
   use_relative_dates: true,
   // version check
@@ -160,6 +165,29 @@ export default (state = INITIAL_STATE, action) => {
         rate_order_direction: { $set: null },
         excluded_rates: { $set: null },
         rate_types: { $set: null },
+      });
+    case EXCLUDE_MARKET: {
+      // value true keeps the market visible, false excludes it
+      const { type, value } = action.payload;
+      if (value === true) {
+        return update(state, {
+          excluded_markets: { $set: _.without(state.excluded_markets, type) },
+        });
+      }
+      return update(state, {
+        excluded_markets: {
+          $set: [type].concat(state.excluded_markets ?? []),
+        },
+      });
+    }
+    case UPDATE_MARKET_TYPES:
+      return update(state, {
+        market_types: { $set: action.payload },
+      });
+    case RESTORE_MARKETS_CUSTOMIZATION:
+      return update(state, {
+        excluded_markets: { $set: null },
+        market_types: { $set: null },
       });
     case SHOW_UPDATE_TOAST:
       return update(state, {

@@ -107,6 +107,120 @@ const getRate = (type) => {
     });
 };
 
+// listing names to market types, one request carries them all
+const MARKET_NAMES = {
+  'Riesgo País': AmbitoDolar.COUNTRY_RISK_TYPE,
+  Merval: AmbitoDolar.MERVAL_TYPE,
+};
+
+const getListedMarkets = () =>
+  // started inside the chain so even a malformed url lands on the catch
+  Promise.resolve()
+    .then(() =>
+      AmbitoDolar.fetch(process.env.MARKETS_URL, {
+        headers: {
+          'user-agent': USER_AGENT,
+        },
+      }).json(),
+    )
+    .then((data) => {
+      const schema = Joi.object()
+        .keys({
+          fecha: Joi.string().required(),
+          ultimo: Joi.string().required().custom(numberValidator),
+        })
+        .unknown(true)
+        .required();
+      return Object.entries(MARKET_NAMES).map(([name, type]) => {
+        const item = _.find(data, { nombre: name });
+        // sometimes 0 as number before the index opens, same as FUTURE_TYPE
+        if (item?.ultimo === 0) {
+          console.info('Skipping empty market', JSON.stringify({ type, item }));
+          return;
+        }
+        const { value, error } = schema.validate(item);
+        if (error) {
+          console.warn(
+            'Invalid schema validation on market',
+            JSON.stringify({ type, error: error.message }),
+          );
+          return;
+        }
+        if (value.ultimo <= 0) {
+          console.info(
+            'Skipping zero or negative market value',
+            JSON.stringify({ type, item }),
+          );
+          return;
+        }
+        const date = chrono.strict.parseDate(value.fecha);
+        if (date === null) {
+          console.warn(
+            'Invalid date on market',
+            JSON.stringify({ type, value }),
+          );
+          return;
+        }
+        // same day identity as rates, a time change alone is not an update
+        const identity = AmbitoDolar.getTimezoneDate(date).format('l');
+        return { type, rate: [identity, value.ultimo] };
+      });
+    })
+    .catch((error) => {
+      console.warn(
+        'Unable to fetch markets',
+        JSON.stringify({ error: error.message }),
+      );
+    });
+
+// bcra monetary series ids
+const BCRA_MARKET_IDS = {
+  [AmbitoDolar.INFLATION_TYPE]: 27,
+  [AmbitoDolar.INFLATION_ANNUAL_TYPE]: 28,
+  [AmbitoDolar.TERM_DEPOSIT_TYPE]: 12,
+  [AmbitoDolar.UVA_TYPE]: 31,
+  [AmbitoDolar.RESERVES_TYPE]: 1,
+};
+
+const getBcraMarket = ([type, id]) =>
+  Promise.resolve()
+    .then(() =>
+      // some series are published ahead, the value of today and never a later one
+      AmbitoDolar.fetch(
+        `${process.env.BCRA_URL}/${id}?hasta=${AmbitoDolar.getTimezoneDate().format('YYYY-MM-DD')}&limit=1`,
+      ).json(),
+    )
+    .then((data) => {
+      const { value: last, error } = Joi.object()
+        .keys({
+          fecha: Joi.string()
+            .pattern(/^\d{4}-\d{2}-\d{2}$/)
+            .required(),
+          valor: Joi.number().required(),
+        })
+        .unknown(true)
+        .required()
+        .validate(data?.results?.[0]?.detalle?.[0]);
+      if (error) {
+        console.warn(
+          'Invalid schema validation on market',
+          JSON.stringify({ type, error: error.message }),
+        );
+        return;
+      }
+      // the date of the data, a lagged series would read as today otherwise
+      return {
+        type,
+        rate: [last.fecha, last.valor, `${last.fecha}T00:00:00-03:00`],
+      };
+    })
+    .catch((error) => {
+      console.warn(
+        'Unable to fetch market',
+        JSON.stringify({ type, error: error.message }),
+      );
+    });
+
 /* const getCryptoRates = (rates) => {
   const start_time = Date.now();
   // normalize data
@@ -162,10 +276,11 @@ const getRate = (type) => {
     });
 }; */
 
-const getHistoricalRate = (type, rate, { max = 0, max_date }) => {
+const getHistoricalRate = (type, rate, { max, max_date } = {}) => {
   // in-memory calculation
   const value = AmbitoDolar.getRateValue(rate);
-  if (value > max) {
+  // the first value always sets it, zero and negative ones included
+  if (max === undefined || value > max) {
     const result = {
       type,
       rate: {
@@ -191,81 +306,86 @@ const getRateHash = (rate, length = 10) =>
   hash(rate, { algorithm: 'md5' }).slice(0, length);
 
 const getNewRates = (rates, new_rates) =>
-  Object.entries(new_rates).reduce((obj, [type, [identity, rate_last]]) => {
-    // TODO: rate_last maybe excluded from hash for realtime rates
-    const rate_hash = getRateHash([identity, rate_last]);
-    // handle initial fix
-    const rate = rates[type];
-    // detect rate update using hash compare
-    if (rate_hash !== _.last(rate)) {
-      // FIXME: use the average between the values instead of the highest one ???
-      // eslint-disable-next-line no-sparse-arrays
-      const rate_last_max = AmbitoDolar.getRateValue([, rate_last]);
-      // get close rate when first rate of day (open)
-      const rate_close = rate
-        ? AmbitoDolar.isRateFromToday(rate)
-          ? rate[3]
-          : AmbitoDolar.getRateValue(rate)
-        : rate_last_max;
-      // calculate from open / close rate and truncate
-      const rate_change_percent = AmbitoDolar.getNumber(
-        (rate_last_max / rate_close - 1) * 100,
-      );
-      // handles variations between notifications regardless of the exchange rate day
-      let notification_rate = rate?.[4] ?? rate_last_max;
-      // truncate decimals
-      const value_diff = AmbitoDolar.getNumber(
-        Math.abs(notification_rate - rate_last_max),
-      );
-      const rate_threshold = Shared.getVariationThreshold(
-        type,
-        notification_rate,
-        rate_last_max,
-      );
-      const should_notify = value_diff !== 0 && value_diff > rate_threshold;
-      console.info(
-        'Check for rate variation to notify',
-        JSON.stringify({
+  Object.entries(new_rates).reduce(
+    (obj, [type, [identity, rate_last, date]]) => {
+      // TODO: rate_last maybe excluded from hash for realtime rates
+      const rate_hash = getRateHash([identity, rate_last]);
+      // handle initial fix
+      const rate = rates[type];
+      // detect rate update using hash compare
+      if (rate_hash !== _.last(rate)) {
+        // FIXME: use the average between the values instead of the highest one ???
+        // eslint-disable-next-line no-sparse-arrays
+        const rate_last_max = AmbitoDolar.getRateValue([, rate_last]);
+        // processing time unless the source dates its value
+        const rate_date = date ?? AmbitoDolar.getTimezoneDate().format();
+        // get close rate when first rate of day (open)
+        const rate_close = rate
+          ? AmbitoDolar.getTimezoneDate(rate_date).isSame(rate[0], 'day')
+            ? rate[3]
+            : AmbitoDolar.getRateValue(rate)
+          : rate_last_max;
+        // calculate from open / close rate and truncate
+        const rate_change_percent = rate_close
+          ? AmbitoDolar.getNumber((rate_last_max / rate_close - 1) * 100)
+          : 0;
+        // handles variations between notifications regardless of the exchange rate day
+        let notification_rate = rate?.[4] ?? rate_last_max;
+        // truncate decimals
+        const value_diff = AmbitoDolar.getNumber(
+          Math.abs(notification_rate - rate_last_max),
+        );
+        const rate_threshold = Shared.getVariationThreshold(
           type,
-          prev: notification_rate,
-          curr: rate_last_max,
-          diff: value_diff,
-          threshold: rate_threshold,
-          should_notify,
-        }),
-      );
-      if (should_notify) {
-        // variation found
-        notification_rate = rate_last_max;
+          notification_rate,
+          rate_last_max,
+        );
+        const should_notify = value_diff !== 0 && value_diff > rate_threshold;
+        console.info(
+          'Check for rate variation to notify',
+          JSON.stringify({
+            type,
+            prev: notification_rate,
+            curr: rate_last_max,
+            diff: value_diff,
+            threshold: rate_threshold,
+            should_notify,
+          }),
+        );
+        if (should_notify) {
+          // variation found
+          notification_rate = rate_last_max;
+        }
+        const new_rate = [
+          rate_date,
+          rate_last,
+          rate_change_percent,
+          rate_close,
+          notification_rate,
+          rate_hash,
+        ];
+        obj[type] = new_rate;
+        console.info(
+          'Rate updated',
+          JSON.stringify({
+            type,
+            old: rate,
+            new: new_rate,
+          }),
+        );
       }
-      const new_rate = [
-        AmbitoDolar.getTimezoneDate().format(),
-        rate_last,
-        rate_change_percent,
-        rate_close,
-        notification_rate,
-        rate_hash,
-      ];
-      obj[type] = new_rate;
-      console.info(
-        'Rate updated',
-        JSON.stringify({
-          type,
-          old: rate,
-          new: new_rate,
-        }),
-      );
-    }
-    return obj;
-  }, {});
+      return obj;
+    },
+    {},
+  );
 
-const getRates = (rates) =>
+const getRates = () =>
   Promise.all([
     getRate(AmbitoDolar.OFFICIAL_TYPE),
     getRate(AmbitoDolar.INFORMAL_TYPE),
     // getRate(AmbitoDolar.TOURIST_TYPE),
-    getRate(AmbitoDolar.QATAR_TYPE),
-    getRate(AmbitoDolar.SAVING_TYPE),
+    // getRate(AmbitoDolar.QATAR_TYPE),
+    // getRate(AmbitoDolar.SAVING_TYPE),
     // getRate(AmbitoDolar.LUXURY_TYPE),
     // getRate(AmbitoDolar.CULTURAL_TYPE),
     getRate(AmbitoDolar.WHOLESALE_TYPE),
@@ -280,9 +400,25 @@ const getRates = (rates) =>
     getRate(AmbitoDolar.EURO_INFORMAL_TYPE),
     getRate(AmbitoDolar.REAL_TYPE),
     getRate(AmbitoDolar.FUTURE_TYPE),
-  ])
-    .then(getObjectRates)
-    .then((new_rates) => getNewRates(rates, new_rates));
+  ]).then(getObjectRates);
+
+const getMarkets = () =>
+  Promise.all([
+    getListedMarkets(),
+    ...Object.entries(BCRA_MARKET_IDS).map(getBcraMarket),
+  ]).then(getObjectRates);
+
+// same day stat is replaced, older ones keep their first three fields to reduce the file size
+const addStats = (items, new_items) =>
+  Object.entries(new_items).forEach(([type, stat]) => {
+    const moment_stat = AmbitoDolar.getTimezoneDate(stat[0]);
+    const stats = (items[type]?.stats || [])
+      .filter((item) => !moment_stat.isSame(item[0], 'day'))
+      .map((item) => _.take(item, 3))
+      .concat([stat]);
+    items[type] ??= {};
+    items[type].stats = _.takeRight(stats, MAX_NUMBER_OF_STATS);
+  });
 
 const getHistoricalRates = (rates, base_rates) =>
   Promise.all(
@@ -392,38 +528,30 @@ export const handler = Shared.wrapHandler(async (event) => {
   const rates = await Shared.getRates(base_rates);
   // has rates when processing
   const has_rates_from_today = AmbitoDolar.hasRatesFromToday(rates);
+  const [fetched_rates, fetched_markets] = await Promise.all([
+    getRates(),
+    getMarkets(),
+  ]);
   // leave new rates only (for realtime too)
-  const new_rates = await getRates(rates);
+  const new_rates = getNewRates(rates, fetched_rates);
+  const new_markets = getNewRates(
+    await Shared.getRates({ rates: base_rates.markets }),
+    fetched_markets,
+  );
   const has_new_rates = !_.isEmpty(new_rates);
+  const has_new_markets = !_.isEmpty(new_markets);
+  // rates and markets are one payload, either one moves updated_at
+  const has_updates = has_new_rates || has_new_markets;
   const processed_at = AmbitoDolar.getTimezoneDate();
   const processed_at_fmt = processed_at.format();
   const processed_at_unix = processed_at.unix();
   if (has_new_rates) {
     // add new_rates to base_rates
-    Object.entries(new_rates).forEach(([type, rate]) => {
-      const moment_rate = AmbitoDolar.getTimezoneDate(rate[0]);
-      // remove stats from same day of new rate
-      const stats = (((base_rates.rates || {})[type] || {}).stats || [])
-        .reduce((obj, stat) => {
-          if (!moment_rate.isSame(stat[0], 'day')) {
-            // leave rate open and hash only on new_rate to reduce the file size
-            obj.push(_.take(stat, 3));
-          }
-          return obj;
-        }, [])
-        .concat([rate]);
-      if (!base_rates.rates) {
-        base_rates.rates = {};
-      }
-      if (!base_rates.rates[type]) {
-        base_rates.rates[type] = {};
-      }
-      Object.assign(base_rates.rates[type], {
-        // leave historical data
-        stats: _.takeRight(stats, MAX_NUMBER_OF_STATS),
-        // inject data provider
-        provider: Shared.getDataProviderForRate(type),
-      });
+    base_rates.rates ??= {};
+    addStats(base_rates.rates, new_rates);
+    Object.keys(new_rates).forEach((type) => {
+      // inject data provider
+      base_rates.rates[type].provider = Shared.getDataProviderForRate(type);
     });
     // took historical data in parallel from new rates
     const new_historical_rates = await getHistoricalRates(
@@ -434,14 +562,36 @@ export const handler = Shared.wrapHandler(async (event) => {
     Object.entries(new_historical_rates).forEach(([type, historical_rate]) => {
       Object.assign(base_rates.rates[type], historical_rate);
     });
+  }
+  if (has_new_markets) {
+    // add new_markets to base_rates
+    base_rates.markets ??= {};
+    addStats(base_rates.markets, new_markets);
+    Object.keys(new_markets).forEach((type) => {
+      // inject data provider
+      base_rates.markets[type].provider = Shared.getDataProviderForMarket(type);
+    });
+    // took historical data in parallel from new markets
+    const new_historical_markets = await getHistoricalRates(
+      new_markets,
+      base_rates.markets,
+    );
+    // merge new_historical_markets with base_rates
+    Object.entries(new_historical_markets).forEach(
+      ([type, historical_market]) => {
+        Object.assign(base_rates.markets[type], historical_market);
+      },
+    );
+  }
+  if (has_updates) {
     // add / override updated_at field
     base_rates.updated_at = processed_at_fmt;
   }
   // add / override processed_at field
   base_rates.processed_at = processed_at_fmt;
   // save json files
-  await Shared.storeRatesJsonObject(base_rates, has_new_rates);
-  // firebase update should occur after saving json files
+  await Shared.storeRatesJsonObject(base_rates, has_updates);
+  // firebase update should occur after saving json files, the board carries rates only
   await Shared.updateRealtimeData({
     processed_at: processed_at_fmt,
     ...(has_new_rates && {

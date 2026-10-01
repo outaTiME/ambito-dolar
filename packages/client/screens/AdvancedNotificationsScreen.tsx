@@ -63,11 +63,7 @@ const AdvancedNotificationsScreen = ({
   );
   return (
     <FixedScrollView>
-      <CardView
-        // title={I18n.t('opts_rates')}
-        note={I18n.t('notification_choose_rates_note')}
-        plain
-      >
+      <CardView note={I18n.t('notification_choose_rates_note')} plain>
         {rateTypes.map((type) => getItemView(type))}
       </CardView>
     </FixedScrollView>

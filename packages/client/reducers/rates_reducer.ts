@@ -11,17 +11,20 @@ const INITIAL_STATE = {
   rates: null,
   updated_at: null,
   is_open: null,
+  markets: null,
   historical_rates: null,
 };
 
 export default (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
     case ADD_RATES: {
-      const { rates, updated_at, is_open } = payload;
+      const { rates, markets = null, updated_at, is_open } = payload;
       const same_rates = _.isEqual(state.rates, rates);
+      const same_markets = _.isEqual(state.markets, markets);
       // the flag moves on its own, with no change on the rates
       if (
         same_rates &&
+        same_markets &&
         state.updated_at === updated_at &&
         state.is_open === is_open
       ) {
@@ -31,10 +34,12 @@ export default (state = INITIAL_STATE, { type, payload }) => {
       return {
         ...state,
         rates: same_rates ? state.rates : rates,
+        markets: same_markets ? state.markets : markets,
         updated_at,
         is_open,
         // the cached historical ends on the old stat, drop it so the next range refetches
-        historical_rates: same_rates ? state.historical_rates : null,
+        historical_rates:
+          same_rates && same_markets ? state.historical_rates : null,
       };
     }
     case UPDATE_HISTORICAL_RATES:

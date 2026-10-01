@@ -1,6 +1,5 @@
 // @ts-nocheck
 import AmbitoDolar from '@ambito-dolar/core';
-import { compose } from '@reduxjs/toolkit';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Text, View, Alert } from 'react-native';
@@ -15,13 +14,10 @@ import VictoryRateChartView from '@/components/VictoryRateChartView';
 import withContainer from '@/components/withContainer';
 import withRates from '@/components/withRates';
 import I18n from '@/config/I18n';
+import { getKind } from '@/config/kinds';
 import Settings from '@/config/settings';
 import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
-import {
-  goToRateRawDetail,
-  goToRatesWithPopToTop,
-} from '@/utilities/Navigation';
 
 const SpreadCardItemView = ({ rateType, nominalValue, percentageValue }) => {
   const { theme, fonts } = Helper.useTheme();
@@ -119,34 +115,51 @@ const Spreads = withRates(true)(({ type, stat, rates, rateTypes }) => {
   );
 });
 
-const RANGE_TYPES = [
-  I18n.t('one_week'),
-  I18n.t('one_month'),
-  I18n.t('three_months'),
-  I18n.t('six_months'),
-  I18n.t('year'),
-  I18n.t('one_year'),
-];
+// no stats keeps the hooks running until the redirect lands
+const EMPTY_STATS = [];
 
-const RateDetailScreen = ({ rates, backgroundColor }) => {
+const RateDetailScreen = ({ kind, backgroundColor }) => {
+  const {
+    useItems,
+    excludedKey,
+    goToRoot,
+    formatValue,
+    formatChange,
+    hasSpreads,
+    refetchOnUpdate,
+    summaryTitle,
+    previousLabel,
+    formatDate,
+  } = getKind(kind);
+  const rates = useItems();
   const params = useLocalSearchParams();
   const [rangeIndex, setRangeIndex] = React.useState(0);
   const prev_rangeIndex = Helper.usePrevious(rangeIndex);
   const type = params?.type as string;
+  // markets bring their own value format and color sense to the chart
+  const chartProps = React.useMemo(
+    () => getKind(kind).getViewProps(type),
+    [kind, type],
+  );
+  const ranges = getKind(kind).getRanges(type);
+  const rangeLabels = React.useMemo(
+    () => ranges.map(({ label }) => label),
+    [ranges],
+  );
   const rate = React.useMemo(() => rates[type], [rates, type]);
   const { historical_rates, excluded_rates } = useSelector(
-    ({ rates: { historical_rates }, application: { excluded_rates } }) => ({
+    ({ rates: { historical_rates }, application }) => ({
       historical_rates,
-      excluded_rates,
+      excluded_rates: application[excludedKey],
     }),
     shallowEqual,
   );
   React.useEffect(() => {
-    if (!type || (excluded_rates || []).includes(type)) {
-      goToRatesWithPopToTop();
+    if (!type || !rate || (excluded_rates || []).includes(type)) {
+      goToRoot();
     }
-  }, [excluded_rates, type]);
-  const base_stats = rate.stats;
+  }, [excluded_rates, type, rate, goToRoot]);
+  const base_stats = rate?.stats ?? EMPTY_STATS;
   const stat = base_stats[base_stats.length - 1];
   const prev_base_stats = Helper.usePrevious(base_stats);
   const [loading, setLoading] = React.useState(false);
@@ -178,16 +191,10 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
             const stats = historical_rates[type] || [];
             if (stats.length > 0) {
               const moment_to = DateUtils.get(stats[stats.length - 1][0]);
-              const moment_from =
-                rangeIndex === 1
-                  ? moment_to.clone().subtract(1, 'month')
-                  : rangeIndex === 2
-                    ? moment_to.clone().subtract(3, 'months')
-                    : rangeIndex === 3
-                      ? moment_to.clone().subtract(6, 'months')
-                      : rangeIndex === 4
-                        ? moment_to.clone().startOf('year')
-                        : DateUtils.get(stats[0][0]);
+              const moment_from = ranges[rangeIndex].from(
+                moment_to,
+                DateUtils.get(stats[0][0]),
+              );
               setChartStats(
                 stats.filter(([timestamp]) =>
                   DateUtils.get(timestamp).isBetween(
@@ -210,11 +217,14 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
       }, Settings.ANIMATION_DURATION);
       return () => clearTimeout(timer_id);
     }
-  }, [rangeIndex, historical_rates, type, base_stats]);
+  }, [rangeIndex, historical_rates, type, base_stats, ranges]);
   // re-fetch when the rates moved, the cached one keeps drawing meanwhile
+  // markets move on every tick, their history is read once per range
   React.useEffect(() => {
     const must_revalidate =
-      prev_base_stats !== undefined && base_stats !== prev_base_stats;
+      refetchOnUpdate &&
+      prev_base_stats !== undefined &&
+      base_stats !== prev_base_stats;
     if (must_revalidate && rangeIndex > 0) {
       updateHistoricalRates().catch(() => {
         // silent ignore when error
@@ -225,7 +235,8 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
   React.useEffect(() => {
     const range_updated =
       prev_rangeIndex !== undefined && prev_rangeIndex !== rangeIndex;
-    if (range_updated && rangeIndex > 0 && !historical_rates) {
+    // per type, a cache from before markets carries rates only
+    if (range_updated && rangeIndex > 0 && !historical_rates?.[type]) {
       setLoading(true);
       // wait at least ANIMATION_DURATION before request to prevent fast dialogs on fails
       Helper.delay().then(() =>
@@ -256,32 +267,47 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
     }
   }, [rangeIndex, historical_rates]);
   const onRawDetail = React.useCallback(
-    () => goToRateRawDetail(type, rangeIndex),
-    [type, rangeIndex],
+    () => getKind(kind).goToRawDetail(type, rangeIndex),
+    [kind, type, rangeIndex],
   );
   const onTabPress = React.useCallback((index) => {
     setRangeIndex(index);
   }, []);
+  if (!stat) {
+    return null;
+  }
   return (
     <FixedScrollView backgroundColor={backgroundColor}>
-      <SegmentedControlTab
-        values={RANGE_TYPES}
-        selectedIndex={rangeIndex}
-        onTabPress={onTabPress}
-        enabled={loading === false}
-        animated
-      />
+      {/* a single stat has nothing to filter, a new market until its next value */}
+      {base_stats.length > 1 && (
+        <SegmentedControlTab
+          values={rangeLabels}
+          selectedIndex={rangeIndex}
+          onTabPress={onTabPress}
+          enabled={loading === false}
+          animated
+        />
+      )}
       <CardView style={{ flex: 1 }} plain>
         <View
           style={[
             {
               flexGrow: 1,
-              height: Settings.moderateScale(300),
+              // the header alone when there is no line to draw
+              height:
+                chartStats.length > 1 ? Settings.moderateScale(300) : undefined,
               padding: Settings.PADDING,
             },
           ]}
         >
-          <VictoryRateChartView stats={chartStats} />
+          <VictoryRateChartView
+            stats={chartStats}
+            formatValue={chartProps?.formatValue}
+            inverse={chartProps?.inverse}
+            formatDate={chartProps?.formatDate}
+            formatChange={chartProps?.formatRowChange}
+            formatAxis={chartProps?.formatAxis}
+          />
         </View>
         <CardItemView
           title={I18n.t('show_detail')}
@@ -289,34 +315,36 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
           onAction={onRawDetail}
         />
       </CardView>
-      <CardView title={I18n.t('day_summary')} plain>
+      <CardView title={I18n.t(summaryTitle)} plain>
         <CardItemView
           title={I18n.t('variation')}
           useSwitch={false}
-          value={AmbitoDolar.getRateChange([null, stat[1], null, stat[3]])}
+          value={formatChange(type, stat)}
         />
         <CardItemView
-          title={I18n.t('previous_close')}
+          title={I18n.t(previousLabel)}
           useSwitch={false}
-          value={Helper.getCurrency(stat[3])}
+          value={formatValue(type, stat[3])}
         />
       </CardView>
-      {rate.max_date && rate.max && (
+      {rate.max_date && rate.max != null && (
         <CardView plain>
           <CardItemView
             title={I18n.t('all-time_high')}
-            titleDetail={DateUtils.humanize(rate.max_date, 5)}
+            titleDetail={formatDate(type, rate.max_date, 5)}
             useSwitch={false}
-            value={Helper.getCurrency(rate.max)}
+            value={formatValue(type, rate.max)}
           />
         </CardView>
       )}
-      <Spreads
-        {...{
-          type,
-          stat,
-        }}
-      />
+      {hasSpreads && (
+        <Spreads
+          {...{
+            type,
+            stat,
+          }}
+        />
+      )}
       <CardView title={I18n.t('source')} plain>
         <CardItemView title={rate.provider} useSwitch={false} />
       </CardView>
@@ -324,4 +352,4 @@ const RateDetailScreen = ({ rates, backgroundColor }) => {
   );
 };
 
-export default compose(withContainer, withRates())(RateDetailScreen);
+export default withContainer(RateDetailScreen);
