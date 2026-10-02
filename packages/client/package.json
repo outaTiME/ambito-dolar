@@ -59,7 +59,7 @@
     "react-native-animateable-text": "~0.19.3",
     "react-native-gesture-handler": "~3.3.0",
     "react-native-purchases": "^10.11.0",
-    "react-native-reanimated": "~4.7.0",
+    "react-native-reanimated": "~4.7.1",
     "react-native-redash": "^18.1.5",
     "react-native-safe-area-context": "^5.10.1",
     "react-native-screens": "^4.28.0",
