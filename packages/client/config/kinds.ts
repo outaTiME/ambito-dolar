@@ -37,7 +37,7 @@ const MARKETS = {
   [AmbitoDolar.UVA_TYPE]: { dated: 'day' },
   [AmbitoDolar.COUNTRY_RISK_TYPE]: {
     decimals: 0,
-    suffix: ' pts',
+    suffix: ' pb',
     inverse: true,
   },
   [AmbitoDolar.MERVAL_TYPE]: { decimals: 0, suffix: ' pts' },
