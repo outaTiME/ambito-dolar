@@ -20,6 +20,10 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
   the project is not on the compiler and they false positive on Reanimated `.value` and on
   intentional ref and effect patterns. Fix a real prop reassign, do not mute those rules.
 
+## Store listing
+
+Store description and the "What's New" entry follow `packages/client/docs/store-listing.md`.
+
 ## Donation modal
 
 Read `packages/client/docs/donation-modal.md` before touching the flow, donor re-asks or the
