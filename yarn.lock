@@ -20,7 +20,7 @@ __metadata:
     "@shelf/dynamodb-parallel-scan": "npm:^4.0.0"
     "@smithy/node-http-handler": "npm:^4.12.1"
     "@sparticuz/chromium": "npm:~153.0.0"
-    chrono-node: "npm:^2.10.1"
+    chrono-node: "npm:^2.10.2"
     expo-server-sdk: "npm:^7.2.0"
     google-auth-library: "npm:^11.1.0"
     image-type: "npm:^6.1.0"
@@ -8425,10 +8425,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chrono-node@npm:^2.10.1":
-  version: 2.10.1
-  resolution: "chrono-node@npm:2.10.1"
-  checksum: 10/b48af80b14493e39ec72e5d2d04dcdbf15c5c9887dd1209e7fc088a079e05356e51146a57e030000461cebb1fe474917755c53e33f890149124ab62277055819
+"chrono-node@npm:^2.10.2":
+  version: 2.10.2
+  resolution: "chrono-node@npm:2.10.2"
+  checksum: 10/9329d4f0bc98acca45e29a5f1a7727343a9ef4be2e4ae115a3dacb23b7acfafd1481bf4b81667557965fc686fc10d7a1ec79fa40d439af7fac91692b7b6075c8
   languageName: node
   linkType: hard
 

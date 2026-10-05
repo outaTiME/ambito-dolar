@@ -14,7 +14,7 @@
     "@shelf/dynamodb-parallel-scan": "^4.0.0",
     "@smithy/node-http-handler": "^4.12.1",
     "@sparticuz/chromium": "~153.0.0",
-    "chrono-node": "^2.10.1",
+    "chrono-node": "^2.10.2",
     "expo-server-sdk": "^7.2.0",
     "google-auth-library": "^11.1.0",
     "image-type": "^6.1.0",
