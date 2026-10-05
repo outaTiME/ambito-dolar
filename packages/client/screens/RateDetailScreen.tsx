@@ -16,7 +16,6 @@ import withRates from '@/components/withRates';
 import I18n from '@/config/I18n';
 import { getKind } from '@/config/kinds';
 import Settings from '@/config/settings';
-import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
 
 const SpreadCardItemView = ({ rateType, nominalValue, percentageValue }) => {
@@ -126,7 +125,6 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
     formatValue,
     formatChange,
     hasSpreads,
-    refetchOnUpdate,
     summaryTitle,
     previousLabel,
     formatDate,
@@ -161,7 +159,6 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
   }, [excluded_rates, type, rate, goToRoot]);
   const base_stats = rate?.stats ?? EMPTY_STATS;
   const stat = base_stats[base_stats.length - 1];
-  const prev_base_stats = Helper.usePrevious(base_stats);
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
   const inFlightRef = React.useRef();
@@ -190,14 +187,17 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
           if (historical_rates) {
             const stats = historical_rates[type] || [];
             if (stats.length > 0) {
-              const moment_to = DateUtils.get(stats[stats.length - 1][0]);
+              // compare in market days, a midnight stamp shifts a day on a phone west of buenos aires
+              const moment_to = AmbitoDolar.getTimezoneDate(
+                stats[stats.length - 1][0],
+              );
               const moment_from = ranges[rangeIndex].from(
                 moment_to,
-                DateUtils.get(stats[0][0]),
+                AmbitoDolar.getTimezoneDate(stats[0][0]),
               );
               setChartStats(
                 stats.filter(([timestamp]) =>
-                  DateUtils.get(timestamp).isBetween(
+                  AmbitoDolar.getTimezoneDate(timestamp).isBetween(
                     moment_from,
                     moment_to,
                     'day',
@@ -218,19 +218,15 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
       return () => clearTimeout(timer_id);
     }
   }, [rangeIndex, historical_rates, type, base_stats, ranges]);
-  // re-fetch when the rates moved, the cached one keeps drawing meanwhile
-  // markets move on every tick, their history is read once per range
+  // refetch once when an update drops the cached history, the chart keeps drawing meanwhile
+  const prev_historical_rates = Helper.usePrevious(historical_rates);
   React.useEffect(() => {
-    const must_revalidate =
-      refetchOnUpdate &&
-      prev_base_stats !== undefined &&
-      base_stats !== prev_base_stats;
-    if (must_revalidate && rangeIndex > 0) {
+    if (rangeIndex > 0 && prev_historical_rates && !historical_rates) {
       updateHistoricalRates().catch(() => {
         // silent ignore when error
       });
     }
-  }, [base_stats, rangeIndex]);
+  }, [historical_rates]);
   // update data on charts
   React.useEffect(() => {
     const range_updated =

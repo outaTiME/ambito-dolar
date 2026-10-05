@@ -149,7 +149,6 @@ const KINDS = {
     restore: actions.restoreCustomization,
     hasOrder: true,
     hasSpreads: true,
-    refetchOnUpdate: true,
   },
   markets: {
     useItems: (customized) => Helper.useMarkets(customized),
