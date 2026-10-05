@@ -65,6 +65,26 @@ export const MIN_CLIENT_VERSION_FOR_FUTURE = '13.2.0';
 export const MAX_NUMBER_OF_STATS = 6; // 1 week, same as the client
 export const IS_LOCAL = process.env.IS_LOCAL === 'true';
 export const IS_PRODUCTION = process.env.IS_PRODUCTION === 'true';
+// rates the clients older than quotes.json render, a new one never reaches them
+const LEGACY_RATE_TYPES = [
+  AmbitoDolar.OFFICIAL_TYPE,
+  AmbitoDolar.TOURIST_TYPE,
+  AmbitoDolar.INFORMAL_TYPE,
+  AmbitoDolar.CCL_TYPE,
+  AmbitoDolar.MEP_TYPE,
+];
+// v5 files add wholesale and keep the ccl key
+const V5_RATE_TYPES = [...LEGACY_RATE_TYPES, AmbitoDolar.WHOLESALE_TYPE];
+
+// keeps the source key order, legacy files rename ccl to cl
+const pickRates = (rates, types, legacy = false) =>
+  _.mapKeys(
+    _.pickBy(rates, (rate, type) => types.includes(type)),
+    (rate, type) =>
+      legacy && type === AmbitoDolar.CCL_TYPE
+        ? AmbitoDolar.CCL_LEGACY_TYPE
+        : type,
+  );
 // prevents 403 errors when fetching rates
 export const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
@@ -349,49 +369,29 @@ const storeFetchJsonObject = (rates) => {
 };
 
 const storeRateStats = (rates) => {
-  const base_rates = Object.entries(rates || {}).reduce(
-    (obj, [type, { stats }]) => {
-      // ignore
-      if (
-        type === AmbitoDolar.WHOLESALE_TYPE ||
-        type === AmbitoDolar.CCB_TYPE ||
-        type === AmbitoDolar.SAVING_TYPE ||
-        type === AmbitoDolar.QATAR_TYPE ||
-        // type === AmbitoDolar.LUXURY_TYPE ||
-        // type === AmbitoDolar.CULTURAL_TYPE ||
-        type === AmbitoDolar.BNA_TYPE ||
-        type === AmbitoDolar.EURO_TYPE ||
-        type === AmbitoDolar.EURO_INFORMAL_TYPE ||
-        type === AmbitoDolar.REAL_TYPE ||
-        type === AmbitoDolar.FUTURE_TYPE
-      ) {
-        return obj;
-      }
-      if (type === AmbitoDolar.CCL_TYPE) {
-        type = AmbitoDolar.CCL_LEGACY_TYPE;
-      }
-      // convert number to formatted values
-      const new_stats = stats.map((stat) => {
-        const timestamp = stat[0];
-        const value = stat[1];
-        const change = stat[2];
-        return {
-          timestamp,
-          ...(Array.isArray(value)
-            ? {
-                buy: AmbitoDolar.formatRateCurrency(value[0]),
-                sell: AmbitoDolar.formatRateCurrency(value[1]),
-              }
-            : { value: AmbitoDolar.formatRateCurrency(value) }),
-          change: AmbitoDolar.formatRateChange(change),
-        };
-      });
-      // translate to production keys
-      obj[type + '_stats'] = new_stats;
-      return obj;
-    },
-    {},
-  );
+  const base_rates = Object.entries(
+    pickRates(rates, LEGACY_RATE_TYPES, true),
+  ).reduce((obj, [type, { stats }]) => {
+    // convert number to formatted values
+    const new_stats = stats.map((stat) => {
+      const timestamp = stat[0];
+      const value = stat[1];
+      const change = stat[2];
+      return {
+        timestamp,
+        ...(Array.isArray(value)
+          ? {
+              buy: AmbitoDolar.formatRateCurrency(value[0]),
+              sell: AmbitoDolar.formatRateCurrency(value[1]),
+            }
+          : { value: AmbitoDolar.formatRateCurrency(value) }),
+        change: AmbitoDolar.formatRateChange(change),
+      };
+    });
+    // translate to production keys
+    obj[type + '_stats'] = new_stats;
+    return obj;
+  }, {});
   return storePublicJsonObject(RATE_STATS_OBJECT_KEY, base_rates);
 };
 
@@ -440,52 +440,13 @@ const storeHistoricalRatesJsonObject = async (rates) => {
         return include;
       });
   });
-  const legacy_rates = Object.entries(base_year_rates || {}).reduce(
-    (obj, [type, rate]) => {
-      // ignore
-      if (
-        // markets only travel on quotes
-        AmbitoDolar.getAvailableMarketTypes().includes(type) ||
-        type === AmbitoDolar.WHOLESALE_TYPE ||
-        type === AmbitoDolar.CCB_TYPE ||
-        type === AmbitoDolar.SAVING_TYPE ||
-        type === AmbitoDolar.QATAR_TYPE ||
-        // type === AmbitoDolar.LUXURY_TYPE ||
-        // type === AmbitoDolar.CULTURAL_TYPE ||
-        type === AmbitoDolar.BNA_TYPE ||
-        type === AmbitoDolar.EURO_TYPE ||
-        type === AmbitoDolar.EURO_INFORMAL_TYPE ||
-        type === AmbitoDolar.REAL_TYPE ||
-        type === AmbitoDolar.FUTURE_TYPE
-      ) {
-        return obj;
-      }
-      if (type === AmbitoDolar.CCL_TYPE) {
-        type = AmbitoDolar.CCL_LEGACY_TYPE;
-      }
-      obj[type] = rate;
-      return obj;
-    },
-    {},
-  );
+  const legacy_rates = pickRates(base_year_rates, LEGACY_RATE_TYPES, true);
   return Promise.all([
     storePublicJsonObject(FULL_HISTORICAL_QUOTES_OBJECT_KEY, base_rates),
     storePublicJsonObject(HISTORICAL_RATES_LEGACY_OBJECT_KEY, legacy_rates),
     storePublicJsonObject(
       HISTORICAL_RATES_OBJECT_KEY,
-      _.omit(base_year_rates, [
-        AmbitoDolar.CCB_TYPE,
-        AmbitoDolar.SAVING_TYPE,
-        AmbitoDolar.QATAR_TYPE,
-        // AmbitoDolar.LUXURY_TYPE
-        // AmbitoDolar.CULTURAL_TYPE
-        AmbitoDolar.BNA_TYPE,
-        AmbitoDolar.EURO_TYPE,
-        AmbitoDolar.EURO_INFORMAL_TYPE,
-        AmbitoDolar.REAL_TYPE,
-        AmbitoDolar.FUTURE_TYPE,
-        ...AmbitoDolar.getAvailableMarketTypes(),
-      ]),
+      pickRates(base_year_rates, V5_RATE_TYPES),
     ),
     storePublicJsonObject(HISTORICAL_QUOTES_OBJECT_KEY, base_year_rates),
   ]);
@@ -494,32 +455,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
 const storeRatesJsonObject = (quotes, is_updated) => {
   // markets only travel on quotes
   const rates = _.omit(quotes, ['markets']);
-  const legacy_rates = Object.entries(rates.rates || {}).reduce(
-    (obj, [type, rate]) => {
-      // ignore
-      if (
-        type === AmbitoDolar.WHOLESALE_TYPE ||
-        type === AmbitoDolar.CCB_TYPE ||
-        type === AmbitoDolar.SAVING_TYPE ||
-        type === AmbitoDolar.QATAR_TYPE ||
-        // type === AmbitoDolar.LUXURY_TYPE ||
-        // type === AmbitoDolar.CULTURAL_TYPE ||
-        type === AmbitoDolar.BNA_TYPE ||
-        type === AmbitoDolar.EURO_TYPE ||
-        type === AmbitoDolar.EURO_INFORMAL_TYPE ||
-        type === AmbitoDolar.REAL_TYPE ||
-        type === AmbitoDolar.FUTURE_TYPE
-      ) {
-        return obj;
-      }
-      if (type === AmbitoDolar.CCL_TYPE) {
-        type = AmbitoDolar.CCL_LEGACY_TYPE;
-      }
-      obj[type] = rate;
-      return obj;
-    },
-    {},
-  );
+  const legacy_rates = pickRates(rates.rates, LEGACY_RATE_TYPES, true);
   return Promise.all([
     is_updated && storeRateStats(rates.rates),
     storePublicJsonObject(RATES_LEGACY_OBJECT_KEY, {
@@ -528,18 +464,7 @@ const storeRatesJsonObject = (quotes, is_updated) => {
     }),
     storePublicJsonObject(RATES_OBJECT_KEY, {
       ...rates,
-      rates: _.omit(rates.rates, [
-        AmbitoDolar.CCB_TYPE,
-        AmbitoDolar.SAVING_TYPE,
-        AmbitoDolar.QATAR_TYPE,
-        // AmbitoDolar.LUXURY_TYPE
-        // AmbitoDolar.CULTURAL_TYPE
-        AmbitoDolar.BNA_TYPE,
-        AmbitoDolar.EURO_TYPE,
-        AmbitoDolar.EURO_INFORMAL_TYPE,
-        AmbitoDolar.REAL_TYPE,
-        AmbitoDolar.FUTURE_TYPE,
-      ]),
+      rates: pickRates(rates.rates, V5_RATE_TYPES),
     }),
     storePublicJsonObject(QUOTES_OBJECT_KEY, quotes),
     // keep a non-suffixed key to serve GET /fetch from cloudfront+s3
