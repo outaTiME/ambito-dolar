@@ -94,15 +94,18 @@ const RateRawDetailScreen = ({ kind }) => {
     if (current_historical_rates && rangeIndex > 0) {
       const stats = current_historical_rates[type] || [];
       if (stats.length > 0) {
-        const moment_to = DateUtils.get(stats[stats.length - 1][0]);
+        // compare in market days, a midnight stamp shifts a day on a phone west of buenos aires
+        const moment_to = AmbitoDolar.getTimezoneDate(
+          stats[stats.length - 1][0],
+        );
         // same ranges as the detail that opened this one, a deep link past them takes the widest
         const ranges = getKind(kind).getRanges(type);
         const moment_from = (ranges[rangeIndex] ?? _.last(ranges)).from(
           moment_to,
-          DateUtils.get(stats[0][0]),
+          AmbitoDolar.getTimezoneDate(stats[0][0]),
         );
         return stats.filter(([timestamp]) =>
-          DateUtils.get(timestamp).isBetween(
+          AmbitoDolar.getTimezoneDate(timestamp).isBetween(
             moment_from,
             moment_to,
             'day',
