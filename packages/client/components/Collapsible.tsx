@@ -56,7 +56,9 @@ export default class Collapsible extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
-    if (this._animation) this._animation.stop();
+    if (this._animation) {
+      this._animation.stop();
+    }
   }
 
   contentHandle = null;
@@ -133,11 +135,17 @@ export default class Collapsible extends Component {
           break;
         }
       }
-      if (!found) easing = Easing[easing] || Easing.ease;
+      if (!found) {
+        easing = Easing[easing] || Easing.ease;
+      }
     }
-    if (typeof easing !== 'function') easing = Easing.ease;
+    if (typeof easing !== 'function') {
+      easing = Easing.ease;
+    }
 
-    if (this._animation) this._animation.stop();
+    if (this._animation) {
+      this._animation.stop();
+    }
 
     const target = Number.isFinite(height)
       ? height
@@ -152,7 +160,9 @@ export default class Collapsible extends Component {
     });
     this._animation.start(() => {
       this._animating = false;
-      if (!this.unmounted) this.props.onAnimationEnd();
+      if (!this.unmounted) {
+        this.props.onAnimationEnd();
+      }
     });
   }
 

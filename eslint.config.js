@@ -14,6 +14,7 @@ module.exports = (async () => {
         '**/build/**',
         '**/web-build/**',
         '**/android/**',
+        '**/ios/**',
         '**/.expo/**',
         '**/.astro/**',
       ],
@@ -35,5 +36,7 @@ module.exports = (async () => {
       files: ['packages/website/**/*.astro'],
       extends: [astro.configs['flat/recommended']],
     },
+    // every if/else/for/while braced, single line bodies included
+    { rules: { curly: ['error', 'all'] } },
   ]);
 })();

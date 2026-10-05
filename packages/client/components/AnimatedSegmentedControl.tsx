@@ -166,7 +166,9 @@ export default function AnimatedSegmentedControl({
     </Pressable>
   );
 
-  if (!hasSegments) return null;
+  if (!hasSegments) {
+    return null;
+  }
 
   const arrowChar = isRTL
     ? safeIndex === 0

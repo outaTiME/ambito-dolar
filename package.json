@@ -26,7 +26,7 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "test": "lerna run test",
+    "test": "eslint packages && prettier --check \"**/*.md\" && lerna run test",
     "client:start": "yarn workspace @ambito-dolar/client run start",
     "client:run:android": "yarn workspace @ambito-dolar/client run android",
     "client:run:ios": "yarn workspace @ambito-dolar/client run ios",
