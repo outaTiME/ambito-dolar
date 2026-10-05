@@ -36,12 +36,12 @@ yarn workspace @ambito-dolar/website run build|preview
 ### Lint
 
 - From repo root: `yarn eslint packages`, or scope it, `yarn eslint "packages/<ws>/<path>"`.
-- Before handing work back run root `yarn test`: it lints every workspace, checks the markdown format and runs the core tests.
+- Before handing work back run root `yarn test`: it lints every workspace, checks the code and markdown format and runs the core tests.
 - **`eslint`, `prettier` and `tsc` are root devDependencies and resolve from the repo root only.** A workspace only sees what it declares itself, so calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. From inside a workspace the way in is `yarn run -T <binary>`, which resolves the root one. Typecheck the client with `yarn client:typecheck` from the root.
 
 ### Tests
 
-- Root `yarn test` lints every workspace, checks the markdown format and runs the AVA tests of `packages/core` through lerna, the CI runs it on every push. No other workspace has a test script. Details in `packages/core/AGENTS.md`.
+- Root `yarn test` lints every workspace, checks the code and markdown format and runs the AVA tests of `packages/core` through lerna, the CI runs it on every push. No other workspace has a test script. Details in `packages/core/AGENTS.md`.
 
 ## Code Style
 
