@@ -1,7 +1,7 @@
 # Store listing
 
 Applies when writing the App Store / Google Play description or the "What's New" entry of a release.
-Same copy register as the app (`AGENTS.md`, Copy register): voseo, no tuteo, no `colaborar`.
+Same copy register as the app (`packages/client/docs/copy-register.md`): voseo, no tuteo, no `colaborar`.
 
 ## Description
 

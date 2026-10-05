@@ -32,7 +32,7 @@ const start_time = Date.now();
 SplashScreen.preventAutoHideAsync().catch(console.warn);
 SplashScreen.setOptions({ fade: true });
 
-// leaf component to isolate usePathname subscription away from ThemedLayout
+// leaf component to isolate useSegments subscription away from ThemedLayout
 // prevents the whole app tree from re-rendering on every URL change
 const NavigationTracker = () => {
   useNavigationTrackingRouter();

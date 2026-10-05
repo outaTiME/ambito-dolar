@@ -17,10 +17,11 @@ SST v4, Lambda handlers.
   `packages/backend/src/routes/update-rates.js` reads the stored one for that, and the stored
   `markets` when the body has none.
 - **Markets live in `quotes.json` under `markets` and in both historical-quotes files, nowhere
-  else.** `rates*.json`, `rate-stats`, `/fetch`, the realtime board and `notify` stay rates only. A
-  new market enters core `getAvailableMarketTypes` and `getDataProviderForMarket` before the
-  processor fetches it: the legacy historical omit reads that list, a type missing from it leaks
-  into `historical-rates*.json` on its first tick.
+  else.** `rates*.json`, `rate-stats`, `/fetch`, the realtime board and `notify` stay rates only. The
+  legacy files pick a fixed list (`LEGACY_RATE_TYPES`, `V5_RATE_TYPES` in
+  `packages/backend/src/libs/shared.js`), so a new rate or market never reaches them. A new market
+  enters core `getAvailableMarketTypes` and `getDataProviderForMarket` with the processor change, or
+  the client hides it and the detail names the wrong source.
 - **The repair routes rewrite history.** `/update-rates` keeps each type's history before the
   body's first stat and replaces the rest with the body, so a body older than the stored
   `quotes.json` loses every day after its last stat; build it from a download taken after the 18:00

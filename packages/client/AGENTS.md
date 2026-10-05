@@ -20,6 +20,10 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
   the project is not on the compiler and they false positive on Reanimated `.value` and on
   intentional ref and effect patterns. Fix a real prop reassign, do not mute those rules.
 
+## Copy register
+
+Any user facing string follows `packages/client/docs/copy-register.md`: voseo, error shapes, vocabulary.
+
 ## Store listing
 
 Store description and the "What's New" entry follow `packages/client/docs/store-listing.md`.
@@ -88,12 +92,10 @@ error, and that is the whole of this section.
 
 ## Navigation centralization
 
-- **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Tabs`, `Slot`, `Redirect`, `useNavigation` (setOptions), `useLocalSearchParams`, `useFocusEffect`, `usePathname`, plus `NativeTabs` from `expo-router/unstable-native-tabs`, `HeaderButton` from `expo-router/react-navigation` and `BottomTabBar` from `expo-router/js-tabs`.
+- **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Tabs`, `Slot`, `Redirect`, `useNavigation` (setOptions), `useLocalSearchParams`, `useFocusEffect`, `usePathname`, `useSegments`, plus `NativeTabs` from `expo-router/unstable-native-tabs`, `HeaderButton` from `expo-router/react-navigation` and `BottomTabBar` from `expo-router/js-tabs`.
 - **`SplashScreen` comes from `expo-splash-screen`, never from `expo-router`.** The router ships its own wrapper marked `@hidden`.
 - Helpers: `goToX` (nav), `goBack` (guarded), `dismissToTop` (guarded pop), `clearRouteParam(name)`.
-- **A new route goes into `SCREENS` in `packages/client/hooks/app/useNavigationTrackingRouter.ts`** too,
-  by its route pattern (`markets/[type]/raw`, groups left out). An unknown pattern is dropped without a
-  word, so the screen never reaches the Sentry breadcrumbs or Amplitude. A screen that is no route, like the donation
-  sheet, reports itself through `trackScreen` from the same file.
+- **A new route goes into `SCREENS` in `packages/client/hooks/app/useNavigationTrackingRouter.ts`**, a
+  screen that is no route reports through `trackScreen`; development warns `Untracked screen` otherwise.
 - New route to a `goToX` helper. Modal variant = separate helper (`goToDonate` settings tab vs `goToDonateModal` root modal). Use `router.navigate` not `push` (dedupes, prevents double-tap stacks).
 - Clear a consumed deeplink/intent param (`focus=true`, `popToTop=true`) via `clearRouteParam('focus')`, not inline `router.setParams({focus: undefined})`.

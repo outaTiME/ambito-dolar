@@ -36,13 +36,12 @@ yarn workspace @ambito-dolar/website run build|preview
 ### Lint
 
 - From repo root: `yarn eslint packages`, or scope it, `yarn eslint "packages/<ws>/<path>"`.
-- Lint what a change touched, tracked and new alike, before handing it back: `{ git diff --name-only -z --diff-filter=ACM -- '*.ts' '*.tsx' '*.js'; git ls-files -o -z --exclude-standard -- '*.ts' '*.tsx' '*.js'; } | xargs -0 yarn eslint`. The `-z` and `-0` pair is load bearing, an expo-router group like `app/(tabs)/` carries glob characters and an unquoted path answers `no files were found` instead of linting.
+- Before handing work back run root `yarn test`: it lints every workspace, checks the markdown format and runs the core tests.
 - **`eslint`, `prettier` and `tsc` are root devDependencies and resolve from the repo root only.** A workspace only sees what it declares itself, so calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. From inside a workspace the way in is `yarn run -T <binary>`, which resolves the root one. Typecheck the client with `yarn client:typecheck` from the root.
-- Fallback if the root call itself fails: `yarn node ./node_modules/eslint/bin/eslint.js <paths>`.
 
 ### Tests
 
-- The only automated tests are AVA in `packages/core`; root `yarn test` runs them through lerna. No other workspace has a test script. Details in `packages/core/AGENTS.md`.
+- Root `yarn test` lints every workspace, checks the markdown format and runs the AVA tests of `packages/core` through lerna, the CI runs it on every push. No other workspace has a test script. Details in `packages/core/AGENTS.md`.
 
 ## Code Style
 
@@ -53,7 +52,6 @@ yarn workspace @ambito-dolar/website run build|preview
 - Comments: lowercase default, keep existing uppercase unless editing that line. Terse, ASCII-only, no arrows/em-dash/checkmarks/special chars. No trailing period. One sentence per `//`, one line where it fits. Multi-line only for a second distinct fact, consecutive `//`, never prose-with-semicolons.
 - No label-prefix comments (`// feature flag:`, `// android:`, `// <tag>:`). Plain sentence describing what or why.
 - Contiguous related statements compact, no blank lines within decls/guards/memo/returns. Blank line only between distinct logical phases.
-- Always brace `if/else/for/while`. No inline (`if (x) { return; }`, not `if (x) return;`).
 
 ### Naming and modules
 
@@ -80,24 +78,7 @@ yarn workspace @ambito-dolar/website run build|preview
 - Semver alignment across branch: major needs `BREAKING CHANGE:`, minor needs `feat:`, patch needs `fix:` only (no `feat:`).
 - Lerna independent versioning, release from `master`.
 
-### Release order (branch tail)
-
-`chore: bump version and build number` (only `packages/client/app.config.ts` version+buildNumber, the native plists are generated) → `chore: bump yarn` (only `.yarnrc.yml` + `packageManager` field in root `package.json`) → `chore: bump dependencies` (lockfiles, manifests) → `chore: publish`.
-
-- Single-dep functional change may own its whole `package.json` if the file has no other pending bumps. Manifest mixing many bumps (SDK upgrade) → whole file to the dominant commit, no hunk split.
-- Yarn bump colliding with dep bumps in the same `package.json` (no `.yarnrc.yml` change) → `packageManager` field rides in `chore: bump dependencies`, no separate `chore: bump yarn`.
-
-### No hunk splitting
-
-- Always `git add <file>` (full file). Never `git add -p`/`--patch`, past incident broke files and lost fragments.
-- Exception (only `app.config.ts`): version+build lines go to `chore: bump version and build number` while other hunks go to the functional commit.
-- Backup WT first: `git diff --binary > /tmp/wt-backup.patch`. Restore: `git apply /tmp/wt-backup.patch`.
-
-### Major SDK upgrade sequence
-
-1. `feat: update to Expo SDK <N>` + `BREAKING CHANGE:` footer (`BREAKING CHANGE: upgraded to React Native 0.85`) — code migration, native diffs, plugins, forced import migration.
-2. `docs: update AGENTS rules` if rules change with the upgrade.
-3. Then the release order above, `chore: bump yarn` only if Yarn changed.
+Before any commit read `docs/commits.md`: release tail order, no hunk splitting, SDK upgrade sequence.
 
 ## Analytics and tracking policy
 
@@ -138,33 +119,10 @@ with its `/rates[/type]` route, and the app `AppTheme`. Only the font is loud, a
 Read `packages/client/docs/android-widgets.md` and `packages/client/docs/ios-widgets.md` before
 touching any of that.
 
-## Copy register
-
-Voseo everywhere, rioplatense: `Elegí`, `verificá`, `Tenés`. No tuteo. Applies to the ios swift
-strings too. The widget picker has its own register, see `packages/client/docs/android-widgets.md`.
-
-The error strings take their shape from Apple's `es_419`: `Imposible <verb>` and `No se pudieron
-<verb>`. Apple's `es_419` tutea and this app does not, voseo wins there.
-
-Every string is one sentence. A failure that needs a remedy carries it in the same sentence or
-leaves it to the button beside it.
-
-Neutral `lo` refers to an action. Do not pluralise one to `los` just to match a nearby plural noun.
-
-A note says what happens or what the reader can do, and never opens on a negation. Every negative
-string is an error state, so a note shaped like one reads as a failure. State the fact instead of
-denying the alternative.
-
-`Donar` is the action and `Donaciones` counts them in the stats, `aporte` is the thing the reader
-picks and gives. Those two are the whole vocabulary for it, there is no `colaborar` and no
-`contribución` in the catalog.
-
-One word per concept where the concept is really one: `conexión` never `conectividad`. No
-commercial vocabulary, so no `pago` and no `suscripción`.
-
 ## Agent Operating Defaults
 
 - No rename/move files unless task needs. Run the most relevant scoped lint/test for touched code before handoff, report what ran.
+- A change to code a `.md` names updates that `.md` in the same commit.
 
 ### Reading and writing these files
 
