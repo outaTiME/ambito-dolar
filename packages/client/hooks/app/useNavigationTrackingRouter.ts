@@ -51,6 +51,9 @@ export default function useNavigationTrackingRouter() {
   const previousRouteNameRef = React.useRef(null);
   React.useEffect(() => {
     const currentRouteName = SCREENS[pattern];
+    if (__DEV__ && pattern && !currentRouteName) {
+      console.warn('Untracked screen', pattern);
+    }
     if (
       !currentRouteName ||
       previousRouteNameRef.current === currentRouteName
