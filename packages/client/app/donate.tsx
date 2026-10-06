@@ -8,9 +8,12 @@ import * as actions from '@/actions';
 import ActionButton from '@/components/ActionButton';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
-import { useDonationProducts } from '@/hooks/useDonationProducts';
+import {
+  formatProductPrice,
+  useDonationProducts,
+} from '@/hooks/useDonationProducts';
 import { useDonationPurchase } from '@/hooks/useDonationPurchase';
-import { donationModal, formatProductPrice } from '@/utilities/Donation';
+import { donationModal } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import { goBack } from '@/utilities/Navigation';
 

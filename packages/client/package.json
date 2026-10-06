@@ -8,7 +8,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "check": "expo install --check"
+    "check": "expo install --check",
+    "test": "yarn run -T ava --node-arguments=--disable-warning=MODULE_TYPELESS_PACKAGE_JSON"
   },
   "dependencies": {
     "@ambito-dolar/core": "^5.2.2",

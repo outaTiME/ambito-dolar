@@ -30,7 +30,7 @@ export default function SettingsStackLayout() {
         name="notifications/[type]"
         options={({ route }) => ({
           title: Helper.getScreenTitle(
-            AmbitoDolar.getNotificationTitle((route as any).params.type),
+            AmbitoDolar.getNotificationTitle((route as any).params?.type),
           ),
         })}
       />

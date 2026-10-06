@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { compose } from '@reduxjs/toolkit';
-import React from 'react';
 
 import CardItemView from '@/components/CardItemView';
 import CardView from '@/components/CardView';
@@ -8,9 +7,11 @@ import FixedScrollView from '@/components/FixedScrollView';
 import MessageView from '@/components/MessageView';
 import withContainer from '@/components/withContainer';
 import I18n from '@/config/I18n';
-import { useDonationProducts } from '@/hooks/useDonationProducts';
+import {
+  formatProductPrice,
+  useDonationProducts,
+} from '@/hooks/useDonationProducts';
 import { useDonationPurchase } from '@/hooks/useDonationPurchase';
-import { formatProductPrice } from '@/utilities/Donation';
 
 // fall back to store-provided title when i18n key missing
 const getLocalTitle = (product) => {

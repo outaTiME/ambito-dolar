@@ -12,12 +12,11 @@ import Settings from '@/config/settings';
 import * as WidgetKit from '@/modules/widgetkit';
 import { reloadWidgets } from '@/modules/widgets';
 import Helper from '@/utilities/Helper';
+import { getPollInterval } from '@/utilities/Polling';
 import Sentry from '@/utilities/Sentry';
 
 // half the tick and flat across cadences, absorbs its drift so a foreground entry can refresh early
 const SLACK = Settings.RATES_REFRESH_INTERVAL / 2;
-// ceiling for the remote cadence, and the longest a client waits to see it lifted
-const MAX_INTERVAL = 60 * 60 * 1000;
 
 const withRateUpdates = (Component) => (props) => {
   const dispatch = useDispatch();
@@ -47,15 +46,10 @@ const withRateUpdates = (Component) => (props) => {
         return;
       }
       const fetchedAt = Date.now();
-      // the payload can slow the polling without a release, never speed it up
-      const remote = Number.isFinite(cadenceRef.current)
-        ? cadenceRef.current
-        : 0;
-      const base = Math.max(remote, Settings.RATES_REFRESH_INTERVAL);
-      // five times slower with the market closed
-      const interval = Math.min(
-        isOpenRef.current === false ? base * 5 : base,
-        MAX_INTERVAL,
+      const interval = getPollInterval(
+        cadenceRef.current,
+        isOpenRef.current,
+        Settings.RATES_REFRESH_INTERVAL,
       );
       // negative elapsed would freeze polling, same as the ios widget
       const elapsed = fetchedAt - lastFetchAtRef.current;

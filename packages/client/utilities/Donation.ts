@@ -1,11 +1,3 @@
-// @ts-nocheck
-import { Alert } from 'react-native';
-import Purchases from 'react-native-purchases';
-
-import I18n from '@/config/I18n';
-import Helper from '@/utilities/Helper';
-import Sentry from '@/utilities/Sentry';
-
 const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 
 // distinct usage days before re-show, count=0 uses shorter wait to invite casuals
@@ -43,37 +35,25 @@ export const computeLifetime = (transactions = [], priceMap = {}) =>
     0,
   );
 
-export const showGenericErrorAlert = () => {
-  Alert.alert(I18n.t('generic_error'), '', [{ text: I18n.t('accept') }], {
-    cancelable: false,
-  });
+// the usage day gate, runs before the re-ask so a donor waits for both
+export const getDonationCooldown = (daysUsed, ignoreDaysUsed, ignoreCount) => {
+  const cooldownDays = getCooldownDays(ignoreCount);
+  const elapsedDays = Math.max(0, daysUsed - (ignoreDaysUsed ?? 0));
+  return { cooldownDays, elapsedDays, due: elapsedDays >= cooldownDays };
 };
 
-// ask to buy or a pending store payment, it completes outside the app
-const isPurchasePending = (e) =>
-  e?.code === Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR;
-
-const showPurchaseErrorAlert = (e) => {
-  if (e?.userCancelled || isPurchasePending(e)) {
-    return;
-  }
-  Sentry.captureException(new Error('Purchase error', { cause: e }));
-  showGenericErrorAlert();
+// the ask after a donation, someone who never donated is always due
+export const getDonationReAsk = (customerInfo, priceMap) => {
+  // server time of the snapshot, a cached one only delays the ask
+  const now = Date.parse(customerInfo?.requestDate) || Date.now();
+  const transactions = customerInfo?.nonSubscriptionTransactions ?? [];
+  const lastPurchaseDate = transactions[transactions.length - 1]?.purchaseDate;
+  const lifetimeTotal = computeLifetime(transactions, priceMap);
+  const reAskMs = lastPurchaseDate ? getReAskMs(lifetimeTotal) : null;
+  const due =
+    !lastPurchaseDate || now - new Date(lastPurchaseDate).getTime() >= reAskMs;
+  return { lastPurchaseDate, lifetimeTotal, reAskMs, due };
 };
-
-// true once the store charged, a failure is already reported here
-export const purchaseDonation = (product) =>
-  Purchases.purchaseStoreProduct(product).then(
-    () => true,
-    (e) => {
-      showPurchaseErrorAlert(e);
-      return false;
-    },
-  );
 
 // one donation modal at a time, a usage day crossing midnight must not present another
 export const donationModal = { open: false };
-
-// rounded localized currency to avoid toFixedNoRounding truncation (e.g. 2.99 to 2.98)
-export const formatProductPrice = (product) =>
-  Helper.getCurrency(Math.round((product?.price ?? 0) * 100) / 100, true, true);

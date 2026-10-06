@@ -19,8 +19,6 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 - React Compiler rules are off on purpose (`react-hooks/{immutability,refs,set-state-in-effect,purity}`):
   the project is not on the compiler and they false positive on Reanimated `.value` and on
   intentional ref and effect patterns. Fix a real prop reassign, do not mute those rules.
-- There is no test runner here. A one caller function pulled out only to be tested does not pay, it
-  stays inline until the client gets tests.
 
 ## Copy register
 
@@ -38,7 +36,8 @@ Developer screen bypass.
 ## Rate updates
 
 Everything that keeps the rates in sync is in
-`packages/client/components/withRateUpdates.tsx`, contract in `docs/product-policies.md`.
+`packages/client/components/withRateUpdates.tsx`, the interval math in
+`packages/client/utilities/Polling.ts`, contract in `docs/product-policies.md`.
 
 - **Do not put a "no network, do not bother" check in front of `fetchRates`.** The failed attempt
   is what arms the connectivity listener, and `isConnected` is wrong in both directions.
@@ -103,3 +102,14 @@ error, and that is the whole of this section.
   screen that is no route reports through `trackScreen`; development warns `Untracked screen` otherwise.
 - New route to a `goToX` helper. Modal variant = separate helper (`goToDonate` settings tab vs `goToDonateModal` root modal). Use `router.navigate` not `push` (dedupes, prevents double-tap stacks).
 - Clear a consumed deeplink/intent param (`focus=true`, `popToTop=true`) via `clearRouteParam('focus')`, not inline `router.setParams({focus: undefined})`.
+
+## Tests
+
+- AVA in `packages/client/test.js`, run alone with `yarn workspace @ambito-dolar/client test`.
+- It loads `packages/client/utilities/Polling.ts` and `packages/client/utilities/Donation.ts` in
+  plain Node, no Metro, and Node loads the `.ts` without a build. Both import nothing, a
+  `react-native`, Expo or `@/` import there breaks the test. What needs the store or a native module
+  lives in a hook.
+- No `"type": "module"` here, like the official Expo template. `@bacons/apple-targets` `require`s
+  `packages/client/targets/RateWidgets/expo-target.config.js` and reads `.type` without unwrapping
+  `.default`, so it cannot be ESM. The `test` script mutes `MODULE_TYPELESS_PACKAGE_JSON` instead.

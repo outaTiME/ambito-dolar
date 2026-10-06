@@ -94,3 +94,7 @@ export const useDonationProducts = () => {
   );
   return { products, priceMap, ensureProducts };
 };
+
+// rounded localized currency to avoid toFixedNoRounding truncation (e.g. 2.99 to 2.98)
+export const formatProductPrice = (product) =>
+  Helper.getCurrency(Math.round((product?.price ?? 0) * 100) / 100, true, true);

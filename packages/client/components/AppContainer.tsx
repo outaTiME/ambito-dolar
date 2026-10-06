@@ -25,17 +25,18 @@ import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import { trackScreen } from '@/hooks/app/useNavigationTrackingRouter';
 import useAppState from '@/hooks/useAppState';
-import { useDonationProducts } from '@/hooks/useDonationProducts';
+import {
+  formatProductPrice,
+  useDonationProducts,
+} from '@/hooks/useDonationProducts';
 import { useDonationPurchase } from '@/hooks/useDonationPurchase';
 import InitialScreen from '@/screens/InitialScreen';
 import Amplitude from '@/utilities/Amplitude';
 import DateUtils from '@/utilities/Date';
 import {
-  computeLifetime,
   donationModal,
-  formatProductPrice,
-  getCooldownDays,
-  getReAskMs,
+  getDonationCooldown,
+  getDonationReAsk,
 } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import { goToDonateModal } from '@/utilities/Navigation';
@@ -372,16 +373,18 @@ const withAppDonation = (Component) => (props) => {
       return;
     }
     const forced = !!appDonationModal;
-    const cooldownDays = getCooldownDays(ignoreDonationCount);
-    const elapsedDays = Math.max(0, daysUsed - (ignoreDonationDaysUsed ?? 0));
-    const shouldShowModal = forced || elapsedDays >= cooldownDays;
-    if (!shouldShowModal) {
+    const cooldown = getDonationCooldown(
+      daysUsed,
+      ignoreDonationDaysUsed,
+      ignoreDonationCount,
+    );
+    if (!forced && !cooldown.due) {
       Helper.debug('💖 Donation not due', {
         daysUsed,
         ignoreDonationDaysUsed,
         ignoreDonationCount,
-        cooldownDays,
-        elapsedDays,
+        cooldownDays: cooldown.cooldownDays,
+        elapsedDays: cooldown.elapsedDays,
       });
       return;
     }
@@ -397,22 +400,12 @@ const withAppDonation = (Component) => (props) => {
     let cancelled = false;
     Purchases.getCustomerInfo()
       .then((customerInfo) => {
-        // server time of the snapshot, a cached one only delays the ask
-        const now = Date.parse(customerInfo?.requestDate) || Date.now();
-        const transactions = customerInfo?.nonSubscriptionTransactions ?? [];
-        const lastPurchaseDate = _.last(transactions)?.purchaseDate;
-        const lifetimeTotal = computeLifetime(transactions, priceMap);
-        const elapsedSinceLast = lastPurchaseDate
-          ? now - new Date(lastPurchaseDate).getTime()
-          : Infinity;
-        const reAskMs = lastPurchaseDate ? getReAskMs(lifetimeTotal) : null;
-        const shouldAsk =
-          forced || !lastPurchaseDate || elapsedSinceLast >= reAskMs;
-        if (!shouldAsk || cancelled) {
+        const reAsk = getDonationReAsk(customerInfo, priceMap);
+        if (!(forced || reAsk.due) || cancelled) {
           Helper.debug('💖 Donation skipped', {
-            lastPurchaseAt: Helper.formatTimestamp(lastPurchaseDate),
-            lifetimeTotal,
-            reAsk: AmbitoDolar.formatDuration(reAskMs),
+            lastPurchaseAt: Helper.formatTimestamp(reAsk.lastPurchaseDate),
+            lifetimeTotal: reAsk.lifetimeTotal,
+            reAsk: AmbitoDolar.formatDuration(reAsk.reAskMs),
             cancelled,
           });
           return;

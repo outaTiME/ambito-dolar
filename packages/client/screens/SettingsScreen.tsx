@@ -15,13 +15,15 @@ import TextCardView from '@/components/TextCardView';
 import withContainer from '@/components/withContainer';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
-import { useDonationProducts } from '@/hooks/useDonationProducts';
-import DateUtils from '@/utilities/Date';
 import {
   formatProductPrice,
+  useDonationProducts,
+} from '@/hooks/useDonationProducts';
+import {
   purchaseDonation,
   showGenericErrorAlert,
-} from '@/utilities/Donation';
+} from '@/hooks/useDonationPurchase';
+import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
 import {
   goToAbout,
