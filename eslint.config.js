@@ -38,5 +38,10 @@ module.exports = (async () => {
     },
     // every if/else/for/while braced, single line bodies included
     { rules: { curly: ['error', 'all'] } },
+    // tsc skips the files marked @ts-nocheck, an unknown name only fails here
+    {
+      files: ['packages/**/*.{js,jsx,ts,tsx}'],
+      rules: { 'no-undef': 'error' },
+    },
   ]);
 })();
