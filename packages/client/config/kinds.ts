@@ -56,12 +56,14 @@ const formatMarketDate = (type, timestamp, style) => {
   const { dated } = getMarket(type);
   if (dated === 'month') {
     const date = AmbitoDolar.getTimezoneDate(timestamp);
-    if (style === 3) {
+    if (style === 'axis') {
       return date.format('MM/YY');
     }
     // the card names the month alone
     return AmbitoDolar.getCapitalized(
-      date.format(style === 7 || style === 1 ? 'MMMM' : 'MMMM YYYY'),
+      date.format(
+        style === 'relative' || style === 'card' ? 'MMMM' : 'MMMM YYYY',
+      ),
     );
   }
   if (dated === 'day') {
@@ -117,19 +119,33 @@ const RANGES = [
     from: (to) => to.clone().subtract(6, 'months'),
   },
   { label: I18n.t('year'), from: (to) => to.clone().startOf('year') },
+  // the historical file already holds one year, trimmed in the backend
   { label: I18n.t('one_year'), from: (to, first) => first },
 ];
 
 // a monthly series, the payload already spans six months and year to date can hold a single point
 const MONTHLY_RANGES = [{ label: I18n.t('six_months') }, RANGES[5]];
 
+// the formats every rate view gets
+const RATE_VIEW_PROPS = {
+  formatValue: (value) => Helper.getInlineRateValue(value),
+  formatChange: (stat) => AmbitoDolar.getRateChange(stat, true),
+  // the first point of a history has no change
+  formatRowChange: (stat) =>
+    stat[2] === undefined
+      ? undefined
+      : AmbitoDolar.getRateChange(stat[2], true),
+  formatAxis: (value) => Helper.getCurrency(value),
+  inverse: false,
+  formatDate: (timestamp, style) => DateUtils.humanize(timestamp, style),
+};
+
 // what tells rates and markets apart, the screens stay the same for both
 const KINDS = {
   rates: {
     useItems: (customized) => Helper.useRates(customized),
     getTitle: AmbitoDolar.getRateTitle,
-    // the card keeps its own formats
-    getViewProps: () => null,
+    getViewProps: () => RATE_VIEW_PROPS,
     formatValue: (type, value) => Helper.getCurrency(value),
     formatChange: (type, stat) =>
       AmbitoDolar.getRateChange([null, stat[1], null, stat[3]]),

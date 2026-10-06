@@ -134,7 +134,6 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
   const [rangeIndex, setRangeIndex] = React.useState(0);
   const prev_rangeIndex = Helper.usePrevious(rangeIndex);
   const type = params?.type as string;
-  // markets bring their own value format and color sense to the chart
   const chartProps = React.useMemo(
     () => getKind(kind).getViewProps(type),
     [kind, type],
@@ -187,23 +186,8 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
           if (historical_rates) {
             const stats = historical_rates[type] || [];
             if (stats.length > 0) {
-              // compare in market days, a midnight stamp shifts a day on a phone west of buenos aires
-              const moment_to = AmbitoDolar.getTimezoneDate(
-                stats[stats.length - 1][0],
-              );
-              const moment_from = ranges[rangeIndex].from(
-                moment_to,
-                AmbitoDolar.getTimezoneDate(stats[0][0]),
-              );
               setChartStats(
-                stats.filter(([timestamp]) =>
-                  AmbitoDolar.getTimezoneDate(timestamp).isBetween(
-                    moment_from,
-                    moment_to,
-                    'day',
-                    '[]',
-                  ),
-                ),
+                AmbitoDolar.getStatsInRange(stats, ranges[rangeIndex].from),
               );
             } else {
               if (__DEV__) {
@@ -298,11 +282,11 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
         >
           <VictoryRateChartView
             stats={chartStats}
-            formatValue={chartProps?.formatValue}
-            inverse={chartProps?.inverse}
-            formatDate={chartProps?.formatDate}
-            formatChange={chartProps?.formatRowChange}
-            formatAxis={chartProps?.formatAxis}
+            formatValue={chartProps.formatValue}
+            inverse={chartProps.inverse}
+            formatDate={chartProps.formatDate}
+            formatChange={chartProps.formatRowChange}
+            formatAxis={chartProps.formatAxis}
           />
         </View>
         <CardItemView
@@ -327,7 +311,7 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
         <CardView plain>
           <CardItemView
             title={I18n.t('all-time_high')}
-            titleDetail={formatDate(type, rate.max_date, 5)}
+            titleDetail={formatDate(type, rate.max_date, 'detail')}
             useSwitch={false}
             value={formatValue(type, rate.max)}
           />

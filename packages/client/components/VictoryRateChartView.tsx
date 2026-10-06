@@ -21,7 +21,6 @@ import {
 
 import AnimatedChartView from '@/components/AnimatedChartView';
 import Settings from '@/config/settings';
-import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
 
 const AXIS_FONT_SIZE = 10;
@@ -409,23 +408,13 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
   );
 });
 
-const formatRateValue = (value) => Helper.getInlineRateValue(value);
-
-const formatRateDate = (timestamp, style) =>
-  DateUtils.humanize(timestamp, style);
-
-const formatRateAxis = (value) => Helper.getCurrency(value);
-
-const formatRateChange = (stat) =>
-  stat[2] === undefined ? undefined : AmbitoDolar.getRateChange(stat[2], true);
-
 export default ({
   stats,
-  formatValue = formatRateValue,
-  inverse = false,
-  formatDate = formatRateDate,
-  formatChange = formatRateChange,
-  formatAxis = formatRateAxis,
+  formatValue,
+  inverse,
+  formatDate,
+  formatChange,
+  formatAxis,
 }) => {
   const data = React.useMemo(
     () =>
@@ -463,8 +452,8 @@ export default ({
           stats[index - 1]?.[1] ?? stat[3],
         ]);
         return {
-          timestamp: formatDate(stat[0], 2),
-          timestamp_axis: formatDate(stat[0], 3),
+          timestamp: formatDate(stat[0], 'chart'),
+          timestamp_axis: formatDate(stat[0], 'axis'),
           value: formatValue(stat[1]),
           // ignore when empty
           ...(change !== undefined && {

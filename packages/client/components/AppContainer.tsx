@@ -26,6 +26,7 @@ import Settings from '@/config/settings';
 import { trackScreen } from '@/hooks/app/useNavigationTrackingRouter';
 import useAppState from '@/hooks/useAppState';
 import { useDonationProducts } from '@/hooks/useDonationProducts';
+import { useDonationPurchase } from '@/hooks/useDonationPurchase';
 import InitialScreen from '@/screens/InitialScreen';
 import Amplitude from '@/utilities/Amplitude';
 import DateUtils from '@/utilities/Date';
@@ -35,7 +36,6 @@ import {
   formatProductPrice,
   getCooldownDays,
   getReAskMs,
-  purchaseDonation,
 } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import { goToDonateModal } from '@/utilities/Navigation';
@@ -359,8 +359,14 @@ const withAppDonation = (Component) => (props) => {
   const forcedRef = React.useRef(false);
   // this presentation ended in a purchase, reset when the next one opens
   const donatedRef = React.useRef(false);
-  // mirrors loadingProductId so dismiss callbacks see the latest value
-  const loadingRef = React.useRef(false);
+  const {
+    loadingProductId,
+    loadingRef,
+    donate: handleDonate,
+  } = useDonationPurchase(() => {
+    donatedRef.current = true;
+    bottomSheetRef.current?.dismiss();
+  });
   React.useEffect(() => {
     if (!purchasesConfigured || !donationProducts?.length) {
       return;
@@ -484,24 +490,6 @@ const withAppDonation = (Component) => (props) => {
   const safeAreaInsets = useSafeAreaInsets();
   const colorScheme = 'light';
   const { fonts } = Helper.useTheme(colorScheme);
-  const [loadingProductId, setLoadingProductId] = React.useState(null);
-  const handleDonate = React.useCallback(
-    async (product, productId) => {
-      setLoadingProductId(productId);
-      loadingRef.current = true;
-      try {
-        if (await purchaseDonation(product)) {
-          donatedRef.current = true;
-          dispatch(actions.registerApplicationDonation());
-          bottomSheetRef.current?.dismiss();
-        }
-      } finally {
-        setLoadingProductId(null);
-        loadingRef.current = false;
-      }
-    },
-    [dispatch],
-  );
   return (
     <>
       <Component {...props} />

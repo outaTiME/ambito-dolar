@@ -7,7 +7,6 @@ import { View, Text, Platform, PixelRatio } from 'react-native';
 import CardView from '@/components/CardView';
 import MiniRateChartView from '@/components/VictoryMiniRateChartView';
 import Settings from '@/config/settings';
-import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
 
 const InlineRateView = ({ title, value, onSelected, compact }) => {
@@ -193,13 +192,6 @@ const InlineRateDetailView = ({
   );
 };
 
-const formatRateValue = (value) => Helper.getInlineRateValue(value);
-
-const formatRateChange = (stat) => AmbitoDolar.getRateChange(stat, true);
-
-const formatRateDate = (timestamp, style) =>
-  DateUtils.humanize(timestamp, style);
-
 const RateView = ({
   type,
   stats,
@@ -209,12 +201,12 @@ const RateView = ({
   compact = null,
   smallPadding = false,
   relativeDates = false,
-  // markets bring their own title, formats and color sense
+  // markets bring their own title, the formats and color sense come from the kind
   title = AmbitoDolar.getRateTitle(type),
-  formatValue = formatRateValue,
-  formatChange = formatRateChange,
-  inverse = false,
-  formatDate = formatRateDate,
+  formatValue,
+  formatChange,
+  inverse,
+  formatDate,
 }) => {
   const { theme } = Helper.useTheme();
   const now = Helper.useNow();
@@ -231,7 +223,7 @@ const RateView = ({
     [formatValue, value],
   );
   const timestamp_fmt = React.useMemo(
-    () => formatDate(timestamp, relativeDates ? 7 : 1),
+    () => formatDate(timestamp, relativeDates ? 'relative' : 'card'),
     [timestamp, now, relativeDates, formatDate],
   );
   const change_fmt = React.useMemo(

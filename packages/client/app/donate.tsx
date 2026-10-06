@@ -9,11 +9,8 @@ import ActionButton from '@/components/ActionButton';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import { useDonationProducts } from '@/hooks/useDonationProducts';
-import {
-  donationModal,
-  formatProductPrice,
-  purchaseDonation,
-} from '@/utilities/Donation';
+import { useDonationPurchase } from '@/hooks/useDonationPurchase';
+import { donationModal, formatProductPrice } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import { goBack } from '@/utilities/Navigation';
 
@@ -28,13 +25,18 @@ const DonateScreen = () => {
     'appDonationModal',
     false,
   );
-  const [loadingProductId, setLoadingProductId] = React.useState(null);
   // captured on mount, the trigger is spent right below
   const forcedRef = React.useRef(appDonationModal);
   // skip ignore dispatch on unmount when user already donated
   const donatedRef = React.useRef(false);
-  // mirrors loadingProductId so unmount cleanup sees the latest value
-  const loadingRef = React.useRef(false);
+  const {
+    loadingProductId,
+    loadingRef,
+    donate: handleDonate,
+  } = useDonationPurchase(() => {
+    donatedRef.current = true;
+    goBack();
+  });
   // spend the trigger here, an unmount that never runs would leave it armed
   React.useEffect(() => {
     if (forcedRef.current) {
@@ -55,23 +57,6 @@ const DonateScreen = () => {
       dispatch(actions.ignoreApplicationDonation());
     };
   }, []);
-  const handleDonate = React.useCallback(
-    async (product, productId) => {
-      setLoadingProductId(productId);
-      loadingRef.current = true;
-      try {
-        if (await purchaseDonation(product)) {
-          donatedRef.current = true;
-          dispatch(actions.registerApplicationDonation());
-          goBack();
-        }
-      } finally {
-        setLoadingProductId(null);
-        loadingRef.current = false;
-      }
-    },
-    [dispatch],
-  );
   // mirror bottom inset on top plus breathing room
   // iOS sheet absorbs the bottom inset, android does not so paddingBottom keeps it
   const isAndroid = Platform.OS === 'android';

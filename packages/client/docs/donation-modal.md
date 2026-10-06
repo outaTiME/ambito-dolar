@@ -64,6 +64,7 @@ bypass.
   turn taking by killing the transfer that recovers a reinstalled donor, the more common case. The
   icloud keychain is the one technique that works, ios only and a native module.
 - When someone asks for their donations back, transfer by Order ID from the RevenueCat dashboard.
+- A purchase goes through `useDonationPurchase` in `packages/client/hooks/useDonationPurchase.ts`, one at a time, from both modals and the DonateScreen. Settings keeps its own guard, its wait also covers loading the products.
 - Closing the sheet with a purchase in flight or just finished is not a dismiss, `donatedRef` and `loadingRef` hold it back. Without that, donating and closing would count against the donor.
 - `purchaseDonation` resolves `true` once charged and reports any failure itself, callers only branch on it. A pending purchase (ask to buy, a pending store payment) rejects with `PAYMENT_PENDING_ERROR` and is not a failure: no alert and no Sentry. Its close still counts as a dismiss on purpose: nothing registers a donation until the transaction lands, so a close that spent no cooldown would ask again on the next usage day while the approval is pending. Once it lands the re-ask gate reads the transaction.
 - A failed boot fetch of the catalog leaves no dep changed, so `useDonationProducts` retries on the next foreground. Without it a launch without network skips the automatic modal for as long as the process lives.

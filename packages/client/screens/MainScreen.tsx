@@ -12,7 +12,7 @@ import withContainer from '@/components/withContainer';
 import { getKind } from '@/config/kinds';
 import Settings from '@/config/settings';
 
-// markets bring their own formats, rates keep the card defaults
+// the kind brings the formats
 const QuoteView = ({ kind, type, ...props }) => {
   const viewProps = React.useMemo(
     () => getKind(kind).getViewProps(type),

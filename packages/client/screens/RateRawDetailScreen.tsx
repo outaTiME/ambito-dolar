@@ -19,27 +19,20 @@ import Helper from '@/utilities/Helper';
 ); */
 const ITEM_HEIGHT = Settings.PADDING * 2 + 22 + Settings.SMALL_PADDING + 18;
 
-const formatRateValue = (value) => Helper.getInlineRateValue(value);
-
-const formatRateDate = (timestamp, style) =>
-  DateUtils.humanize(timestamp, style);
-
-const formatRateChange = (stat) => AmbitoDolar.getRateChange(stat[2], true);
-
-// markets bring their own formats and color sense, rates keep these
+// the formats and color sense come from the kind
 const RateRawDetailItem = ({
   stat,
-  formatValue = formatRateValue,
-  formatDate = formatRateDate,
-  formatRowChange = formatRateChange,
-  inverse = false,
+  formatValue,
+  formatDate,
+  formatRowChange,
+  inverse,
 }) => {
   const { theme } = Helper.useTheme();
   const change = stat[2];
   return (
     <CardItemView
       title={formatValue(stat[1])}
-      titleDetail={formatDate(stat[0], 5)}
+      titleDetail={formatDate(stat[0], 'detail')}
       useSwitch={false}
       value={formatRowChange(stat)}
       valueStyle={{
@@ -94,23 +87,11 @@ const RateRawDetailScreen = ({ kind }) => {
     if (current_historical_rates && rangeIndex > 0) {
       const stats = current_historical_rates[type] || [];
       if (stats.length > 0) {
-        // compare in market days, a midnight stamp shifts a day on a phone west of buenos aires
-        const moment_to = AmbitoDolar.getTimezoneDate(
-          stats[stats.length - 1][0],
-        );
         // same ranges as the detail that opened this one, a deep link past them takes the widest
         const ranges = getKind(kind).getRanges(type);
-        const moment_from = (ranges[rangeIndex] ?? _.last(ranges)).from(
-          moment_to,
-          AmbitoDolar.getTimezoneDate(stats[0][0]),
-        );
-        return stats.filter(([timestamp]) =>
-          AmbitoDolar.getTimezoneDate(timestamp).isBetween(
-            moment_from,
-            moment_to,
-            'day',
-            '[]',
-          ),
+        return AmbitoDolar.getStatsInRange(
+          stats,
+          (ranges[rangeIndex] ?? _.last(ranges)).from,
         );
       } else {
         if (__DEV__) {

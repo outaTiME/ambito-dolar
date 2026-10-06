@@ -14,6 +14,7 @@ import SocialView from '@/components/SocialView';
 import WatermarkOverlayView from '@/components/WatermarkOverlayView';
 import withContainer from '@/components/withContainer';
 import I18n from '@/config/I18n';
+import { getKind } from '@/config/kinds';
 import Settings from '@/config/settings';
 import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
@@ -351,6 +352,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
         {...{
           type,
           stats: rates[type].stats,
+          ...getKind().getViewProps(type),
           large: true,
           compact,
           smallPadding,
@@ -389,7 +391,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
                 ]}
                 numberOfLines={1}
               >
-                {DateUtils.humanize(processedAt, 5)}
+                {DateUtils.humanize(processedAt, 'detail')}
               </Text>
             )}
           </Text>
@@ -405,7 +407,7 @@ const RatesContainer = compose(withRates)(({ title, rates, processedAt }) => {
               ]}
               numberOfLines={1}
             >
-              {DateUtils.humanize(processedAt, 2)}
+              {DateUtils.humanize(processedAt, 'chart')}
             </Text>
           )}
         </View>

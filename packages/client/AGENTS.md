@@ -19,6 +19,8 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 - React Compiler rules are off on purpose (`react-hooks/{immutability,refs,set-state-in-effect,purity}`):
   the project is not on the compiler and they false positive on Reanimated `.value` and on
   intentional ref and effect patterns. Fix a real prop reassign, do not mute those rules.
+- There is no test runner here. A one caller function pulled out only to be tested does not pay, it
+  stays inline until the client gets tests.
 
 ## Copy register
 
@@ -59,6 +61,8 @@ Everything that keeps the rates in sync is in
 - **The shared screens tell rates and markets apart only through `getKind`** in
   `packages/client/config/kinds.ts`. A per type display rule (unit, `decimals`, `points`, `dated`,
   `inverse`, ranges) goes in its `MARKETS` catalog, never a `type ===` in a screen.
+- **The views carry no formats of their own**, every caller takes its formats from `getViewProps(type)`, the web
+  social card included. Rates share `RATE_VIEW_PROPS`.
 - **A value that is already a percentage moves in points, everything else in percent**, the way the
   quote panels show it. The absolute difference lives in the detail's `Variación` row.
 

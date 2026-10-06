@@ -72,7 +72,7 @@ export default {
   }, */
   humanize(date, style) {
     date = this.get(date);
-    if (style === 1) {
+    if (style === 'card') {
       // rate view with relative dates off, and the android widget card. Padded hour so
       // every row keeps the same width, same as the ios widget dd/MM HH:mm
       if (Platform.OS === 'web') {
@@ -80,44 +80,38 @@ export default {
       }
       // return date.format('D MMM HH:mm');
       return date.format('DD/MM HH:mm');
-    } else if (style === 2) {
+    } else if (style === 'chart') {
       // timestamp on web, rate chart
       return date.format('dddd, D [de] MMM [de] YYYY H:mm');
-    } else if (style === 3) {
+    } else if (style === 'axis') {
       // rate chart axis
       return date.format('D/M');
-    } else if (style === 4) {
-      // rate all-time_high (DEPRECATED)
-      // return date.format('dddd, D [de] MMM [de] YYYY');
-    } else if (style === 5) {
+    } else if (style === 'detail') {
       // rate raw detail, all-time_high rate, timestamp on web (condensed)
       return date.format('ddd, D MMM YYYY H:mm');
-    } else if (style === 6) {
-      // screenshot (DEPRECATED)
-      // return date.format('D MMM YYYY H:mm');
-    } else if (style === 7) {
+    } else if (style === 'relative') {
       // card date relative on native, web stays absolute
       if (Platform.OS === 'web') {
         return date.format('DD/MM HH:mm');
       }
       return shortRelative(date);
-    } else if (style === 9) {
+    } else if (style === 'header') {
       // header subtitle day reference capitalized
       return AmbitoDolar.getCapitalized(date.format('ddd, D MMM'));
     }
-    // rate raw detail, screenshot and statistics
+    // statistics
     return date.format('DD/MM/YY H:mm');
   },
   // the humanize styles for a series dated by day, in the market timezone
   humanizeDay(date, style) {
     date = AmbitoDolar.getTimezoneDate(date);
-    if (style === 7 && Platform.OS !== 'web') {
+    if (style === 'relative' && Platform.OS !== 'web') {
       return shortRelative(date, false);
-    } else if (style === 2) {
+    } else if (style === 'chart') {
       return date.format('dddd, D [de] MMM [de] YYYY');
-    } else if (style === 3) {
+    } else if (style === 'axis') {
       return date.format('D/M');
-    } else if (style === 5) {
+    } else if (style === 'detail') {
       return date.format('ddd, D MMM YYYY');
     }
     return date.format('DD/MM');

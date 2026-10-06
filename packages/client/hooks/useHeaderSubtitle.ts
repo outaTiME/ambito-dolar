@@ -18,7 +18,7 @@ const useHeaderSubtitle = () => {
   if (prevRef.current && prevRef.current !== updated_at) {
     prevRef.current = updated_at;
     // freeze date for ephemeral window so cross-midnight tick doesn't mutate text
-    frozenDateRef.current = DateUtils.humanize(Date.now(), 9);
+    frozenDateRef.current = DateUtils.humanize(Date.now(), 'header');
     setShowUpdated(true);
   }
   React.useEffect(() => {
@@ -40,7 +40,7 @@ const useHeaderSubtitle = () => {
     }
     return label;
   }
-  return DateUtils.humanize(now, 9);
+  return DateUtils.humanize(now, 'header');
 };
 
 export default useHeaderSubtitle;

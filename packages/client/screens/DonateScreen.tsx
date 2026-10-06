@@ -1,9 +1,7 @@
 // @ts-nocheck
 import { compose } from '@reduxjs/toolkit';
 import React from 'react';
-import { useDispatch } from 'react-redux';
 
-import * as actions from '@/actions';
 import CardItemView from '@/components/CardItemView';
 import CardView from '@/components/CardView';
 import FixedScrollView from '@/components/FixedScrollView';
@@ -11,7 +9,8 @@ import MessageView from '@/components/MessageView';
 import withContainer from '@/components/withContainer';
 import I18n from '@/config/I18n';
 import { useDonationProducts } from '@/hooks/useDonationProducts';
-import { formatProductPrice, purchaseDonation } from '@/utilities/Donation';
+import { useDonationPurchase } from '@/hooks/useDonationPurchase';
+import { formatProductPrice } from '@/utilities/Donation';
 
 // fall back to store-provided title when i18n key missing
 const getLocalTitle = (product) => {
@@ -21,28 +20,8 @@ const getLocalTitle = (product) => {
 };
 
 const DonateScreen = () => {
-  const dispatch = useDispatch();
   const { products } = useDonationProducts();
-  const [loadingProductId, setLoadingProductId] = React.useState(null);
-  const loadingRef = React.useRef(false);
-  const handleDonate = React.useCallback(
-    async (product) => {
-      if (loadingRef.current) {
-        return;
-      }
-      loadingRef.current = true;
-      setLoadingProductId(product.identifier);
-      try {
-        if (await purchaseDonation(product)) {
-          dispatch(actions.registerApplicationDonation());
-        }
-      } finally {
-        loadingRef.current = false;
-        setLoadingProductId(null);
-      }
-    },
-    [dispatch],
-  );
+  const { loadingProductId, donate: handleDonate } = useDonationPurchase();
   return (
     <FixedScrollView>
       {products.length === 0 ? (
