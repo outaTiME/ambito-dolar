@@ -9,6 +9,9 @@ SST v4, Lambda handlers.
 - Public response shapes are contracts: the client, the website and both widget implementations
   read them. A `/fetch` change reaches the ios widgets first, see
   `packages/client/docs/android-widgets.md`.
+- **The `GET /fetch` lambda in `infra/api.ts` is a kept fallback**, CloudFront serves `/fetch` from S3
+  in front of it and the lambda takes over if CloudFront goes. Both build the body with
+  `getLastStats` in `shared.js`.
 - `is_open` in the rates payload drives how often the client asks for rates. Dropping it or changing
   its meaning fails silently, see `docs/product-policies.md`. It must not go into `/fetch` while
   `storeFetchJsonObject` is gated on `is_updated`: a gated write leaves it stale on exactly the
@@ -61,6 +64,10 @@ SST v4, Lambda handlers.
 - **Do not reorder `process.js`.** `storeRatesJsonObject` -> `updateRealtimeData` -> `notify` is
   load bearing, a push landing before the board is written shows stale rates to the clients still
   on it.
+- **Rate math lives in core, AVA tested**: `getNextRateStat` (close, pct, notify threshold),
+  `getNotifications` (which pushes), `addStat` / `mergeHistoricalStats` (payload and historical
+  file). `process.js` only hashes, passes `getVariationThreshold` and logs. The historical file keeps
+  one year, the client draws it as `1A`.
 - **Remove `updateInstantData` before 2027-08-31**, the day InstantDB cloud shuts down. It carries
   no timeout of its own and runs before `notify()`, so a hung sdk eats the one minute `Process`
   budget and stops push and socials for everyone.

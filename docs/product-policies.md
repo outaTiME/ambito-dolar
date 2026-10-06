@@ -9,7 +9,7 @@ New rate in development before stores approve client release:
 
 - Backend `packages/backend/src/subscribers/notify.js`: add rate type to socials `_.omit(current_rates, [...])` so socials don't publish before clients render. Mark `// TODO: remove once vX.Y.Z is released`.
 - Client `packages/client/utilities/Helper.ts`: add the rate type to the `.omit([...])` in `getAvailableRates`, which hides it on every platform. Same TODO.
-- Version gate `packages/backend/src/libs/shared.js`: `MIN_CLIENT_VERSION_FOR_<TYPE> = 'X.Y.Z'`, apply where payloads/notifications dispatched.
+- Version gate `packages/backend/src/libs/shared.js`: `MIN_CLIENT_VERSION_FOR_<TYPE> = 'X.Y.Z'`, apply where payloads dispatched, and for pushes add the rate to `MIN_CLIENT_VERSIONS` in `packages/backend/src/subscribers/notify.js`.
 - Verify social caption ≤300 chars with new rate.
 
 Release after approval: delete only the `// TODO:` line + that rate entry. Preserve `_.omit([...])` block + `// rates to exclude...` comment placeholder as insertion point for next gated rate.
@@ -58,7 +58,7 @@ The client polls `Settings.RATES_URI` from `packages/client/components/withRateU
 
 ## Notification body and social caption
 
-`getBodyMessage` (`packages/backend/src/subscribers/notify.js`) feeds push body + social caption.
+`getBodyMessage` (`packages/core/index.js`) feeds push body + social caption.
 
 - Cap 300 chars: bsky `text` graphemes, reddit `title` chars, both published through IFTTT. Reddit error misleading: `NO_TEXT: title required` when title >300.
 - Format: `LABEL VALOR ↑PCT%` / `↓PCT%`. No colon, no parens, no trailing period. No-change rates (CRIPTO) drop arrow+pct.

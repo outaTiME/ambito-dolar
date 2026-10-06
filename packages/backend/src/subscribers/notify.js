@@ -16,51 +16,24 @@ import Shared, {
   MIN_CLIENT_VERSION_FOR_FUTURE,
 } from '../libs/shared';
 
+// a client below the version a rate shipped in cannot render it
+const MIN_CLIENT_VERSIONS = {
+  [AmbitoDolar.MEP_TYPE]: MIN_CLIENT_VERSION_FOR_MEP,
+  [AmbitoDolar.WHOLESALE_TYPE]: MIN_CLIENT_VERSION_FOR_WHOLESALE,
+  [AmbitoDolar.CCB_TYPE]: MIN_CLIENT_VERSION_FOR_CCB,
+  [AmbitoDolar.SAVING_TYPE]: MIN_CLIENT_VERSION_FOR_SAVING,
+  [AmbitoDolar.QATAR_TYPE]: MIN_CLIENT_VERSION_FOR_QATAR,
+  // [AmbitoDolar.LUXURY_TYPE]: MIN_CLIENT_VERSION_FOR_QATAR,
+  // [AmbitoDolar.CULTURAL_TYPE]: MIN_CLIENT_VERSION_FOR_QATAR,
+  [AmbitoDolar.BNA_TYPE]: MIN_CLIENT_VERSION_FOR_BNA,
+  [AmbitoDolar.EURO_TYPE]: MIN_CLIENT_VERSION_FOR_EURO_AND_REAL,
+  [AmbitoDolar.EURO_INFORMAL_TYPE]: MIN_CLIENT_VERSION_FOR_EURO_AND_REAL,
+  [AmbitoDolar.REAL_TYPE]: MIN_CLIENT_VERSION_FOR_EURO_AND_REAL,
+  [AmbitoDolar.FUTURE_TYPE]: MIN_CLIENT_VERSION_FOR_FUTURE,
+};
+
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
-
-const getChangeMessage = (rate) => {
-  const value = AmbitoDolar.getRateValue(rate);
-  const formatted_value = AmbitoDolar.formatRateCurrency(value, true);
-  const change = rate[2];
-  const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '';
-  if (arrow) {
-    const abs_pct = AmbitoDolar.formatRateCurrency(Math.abs(change), true);
-    return `${formatted_value} ${arrow}${abs_pct}%`;
-  }
-  return formatted_value;
-};
-
-const getRateMessage = (type, rate) => {
-  const rate_title = AmbitoDolar.getRateTitle(type);
-  if (rate_title) {
-    return `${rate_title.toUpperCase()} ${getChangeMessage(rate)}`;
-  }
-};
-
-const getBodyMessage = (rates) => {
-  const available_rates = AmbitoDolar.getAvailableRates(rates);
-  if (available_rates) {
-    const body = _.chain(available_rates)
-      .map((rate, type) => ({ type, rate, mag: Math.abs(rate[2] ?? 0) }))
-      .sortBy((x) => -x.mag)
-      .map(({ type, rate }) => getRateMessage(type, rate))
-      // remove empty messages
-      .compact()
-      .value();
-    if (body.length > 0) {
-      return body.join(', ');
-    }
-  }
-};
-
-const getSocialCaption = (type, rates) => {
-  const body = getBodyMessage(rates);
-  if (body) {
-    const title = AmbitoDolar.getNotificationTitle(type);
-    return `${title}. ${body}`;
-  }
-};
 
 const getMessage = (extras = {}) => ({
   priority: 'high',
@@ -76,57 +49,16 @@ const getMessagesFromCurrentRate = (items, type, rates) => {
         const settings = AmbitoDolar.getNotificationSettings(
           notification_settings,
         )[type];
-        const rates_for_settings = Object.entries(rates).reduce(
-          (obj, [type, value]) => {
-            // legacy support for settings < MIN_CLIENT_VERSION_FOR_WHOLESALE
-            if (type === AmbitoDolar.CCL_TYPE) {
-              if (
-                settings.rates[AmbitoDolar.CCL_LEGACY_TYPE] !== false &&
-                settings.rates[AmbitoDolar.CCL_TYPE] === true
-              ) {
-                obj[type] = value;
-              }
-            } else {
-              if (settings.rates[type] === true) {
-                obj[type] = value;
-              }
-            }
-            return obj;
-          },
-          {},
+        const rates_for_settings = _.pickBy(
+          rates,
+          (value, type) =>
+            AmbitoDolar.isNotificationRateEnabled(settings, type) &&
+            !(
+              MIN_CLIENT_VERSIONS[type] &&
+              Shared.isSemverLt(app_version, MIN_CLIENT_VERSIONS[type])
+            ),
         );
-        // remove rates not available in app version
-        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_MEP)) {
-          delete rates_for_settings[AmbitoDolar.MEP_TYPE];
-        }
-        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_WHOLESALE)) {
-          delete rates_for_settings[AmbitoDolar.WHOLESALE_TYPE];
-        }
-        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_CCB)) {
-          delete rates_for_settings[AmbitoDolar.CCB_TYPE];
-        }
-        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_SAVING)) {
-          delete rates_for_settings[AmbitoDolar.SAVING_TYPE];
-        }
-        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_QATAR)) {
-          delete rates_for_settings[AmbitoDolar.QATAR_TYPE];
-          // delete rates_for_settings[AmbitoDolar.LUXURY_TYPE];
-          // delete rates_for_settings[AmbitoDolar.CULTURAL_TYPE];
-        }
-        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_BNA)) {
-          delete rates_for_settings[AmbitoDolar.BNA_TYPE];
-        }
-        if (
-          Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_EURO_AND_REAL)
-        ) {
-          delete rates_for_settings[AmbitoDolar.EURO_TYPE];
-          delete rates_for_settings[AmbitoDolar.EURO_INFORMAL_TYPE];
-          delete rates_for_settings[AmbitoDolar.REAL_TYPE];
-        }
-        if (Shared.isSemverLt(app_version, MIN_CLIENT_VERSION_FOR_FUTURE)) {
-          delete rates_for_settings[AmbitoDolar.FUTURE_TYPE];
-        }
-        const body = getBodyMessage(rates_for_settings);
+        const body = AmbitoDolar.getBodyMessage(rates_for_settings);
         if (body) {
           return getMessage({
             to: push_token,
@@ -423,7 +355,7 @@ export const handler = Shared.wrapHandler(async (event) => {
             Shared.triggerSocialNotifyEvent({
               type,
               title: AmbitoDolar.getNotificationTitle(type),
-              caption: getSocialCaption(type, social_rates),
+              caption: AmbitoDolar.getSocialCaption(type, social_rates),
             }),
           );
         }

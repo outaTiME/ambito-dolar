@@ -314,56 +314,20 @@ const getNewRates = (rates, new_rates) =>
       const rate = rates[type];
       // detect rate update using hash compare
       if (rate_hash !== _.last(rate)) {
-        // FIXME: use the average between the values instead of the highest one ???
-        // eslint-disable-next-line no-sparse-arrays
-        const rate_last_max = AmbitoDolar.getRateValue([, rate_last]);
-        // processing time unless the source dates its value
-        const rate_date = date ?? AmbitoDolar.getTimezoneDate().format();
-        // get close rate when first rate of day (open)
-        const rate_close = rate
-          ? AmbitoDolar.getTimezoneDate(rate_date).isSame(rate[0], 'day')
-            ? rate[3]
-            : AmbitoDolar.getRateValue(rate)
-          : rate_last_max;
-        // calculate from open / close rate and truncate
-        const rate_change_percent = rate_close
-          ? AmbitoDolar.getNumber((rate_last_max / rate_close - 1) * 100)
-          : 0;
-        // handles variations between notifications regardless of the exchange rate day
-        let notification_rate = rate?.[4] ?? rate_last_max;
-        // truncate decimals
-        const value_diff = AmbitoDolar.getNumber(
-          Math.abs(notification_rate - rate_last_max),
+        const { stat: new_rate, variation } = AmbitoDolar.getNextRateStat(
+          rate,
+          {
+            rate_last,
+            date,
+            rate_hash,
+            getThreshold: (prev, curr) =>
+              Shared.getVariationThreshold(type, prev, curr),
+          },
         );
-        const rate_threshold = Shared.getVariationThreshold(
-          type,
-          notification_rate,
-          rate_last_max,
-        );
-        const should_notify = value_diff !== 0 && value_diff > rate_threshold;
         console.info(
           'Check for rate variation to notify',
-          JSON.stringify({
-            type,
-            prev: notification_rate,
-            curr: rate_last_max,
-            diff: value_diff,
-            threshold: rate_threshold,
-            should_notify,
-          }),
+          JSON.stringify({ type, ...variation }),
         );
-        if (should_notify) {
-          // variation found
-          notification_rate = rate_last_max;
-        }
-        const new_rate = [
-          rate_date,
-          rate_last,
-          rate_change_percent,
-          rate_close,
-          notification_rate,
-          rate_hash,
-        ];
         obj[type] = new_rate;
         console.info(
           'Rate updated',
@@ -408,16 +372,14 @@ const getMarkets = () =>
     ...Object.entries(BCRA_MARKET_IDS).map(getBcraMarket),
   ]).then(getObjectRates);
 
-// same day stat is replaced, older ones keep their first three fields to reduce the file size
 const addStats = (items, new_items) =>
   Object.entries(new_items).forEach(([type, stat]) => {
-    const moment_stat = AmbitoDolar.getTimezoneDate(stat[0]);
-    const stats = (items[type]?.stats || [])
-      .filter((item) => !moment_stat.isSame(item[0], 'day'))
-      .map((item) => _.take(item, 3))
-      .concat([stat]);
     items[type] ??= {};
-    items[type].stats = _.takeRight(stats, MAX_NUMBER_OF_STATS);
+    items[type].stats = AmbitoDolar.addStat(
+      items[type].stats,
+      stat,
+      MAX_NUMBER_OF_STATS,
+    );
   });
 
 const getHistoricalRates = (rates, base_rates) =>
@@ -427,64 +389,16 @@ const getHistoricalRates = (rates, base_rates) =>
     ),
   ).then(getObjectRates);
 
-const notify = (
-  close_day,
-  rates,
-  has_rates_from_today,
-  new_rates,
-  has_new_rates,
-) => {
-  const notifications = [];
-  if (close_day === true) {
-    notifications.push([
-      AmbitoDolar.NOTIFICATION_CLOSE_TYPE,
-      {
-        ...rates,
-        ...new_rates,
-      },
-    ]);
-  } else if (has_new_rates) {
-    if (!has_rates_from_today) {
-      notifications.push([
-        AmbitoDolar.NOTIFICATION_OPEN_TYPE,
-        {
-          ...rates,
-          ...new_rates,
-        },
-      ]);
-    } else {
-      const variation_rates = Object.entries(new_rates).reduce(
-        (obj, [type, rate]) => {
-          const prev_rate = rates[type];
-          // variation logic handled on getNewRates
-          const prev_notification_rate = prev_rate?.[4];
-          const notification_rate = rate[4];
-          const notify = prev_notification_rate !== notification_rate;
-          console.info(
-            'Notify rate variation',
-            JSON.stringify({
-              type,
-              prev: prev_notification_rate,
-              curr: notification_rate,
-              notify,
-            }),
-          );
-          if (notify) {
-            obj[type] = rate;
-          }
-          return obj;
-        },
-        {},
-      );
-      if (!_.isEmpty(variation_rates)) {
-        // join variations in a single notification
-        notifications.push([
-          AmbitoDolar.NOTIFICATION_VARIATION_TYPE,
-          variation_rates,
-        ]);
-      }
-    }
-  }
+const notify = (close_day, rates, has_rates_from_today, new_rates) => {
+  const { notifications, variations = [] } = AmbitoDolar.getNotifications({
+    close_day,
+    rates,
+    new_rates,
+    has_rates_from_today,
+  });
+  variations.forEach((variation) =>
+    console.info('Notify rate variation', JSON.stringify(variation)),
+  );
   return Promise.all(
     notifications.map(([type, rates]) =>
       Shared.triggerNotifyEvent({
@@ -602,13 +516,7 @@ export const handler = Shared.wrapHandler(async (event) => {
   });
   // notifications should occur after saving json files
   if (trigger_notification === true) {
-    await notify(
-      close_day,
-      rates,
-      has_rates_from_today,
-      new_rates,
-      has_new_rates,
-    );
+    await notify(close_day, rates, has_rates_from_today, new_rates);
   }
   console.info('Completed', JSON.stringify(new_rates));
   return new_rates;

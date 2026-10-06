@@ -303,23 +303,21 @@ const getTickets = (date, type) =>
 
 const getRatesJsonObject = () => getJsonObject(QUOTES_OBJECT_KEY);
 
-const getRates = async (base_rates) => {
-  // took only available rates
-  base_rates =
-    base_rates ||
-    (await getRatesJsonObject().catch(() => {
-      // ignore
-    }));
-  // reduce rate_stats to the last ones
-  const rates = Object.entries(base_rates.rates || {}).reduce(
-    (obj, [type, rate]) => {
-      obj[type] = _.last(rate.stats);
-      return obj;
-    },
-    {},
+// the last stat per type, what /fetch serves from S3 and from its lambda
+const getLastStats = (items) =>
+  _.mapValues(items, (item) => _.last(item.stats));
+
+// an unreadable quotes file throws, so a manual notify fails loud and its event retries
+// a plain error keeps a string code like Z_DATA_ERROR out of the route status
+const getRates = async (base_rates) =>
+  getLastStats(
+    (
+      base_rates ||
+      (await getRatesJsonObject().catch((error) => {
+        throw new Error('Unable to read the rates', { cause: error });
+      }))
+    ).rates,
   );
-  return rates;
-};
 
 const storeObject = (key, content, compressed = true, opts = {}) => {
   const bucket = Resource.Bucket.name;
@@ -356,10 +354,7 @@ const storeTickets = (date, type, json) =>
 const storePublicJsonObject = (key, json) => storeJsonObject(key, json);
 
 const storeFetchJsonObject = (rates) => {
-  const json = Object.entries(rates.rates || {}).reduce((obj, [type, rate]) => {
-    obj[type] = _.last(rate.stats);
-    return obj;
-  }, {});
+  const json = getLastStats(rates.rates);
   const opts = { suffix: '' };
   return Promise.all([
     storeJsonObject(FETCH_OBJECT_KEY, json, opts),
@@ -414,32 +409,16 @@ const storeHistoricalRatesJsonObject = async (rates) => {
       // a rate always wins a collision
       ..._.mapValues(rates.rates, 'stats'),
     }).forEach(([type, stats]) => {
-      const moment_from = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
-      base_rates[type] = (base_rates[type] || [])
-        // leave rates not present on base_rates
-        .filter(([timestamp]) => {
-          const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
-          const include = moment_timestamp.isBefore(moment_from, 'day');
-          return include;
-        })
-        // leave new rate without rate open and hash
-        .concat(stats.map((stat) => _.take(stat, 3)));
+      base_rates[type] = AmbitoDolar.mergeHistoricalStats(
+        base_rates[type],
+        stats,
+      );
     });
   }
-  const base_year_rates = {};
-  Object.entries(base_rates || {}).forEach(([type, stats]) => {
-    const moment_from = AmbitoDolar.getTimezoneDate(_.last(stats)[0]).subtract(
-      1,
-      'year',
-    );
-    base_year_rates[type] = (base_rates[type] || [])
-      // leave rates from last year
-      .filter(([timestamp]) => {
-        const moment_timestamp = AmbitoDolar.getTimezoneDate(timestamp);
-        const include = moment_timestamp.isSameOrAfter(moment_from, 'day');
-        return include;
-      });
-  });
+  // the year the client draws as its widest range
+  const base_year_rates = _.mapValues(base_rates || {}, (stats) =>
+    AmbitoDolar.getStatsInRange(stats, (to) => to.clone().subtract(1, 'year')),
+  );
   const legacy_rates = pickRates(base_year_rates, LEGACY_RATE_TYPES, true);
   return Promise.all([
     storePublicJsonObject(FULL_HISTORICAL_QUOTES_OBJECT_KEY, base_rates),

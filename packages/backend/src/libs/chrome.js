@@ -109,3 +109,27 @@ export const generateScreenshot = async (url, opts) => {
     ig_story_file: ig_sharp_story_file,
   };
 };
+
+// a failed screenshot throws, each caller keeps its own fallback
+export const publishScreenshot = async (
+  url,
+  { square, generate_only, targets, caption },
+) => {
+  const {
+    target_url: image_url,
+    target_story_url: image_story_url,
+    ig_file: file,
+    ig_story_file: story_file,
+  } = await generateScreenshot(url, { square });
+  if (generate_only === true) {
+    return { image_url, image_story_url };
+  }
+  return Shared.triggerSocials(
+    targets,
+    caption,
+    image_url,
+    image_story_url,
+    file,
+    story_file,
+  );
+};

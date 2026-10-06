@@ -1,6 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 
-import { generateScreenshot } from '../libs/chrome';
+import { publishScreenshot } from '../libs/chrome';
 import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
@@ -40,23 +40,14 @@ export const handler = Shared.wrapHandler(async (event) => {
       title,
     });
     try {
-      const {
-        target_url: image_url,
-        target_story_url: image_story_url,
-        ig_file: file,
-        ig_story_file: story_file,
-      } = await generateScreenshot(screenshot_url);
-      if (generate_only === true) {
-        return { image_url, image_story_url };
-      }
-      results = await Shared.triggerSocials(
+      results = await publishScreenshot(screenshot_url, {
+        generate_only,
         targets,
         caption,
-        image_url,
-        image_story_url,
-        file,
-        story_file,
-      );
+      });
+      if (generate_only === true) {
+        return results;
+      }
     } catch (error) {
       console.warn(
         'Unable to generate the screenshot for notification',

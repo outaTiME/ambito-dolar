@@ -1,4 +1,4 @@
-import { generateScreenshot } from '../libs/chrome';
+import { publishScreenshot } from '../libs/chrome';
 import Shared from '../libs/shared';
 
 export const handler = Shared.wrapHandler(async (event) => {
@@ -30,25 +30,15 @@ export const handler = Shared.wrapHandler(async (event) => {
     earlier,
   });
   try {
-    const {
-      target_url: image_url,
-      target_story_url: image_story_url,
-      ig_file: file,
-      ig_story_file: story_file,
-    } = await generateScreenshot(screenshot_url, {
+    const results = await publishScreenshot(screenshot_url, {
       square: true,
-    });
-    if (generate_only === true) {
-      return { image_url, image_story_url };
-    }
-    const results = await Shared.triggerSocials(
+      generate_only,
       targets,
       caption,
-      image_url,
-      image_story_url,
-      file,
-      story_file,
-    );
+    });
+    if (generate_only === true) {
+      return results;
+    }
     console.info('Completed', JSON.stringify(results));
     return results;
   } catch (error) {
