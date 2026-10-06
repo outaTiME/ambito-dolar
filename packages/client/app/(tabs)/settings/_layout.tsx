@@ -29,12 +29,9 @@ export default function SettingsStackLayout() {
       <Stack.Screen
         name="notifications/[type]"
         options={({ route }) => ({
-          title: Helper.getScreenTitle(I18n.t('advanced_notifications')),
-          ...((route as any)?.params?.type && {
-            title: Helper.getScreenTitle(
-              AmbitoDolar.getNotificationTitle((route as any).params.type),
-            ),
-          }),
+          title: Helper.getScreenTitle(
+            AmbitoDolar.getNotificationTitle((route as any).params.type),
+          ),
         })}
       />
       <Stack.Screen

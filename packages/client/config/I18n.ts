@@ -8,7 +8,6 @@ const i18n = new I18n({
   es: {
     // general
     accept: 'Aceptar',
-    cancel: 'Cancelar',
     done: 'Listo',
     not_now: 'Ahora no',
     customize: 'Personalizar',
@@ -126,7 +125,6 @@ const i18n = new I18n({
     dark_appearance: 'Oscuro',
     // custom rates
     customize_rates: 'Cotizaciones',
-    edit: 'Editar',
     customize_rates_note:
       'Podés ajustar el orden manteniendo presionado el selector lateral y arrastrando.',
     rate_order: 'Orden',
