@@ -35,19 +35,20 @@ const AdvancedNotificationsScreen = ({
         },
         paramType,
       );
+      // the legacy key would keep ccl off whatever the switch says
+      if (type === AmbitoDolar.CCL_TYPE) {
+        delete settings[paramType].rates[AmbitoDolar.CCL_LEGACY_TYPE];
+      }
       dispatch(actions.updateNotificationSettings(settings));
     },
     [paramType, notification_settings, dispatch],
   );
   const getItemView = React.useCallback(
     (type) => {
-      const settings = notification_settings[paramType];
-      // keep compatibility with previously saved notification settings
-      const value =
-        type === AmbitoDolar.CCL_TYPE
-          ? settings.rates[AmbitoDolar.CCL_LEGACY_TYPE] !== false &&
-            settings.rates[AmbitoDolar.CCL_TYPE] === true
-          : settings.rates[type];
+      const value = AmbitoDolar.isNotificationRateEnabled(
+        notification_settings[paramType],
+        type,
+      );
       return (
         <CardItemView
           key={type}
