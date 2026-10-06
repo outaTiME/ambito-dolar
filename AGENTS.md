@@ -123,6 +123,8 @@ touching any of that.
 
 - No rename/move files unless task needs. Run the most relevant scoped lint/test for touched code before handoff, report what ran.
 - A change to code a `.md` names updates that `.md` in the same commit.
+- A refactor that preserves behaviour is checked by running HEAD and the new code on the same inputs,
+  `null`, empty and a failing read included.
 
 ### Reading and writing these files
 
