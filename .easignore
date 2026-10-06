@@ -73,6 +73,8 @@ packages/*
 packages/backend/*
 !packages/backend/package.json
 !packages/client
+packages/client/test.js
+packages/client/scripts/
 !packages/core
 packages/core/*
 !packages/core/index.js
