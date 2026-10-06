@@ -1,10 +1,10 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import * as chrono from 'chrono-node/es';
 import Joi from 'joi';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import hash from 'object-hash';
 
-import Shared, { MAX_NUMBER_OF_STATS, USER_AGENT } from '../libs/shared';
+import Shared, { MAX_NUMBER_OF_STATS, USER_AGENT } from '../libs/shared.js';
 
 const numberValidator = (value, helpers) => {
   // convert to number and truncate
@@ -314,16 +314,13 @@ const getNewRates = (rates, new_rates) =>
       const rate = rates[type];
       // detect rate update using hash compare
       if (rate_hash !== _.last(rate)) {
-        const { stat: new_rate, variation } = AmbitoDolar.getNextRateStat(
-          rate,
-          {
-            rate_last,
-            date,
-            rate_hash,
-            getThreshold: (prev, curr) =>
-              Shared.getVariationThreshold(type, prev, curr),
-          },
-        );
+        const { stat: new_rate, variation } = Shared.getNextRateStat(rate, {
+          rate_last,
+          date,
+          rate_hash,
+          getThreshold: (prev, curr) =>
+            Shared.getVariationThreshold(type, prev, curr),
+        });
         console.info(
           'Check for rate variation to notify',
           JSON.stringify({ type, ...variation }),
@@ -375,7 +372,7 @@ const getMarkets = () =>
 const addStats = (items, new_items) =>
   Object.entries(new_items).forEach(([type, stat]) => {
     items[type] ??= {};
-    items[type].stats = AmbitoDolar.addStat(
+    items[type].stats = Shared.addStat(
       items[type].stats,
       stat,
       MAX_NUMBER_OF_STATS,
@@ -390,7 +387,7 @@ const getHistoricalRates = (rates, base_rates) =>
   ).then(getObjectRates);
 
 const notify = (close_day, rates, has_rates_from_today, new_rates) => {
-  const { notifications, variations = [] } = AmbitoDolar.getNotifications({
+  const { notifications, variations = [] } = Shared.getNotifications({
     close_day,
     rates,
     new_rates,

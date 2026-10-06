@@ -1,8 +1,8 @@
 import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { Resource } from 'sst';
 
-import Shared from '../libs/shared';
+import Shared from '../libs/shared.js';
 
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);

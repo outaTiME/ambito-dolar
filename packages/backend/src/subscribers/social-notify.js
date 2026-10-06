@@ -1,7 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 
-import { publishScreenshot } from '../libs/chrome';
-import Shared from '../libs/shared';
+import { publishScreenshot } from '../libs/chrome.js';
+import Shared from '../libs/shared.js';
 
 export const handler = Shared.wrapHandler(async (event) => {
   const {

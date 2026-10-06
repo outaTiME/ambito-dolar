@@ -2,6 +2,7 @@
   "name": "@ambito-dolar/backend",
   "private": true,
   "version": "5.2.2",
+  "type": "module",
   "dependencies": {
     "@ambito-dolar/core": "^5.2.2",
     "@aws-sdk/client-dynamodb": "^3.1146.0",
@@ -29,5 +30,8 @@
     "semver": "^7.8.5",
     "sharp": "~0.35.5",
     "yn": "^5.1.0"
+  },
+  "scripts": {
+    "test": "yarn run -T ava"
   }
 }

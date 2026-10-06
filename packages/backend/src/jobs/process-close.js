@@ -1,4 +1,4 @@
-import Shared from '../libs/shared';
+import Shared from '../libs/shared.js';
 
 export const handler = Shared.wrapHandler(async () => {
   const message_id = await Shared.triggerProcessEvent({

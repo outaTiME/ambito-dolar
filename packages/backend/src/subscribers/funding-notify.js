@@ -1,5 +1,5 @@
-import { publishScreenshot } from '../libs/chrome';
-import Shared from '../libs/shared';
+import { publishScreenshot } from '../libs/chrome.js';
+import Shared from '../libs/shared.js';
 
 export const handler = Shared.wrapHandler(async (event) => {
   const { generate_only, targets, earlier } = JSON.parse(

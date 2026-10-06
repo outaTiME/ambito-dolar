@@ -15,16 +15,15 @@ import { NodeHttpHandler } from '@smithy/node-http-handler';
 import { Expo } from 'expo-server-sdk';
 import { JWT } from 'google-auth-library';
 import https from 'https';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import pLimit from 'promise-limit';
-import semverGte from 'semver/functions/gte';
-import semverLt from 'semver/functions/lt';
+import semverLt from 'semver/functions/lt.js';
 import { Resource } from 'sst';
 import yn from 'yn';
 import zlib from 'zlib';
 
-import { publish as publishToInstagram } from './social/instagram';
-import { publish as publishToMastodon } from './social/mastodon';
+import { publish as publishToInstagram } from './social/instagram.js';
+import { publish as publishToMastodon } from './social/mastodon.js';
 
 // defaults
 
@@ -245,8 +244,6 @@ const getAllDataFromDynamoDB = (params) => {
 
 const isSemverLt = (v1, v2) => semverLt(v1, v2);
 
-const isSemverGte = (v1, v2) => semverGte(v1, v2);
-
 const getVariationThreshold = (type, prev_rate, rate) => {
   const realtime_types = [
     AmbitoDolar.CCL_TYPE,
@@ -409,10 +406,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
       // a rate always wins a collision
       ..._.mapValues(rates.rates, 'stats'),
     }).forEach(([type, stats]) => {
-      base_rates[type] = AmbitoDolar.mergeHistoricalStats(
-        base_rates[type],
-        stats,
-      );
+      base_rates[type] = mergeHistoricalStats(base_rates[type], stats);
     });
   }
   // the year the client draws as its widest range
@@ -693,11 +687,6 @@ const triggerSocials = (targets, caption, url, story_url, file, story_file) => {
   return Promise.all(promises).then(_.compact);
 };
 
-const fetchImage = (url) =>
-  AmbitoDolar.fetch(url).then(async (response) =>
-    Buffer.from(await response.arrayBuffer()),
-  );
-
 const wrapHandler = (handler) => {
   if (IS_PRODUCTION) {
     // https://docs.sentry.io/platforms/javascript/guides/aws-lambda/install/esm-npm/#alternative-initialize-the-sdk-in-code
@@ -736,6 +725,149 @@ const isQueryParamTruthy = (value) =>
     default: value === '',
   });
 
+// the stat a fetched value turns into, the hash only rides along
+// getThreshold gets the notified value and the new one
+const getNextRateStat = (
+  rate,
+  { rate_last, date, rate_hash, getThreshold },
+) => {
+  // FIXME: use the average between the values instead of the highest one ???
+  // eslint-disable-next-line no-sparse-arrays
+  const rate_last_max = AmbitoDolar.getRateValue([, rate_last]);
+  // processing time unless the source dates its value
+  const rate_date = date ?? AmbitoDolar.getTimezoneDate().format();
+  // get close rate when first rate of day (open)
+  const rate_close = rate
+    ? AmbitoDolar.getTimezoneDate(rate_date).isSame(rate[0], 'day')
+      ? rate[3]
+      : AmbitoDolar.getRateValue(rate)
+    : rate_last_max;
+  // calculate from open / close rate and truncate
+  const rate_change_percent = rate_close
+    ? AmbitoDolar.getNumber((rate_last_max / rate_close - 1) * 100)
+    : 0;
+  // handles variations between notifications regardless of the exchange rate day
+  const prev = rate?.[4] ?? rate_last_max;
+  // truncate decimals
+  const diff = AmbitoDolar.getNumber(Math.abs(prev - rate_last_max));
+  const threshold = getThreshold(prev, rate_last_max);
+  const should_notify = diff !== 0 && diff > threshold;
+  return {
+    stat: [
+      rate_date,
+      rate_last,
+      rate_change_percent,
+      rate_close,
+      should_notify ? rate_last_max : prev,
+      rate_hash,
+    ],
+    variation: { prev, curr: rate_last_max, diff, threshold, should_notify },
+  };
+};
+
+// a same day stat is replaced, older ones keep their first three fields to reduce the file size
+const addStat = (stats, stat, max) => {
+  const day = AmbitoDolar.getTimezoneDate(stat[0]);
+  return _.takeRight(
+    (stats || [])
+      .filter((item) => !day.isSame(item[0], 'day'))
+      .map((item) => _.take(item, 3))
+      .concat([stat]),
+    max,
+  );
+};
+
+// the new stats replace every day from their first one on, without the open and the hash
+const mergeHistoricalStats = (history, stats) => {
+  const from = AmbitoDolar.getTimezoneDate(_.first(stats)[0]);
+  return (history || [])
+    .filter(([timestamp]) =>
+      AmbitoDolar.getTimezoneDate(timestamp).isBefore(from, 'day'),
+    )
+    .concat(stats.map((stat) => _.take(stat, 3)));
+};
+
+const getChangeMessage = (rate) => {
+  const value = AmbitoDolar.getRateValue(rate);
+  const formatted_value = AmbitoDolar.formatRateCurrency(value, true);
+  const change = rate[2];
+  const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '';
+  if (arrow) {
+    const abs_pct = AmbitoDolar.formatRateCurrency(Math.abs(change), true);
+    return `${formatted_value} ${arrow}${abs_pct}%`;
+  }
+  return formatted_value;
+};
+
+const getRateMessage = (type, rate) => {
+  const rate_title = AmbitoDolar.getRateTitle(type);
+  if (rate_title) {
+    return `${rate_title.toUpperCase()} ${getChangeMessage(rate)}`;
+  }
+};
+
+// the push body and the social caption, reddit and bluesky cap the caption at 300 characters
+const getBodyMessage = (rates) => {
+  const available_rates = AmbitoDolar.getAvailableRates(rates);
+  if (available_rates) {
+    const body = _.chain(available_rates)
+      .map((rate, type) => ({ type, rate, mag: Math.abs(rate[2] ?? 0) }))
+      .sortBy((x) => -x.mag)
+      .map(({ type, rate }) => getRateMessage(type, rate))
+      // remove empty messages
+      .compact()
+      .value();
+    if (body.length > 0) {
+      return body.join(', ');
+    }
+  }
+};
+
+const getSocialCaption = (type, rates) => {
+  const body = getBodyMessage(rates);
+  if (body) {
+    const title = AmbitoDolar.getNotificationTitle(type);
+    return `${title}. ${body}`;
+  }
+};
+
+// which pushes a run sends, a variation is a notified value that moved in getNextRateStat
+const getNotifications = ({
+  close_day,
+  rates,
+  new_rates,
+  has_rates_from_today,
+}) => {
+  const all_rates = { ...rates, ...new_rates };
+  if (close_day === true) {
+    return {
+      notifications: [[AmbitoDolar.NOTIFICATION_CLOSE_TYPE, all_rates]],
+    };
+  }
+  if (_.isEmpty(new_rates)) {
+    return { notifications: [] };
+  }
+  if (!has_rates_from_today) {
+    return { notifications: [[AmbitoDolar.NOTIFICATION_OPEN_TYPE, all_rates]] };
+  }
+  const variations = Object.entries(new_rates).map(([type, rate]) => {
+    const prev = rates[type]?.[4];
+    const curr = rate[4];
+    return { type, prev, curr, notify: prev !== curr };
+  });
+  const variation_rates = _.pick(
+    new_rates,
+    variations.filter(({ notify }) => notify).map(({ type }) => type),
+  );
+  return {
+    // join variations in a single notification
+    notifications: _.isEmpty(variation_rates)
+      ? []
+      : [[AmbitoDolar.NOTIFICATION_VARIATION_TYPE, variation_rates]],
+    variations,
+  };
+};
+
 export default {
   // fetchFirebaseData,
   // updateFirebaseData,
@@ -745,8 +877,13 @@ export default {
   // getS3Client,
   getAllDataFromDynamoDB,
   isSemverLt,
-  isSemverGte,
   getVariationThreshold,
+  getNextRateStat,
+  addStat,
+  mergeHistoricalStats,
+  getBodyMessage,
+  getSocialCaption,
+  getNotifications,
   getJsonObject,
   getTickets,
   getRatesJsonObject,
@@ -770,7 +907,6 @@ export default {
   // triggerSendSocialNotificationsEvent,
   promiseRetry,
   triggerSocials,
-  fetchImage,
   wrapHandler,
   // TODO: update default limit close to 500 ???
   promiseLimit: (concurrency = MAX_SOCKETS) => pLimit(concurrency),

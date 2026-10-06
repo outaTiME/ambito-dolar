@@ -361,46 +361,6 @@ const getNotificationSettings = (notification_settings) => {
 
 const getRateValue = (stat) => Math.max(...[].concat(stat[1]));
 
-// the stat a fetched value turns into, the hash only rides along
-// getThreshold gets the notified value and the new one
-const getNextRateStat = (
-  rate,
-  { rate_last, date, rate_hash, getThreshold },
-) => {
-  // FIXME: use the average between the values instead of the highest one ???
-  // eslint-disable-next-line no-sparse-arrays
-  const rate_last_max = getRateValue([, rate_last]);
-  // processing time unless the source dates its value
-  const rate_date = date ?? getTimezoneDate().format();
-  // get close rate when first rate of day (open)
-  const rate_close = rate
-    ? getTimezoneDate(rate_date).isSame(rate[0], 'day')
-      ? rate[3]
-      : getRateValue(rate)
-    : rate_last_max;
-  // calculate from open / close rate and truncate
-  const rate_change_percent = rate_close
-    ? getNumber((rate_last_max / rate_close - 1) * 100)
-    : 0;
-  // handles variations between notifications regardless of the exchange rate day
-  const prev = rate?.[4] ?? rate_last_max;
-  // truncate decimals
-  const diff = getNumber(Math.abs(prev - rate_last_max));
-  const threshold = getThreshold(prev, rate_last_max);
-  const should_notify = diff !== 0 && diff > threshold;
-  return {
-    stat: [
-      rate_date,
-      rate_last,
-      rate_change_percent,
-      rate_close,
-      should_notify ? rate_last_max : prev,
-      rate_hash,
-    ],
-    variation: { prev, curr: rate_last_max, diff, threshold, should_notify },
-  };
-};
-
 const getRateChange = (stat, include_symbol = false) => {
   const str = [];
   let change = stat;
@@ -441,111 +401,12 @@ const promiseRetry = (fn, opts) =>
     ...opts,
   });
 
-// a same day stat is replaced, older ones keep their first three fields to reduce the file size
-const addStat = (stats, stat, max) => {
-  const day = getTimezoneDate(stat[0]);
-  return _.takeRight(
-    (stats || [])
-      .filter((item) => !day.isSame(item[0], 'day'))
-      .map((item) => _.take(item, 3))
-      .concat([stat]),
-    max,
-  );
-};
-
-// the new stats replace every day from their first one on, without the open and the hash
-const mergeHistoricalStats = (history, stats) => {
-  const from = getTimezoneDate(_.first(stats)[0]);
-  return (history || [])
-    .filter(([timestamp]) => getTimezoneDate(timestamp).isBefore(from, 'day'))
-    .concat(stats.map((stat) => _.take(stat, 3)));
-};
-
-const getChangeMessage = (rate) => {
-  const value = getRateValue(rate);
-  const formatted_value = formatRateCurrency(value, true);
-  const change = rate[2];
-  const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '';
-  if (arrow) {
-    const abs_pct = formatRateCurrency(Math.abs(change), true);
-    return `${formatted_value} ${arrow}${abs_pct}%`;
-  }
-  return formatted_value;
-};
-
-const getRateMessage = (type, rate) => {
-  const rate_title = getRateTitle(type);
-  if (rate_title) {
-    return `${rate_title.toUpperCase()} ${getChangeMessage(rate)}`;
-  }
-};
-
 // a setting saved before the wholesale rate carries ccl as cl too
 const isNotificationRateEnabled = (settings, type) =>
   type === CCL_TYPE
     ? settings.rates[CCL_LEGACY_TYPE] !== false &&
       settings.rates[CCL_TYPE] === true
     : settings.rates[type] === true;
-
-// the push body and the social caption, reddit and bluesky cap the caption at 300 characters
-const getBodyMessage = (rates) => {
-  const available_rates = getAvailableRates(rates);
-  if (available_rates) {
-    const body = _.chain(available_rates)
-      .map((rate, type) => ({ type, rate, mag: Math.abs(rate[2] ?? 0) }))
-      .sortBy((x) => -x.mag)
-      .map(({ type, rate }) => getRateMessage(type, rate))
-      // remove empty messages
-      .compact()
-      .value();
-    if (body.length > 0) {
-      return body.join(', ');
-    }
-  }
-};
-
-const getSocialCaption = (type, rates) => {
-  const body = getBodyMessage(rates);
-  if (body) {
-    const title = getNotificationTitle(type);
-    return `${title}. ${body}`;
-  }
-};
-
-// which pushes a run sends, a variation is a notified value that moved in getNextRateStat
-const getNotifications = ({
-  close_day,
-  rates,
-  new_rates,
-  has_rates_from_today,
-}) => {
-  const all_rates = { ...rates, ...new_rates };
-  if (close_day === true) {
-    return { notifications: [[NOTIFICATION_CLOSE_TYPE, all_rates]] };
-  }
-  if (_.isEmpty(new_rates)) {
-    return { notifications: [] };
-  }
-  if (!has_rates_from_today) {
-    return { notifications: [[NOTIFICATION_OPEN_TYPE, all_rates]] };
-  }
-  const variations = Object.entries(new_rates).map(([type, rate]) => {
-    const prev = rates[type]?.[4];
-    const curr = rate[4];
-    return { type, prev, curr, notify: prev !== curr };
-  });
-  const variation_rates = _.pick(
-    new_rates,
-    variations.filter(({ notify }) => notify).map(({ type }) => type),
-  );
-  return {
-    // join variations in a single notification
-    notifications: _.isEmpty(variation_rates)
-      ? []
-      : [[NOTIFICATION_VARIATION_TYPE, variation_rates]],
-    variations,
-  };
-};
 
 export default {
   TIMEZONE,
@@ -597,13 +458,7 @@ export default {
   formatDuration,
   isRateFromToday,
   getStatsInRange,
-  getNextRateStat,
-  addStat,
-  mergeHistoricalStats,
-  getNotifications,
   isNotificationRateEnabled,
-  getBodyMessage,
-  getSocialCaption,
   hasRatesFromToday,
   getAvailableRateTypes,
   getAvailableRates,

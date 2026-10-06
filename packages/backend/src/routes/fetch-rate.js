@@ -1,6 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 
-import Shared, { USER_AGENT } from '../libs/shared';
+import Shared, { USER_AGENT } from '../libs/shared.js';
 
 export const handler = Shared.wrapHandler(async (event) => {
   const type = event?.queryStringParameters?.type || AmbitoDolar.INFORMAL_TYPE;

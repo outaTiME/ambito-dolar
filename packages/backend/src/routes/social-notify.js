@@ -1,4 +1,4 @@
-import Shared from '../libs/shared';
+import Shared from '../libs/shared.js';
 
 export const handler = Shared.wrapHandler(async (event) => {
   const { type, title, caption, generate_only, targets } =

@@ -1,6 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 
-import Shared from '../shared';
+import Shared from '../shared.js';
 
 const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
 const IG_USER_ID = process.env.IG_USER_ID;

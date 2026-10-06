@@ -1,9 +1,9 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { marshall } from '@aws-sdk/util-dynamodb';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { Resource } from 'sst';
 
-import Shared from '../libs/shared';
+import Shared from '../libs/shared.js';
 
 export const handler = Shared.wrapHandler(async (event) => {
   const { push_token } = event.queryStringParameters || {};

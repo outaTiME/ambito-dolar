@@ -2,7 +2,8 @@
 
 Rules for `packages/core`, loaded on top of the root `AGENTS.md` when working here.
 
-A change here reaches the client, the backend and the website.
+A change here reaches the client and the backend.
+Logic only one package calls lives in that package, see its `AGENTS.md`.
 
 - **`fetch` and `promiseRetry` have consumers on both sides.** `promiseRetry` reads as backend only
   and is not, the client retries the expo push token with it through `Helper.promiseRetry` in
@@ -15,11 +16,6 @@ A change here reaches the client, the backend and the website.
 
 ## Tests
 
-```bash
-yarn test                                                # from the root, through lerna
-yarn workspace @ambito-dolar/core exec ava
-```
-
-- The `test` script is `eslint . && ava`, so `yarn workspace @ambito-dolar/core test` dies with
-  `command not found: eslint`: eslint only resolves from the repo root. Go through root `yarn test`
-  or `exec ava`.
+- AVA in `packages/core/test.js`, run alone with `yarn workspace @ambito-dolar/core test`.
+- A device timezone is simulated with `moment.tz.setDefault`. Setting `process.env.TZ` inside a test
+  does nothing, AVA runs it in a worker thread.

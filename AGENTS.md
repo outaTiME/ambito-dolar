@@ -7,7 +7,7 @@ Guide for coding agents. Minimal targeted edits. Preserve behavior unless asked.
 - Monorepo: Yarn workspaces + Lerna (`packages/*`).
 - `packages/core` (`@ambito-dolar/core`): shared domain utils (rates, dates, formatting, fetch helpers). ESM (`"type": "module"`).
 - `packages/client` (`@ambito-dolar/client`): Expo React Native app (iOS, Android, web).
-- `packages/backend` (`@ambito-dolar/backend`): SST v4 backend (Lambda handlers).
+- `packages/backend` (`@ambito-dolar/backend`): SST v4 backend (Lambda handlers). ESM (`"type": "module"`).
 - `packages/website` (`@ambito-dolar/website`): Astro website (static landing).
 
 ## Runtime and Tooling
@@ -36,18 +36,18 @@ yarn workspace @ambito-dolar/website run build|preview
 ### Lint
 
 - From repo root: `yarn eslint packages`, or scope it, `yarn eslint "packages/<ws>/<path>"`.
-- Before handing work back run root `yarn test`: it lints every workspace, checks the code and markdown format and runs the core tests.
-- **`eslint`, `prettier` and `tsc` are root devDependencies and resolve from the repo root only.** A workspace only sees what it declares itself, so calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. From inside a workspace the way in is `yarn run -T <binary>`, which resolves the root one. Typecheck the client with `yarn client:typecheck` from the root.
+- Before handing work back run root `yarn test`, see Tests.
+- **`eslint`, `prettier`, `tsc` and `ava` are root devDependencies and resolve from the repo root only.** A workspace only sees what it declares itself, so calling them anywhere else, including after a `cd` into a workspace inside the same command, answers `Couldn't find a script named "eslint"`. From inside a workspace the way in is `yarn run -T <binary>`, which resolves the root one. Typecheck the client with `yarn client:typecheck` from the root.
 
 ### Tests
 
-- Root `yarn test` lints every workspace, checks the code and markdown format and runs the AVA tests of `packages/core` through lerna, the CI runs it on every push. No other workspace has a test script. Details in `packages/core/AGENTS.md`.
+- Root `yarn test` lints every workspace and runs the AVA tests of `packages/core`, `packages/backend` and `packages/client` through lerna, the CI runs it on every push. The website has no test script. Details in each package `AGENTS.md`.
 
 ## Code Style
 
 ### Formatting
 
-- Prettier and EditorConfig read their own config, run them instead of applying them by hand.
+- Prettier and EditorConfig read their own config. Root `yarn test` does not check formatting, run `yarn prettier --write` on the files you touched.
 - Match nearby style before broad reformat.
 - Comments: lowercase default, keep existing uppercase unless editing that line. Terse, ASCII-only, no arrows/em-dash/checkmarks/special chars. No trailing period. One sentence per `//`, one line where it fits. Multi-line only for a second distinct fact, consecutive `//`, never prose-with-semicolons.
 - No label-prefix comments (`// feature flag:`, `// android:`, `// <tag>:`). Plain sentence describing what or why.
@@ -67,7 +67,7 @@ yarn workspace @ambito-dolar/website run build|preview
 
 - **Commit and push directly to `master` by default.** That settles where, never when. Nothing is committed until the user calls the task closed, unless they ask for it sooner; until then the work stays in the tree and the diff goes to them. Group what does land, one commit per closed piece of work and never one per edit, and a change undone later in the same session must not reach the history at all. Only branch or open a PR when the user explicitly asks. Never branch on your own from the generic harness default "if on the default branch, branch first" — that default does not apply here.
 - Conventional commits (`@commitlint/config-conventional`). Types: `feat/fix/refactor/chore/docs/test`. No scope in subjects.
-- Subject only, no body (body reserved for `BREAKING CHANGE:` footer). Preserve acronym/product casing (`CloudFront`, `S3`, `iOS`).
+- Subject only, no body (body reserved for `BREAKING CHANGE:` footer). Preserve acronym/product casing (`CloudFront`, `S3`, `iOS`), never as the subject's first word.
 - Subject names the real problem/effect, not the mechanism: `fix: unreadable android navigation bar in light mode`, not `fix: theme android navigation bar`.
 - Preventive fix: `fix: prevent <effect>` (`fix: prevent expo-server-sdk v6 bundle break in notification lambdas`, `fix: externalize puppeteer-core to prevent social lambda crash`). Present tense (`X breaks`) only when the break actually happened.
 - `chore: remove unused code` = pure removals only; refactors/restructures stay `refactor:`.
@@ -78,7 +78,7 @@ yarn workspace @ambito-dolar/website run build|preview
 - Semver alignment across branch: major needs `BREAKING CHANGE:`, minor needs `feat:`, patch needs `fix:` only (no `feat:`).
 - Lerna independent versioning, release from `master`.
 
-Before any commit read `docs/commits.md`: release tail order, no hunk splitting, SDK upgrade sequence.
+Before any commit read `docs/commits.md`.
 
 ## Analytics and tracking policy
 
@@ -121,7 +121,7 @@ touching any of that.
 
 ## Agent Operating Defaults
 
-- No rename/move files unless task needs. Run the most relevant scoped lint/test for touched code before handoff, report what ran.
+- No rename/move files unless task needs. Report what ran before handoff.
 - A change to code a `.md` names updates that `.md` in the same commit.
 - A refactor that preserves behaviour is checked by running HEAD and the new code on the same inputs,
   `null`, empty and a failing read included.

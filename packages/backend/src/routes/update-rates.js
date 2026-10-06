@@ -1,7 +1,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
-import Shared from '../libs/shared';
+import Shared from '../libs/shared.js';
 
 export const handler = Shared.wrapHandler(async (event) => {
   try {

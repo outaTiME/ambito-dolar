@@ -2,10 +2,10 @@ import AmbitoDolar from '@ambito-dolar/core';
 import { BatchWriteItemCommand } from '@aws-sdk/client-dynamodb'; // ES Modules import
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { Resource } from 'sst';
 
-import Shared, { IS_LOCAL } from '../libs/shared';
+import Shared, { IS_LOCAL } from '../libs/shared.js';
 
 const ddbClient = Shared.getDynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);

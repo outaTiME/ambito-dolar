@@ -1,6 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import pThrottle from 'p-throttle';
 import { Resource } from 'sst';
 
@@ -14,7 +14,7 @@ import Shared, {
   MIN_CLIENT_VERSION_FOR_BNA,
   MIN_CLIENT_VERSION_FOR_EURO_AND_REAL,
   MIN_CLIENT_VERSION_FOR_FUTURE,
-} from '../libs/shared';
+} from '../libs/shared.js';
 
 // a client below the version a rate shipped in cannot render it
 const MIN_CLIENT_VERSIONS = {
@@ -58,7 +58,7 @@ const getMessagesFromCurrentRate = (items, type, rates) => {
               Shared.isSemverLt(app_version, MIN_CLIENT_VERSIONS[type])
             ),
         );
-        const body = AmbitoDolar.getBodyMessage(rates_for_settings);
+        const body = Shared.getBodyMessage(rates_for_settings);
         if (body) {
           return getMessage({
             to: push_token,
@@ -355,7 +355,7 @@ export const handler = Shared.wrapHandler(async (event) => {
             Shared.triggerSocialNotifyEvent({
               type,
               title: AmbitoDolar.getNotificationTitle(type),
-              caption: AmbitoDolar.getSocialCaption(type, social_rates),
+              caption: Shared.getSocialCaption(type, social_rates),
             }),
           );
         }

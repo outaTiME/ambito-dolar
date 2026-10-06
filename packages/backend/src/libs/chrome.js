@@ -5,7 +5,7 @@ import prettyBytes from 'pretty-bytes';
 import { launch } from 'puppeteer-core';
 import sharp from 'sharp';
 
-import Shared from './shared';
+import Shared from './shared.js';
 
 const storeS3File = async (buffer, isStory = false) => {
   const { ext = 'jpg', mime = 'image/jpeg' } = (await imageType(buffer)) || {};

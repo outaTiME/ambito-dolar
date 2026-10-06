@@ -5,7 +5,11 @@ Rules for `packages/backend`, loaded on top of the root `AGENTS.md` when working
 SST v4, Lambda handlers.
 
 - API handlers go through `Shared.wrapHandler(...)` and answer with `Shared.serviceResponse(...)`.
-- `packages/backend/src/routes/test.js` is an API endpoint, not a test. There is no test script here.
+- `packages/backend/src/routes/test.js` is an API endpoint, not a test.
+- ESM (`"type": "module"`): imports follow Node semantics in esbuild and in the AVA test. Relative
+  imports and package subpaths (`semver/functions/lt.js`) carry their `.js` extension. A CommonJS
+  default import gets `module.exports`: lodash is `import _ from 'lodash'`, a package compiled with
+  `__esModule` is imported by name.
 - Public response shapes are contracts: the client, the website and both widget implementations
   read them. A `/fetch` change reaches the ios widgets first, see
   `packages/client/docs/android-widgets.md`.
@@ -64,10 +68,16 @@ SST v4, Lambda handlers.
 - **Do not reorder `process.js`.** `storeRatesJsonObject` -> `updateRealtimeData` -> `notify` is
   load bearing, a push landing before the board is written shows stale rates to the clients still
   on it.
-- **Rate math lives in core, AVA tested**: `getNextRateStat` (close, pct, notify threshold),
-  `getNotifications` (which pushes), `addStat` / `mergeHistoricalStats` (payload and historical
-  file). `process.js` only hashes, passes `getVariationThreshold` and logs. The historical file keeps
-  one year, the client draws it as `1A`.
+- **Rate math lives in `packages/backend/src/libs/shared.js`, AVA tested**: `getNextRateStat`
+  (close, pct, notify threshold), `getNotifications` (which pushes), `addStat` /
+  `mergeHistoricalStats` (payload and historical file), `getBodyMessage` / `getSocialCaption` (push
+  and social text). `process.js` only hashes, passes `getVariationThreshold` and logs. The
+  historical file keeps one year, the client draws it as `1A`.
 - **Remove `updateInstantData` before 2027-08-31**, the day InstantDB cloud shuts down. It carries
   no timeout of its own and runs before `notify()`, so a hung sdk eats the one minute `Process`
   budget and stops push and socials for everyone.
+
+## Tests
+
+- AVA in `packages/backend/test.js`, run alone with `yarn workspace @ambito-dolar/backend test`.
+- It loads `packages/backend/src/libs/shared.js` and what it imports in plain Node, unbundled.
