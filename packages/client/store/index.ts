@@ -11,7 +11,8 @@ import rootReducer from '@/reducers';
 
 const debug = __DEV__;
 
-const STORE_CONFIG_VERSION = 6.1;
+// an integer, redux-persist parses migration keys with parseInt
+const STORE_CONFIG_VERSION = 7;
 
 const migrations = {
   // when store config version bump leave application data only
