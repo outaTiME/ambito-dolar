@@ -61,10 +61,17 @@ abstract class WidgetProvider : AppWidgetProvider() {
   // the configured rate of every slot, each one falling back to its own default. Pairing a slot
   // with the wrong default is the kind of mistake that only shows up as a wrong widget. The config
   // screen reads them through here too, so the pairing is written once
-  internal fun rateTypes(context: Context, widgetId: Int): List<String> =
-    defaultRates.mapIndexed { slot, default ->
-      WidgetConfig.rateType(context, widgetId, slot, default)
+  // a rate a release retired goes back to the default of its slot unless another slot holds it,
+  // then it stays and draws nothing like ios, so a widget never shows the same rate twice
+  internal fun rateTypes(context: Context, widgetId: Int): List<String> {
+    val stored =
+      defaultRates.mapIndexed { slot, default ->
+        WidgetConfig.rateType(context, widgetId, slot, default)
+      }
+    return stored.mapIndexed { slot, type ->
+      type.takeIf(Format::isKnown) ?: defaultRates[slot].takeIf { it !in stored } ?: type
     }
+  }
 
   // what the config screen puts on top, the same string the launcher shows in the picker
   abstract val label: Int
