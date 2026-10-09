@@ -198,6 +198,19 @@ test('Notification settings should keep the types independent', (t) => {
   t.true(settings.close.enabled);
 });
 
+test('Notification settings should survive a rate added or retired', (t) => {
+  // persisted by an older release, before mep existed and while qatar was still served
+  const settings = AmbitoDolar.getNotificationSettings({
+    close: { rates: { oficial: false, qatar: true } },
+  });
+  // a rate the persisted state does not name starts enabled
+  t.true(AmbitoDolar.isNotificationRateEnabled(settings.close, 'mep'));
+  // what was turned off stays off
+  t.false(AmbitoDolar.isNotificationRateEnabled(settings.close, 'oficial'));
+  // a retired key is kept
+  t.true(settings.close.rates.qatar);
+});
+
 test('Fetch should timeout with error', (t) =>
   t.throwsAsync(
     AmbitoDolar.fetch('https://httpbin.org/delay/2', {
