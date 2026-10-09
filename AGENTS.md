@@ -109,8 +109,10 @@ Simulate the caption with every active rate before adding one. See `docs/product
 ## Widgets
 
 Written twice: native android in `packages/client/modules/widgets/`, SwiftUI on ios in
-`packages/client/targets/RateWidgets/`. A rate, a label, a font size or a `/fetch` schema change
-has to move on both sides.
+`packages/client/targets/RateWidgets/` and `packages/client/targets/_shared/`. A rate, a label, a
+font size or a `/fetch` schema change has to move on both sides. The Apple Watch app in
+`packages/client/targets/RateWatch/` shares the rate list and the `/fetch` reading with the ios
+widget through `packages/client/targets/_shared/`.
 
 Four things outside the widgets break them when moved, and none is in a widget file:
 `packages/client/assets/fonts/FiraGO-Regular.otf`, the `API_URL` env var, the `ambito-dolar` scheme

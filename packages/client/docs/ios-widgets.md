@@ -7,22 +7,35 @@ Read before touching `packages/client/targets/`, `expo-target.config.js`, or the
 
 ```
 packages/client/targets/
-  _shared/LaunchAppIntent.swift        app target + widget target
+  _shared/                             every target: app, widget and watch app
+    LaunchAppIntent.swift              ios only, behind #if os(iOS)
+    Intents.swift                      AppEntity, AppEnum, the 3 WidgetConfigurationIntent
+    Helper.swift                       the rate list, mirrored by Format.kt on android
+    Rates.swift                        getRates, RateValue and lookupRateValues, the formatting
   RateWidgets/
     expo-target.config.js              everything the pbxproj used to hold by hand
     Info.plist                         hand managed, the plugin never rewrites it
     RateWidgets.swift                  views, providers, @main WidgetBundle
-    _shared/Intents.swift              AppEntity, AppEnum, the 3 WidgetConfigurationIntent
-    _shared/Helper.swift               the rate list, mirrored by Format.kt on android
     FiraGO-Regular.otf                 symlink, see below
     Assets.xcassets/                   symbolset committed, colorsets generated
+  RateWatch/
+    expo-target.config.js              type watch, icon from the app icon
+    Info.plist                         hand managed, UIAppFonts only
+    RateWatchApp.swift                 views, settings sheet, @main App
+    FiraGO-Regular.otf                 symlink, same as the widget
+    Assets.xcassets/                   colorset and appiconset generated
 ```
 
 `@bacons/apple-targets` links the folder as a `PBXFileSystemSynchronizedRootGroup`: Xcode globs it
 at build time, so **any file dropped in becomes part of the target** and Swift-only edits do not
-need a prebuild. Adding, renaming or removing a file in a `_shared/` does.
+need a prebuild. Adding, renaming or removing a file in `_shared/` does.
 
-The intents live in `packages/client/targets/RateWidgets/_shared/` and not next to the views, so the
+**Names follow one pattern**: the folder names the thing (`RateWidgets/`, `RateWatch/`), the main
+file is named after its `@main` type, `name` adds the product kind (`RateWidgetsExtension`,
+`RateWatchApp`). The widget side is published identity: a new bundle id `.RateWidgets` or widget
+`kind` drops the widgets users placed, a new `name` changes the module the saved intents point at.
+
+The intents live in `packages/client/targets/_shared/` and not next to the views, so the
 **main app target compiles them too**, which the plugin README asks for. The app target is 16.4
 against the extension's 17.0, which is why the three `WidgetConfigurationIntent` carry
 `@available(iOS 17.0, *)`. The entity, the enum and the queries are iOS 16 API and need none.
@@ -39,7 +52,8 @@ back to the system font silently. Survives EAS, measured by simulating the uploa
 **`Assets.xcassets` is compiled whole, only part of it is source.** Xcode globs the folder, anything
 in it lands in `Assets.car`. `AppWidgetIcon.symbolset` is hand made and committed, WidgetKit picks
 it up by name, so it needs no target config entry and must not go in `images:` or the SVG lands
-twice. The two colorsets are plugin output, rewritten every prebuild, ignored by git and EAS.
+twice. The colorsets and the watch appiconset are plugin output, rewritten every prebuild, ignored
+by git and EAS.
 
 **`colors:` owns the colorset and the build setting together, you cannot keep one without the
 other.** Per name it writes the colorset into the source tree each prebuild, and
@@ -66,7 +80,7 @@ fixable from the target `Info.plist`, `GENERATE_INFOPLIST_FILE` synthesises it f
 `developmentRegion` and no Expo option exposes that. Measured twice. Harmless, every string is a
 Swift literal and the store listing still reads Spanish. Localizing one day needs a config plugin.
 
-**No `icon` in the target config**, so the extension inherits the project level
+**No `icon` in the RateWidgets target config**, so the extension inherits the project level
 `ASSETCATALOG_COMPILER_APPICON_NAME`. Fine with a plain PNG app icon, revisit before moving to an
 Xcode 26 `.icon` bundle. Upstream issue 159.
 
@@ -130,12 +144,13 @@ ls ~/Library/Developer/Xcode/DerivedData/mbitoDlar-*/Build/Products/*/{mbitoDlar
 Both targets compiling `_shared/Intents.swift` is the design and was not the fault here. Moving the
 file out of `_shared/` was tried and did not help, it only drops the app's copy.
 
-**The endpoint is hardcoded** in `getRates()`, so unlike android this side never reads `API_URL`. A
-build pointed at another host ships ios widgets still reading production, silently.
+**The endpoint is hardcoded** in `getRates` (`packages/client/targets/_shared/Rates.swift`), so
+unlike android this side never reads `API_URL`. A build pointed at another host ships ios widgets
+and the watch app still reading production, silently.
 
 **`placeholder(in:)` is synchronous and must stay off the network.** Apple documents it as
 returning a `TimelineEntry` immediately and `AppIntentTimelineProvider` makes only `snapshot` and
-`timeline` async, so `getRates()` is `async` and awaited from those two, never blocked on a
+`timeline` async, so `getRates` is `async` and awaited from those two, never blocked on a
 `DispatchSemaphore`. `placeholder` reads `storedRates()` and nothing else.
 
 Returning no rates is not an option, WidgetKit paints the placeholder as the widget content until
@@ -144,7 +159,7 @@ the first timeline lands so an empty one shows "Cotizaciones no disponibles" rig
 `SpreadWidgetEntryView` divides one price by the other and a pair of zeros gives NaN. If revisited,
 install and look at the widgets before opening the app.
 
-**Nothing serialises the three providers**, `getRates()` reads the cache at the top and writes it
+**Nothing serialises the three providers**, `getRates` reads the cache at the top and writes it
 once the response lands, so a concurrent reload may cost three requests instead of one. Never
 measured. Android has no hole here, `RatesApi.fetch` is `@Synchronized` on a single thread executor.
 
@@ -209,3 +224,46 @@ Tested on device and fallen, do not re-run:
 The plugin only runs at prebuild, never at runtime. If it breaks: `expo prebuild -p ios`, commit
 the generated `packages/client/ios/`, drop `@bacons/apple-targets` from `app.config.ts` and un-ignore
 `packages/client/ios/`. The Xcode project becomes hand maintained again, as it was before 2026-08.
+
+## Watch app
+
+`packages/client/targets/RateWatch/`, `type: 'watch'`, embedded in the iPhone app by the plugin.
+SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `RateValue` from
+`packages/client/targets/_shared/Rates.swift` and its rate list
+`packages/client/targets/_shared/Helper.swift`.
+
+- **Its data is independent of the phone, no sync**, the install is not: without
+  `WKRunsIndependentlyOfCompanionApp` it needs the iPhone app, and setting it cannot be undone in a
+  later build. It calls `/fetch` itself, through the phone connection when it is near and wifi or
+  LTE when not. App Groups do not cross from the phone to the watch, a sync needs
+  WatchConnectivity and a native module on the RN side.
+- **Requests only while open**: on `scenePhase` `.active`, and only when the stored payload is older
+  than 300s, the cloudfront TTL of `/fetch`. A wrist raise reactivates the frontmost app, so that
+  covers coming back. Reintentar on the unavailable view skips the window. No timer while open, the
+  screen sleeps in 15 to 70s and a timer left running keeps requesting under always on. No
+  background refresh, no complications, both would request all day with nobody looking. No last
+  update footer either, a fetch on open made it read "ahora" almost always.
+- **The widget sets the representation, the app the texts, watchOS the rest.** Rows are the two
+  lines of the list widget. Settings hold the widget configuration, `excluded_rates` with the app
+  key, `value_type` as the widget Mostrar parameter with its default. Restablecer is a `.bordered`
+  capsule and not a red row, an action at the end of a list and nothing destructive. Everything else
+  is the system component with its own spacing and font.
+- **The last rate on cannot be turned off.** Every catalog rate excluded, left by a release that
+  retires the only rate on, reads as none excluded in the list and in settings, the watch has no
+  room for the empty view the app keeps there. A selected rate the payload lacks is left out, the
+  unavailable view shows when none is left.
+- **The title goes with the list only.** Error and empty are a plain `VStack` the system centers,
+  loading a bare `ProgressView`. `ContentUnavailableView` anchors to the top on watchOS and
+  `.frame` does not move it.
+- **FiraGO only in the rate rows**, for the arrows, sized from
+  `UIFont.preferredFont(forTextStyle:)`. A fixed base with `relativeTo:` takes the iOS sizes, and
+  `UITraitCollection` does not exist on watchOS.
+- **Locale sensitive text has to force its locale**, apple-targets pins the watch bundle to `en` and
+  `Locale.current` takes it. Number separators come from the region and are fine.
+- **The font is the same symlink with `UIAppFonts`**, the rule in Traps applies.
+- **Build it alone** with `-target RateWatchApp -sdk watchsimulator` on `mbitoDlar.xcodeproj`. The
+  full app build takes the destination only, `-sdk iphonesimulator` drags the watch target onto the
+  ios sdk and fails on its icon.
+- **`simctl spawn <watch> defaults write` lands outside the app container**, in the device
+  `data/Library/Preferences`, the app reads it and `simctl uninstall` keeps it. Set state from the
+  app and clear it with uninstall.

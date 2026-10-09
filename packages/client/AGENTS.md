@@ -5,8 +5,8 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 ## Native code
 
 - **Both platforms CNG**: `packages/client/android/` and `packages/client/ios/` are regen by `expo prebuild`. Build output, gitignored, no hand-edit. Modify via `packages/client/app.config.ts` or a config plugin.
-- **iOS widgets live in `packages/client/targets/`**, generated into the Xcode project by the `@bacons/apple-targets` plugin. Source, committed. `packages/client/targets/RateWidgets/` is the widget extension. Two `_shared/` folders, both for what has to compile into the app target as well: `packages/client/targets/_shared/` reaches every target, `packages/client/targets/RateWidgets/_shared/` only that one and the app, and the intents live there. Read `packages/client/docs/ios-widgets.md` before touching it.
-- **After a version, dep or SDK bump**: `yarn run client:prebuild -p ios`, nothing else. It regenerates `packages/client/ios/` and runs `pod install`, there is nothing left in there to preserve. Xcode project settings live in `packages/client/app.config.ts` and `packages/client/targets/RateWidgets/expo-target.config.js`. Never `--no-clean`, see `packages/client/docs/ios-widgets.md`. Blank widget gallery previews after a prebuild: check `DerivedData` before the source, same doc.
+- **iOS widgets live in `packages/client/targets/`**, generated into the Xcode project by the `@bacons/apple-targets` plugin. Source, committed. `packages/client/targets/RateWidgets/` is the widget extension. `packages/client/targets/RateWatch/` is the Apple Watch app. `packages/client/targets/_shared/` is the code they share. Read `packages/client/docs/ios-widgets.md` before touching it.
+- **After a version, dep or SDK bump**: `yarn run client:prebuild -p ios`, nothing else. It regenerates `packages/client/ios/` and runs `pod install`, there is nothing left in there to preserve. Xcode project settings live in `packages/client/app.config.ts` and each `packages/client/targets/*/expo-target.config.js`. Never `--no-clean`, see `packages/client/docs/ios-widgets.md`. Blank widget gallery previews after a prebuild: check `DerivedData` before the source, same doc.
 - **An `Alert` carries one sentence as its title and an empty message**, under two lines because
   RN's `DialogTitle` caps it there and ellipsizes. Moving the copy to the message is not the way out,
   RN always sends a title key and an empty one still costs its band.
@@ -106,10 +106,11 @@ error, and that is the whole of this section.
 ## Tests
 
 - AVA in `packages/client/test.js`, run alone with `yarn workspace @ambito-dolar/client test`.
-- It loads `packages/client/utilities/Polling.ts` and `packages/client/utilities/Donation.ts` in
-  plain Node, no Metro, and Node loads the `.ts` without a build. Both import nothing, a
-  `react-native`, Expo or `@/` import there breaks the test. What needs the store or a native module
-  lives in a hook.
+- It loads `packages/client/utilities/Polling.ts`, `packages/client/utilities/Donation.ts` and
+  `packages/client/utilities/Customize.ts` in plain Node, no Metro, and Node loads the `.ts` without
+  a build. They import at most lodash and `@ambito-dolar/core`, a `react-native`, Expo or `@/`
+  import there breaks the test, and lodash goes in as `import _ from 'lodash'`, a namespace import
+  has no `chain` under Node. What needs the store or a native module lives in a hook.
 - No `"type": "module"` here, like the official Expo template. `@bacons/apple-targets` `require`s
-  `packages/client/targets/RateWidgets/expo-target.config.js` and reads `.type` without unwrapping
+  each `packages/client/targets/*/expo-target.config.js` and reads `.type` without unwrapping
   `.default`, so it cannot be ESM. The `test` script mutes `MODULE_TYPELESS_PACKAGE_JSON` instead.

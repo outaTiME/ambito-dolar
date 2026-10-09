@@ -27,10 +27,10 @@ the interval comes from `getPollInterval` in `packages/client/utilities/Polling.
   next open.
 - **`cadence` in the payload slows that polling, clamped so it can only slow and never speed up.** It
   carries the open market value and the client derives the closed one, so an already resolved value
-  must never be sent. It does not reach the widgets, which keep their own.
+  must never be sent. It does not reach the widgets or the watch app, which keep their own.
 - **An answer that yields nothing renderable is a failure**, not an empty screen. `fetchRates`
   throws before the dispatch so a bad payload cannot replace rates that were working, which is the
-  rule both widgets already apply before replacing their stored payload.
+  rule the widgets and the watch app already apply before replacing their stored payload.
 - **The effective interval is the cadence minus `SLACK`**, half the tick and flat across cadences,
   30 seconds today, which absorbs the tick drift and lets a foreground entry refresh early. A
   backend that sends a cadence to shed load has to count on the client asking that much sooner.

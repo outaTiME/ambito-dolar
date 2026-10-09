@@ -8,7 +8,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-// mirrors RateWidgets.swift, which mirrors packages/core, keep the three in sync
+// mirrors packages/client/targets/_shared/Rates.swift and packages/core, keep the three in sync
 object Format {
   // truncates like the core toFixedNoRounding, built per call so a locale change is picked up
   private fun currency(): DecimalFormat =
@@ -74,7 +74,7 @@ object Format {
   private fun shown(value: OffsetDateTime?): String =
     value?.atZoneSameInstant(ZoneId.systemDefault())?.format(date()) ?: ""
 
-  // packages/client/targets/RateWidgets/_shared/Helper.swift keeps the same list and order
+  // packages/client/targets/_shared/Helper.swift keeps the same list and order
   val RATE_TYPES =
     listOf(
       "oficial" to "Oficial",

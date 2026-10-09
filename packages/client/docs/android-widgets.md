@@ -27,7 +27,7 @@ Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews
 - **The periodic redraw is a WorkManager `PeriodicWorkRequest`**, 30 min behind a network constraint. `updatePeriodMillis` is 0 on purpose: it is an alarm, it fires with no network, and those redraws died in milliseconds on a doze wake. A failed fetch returns `Result.retry()` with no count of our own, WorkManager re-evaluates the constraint and backs off 30s doubling to five hours.
 - `adb shell am broadcast APPWIDGET_UPDATE` is protected and does NOT force a redraw, call `provider.refresh(context)`.
 - **The endpoint is not hardcoded.** The module `build.gradle` emits `widget_api_url` from the same `API_URL` the app reads, falling back to production. The trap: `resValue` reads `System.getenv` at gradle configuration time and a bare `./gradlew assembleRelease` does not load `packages/client/.env`, while the js bundle comes from `expo export:embed`, which does. So a `.env` pointed at staging ships a staging app with production widgets, silently. `expo run:android --variant release` and eas read both from the same place.
-- **One `/fetch` for a burst.** `RatesApi` holds the payload 10s, collapsing the three providers into one request. It has to stay under WorkManager's 30s minimum backoff or the first retry lands inside the window and reports success on stale data. ios holds 60s in `getRates()`, on disk, because each reload there can be a separate extension invocation while the three android providers share the app process. One attempt, `connectTimeout` and `readTimeout` at 4s each, body capped at 256K characters and not bytes because an `OutOfMemoryError` is an `Error` no catch would hold.
+- **One `/fetch` for a burst.** `RatesApi` holds the payload 10s, collapsing the three providers into one request. It has to stay under WorkManager's 30s minimum backoff or the first retry lands inside the window and reports success on stale data. ios holds 60s through `ratesCacheWindow` in `RateWidgets.swift`, on disk, because each reload there can be a separate extension invocation while the three android providers share the app process. One attempt, `connectTimeout` and `readTimeout` at 4s each, body capped at 256K characters and not bytes because an `OutOfMemoryError` is an `Error` no catch would hold.
 - **Neither side stores an answer it cannot use**, both require a 2xx and at least one known rate before replacing the persisted payload: an error body is valid json too. ios stores the filtered rates, android the raw body, filtered again on read.
 - **A failed fetch never lowers what a widget shows.** `fetch` answers with the last call that came back or the payload on disk, and only another call that came back replaces it.
 - **Null means this process never got an answer and there is nothing on disk.** Then every id draws the empty text instead of the bare `initialLayout`, which has no text and not even a tap. Verified on a device: data cleared, booted with no network, all three drew the empty text.
@@ -44,19 +44,22 @@ Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews
 Written twice, Swift and Kotlin, so these move together. Touching one side alone is the bug that
 gets shipped.
 
-- **A rate added or retired**: `packages/client/targets/RateWidgets/_shared/Helper.swift`
+- **A rate added or retired**: `packages/client/targets/_shared/Helper.swift`
   `getRateTypes()` and `Format.kt` `RATE_TYPES`, both mirroring `getAvailableRateTypes()` in
   `packages/core`, which owns the order. `getRateTitle` there is a third copy of the labels that has
   to agree. Retired ones stay commented on the ios list, absent from the kotlin one which doubles as
-  the picker, so a widget still on a retired type shows its raw id until the user picks another.
+  the picker, and an android widget still on a retired type goes back to the default of its slot
+  unless another slot holds it, then it stays and draws nothing.
 - **A rate label**: the `display` of the ios entry and the second half of the kotlin pair.
 - **A font size**: `RateWidgets.swift` carries the point sizes and `Sizes.kt` the same numbers
   times 1.05. Change the role, not the factor.
 - **A default**: ios in `Helper.swift`, `getDefaultRateType`, `getDefaultRateTypes` and
   `getDefaultSpreadRateTypes`, read from `RateTypeQuery.defaultResult` for the single rate and from
   each provider's `rateTypes(for:)` fallback for the two lists; android in each provider's
-  `defaultRates`.
-- **A /fetch schema change**: ios first, always. `lookupRateValues` reads the array by index and
+  `defaultRates`, which is also what a stored rate `Format.isKnown` rejects falls back to when no
+  other slot holds it.
+- **A /fetch schema change**: ios first, always, it reaches the widget and the watch app through
+  `packages/client/targets/_shared/Rates.swift`. `lookupRateValues` reads the array by index and
   forces its casts, surviving only because `wellFormed` filters ahead of it, the stored payload
   included, while android drops the
   rate and keeps the rest. The timestamp is already guarded, `ISO8601DateFormatter` with default
@@ -65,8 +68,9 @@ gets shipped.
 ### A new widget
 
 - **iOS**: a `struct X: Widget` with its `kind`, added to the `RateWidgets` bundle, plus a
-  `WidgetConfigurationIntent` with its parameters in `packages/client/targets/RateWidgets/_shared/Intents.swift`,
-  which compiles into the app target as well as the widget one.
+  `WidgetConfigurationIntent` with its parameters in
+  `packages/client/targets/_shared/Intents.swift`, which compiles into every target, the app, the
+  widget and the watch app.
 - **Android**: a `WidgetProvider` subclass, one line in `Widgets.ALL`, a `<receiver>`, an
   `packages/client/modules/widgets/android/src/main/res/xml/widget_x_info.xml`, label and description in `strings.xml`, the preview png in
   `packages/client/assets/widgets/` and its line in the module `build.gradle`. Four are static

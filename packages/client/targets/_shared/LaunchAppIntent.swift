@@ -5,6 +5,8 @@
 //  Created by Ariel Falduto on 14/07/2025.
 //
 
+// controls exist on ios only and this folder also reaches the watch app
+#if os(iOS)
 import AppIntents
 
 @available(iOS 18.0, *)
@@ -18,4 +20,4 @@ struct LaunchAppIntent: ControlConfigurationIntent {
     return .result(opensIntent: OpenURLIntent(URL(string: "https://www.ambito-dolar.app/rates")!))
   }
 }
-
+#endif
