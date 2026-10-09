@@ -23,7 +23,7 @@
     "lerna": "^10.0.1",
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^1.1.0",
-    "sst": "^4.17.1",
+    "sst": "^4.17.2",
     "typescript": "~6.0.3"
   },
   "scripts": {

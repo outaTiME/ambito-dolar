@@ -10,19 +10,19 @@ __metadata:
   resolution: "@ambito-dolar/backend@workspace:packages/backend"
   dependencies:
     "@ambito-dolar/core": "npm:^5.2.2"
-    "@aws-sdk/client-dynamodb": "npm:^3.1147.0"
-    "@aws-sdk/client-s3": "npm:^3.1147.0"
-    "@aws-sdk/client-sns": "npm:^3.1147.0"
-    "@aws-sdk/lib-dynamodb": "npm:^3.1147.0"
+    "@aws-sdk/client-dynamodb": "npm:^3.1148.0"
+    "@aws-sdk/client-s3": "npm:^3.1148.0"
+    "@aws-sdk/client-sns": "npm:^3.1148.0"
+    "@aws-sdk/lib-dynamodb": "npm:^3.1148.0"
     "@aws-sdk/util-dynamodb": "npm:^3.996.9"
     "@instantdb/admin": "npm:^1.0.67"
-    "@sentry/aws-serverless": "npm:^11.4.0"
+    "@sentry/aws-serverless": "npm:^11.6.0"
     "@shelf/dynamodb-parallel-scan": "npm:^4.0.0"
     "@smithy/node-http-handler": "npm:^4.12.1"
     "@sparticuz/chromium": "npm:~153.0.0"
     chrono-node: "npm:^2.10.2"
     expo-server-sdk: "npm:^7.2.0"
-    google-auth-library: "npm:^11.1.0"
+    google-auth-library: "npm:^11.2.0"
     image-type: "npm:^6.1.0"
     joi: "npm:^18.2.9"
     lodash: "npm:^4.18.1"
@@ -43,7 +43,7 @@ __metadata:
   resolution: "@ambito-dolar/client@workspace:packages/client"
   dependencies:
     "@ambito-dolar/core": "npm:^5.2.2"
-    "@amplitude/analytics-react-native": "npm:^1.11.0"
+    "@amplitude/analytics-react-native": "npm:^1.12.1"
     "@bacons/apple-targets": "npm:^5.0.0"
     "@gorhom/bottom-sheet": "npm:^5.2.14"
     "@react-native-community/hooks": "npm:^100.1.0"
@@ -52,7 +52,7 @@ __metadata:
     "@react-native-vector-icons/material-design-icons": "npm:^13.1.4"
     "@react-native-vector-icons/material-icons": "npm:^13.1.4"
     "@reduxjs/toolkit": "npm:^2.13.0"
-    "@sentry/react-native": "npm:^8.29.0"
+    "@sentry/react-native": "npm:^8.30.0"
     "@shopify/flash-list": "npm:^2.3.3"
     "@types/react": "npm:~19.2.18"
     color-rgba: "npm:^3.1.1"
@@ -91,7 +91,7 @@ __metadata:
     react-native: "npm:0.86.3"
     react-native-animateable-text: "npm:~0.19.3"
     react-native-gesture-handler: "npm:~3.3.0"
-    react-native-purchases: "npm:^10.11.0"
+    react-native-purchases: "npm:^10.12.2"
     react-native-reanimated: "npm:~4.7.1"
     react-native-redash: "npm:^18.1.5"
     react-native-safe-area-context: "npm:^5.10.1"
@@ -99,7 +99,7 @@ __metadata:
     react-native-sortables: "npm:^1.10.1"
     react-native-svg: "npm:^15.15.5"
     react-native-typography: "npm:^1.4.1"
-    react-native-web: "npm:~0.21.3"
+    react-native-web: "npm:~0.21.4"
     react-native-worklets: "npm:^0.13.0"
     react-redux: "npm:^9.3.0"
     redux-persist: "npm:^6.0.0"
@@ -134,7 +134,7 @@ __metadata:
     "@astrojs/sitemap": "npm:^3.7.4"
     "@iconify-json/fa6-brands": "npm:^1.2.6"
     "@iconify-json/fa6-solid": "npm:^1.2.4"
-    astro: "npm:^7.3.6"
+    astro: "npm:^7.3.8"
     astro-icon: "npm:^1.2.0"
     sass: "npm:^1.105.1"
   languageName: unknown
@@ -147,42 +147,42 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@amplitude/analytics-core@npm:2.59.0":
-  version: 2.59.0
-  resolution: "@amplitude/analytics-core@npm:2.59.0"
+"@amplitude/analytics-core@npm:2.60.1":
+  version: 2.60.1
+  resolution: "@amplitude/analytics-core@npm:2.60.1"
   dependencies:
     "@amplitude/analytics-connector": "npm:^1.6.4"
     "@types/zen-observable": "npm:0.8.3"
     safe-json-stringify: "npm:1.2.0"
     tslib: "npm:^2.4.1"
     zen-observable: "npm:0.10.0"
-  checksum: 10/43ca56e5dae1b3104f882f4112e733e8cefdb7a21e0506e5670b9e635d64d69a34e364513b5dff9f4fdfa3e38a51c3278b8213171b056033b47b18e82e020b3e
+  checksum: 10/2c3010c71146281a5e09d2a82716d7b9a6671126d2819b2e71cf9766c99f791a03a27665e96d3fbeda2c89495f14299f78ccc8a67fdb4d82e1a8833740d927ba
   languageName: node
   linkType: hard
 
-"@amplitude/analytics-react-native@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "@amplitude/analytics-react-native@npm:1.11.0"
+"@amplitude/analytics-react-native@npm:^1.12.1":
+  version: 1.12.1
+  resolution: "@amplitude/analytics-react-native@npm:1.12.1"
   dependencies:
-    "@amplitude/analytics-core": "npm:2.59.0"
-    "@amplitude/plugin-network-capture-browser": "npm:1.10.19"
+    "@amplitude/analytics-core": "npm:2.60.1"
+    "@amplitude/plugin-network-capture-browser": "npm:1.10.21"
     "@amplitude/ua-parser-js": "npm:^0.7.31"
     "@react-native-async-storage/async-storage": "npm:^1.17.11"
     tslib: "npm:^2.4.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/e3ed0bcf5e5ab6c7334a5ee001d0dbb459a72e61894c025c52bccf36096fff74c11481457f41a08e356591597066b3115271924dc95c7e31db891b1bbe9af9cd
+  checksum: 10/b228c3012623a4776b77ca7c46aa1eb014229f2cdc1bd72ab6a5d93b6c822fac6b793091f8c4a87fae25a8b9fd4a22f91b2447179f26fb9bc3261a03a0f08499
   languageName: node
   linkType: hard
 
-"@amplitude/plugin-network-capture-browser@npm:1.10.19":
-  version: 1.10.19
-  resolution: "@amplitude/plugin-network-capture-browser@npm:1.10.19"
+"@amplitude/plugin-network-capture-browser@npm:1.10.21":
+  version: 1.10.21
+  resolution: "@amplitude/plugin-network-capture-browser@npm:1.10.21"
   dependencies:
-    "@amplitude/analytics-core": "npm:2.59.0"
+    "@amplitude/analytics-core": "npm:2.60.1"
     tslib: "npm:^2.4.1"
-  checksum: 10/684c592824014ac6d86690bfc268d833882a2f16fbe3666d748fb6a6661c76175e5c142074ca65c9861772d577f14165813997aad8f5e95eb6010d000c9400c9
+  checksum: 10/bc5c5bf4079a5dc4b2f9e66af959966e0832782910f5913a9621b34f771822d79d745a78744d018fed562cccd437508509748e639a78754d56f9db2753546782
   languageName: node
   linkType: hard
 
@@ -517,9 +517,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-dynamodb@npm:^3.1147.0":
-  version: 3.1147.0
-  resolution: "@aws-sdk/client-dynamodb@npm:3.1147.0"
+"@aws-sdk/client-dynamodb@npm:^3.1148.0":
+  version: 3.1148.0
+  resolution: "@aws-sdk/client-dynamodb@npm:3.1148.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.978.1"
     "@aws-sdk/credential-provider-node": "npm:^3.972.84"
@@ -531,7 +531,7 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.12.1"
     "@smithy/types": "npm:^4.19.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/8374ff660bacb4a444d36a4c76adb1a3465e8a57aaaf1d3139d1fe8e4cefb4583c7667631cd9cecb7d2cb4cf856a61cc3b9b4e8c9253db183a78b3f1a8381a16
+  checksum: 10/ae10681a5909096d7bf48cbae925f318180ddfd947b062cebfe323c8525e5dfdc8912eb9da63d0dd195f3f2af02244ff917bc913c62210758b3be11a48377f80
   languageName: node
   linkType: hard
 
@@ -551,9 +551,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:^3.1147.0":
-  version: 3.1147.0
-  resolution: "@aws-sdk/client-s3@npm:3.1147.0"
+"@aws-sdk/client-s3@npm:^3.1148.0":
+  version: 3.1148.0
+  resolution: "@aws-sdk/client-s3@npm:3.1148.0"
   dependencies:
     "@aws-sdk/checksums": "npm:^3.1001.1"
     "@aws-sdk/core": "npm:^3.978.1"
@@ -566,13 +566,13 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.12.1"
     "@smithy/types": "npm:^4.19.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/9f4ce39ea5d2bfb99e1a5d82a1561325082f2dbca5e35d2492cfad92bec6a6c31e43f6ebdfdbe0de968dc6d36b8373298ba910c4ab751f1b9aae62edc4e72f1c
+  checksum: 10/7c25670b34ed53748f8fb5318eb6d3c69638b725be43eac2a3f1d8f522b002c425fad7b30e3db3a1f865a0c29cc5da9c5fe23d348fe1dd5c6e2e09cf6ac306eb
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-sns@npm:^3.1147.0":
-  version: 3.1147.0
-  resolution: "@aws-sdk/client-sns@npm:3.1147.0"
+"@aws-sdk/client-sns@npm:^3.1148.0":
+  version: 3.1148.0
+  resolution: "@aws-sdk/client-sns@npm:3.1148.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.978.1"
     "@aws-sdk/credential-provider-node": "npm:^3.972.84"
@@ -582,7 +582,7 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.12.1"
     "@smithy/types": "npm:^4.19.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/da97afdf845ea22e23aad27301c2eb8d185783bd14e4f2df2e5fa0d9f37d97982698ec6d55b746a420d9ab76a620df8d12969e0cabb88befe4c8d4f6199c06f0
+  checksum: 10/c9d2244b79dcd573cc9c20aab299dc0bddaecfd4cc45f6fb6cddaa626b46940aa3f42287db216ce325a8f6ddf6426382f12e4f2c6ae24a23a76f2c2b12a75441
   languageName: node
   linkType: hard
 
@@ -748,9 +748,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/lib-dynamodb@npm:^3.1147.0":
-  version: 3.1147.0
-  resolution: "@aws-sdk/lib-dynamodb@npm:3.1147.0"
+"@aws-sdk/lib-dynamodb@npm:^3.1148.0":
+  version: 3.1148.0
+  resolution: "@aws-sdk/lib-dynamodb@npm:3.1148.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.978.1"
     "@aws-sdk/util-dynamodb": "npm:^3.996.9"
@@ -758,8 +758,8 @@ __metadata:
     "@smithy/types": "npm:^4.19.0"
     tslib: "npm:^2.6.2"
   peerDependencies:
-    "@aws-sdk/client-dynamodb": ^3.1147.0
-  checksum: 10/14e9841e54b038494293c2415525e9a50e0c6bcc94a36b94f63e6b41b65dd4c228803005a869679744b11f8cfdddbc0a7d5c1c50ffe3a5f9c65d64584c82a392
+    "@aws-sdk/client-dynamodb": ^3.1148.0
+  checksum: 10/f1852d3173b9f8667601cd17430c96d2e60b19d405609be9db3fc79dcc882091e94896bb0cd396f3da9e6685980f95ea628887e578ab9b8707b78b54812d5b4b
   languageName: node
   linkType: hard
 
@@ -2182,188 +2182,6 @@ __metadata:
   version: 0.9.0
   resolution: "@emotion/memoize@npm:0.9.0"
   checksum: 10/038132359397348e378c593a773b1148cd0cf0a2285ffd067a0f63447b945f5278860d9de718f906a74c7c940ba1783ac2ca18f1c06a307b01cc0e3944e783b1
-  languageName: node
-  linkType: hard
-
-"@esbuild/aix-ppc64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/aix-ppc64@npm:0.28.2"
-  conditions: os=aix & cpu=ppc64
-  languageName: node
-  linkType: hard
-
-"@esbuild/android-arm64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/android-arm64@npm:0.28.2"
-  conditions: os=android & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/android-arm@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/android-arm@npm:0.28.2"
-  conditions: os=android & cpu=arm
-  languageName: node
-  linkType: hard
-
-"@esbuild/android-x64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/android-x64@npm:0.28.2"
-  conditions: os=android & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/darwin-arm64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/darwin-arm64@npm:0.28.2"
-  conditions: os=darwin & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/darwin-x64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/darwin-x64@npm:0.28.2"
-  conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/freebsd-arm64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/freebsd-arm64@npm:0.28.2"
-  conditions: os=freebsd & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/freebsd-x64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/freebsd-x64@npm:0.28.2"
-  conditions: os=freebsd & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-arm64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/linux-arm64@npm:0.28.2"
-  conditions: os=linux & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-arm@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/linux-arm@npm:0.28.2"
-  conditions: os=linux & cpu=arm
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-ia32@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/linux-ia32@npm:0.28.2"
-  conditions: os=linux & cpu=ia32
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-loong64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/linux-loong64@npm:0.28.2"
-  conditions: os=linux & cpu=loong64
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-mips64el@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/linux-mips64el@npm:0.28.2"
-  conditions: os=linux & cpu=mips64el
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-ppc64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/linux-ppc64@npm:0.28.2"
-  conditions: os=linux & cpu=ppc64
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-riscv64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/linux-riscv64@npm:0.28.2"
-  conditions: os=linux & cpu=riscv64
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-s390x@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/linux-s390x@npm:0.28.2"
-  conditions: os=linux & cpu=s390x
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-x64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/linux-x64@npm:0.28.2"
-  conditions: os=linux & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/netbsd-arm64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/netbsd-arm64@npm:0.28.2"
-  conditions: os=netbsd & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/netbsd-x64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/netbsd-x64@npm:0.28.2"
-  conditions: os=netbsd & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/openbsd-arm64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/openbsd-arm64@npm:0.28.2"
-  conditions: os=openbsd & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/openbsd-x64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/openbsd-x64@npm:0.28.2"
-  conditions: os=openbsd & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/openharmony-arm64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/openharmony-arm64@npm:0.28.2"
-  conditions: os=openharmony & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/sunos-x64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/sunos-x64@npm:0.28.2"
-  conditions: os=sunos & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/win32-arm64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/win32-arm64@npm:0.28.2"
-  conditions: os=win32 & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/win32-ia32@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/win32-ia32@npm:0.28.2"
-  conditions: os=win32 & cpu=ia32
-  languageName: node
-  linkType: hard
-
-"@esbuild/win32-x64@npm:0.28.2":
-  version: 0.28.2
-  resolution: "@esbuild/win32-x64@npm:0.28.2"
-  conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
@@ -5640,26 +5458,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@revenuecat/purchases-js-hybrid-mappings@npm:19.5.0":
-  version: 19.5.0
-  resolution: "@revenuecat/purchases-js-hybrid-mappings@npm:19.5.0"
+"@revenuecat/purchases-js-hybrid-mappings@npm:19.10.0":
+  version: 19.10.0
+  resolution: "@revenuecat/purchases-js-hybrid-mappings@npm:19.10.0"
   dependencies:
-    "@revenuecat/purchases-js": "npm:1.67.1"
-  checksum: 10/8858759bd028367b04d50291ee525a7fc860dd196c1e98cc66e6fcedfeb380b1303c2e11f7f669133d464d4676cc6eb5d5caa818263f9e1815b34ced564bcb05
+    "@revenuecat/purchases-js": "npm:1.70.0"
+  checksum: 10/93049158fb32b10925bb44d4663c7405adca1778f98dc2a645e68a3de5d3a2262ab43a050d8a66b3452975dd8f73d40610020ba11a3d1d9a53da836913c84351
   languageName: node
   linkType: hard
 
-"@revenuecat/purchases-js@npm:1.67.1":
-  version: 1.67.1
-  resolution: "@revenuecat/purchases-js@npm:1.67.1"
-  checksum: 10/1ca37282c0098da3c7500cc13dc9e1c70b50e87036cdd179cc6abbff77986ecc93fb61c58d47ccf940b49fc03d1733dc8d49daf9d304d68eab673dacc70f9189
+"@revenuecat/purchases-js@npm:1.70.0":
+  version: 1.70.0
+  resolution: "@revenuecat/purchases-js@npm:1.70.0"
+  checksum: 10/8947d1e064d36ec2ed72fd977d384e91c1129aca8ea06880fe384fdce9df9b919738a734cddfadf1412cd03e1dbb4fbde8842dd152ab42af868ea8c1cd330dc7
   languageName: node
   linkType: hard
 
-"@revenuecat/purchases-typescript-internal@npm:19.5.0":
-  version: 19.5.0
-  resolution: "@revenuecat/purchases-typescript-internal@npm:19.5.0"
-  checksum: 10/569d3f111a47800d65eacdfd7b6a6a3f2e3f8dc7e7da7561aead77d8763d0fbc41c50234a99477da9cc51dc291f0ca6870c060c44a015ff7ff3feb0a3d31998f
+"@revenuecat/purchases-typescript-internal@npm:19.10.0":
+  version: 19.10.0
+  resolution: "@revenuecat/purchases-typescript-internal@npm:19.10.0"
+  checksum: 10/f4742f58b7ef5904f96e6509708ca5e5a9ed2d4f4240469f35bea4517fe5899ee7215d295715a501c5e33666efc8de1249704059bb94346779603f690388d1f2
   languageName: node
   linkType: hard
 
@@ -5798,51 +5616,51 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/aws-serverless@npm:^11.4.0":
-  version: 11.4.0
-  resolution: "@sentry/aws-serverless@npm:11.4.0"
+"@sentry/aws-serverless@npm:^11.6.0":
+  version: 11.6.0
+  resolution: "@sentry/aws-serverless@npm:11.6.0"
   dependencies:
-    "@sentry/conventions": "npm:^0.25.0"
-    "@sentry/core": "npm:11.4.0"
-    "@sentry/node": "npm:11.4.0"
-    "@sentry/server-runtime-injection": "npm:11.4.0"
-    "@sentry/server-utils": "npm:11.4.0"
+    "@sentry/conventions": "npm:^0.26.0"
+    "@sentry/core": "npm:11.6.0"
+    "@sentry/node": "npm:11.6.0"
+    "@sentry/server-runtime-injection": "npm:11.6.0"
+    "@sentry/server-utils": "npm:11.6.0"
     "@types/aws-lambda": "npm:^8.10.161"
-  checksum: 10/2e45c7a74ecf9e0ce6325eee79d692800c21e4e741710358f843d1361173f187597579b1ebe560733db1311cd10ead95a96e30a928efad463b80e19706964e5b
+  checksum: 10/a0bb73f40c2c6e41e92f58f7e48713e183a78d51568315429b70fdeaf95791bb292269a4528d3e58540836ab3670139474068f7800a6d7bd21d96c84e9401061
   languageName: node
   linkType: hard
 
-"@sentry/browser-utils@npm:10.75.2":
-  version: 10.75.2
-  resolution: "@sentry/browser-utils@npm:10.75.2"
+"@sentry/browser-utils@npm:10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/browser-utils@npm:10.76.0"
   dependencies:
     "@sentry/conventions": "npm:^0.16.0"
-    "@sentry/core": "npm:10.75.2"
-  checksum: 10/b064a5dadf3a2fc099281bd9df44bf322f762ed51966f616f0bbf2a855f1687524980aaf863f10ad1de6474b241f462462c6a8ddef0eb0bfe47dd10f0a1344f4
+    "@sentry/core": "npm:10.76.0"
+  checksum: 10/69a546a1fd832a41b0145d53b3051113cf139bf66ca24a46da7e56637e7d4680263566c84022642f97ac334f07a496294701ff948ae94e0b13c63469da25f465
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:10.75.2":
-  version: 10.75.2
-  resolution: "@sentry/browser@npm:10.75.2"
+"@sentry/browser@npm:10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/browser@npm:10.76.0"
   dependencies:
-    "@sentry/browser-utils": "npm:10.75.2"
+    "@sentry/browser-utils": "npm:10.76.0"
     "@sentry/conventions": "npm:^0.16.0"
-    "@sentry/core": "npm:10.75.2"
-    "@sentry/feedback": "npm:10.75.2"
-    "@sentry/replay": "npm:10.75.2"
-    "@sentry/replay-canvas": "npm:10.75.2"
-  checksum: 10/488d167dadccdfe99e6d28cf5ecd6cba9e1d094c62434a39678a629a7c445b7c61d10be330684772603c3d2c11ba178326faf7e97ca9cf395a9002c8a0737b88
+    "@sentry/core": "npm:10.76.0"
+    "@sentry/feedback": "npm:10.76.0"
+    "@sentry/replay": "npm:10.76.0"
+    "@sentry/replay-canvas": "npm:10.76.0"
+  checksum: 10/0985e5bd4b750957b5d2d8e544f598441975adcb84bb703e0822a265dc38aec410c88415e4717e268efb5ffa846d67ee4db6e21353efff10099c6f3b9ed67be3
   languageName: node
   linkType: hard
 
-"@sentry/bundler-plugins@npm:10.75.2":
-  version: 10.75.2
-  resolution: "@sentry/bundler-plugins@npm:10.75.2"
+"@sentry/bundler-plugins@npm:10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/bundler-plugins@npm:10.76.0"
   dependencies:
     "@babel/core": "npm:^7.18.5"
     "@sentry/cli": "npm:^2.58.6"
-    "@sentry/core": "npm:10.75.2"
+    "@sentry/core": "npm:10.76.0"
     dotenv: "npm:^17.4.2"
     find-up: "npm:^5.0.0"
     glob: "npm:^13.0.6"
@@ -5855,15 +5673,15 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 10/132af4639b0f58a0546808d5a029eafc4a08a5ae44ea45d943e595366c332c3d206c3c6af726c9fa1a7a4b767e456924b19dbeb9c6f83ed7fe5dfc526cc3919e
+  checksum: 10/24e73a214f229255a7d9cbc8517d4f9d7c0e5a3d8dd2e0d44420364f91d4c4e7e2c75e711fae11b400f321cf203f2233ebf7bf67c0c08618af40660f350b7fa2
   languageName: node
   linkType: hard
 
-"@sentry/bundler-plugins@npm:11.4.0":
-  version: 11.4.0
-  resolution: "@sentry/bundler-plugins@npm:11.4.0"
+"@sentry/bundler-plugins@npm:11.6.0":
+  version: 11.6.0
+  resolution: "@sentry/bundler-plugins@npm:11.6.0"
   dependencies:
-    "@sentry/core": "npm:11.4.0"
+    "@sentry/core": "npm:11.6.0"
     dotenv: "npm:^17.4.2"
     glob: "npm:^13.0.6"
     magic-string: "npm:~0.30.8 || ^1.0.0"
@@ -5881,7 +5699,7 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 10/7c08feb8f827801b2004e87365cbfaf1c1e5dc0c10e33bea256f1aee3586fc47d2e2b5bc5ed4a87f1041aae42008f202b5f51745e2777cc6d0021cae65f65a1c
+  checksum: 10/45fc209dfb41bbc566714899fa92976125830459fb9520513fe8c7b67ea7b2f1c0cf98c39833bef2ebfa5486ec25b0943527445f523fb9c2a11791474c844ba9
   languageName: node
   linkType: hard
 
@@ -6083,34 +5901,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/conventions@npm:^0.25.0":
-  version: 0.25.0
-  resolution: "@sentry/conventions@npm:0.25.0"
-  checksum: 10/d6d43b4537036140f02155c594cd0ff63abf4e76c514e02a74da1127600f5362543f859d05c1f9d28714cc0683cde0130ccc10a3a452ad048c4c81a57607c0c4
+"@sentry/conventions@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "@sentry/conventions@npm:0.26.0"
+  checksum: 10/890f8334992aefd795a62be319695def12324edc6187884caebaa8555d4adb480628ba2a5b99d293fefbc9431393ec95f1875c05ca150a920d1e0eb5fd89f241
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:10.75.2":
-  version: 10.75.2
-  resolution: "@sentry/core@npm:10.75.2"
+"@sentry/core@npm:10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/core@npm:10.76.0"
   dependencies:
     "@sentry/conventions": "npm:^0.16.0"
-  checksum: 10/6c2b6f0e6a361cc3d14cd8a55c47ebe42a87b49892a3f2f498dec671c00ef4e8b1ea9c7cfab2d20c044e99d1eb58e0556b25e9e32456563cd804cae9b60b6c42
+  checksum: 10/fe796e5273f9f140b5cb43df41d769a4268cfd5c5e02de66dcbae5c55204f3f887f90adab1b15592cd199c6a1a88213de0d27719d8cde3f5aee807d757ea4329
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:11.4.0":
-  version: 11.4.0
-  resolution: "@sentry/core@npm:11.4.0"
+"@sentry/core@npm:11.6.0":
+  version: 11.6.0
+  resolution: "@sentry/core@npm:11.6.0"
   dependencies:
-    "@sentry/conventions": "npm:^0.25.0"
-  checksum: 10/302ef4f5442e101cf7bfa4128c72a01ac940f3707bd65b58196963c11c8562c00d46a1ef25265334ee6ef702815a664459cc590af05a00f7d5fcd461431225d4
+    "@sentry/conventions": "npm:^0.26.0"
+  checksum: 10/5cf43b7e02f05193fc5df9d390f7fedd68c98668235a99f2e0af699f8deb3142be46ce9014cc451c0654385fdc12d07b7fc38592f88b1adc735427ced0e7a2be
   languageName: node
   linkType: hard
 
-"@sentry/expo-upload-sourcemaps@npm:8.29.0":
-  version: 8.29.0
-  resolution: "@sentry/expo-upload-sourcemaps@npm:8.29.0"
+"@sentry/expo-upload-sourcemaps@npm:8.30.0":
+  version: 8.30.0
+  resolution: "@sentry/expo-upload-sourcemaps@npm:8.30.0"
   dependencies:
     "@sentry/cli": "npm:3.8.0"
   peerDependencies:
@@ -6123,56 +5941,56 @@ __metadata:
       optional: true
   bin:
     expo-upload-sourcemaps: cli.js
-  checksum: 10/61f6228c1fbac0735d24a0a3aa3d1c66e152de7138e1d93f96e5c11c2d77942f542bfdf0e2df4144acf7596535ca7702dc368ef48fdb1defbbe57e8598f862b9
+  checksum: 10/b4744012d187eac33fcee8619516b3ed938b323b1fe75c85897035b87fa1b44669e97c83cf7c0ebde4f4cc5b9e2a2cd4a2613132a122b546a2224e0b1ea75870
   languageName: node
   linkType: hard
 
-"@sentry/feedback@npm:10.75.2":
-  version: 10.75.2
-  resolution: "@sentry/feedback@npm:10.75.2"
+"@sentry/feedback@npm:10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/feedback@npm:10.76.0"
   dependencies:
-    "@sentry/core": "npm:10.75.2"
-  checksum: 10/a29bffd747191cf7a17a6d02fe0d2882e86a7525c904981d61605523acdb80da836cc49ab26480d7296f7431287ee907b51400bbcb5ab96b1f93bfd973458a4a
+    "@sentry/core": "npm:10.76.0"
+  checksum: 10/625d50fecbe895eae8e855f2adb55f4b68a06126748a6f30494989d8a767b9687db6d03f3237b9f23760aed9458adefc8c32c2e6d2882a0fbf93586cebe8facf
   languageName: node
   linkType: hard
 
-"@sentry/node@npm:11.4.0":
-  version: 11.4.0
-  resolution: "@sentry/node@npm:11.4.0"
+"@sentry/node@npm:11.6.0":
+  version: 11.6.0
+  resolution: "@sentry/node@npm:11.6.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.9.1"
-    "@sentry/bundler-plugins": "npm:11.4.0"
-    "@sentry/conventions": "npm:^0.25.0"
-    "@sentry/core": "npm:11.4.0"
-    "@sentry/opentelemetry": "npm:11.4.0"
-    "@sentry/server-runtime-injection": "npm:11.4.0"
-    "@sentry/server-utils": "npm:11.4.0"
-  checksum: 10/68e4987e25c335f0e4591dc34619b21914b33592202d4613f71ba225ed1dda57fe5382f0e424b733df0900284a04faaa9cde11fae072ed73818a1a2355972623
+    "@sentry/bundler-plugins": "npm:11.6.0"
+    "@sentry/conventions": "npm:^0.26.0"
+    "@sentry/core": "npm:11.6.0"
+    "@sentry/opentelemetry": "npm:11.6.0"
+    "@sentry/server-runtime-injection": "npm:11.6.0"
+    "@sentry/server-utils": "npm:11.6.0"
+  checksum: 10/db6e633557916f27dfacb626b1a70815a6a7d0c058c4972d1d9ae6f23e426ba4d542fa810afbd5f5354b20fe9f02c649bc52c5c7ba727278de3da4a71f9d5214
   languageName: node
   linkType: hard
 
-"@sentry/opentelemetry@npm:11.4.0":
-  version: 11.4.0
-  resolution: "@sentry/opentelemetry@npm:11.4.0"
+"@sentry/opentelemetry@npm:11.6.0":
+  version: 11.6.0
+  resolution: "@sentry/opentelemetry@npm:11.6.0"
   dependencies:
-    "@sentry/conventions": "npm:^0.25.0"
-    "@sentry/core": "npm:11.4.0"
+    "@sentry/conventions": "npm:^0.26.0"
+    "@sentry/core": "npm:11.6.0"
   peerDependencies:
     "@opentelemetry/api": ^1.9.0
-  checksum: 10/92cafe7e6d30fd9d77b1b373ebde45c2ea4f02437b0a1d56ab70dbfe30fdd970724bf2fd5cd9cb38fd505bf9c2714e979f7c6a7c15376cfc177ca1a276df1982
+  checksum: 10/bbb6f58a9f6dec510d505593cca267cbfdbe20b3f2be04a416504bad0ac97fe8cecc1f859d189559aea656a8bf4e324c4cbf90ec7624e89f1ec5f2311d14e910
   languageName: node
   linkType: hard
 
-"@sentry/react-native@npm:^8.29.0":
-  version: 8.29.0
-  resolution: "@sentry/react-native@npm:8.29.0"
+"@sentry/react-native@npm:^8.30.0":
+  version: 8.30.0
+  resolution: "@sentry/react-native@npm:8.30.0"
   dependencies:
-    "@sentry/browser": "npm:10.75.2"
-    "@sentry/bundler-plugins": "npm:10.75.2"
+    "@sentry/browser": "npm:10.76.0"
+    "@sentry/bundler-plugins": "npm:10.76.0"
     "@sentry/cli": "npm:3.8.0"
-    "@sentry/core": "npm:10.75.2"
-    "@sentry/expo-upload-sourcemaps": "npm:8.29.0"
-    "@sentry/react": "npm:10.75.2"
+    "@sentry/core": "npm:10.76.0"
+    "@sentry/expo-upload-sourcemaps": "npm:8.30.0"
+    "@sentry/react": "npm:10.76.0"
   peerDependencies:
     "@babel/core": ">=7.0.0"
     "@expo/config": "*"
@@ -6224,61 +6042,61 @@ __metadata:
     sentry-eas-build-on-error: scripts/eas-build-hook.js
     sentry-eas-build-on-success: scripts/eas-build-hook.js
     sentry-expo-upload-sourcemaps: scripts/expo-upload-sourcemaps.js
-  checksum: 10/c5d733ae8bb2ab927a6150f1ec19a08de05f1dc68a69fda26c4751a840e257c47d297091961c577683a670134fcfa4c774aca9c01c8c0589d0fc6f2d0a7b7398
+  checksum: 10/9c1ecbbe591ef92d5d81d3cfca0ce10673bf0bead6619964c341ba7bc731857f76f51b464d5dd9a4b8ec1df7a40ca509864b6d174b3d999577666273aea864db
   languageName: node
   linkType: hard
 
-"@sentry/react@npm:10.75.2":
-  version: 10.75.2
-  resolution: "@sentry/react@npm:10.75.2"
+"@sentry/react@npm:10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/react@npm:10.76.0"
   dependencies:
-    "@sentry/browser": "npm:10.75.2"
+    "@sentry/browser": "npm:10.76.0"
     "@sentry/conventions": "npm:^0.16.0"
-    "@sentry/core": "npm:10.75.2"
+    "@sentry/core": "npm:10.76.0"
   peerDependencies:
     react: ^16.14.0 || 17.x || 18.x || 19.x
-  checksum: 10/55430fea50a79375dce78be95e9fa25d77bfa36f21728108fcc0da6e38ac10c43146ddbd39f064694a058de7952c36ebd48a08511a8c38396e94cf10307ee4f3
+  checksum: 10/847ab1c420927c06fecab36b1d9a98cd829bbf491c2b8ec55c542518c3eed8adc3ac4c22b895ec1013abc8616e14208fbb4d3f9c2e4ccd455bd372d8b6d722eb
   languageName: node
   linkType: hard
 
-"@sentry/replay-canvas@npm:10.75.2":
-  version: 10.75.2
-  resolution: "@sentry/replay-canvas@npm:10.75.2"
+"@sentry/replay-canvas@npm:10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/replay-canvas@npm:10.76.0"
   dependencies:
-    "@sentry/core": "npm:10.75.2"
-    "@sentry/replay": "npm:10.75.2"
-  checksum: 10/0b34526c0d91439dbd22f303890cb5ab9f11e74ad5a14ccf25054321f276ccf66ce4fc93739add35b0b0b2bd52a3f38489e6e8c76debfba49aeed6dd0aa8f6fa
+    "@sentry/core": "npm:10.76.0"
+    "@sentry/replay": "npm:10.76.0"
+  checksum: 10/874fa37a251f336b03400e0f3c332062338281e36ce3f1d690ab1cacca7d56c22ee227224233a00690f9c4bdb123224ae3ca691a8ada177d1b0cd745d294e778
   languageName: node
   linkType: hard
 
-"@sentry/replay@npm:10.75.2":
-  version: 10.75.2
-  resolution: "@sentry/replay@npm:10.75.2"
+"@sentry/replay@npm:10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/replay@npm:10.76.0"
   dependencies:
-    "@sentry/browser-utils": "npm:10.75.2"
-    "@sentry/core": "npm:10.75.2"
-  checksum: 10/d7b30106edf98e51bcb34cb12579e03f3269f909892eb06533eccb6200334364bc83abc3329165d5c4c845935ee9076356d4235f9c467d7397bc13e84d470295
+    "@sentry/browser-utils": "npm:10.76.0"
+    "@sentry/core": "npm:10.76.0"
+  checksum: 10/e97852d085446fc7eae85c3c965056a3f4469c9901ad91971ed86868cef6e70c40afdb75cddc9baff6fede4e1a8473ba9fb3abb291de0df3a0b9a631a1515a26
   languageName: node
   linkType: hard
 
-"@sentry/server-runtime-injection@npm:11.4.0":
-  version: 11.4.0
-  resolution: "@sentry/server-runtime-injection@npm:11.4.0"
+"@sentry/server-runtime-injection@npm:11.6.0":
+  version: 11.6.0
+  resolution: "@sentry/server-runtime-injection@npm:11.6.0"
   dependencies:
-    "@sentry/core": "npm:11.4.0"
-    "@sentry/server-utils": "npm:11.4.0"
-  checksum: 10/6d51efbba3faeacb2fc8000dac306f0e81bd31d11823a026e6efa578865a6f4a82db19ef92f224c7495492fe3b4ef0355923552c9bcdb883fb7731a4ef644e96
+    "@sentry/core": "npm:11.6.0"
+    "@sentry/server-utils": "npm:11.6.0"
+  checksum: 10/7943c44d3d8d81a131283687f391f137a5962096ba01e44925cb84daabf71a4fa8628b877f7cc174f1787d78e167fd2471fb82c262c12772e390c76f62c2e578
   languageName: node
   linkType: hard
 
-"@sentry/server-utils@npm:11.4.0":
-  version: 11.4.0
-  resolution: "@sentry/server-utils@npm:11.4.0"
+"@sentry/server-utils@npm:11.6.0":
+  version: 11.6.0
+  resolution: "@sentry/server-utils@npm:11.6.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.9.1"
-    "@sentry/conventions": "npm:^0.25.0"
-    "@sentry/core": "npm:11.4.0"
-  checksum: 10/728e314739b4adee1a8628f7e3b9663c946687742aeb046607d5eaa90b38c2572c7c1a30a88f3b588081f1200e775ef24d8a7e59ecf27975ae26359e4956aec2
+    "@sentry/conventions": "npm:^0.26.0"
+    "@sentry/core": "npm:11.6.0"
+  checksum: 10/1a7e558bb693baa1ee885677bb02f6e1f3dfcc525f4e36efc5711701dd20ac61b798eecdc7a69869038eca18815b6cd95731c5c79c3aea39741aa847018ddfdf
   languageName: node
   linkType: hard
 
@@ -7365,7 +7183,7 @@ __metadata:
     lerna: "npm:^10.0.1"
     prettier: "npm:^3.9.9"
     prettier-plugin-astro: "npm:^1.1.0"
-    sst: "npm:^4.17.1"
+    sst: "npm:^4.17.2"
     typescript: "npm:~6.0.3"
   languageName: unknown
   linkType: soft
@@ -7658,9 +7476,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"astro@npm:^7.3.6":
-  version: 7.3.6
-  resolution: "astro@npm:7.3.6"
+"astro@npm:^7.3.8":
+  version: 7.3.8
+  resolution: "astro@npm:7.3.8"
   dependencies:
     "@astrojs/compiler-rs": "npm:^0.5.1"
     "@astrojs/internal-helpers": "npm:0.12.0"
@@ -7680,7 +7498,6 @@ __metadata:
     diff: "npm:^9.0.0"
     dset: "npm:^3.1.4"
     es-module-lexer: "npm:^3.0.2"
-    esbuild: "npm:^0.28.0"
     find-proc: "npm:0.2.0"
     flattie: "npm:^1.1.1"
     fontace: "npm:~0.4.1"
@@ -7726,7 +7543,7 @@ __metadata:
       optional: true
   bin:
     astro: ./bin/astro.mjs
-  checksum: 10/3908f18c13edfa1602a0230dba4d5bb92c5df44e4f8fe34d179320e35ff322d445f386f3c1f52c663053641290cda6ed972f4a6b1120a2140d827d11e56f7fb4
+  checksum: 10/94dfcbf90abaa07e66ea689bd147de3c1ba01fc8bd5dd0fab71fb0e12e729f4e6f087acd68bdafcffd5dffb572b8391a1d4edcd6cb7991f28c8d3a3167cf586a
   languageName: node
   linkType: hard
 
@@ -10180,95 +9997,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.28.0":
-  version: 0.28.2
-  resolution: "esbuild@npm:0.28.2"
-  dependencies:
-    "@esbuild/aix-ppc64": "npm:0.28.2"
-    "@esbuild/android-arm": "npm:0.28.2"
-    "@esbuild/android-arm64": "npm:0.28.2"
-    "@esbuild/android-x64": "npm:0.28.2"
-    "@esbuild/darwin-arm64": "npm:0.28.2"
-    "@esbuild/darwin-x64": "npm:0.28.2"
-    "@esbuild/freebsd-arm64": "npm:0.28.2"
-    "@esbuild/freebsd-x64": "npm:0.28.2"
-    "@esbuild/linux-arm": "npm:0.28.2"
-    "@esbuild/linux-arm64": "npm:0.28.2"
-    "@esbuild/linux-ia32": "npm:0.28.2"
-    "@esbuild/linux-loong64": "npm:0.28.2"
-    "@esbuild/linux-mips64el": "npm:0.28.2"
-    "@esbuild/linux-ppc64": "npm:0.28.2"
-    "@esbuild/linux-riscv64": "npm:0.28.2"
-    "@esbuild/linux-s390x": "npm:0.28.2"
-    "@esbuild/linux-x64": "npm:0.28.2"
-    "@esbuild/netbsd-arm64": "npm:0.28.2"
-    "@esbuild/netbsd-x64": "npm:0.28.2"
-    "@esbuild/openbsd-arm64": "npm:0.28.2"
-    "@esbuild/openbsd-x64": "npm:0.28.2"
-    "@esbuild/openharmony-arm64": "npm:0.28.2"
-    "@esbuild/sunos-x64": "npm:0.28.2"
-    "@esbuild/win32-arm64": "npm:0.28.2"
-    "@esbuild/win32-ia32": "npm:0.28.2"
-    "@esbuild/win32-x64": "npm:0.28.2"
-  dependenciesMeta:
-    "@esbuild/aix-ppc64":
-      optional: true
-    "@esbuild/android-arm":
-      optional: true
-    "@esbuild/android-arm64":
-      optional: true
-    "@esbuild/android-x64":
-      optional: true
-    "@esbuild/darwin-arm64":
-      optional: true
-    "@esbuild/darwin-x64":
-      optional: true
-    "@esbuild/freebsd-arm64":
-      optional: true
-    "@esbuild/freebsd-x64":
-      optional: true
-    "@esbuild/linux-arm":
-      optional: true
-    "@esbuild/linux-arm64":
-      optional: true
-    "@esbuild/linux-ia32":
-      optional: true
-    "@esbuild/linux-loong64":
-      optional: true
-    "@esbuild/linux-mips64el":
-      optional: true
-    "@esbuild/linux-ppc64":
-      optional: true
-    "@esbuild/linux-riscv64":
-      optional: true
-    "@esbuild/linux-s390x":
-      optional: true
-    "@esbuild/linux-x64":
-      optional: true
-    "@esbuild/netbsd-arm64":
-      optional: true
-    "@esbuild/netbsd-x64":
-      optional: true
-    "@esbuild/openbsd-arm64":
-      optional: true
-    "@esbuild/openbsd-x64":
-      optional: true
-    "@esbuild/openharmony-arm64":
-      optional: true
-    "@esbuild/sunos-x64":
-      optional: true
-    "@esbuild/win32-arm64":
-      optional: true
-    "@esbuild/win32-ia32":
-      optional: true
-    "@esbuild/win32-x64":
-      optional: true
-  bin:
-    esbuild: bin/esbuild
-  checksum: 10/c21a050b308c6f4b99e1a6ed458661d49b83b424b05c5e0851072f7b01fc2999910754454f6833599175d6c94102d99e400849dd67cfcbeef4f0aec7dfa504a6
-  languageName: node
-  linkType: hard
-
 "escalade@npm:3.2.0, escalade@npm:^3.1.1, escalade@npm:^3.2.0":
   version: 3.2.0
   resolution: "escalade@npm:3.2.0"
@@ -12150,9 +11878,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"google-auth-library@npm:^11.1.0":
-  version: 11.1.0
-  resolution: "google-auth-library@npm:11.1.0"
+"google-auth-library@npm:^11.2.0":
+  version: 11.2.0
+  resolution: "google-auth-library@npm:11.2.0"
   dependencies:
     base64-js: "npm:^1.3.0"
     ecdsa-sig-formatter: "npm:^1.0.11"
@@ -12160,7 +11888,7 @@ __metadata:
     gcp-metadata: "npm:^9.0.0"
     google-logging-utils: "npm:^2.0.0"
     jws: "npm:^4.0.0"
-  checksum: 10/23ea144c945f8f9a896581062ce8010cb64a9ba3f7b120a8c4d0ec8f97a6409d32f783398d6ebe769c7741d39f23d739ab3ae5bc13eb28a303f4d32003aa2dea
+  checksum: 10/031d92c76f43fbb06d4046fa92ed3d7f517ea8c826cf043063ce8a1c741a507a44a904b680c30c661e32180df486477f235c790fb5ca44da0846f68b2beea45b
   languageName: node
   linkType: hard
 
@@ -16905,12 +16633,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-purchases@npm:^10.11.0":
-  version: 10.11.0
-  resolution: "react-native-purchases@npm:10.11.0"
+"react-native-purchases@npm:^10.12.2":
+  version: 10.12.2
+  resolution: "react-native-purchases@npm:10.12.2"
   dependencies:
-    "@revenuecat/purchases-js-hybrid-mappings": "npm:19.5.0"
-    "@revenuecat/purchases-typescript-internal": "npm:19.5.0"
+    "@revenuecat/purchases-js-hybrid-mappings": "npm:19.10.0"
+    "@revenuecat/purchases-typescript-internal": "npm:19.10.0"
   peerDependencies:
     react: ">= 16.6.3"
     react-native: ">= 0.73.0"
@@ -16918,7 +16646,7 @@ __metadata:
   peerDependenciesMeta:
     react-native-web:
       optional: true
-  checksum: 10/de2f43929699e07fa46f69636847b9030f6b7619003febed492978b93e27f8b84676157177195e2e62cd57e4a878f369ed33bf8e845ee61752df6db24b3496c4
+  checksum: 10/7c9b23cec35f968ca16d4cfed988c016ddfe74a6424480172632b4a044bdf6992533e3fbb431dec43432af1f458c1777e246679fddea9d2159a3fed6e27b3f83
   languageName: node
   linkType: hard
 
@@ -17015,9 +16743,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-web@npm:~0.21.3":
-  version: 0.21.3
-  resolution: "react-native-web@npm:0.21.3"
+"react-native-web@npm:~0.21.4":
+  version: 0.21.4
+  resolution: "react-native-web@npm:0.21.4"
   dependencies:
     "@babel/runtime": "npm:^7.18.6"
     "@react-native/normalize-colors": "npm:^0.74.1"
@@ -17030,7 +16758,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
-  checksum: 10/3ff954766fc332a7fcb548632c0da57e2c9a7fc09e84d10d958b2df2f4e122a75f2b027493bd6acaec03695a9ce36f99f703aead5e7b14d6aa24fe1baa36d11f
+  checksum: 10/f8b67fdd44e2a5e6d00eaedd7182d05fab7766ccc7f075fe230464c3b05585d86e8aa05c56d067531551a2705b026921ee5a0cf298fe22da1974dbb983eea6fc
   languageName: node
   linkType: hard
 
@@ -18449,78 +18177,78 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sst-darwin-arm64@npm:4.17.1":
-  version: 4.17.1
-  resolution: "sst-darwin-arm64@npm:4.17.1"
+"sst-darwin-arm64@npm:4.17.2":
+  version: 4.17.2
+  resolution: "sst-darwin-arm64@npm:4.17.2"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"sst-darwin-x64@npm:4.17.1":
-  version: 4.17.1
-  resolution: "sst-darwin-x64@npm:4.17.1"
+"sst-darwin-x64@npm:4.17.2":
+  version: 4.17.2
+  resolution: "sst-darwin-x64@npm:4.17.2"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"sst-linux-arm64@npm:4.17.1":
-  version: 4.17.1
-  resolution: "sst-linux-arm64@npm:4.17.1"
+"sst-linux-arm64@npm:4.17.2":
+  version: 4.17.2
+  resolution: "sst-linux-arm64@npm:4.17.2"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"sst-linux-x64@npm:4.17.1":
-  version: 4.17.1
-  resolution: "sst-linux-x64@npm:4.17.1"
+"sst-linux-x64@npm:4.17.2":
+  version: 4.17.2
+  resolution: "sst-linux-x64@npm:4.17.2"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"sst-linux-x86@npm:4.17.1":
-  version: 4.17.1
-  resolution: "sst-linux-x86@npm:4.17.1"
+"sst-linux-x86@npm:4.17.2":
+  version: 4.17.2
+  resolution: "sst-linux-x86@npm:4.17.2"
   conditions: os=linux & cpu=x86
   languageName: node
   linkType: hard
 
-"sst-win32-arm64@npm:4.17.1":
-  version: 4.17.1
-  resolution: "sst-win32-arm64@npm:4.17.1"
+"sst-win32-arm64@npm:4.17.2":
+  version: 4.17.2
+  resolution: "sst-win32-arm64@npm:4.17.2"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"sst-win32-x64@npm:4.17.1":
-  version: 4.17.1
-  resolution: "sst-win32-x64@npm:4.17.1"
+"sst-win32-x64@npm:4.17.2":
+  version: 4.17.2
+  resolution: "sst-win32-x64@npm:4.17.2"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"sst-win32-x86@npm:4.17.1":
-  version: 4.17.1
-  resolution: "sst-win32-x86@npm:4.17.1"
+"sst-win32-x86@npm:4.17.2":
+  version: 4.17.2
+  resolution: "sst-win32-x86@npm:4.17.2"
   conditions: os=win32 & cpu=x86
   languageName: node
   linkType: hard
 
-"sst@npm:^4.17.1":
-  version: 4.17.1
-  resolution: "sst@npm:4.17.1"
+"sst@npm:^4.17.2":
+  version: 4.17.2
+  resolution: "sst@npm:4.17.2"
   dependencies:
     "@aws/durable-execution-sdk-js": "npm:1.0.2"
     aws4fetch: "npm:1.0.18"
     jose: "npm:5.2.3"
     openid-client: "npm:5.6.4"
-    sst-darwin-arm64: "npm:4.17.1"
-    sst-darwin-x64: "npm:4.17.1"
-    sst-linux-arm64: "npm:4.17.1"
-    sst-linux-x64: "npm:4.17.1"
-    sst-linux-x86: "npm:4.17.1"
-    sst-win32-arm64: "npm:4.17.1"
-    sst-win32-x64: "npm:4.17.1"
-    sst-win32-x86: "npm:4.17.1"
+    sst-darwin-arm64: "npm:4.17.2"
+    sst-darwin-x64: "npm:4.17.2"
+    sst-linux-arm64: "npm:4.17.2"
+    sst-linux-x64: "npm:4.17.2"
+    sst-linux-x86: "npm:4.17.2"
+    sst-win32-arm64: "npm:4.17.2"
+    sst-win32-x64: "npm:4.17.2"
+    sst-win32-x86: "npm:4.17.2"
   dependenciesMeta:
     sst-darwin-arm64:
       optional: true
@@ -18540,7 +18268,7 @@ __metadata:
       optional: true
   bin:
     sst: bin/sst.mjs
-  checksum: 10/3a6ca2464dd45f632c0fcef505efb1ea4f09f840220a81a02c31e7b12283b889c281b99b9d7fbb26c81ec14fd3741bee9d05cacf2320e50da96f89e9ccfbf627
+  checksum: 10/3b0e4d23fcf972dfc61eb96c104fb448c49005d9ff14bfba5387a02a0c1d6d5a18178ec31215086923a62a83c9a6cd0601d1c6295c8a58260be9fa1ae4eac6ee
   languageName: node
   linkType: hard
 
