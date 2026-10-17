@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^7.3.8",
+    "astro": "^7.4.0",
     "astro-icon": "^1.2.0",
-    "sass": "^1.105.1"
+    "sass": "^1.105.2"
   },
   "devDependencies": {
     "@iconify-json/fa6-brands": "^1.2.6",
