@@ -107,9 +107,14 @@ const Spreads = withRates(true)(({ type, stat, rates, rateTypes }) => {
     },
     [type, rates, stat],
   );
+  const items = rateTypes.map((type) => getItemView(type)).filter(Boolean);
+  // a single rate shown has nothing to compare, an empty card would leave its title alone
+  if (items.length === 0) {
+    return null;
+  }
   return (
     <CardView title={I18n.t('spreads')} plain>
-      {rateTypes.map((type) => getItemView(type))}
+      {items}
     </CardView>
   );
 });
