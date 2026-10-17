@@ -56,8 +56,7 @@ gets shipped.
 - **A default**: ios in `Helper.swift`, `getDefaultRateType`, `getDefaultRateTypes` and
   `getDefaultSpreadRateTypes`, read from `RateTypeQuery.defaultResult` for the single rate and from
   each provider's `rateTypes(for:)` fallback for the two lists; android in each provider's
-  `defaultRates`, which is also what a stored rate `Format.isKnown` rejects falls back to when no
-  other slot holds it.
+  `defaultRates`.
 - **A /fetch schema change**: ios first, always, it reaches the widget and the watch app through
   `packages/client/targets/_shared/Rates.swift`. `lookupRateValues` reads the array by index and
   forces its casts, surviving only because `wellFormed` filters ahead of it, the stored payload
