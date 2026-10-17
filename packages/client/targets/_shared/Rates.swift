@@ -195,11 +195,13 @@ func lookupRateValues(rates: [String: Any]?, rateTypes: [RateType], valueType: V
   }
 }
 
-func formatRateCurrency(num: Double) -> String {
+// the watch drops the cents of a whole list when its longest amount does not fit
+func formatRateCurrency(num: Double, cents: Bool = true) -> String {
   let nf = NumberFormatter()
   nf.numberStyle = .decimal
-  nf.minimumFractionDigits = 2
-  nf.maximumFractionDigits = 2
+  let digits = cents ? 2 : 0
+  nf.minimumFractionDigits = digits
+  nf.maximumFractionDigits = digits
   nf.roundingMode = .down
   return nf.string(for: num)!
 }

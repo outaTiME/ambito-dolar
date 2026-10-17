@@ -117,32 +117,13 @@ measured and does not happen: a widget configured under the SiriKit build keeps 
 updating onto the non optional parameter, tested on device with four widgets, two hand configured
 and two on defaults. Re-test whenever Xcode or the deployment target moves.
 
-**A stale `DerivedData` can ship the extension without its AppIntents metadata**, and the symptom
-reads like a code bug. Every gallery preview renders redacted, and the log says:
+**A stale `DerivedData` breaks the build output silently**, and the symptom reads like a code bug.
+After a prebuild the extension shipped without its AppIntents metadata and every gallery preview
+rendered redacted. After a target rename the old copy shipped next to the new one and the install
+failed. Delete `DerivedData` and build again before touching any source.
 
-```
-Failed to instantiate type SelectRateTypeIntent by name (9mbitoDlar20SelectRateTypeIntentV).
-The type with this mangled name does not exist in the process's memory space.
-Returned view collection was either nil or empty.
-```
-
-`mbitoDlar` there is the app's Swift module and the `9` is its length, so the extension is being
-asked for the app executable's copy of the intent, which its own process does not carry. Measured in
-that build: `RateWidgetsExtension.appex` shipped with no `Metadata.appintents` while the app's
-declared all three. Deleting `~/Library/Developer/Xcode/DerivedData/mbitoDlar-*` and building again
-produced it, with `RateWidgetsExtension` mangled names, and the widgets rendered.
-
-Why the task did not run is not settled. XCBuild had `ExtractAppIntentsMetadata` in its manifest for
-that exact output and the file was absent, after a prebuild had regenerated the project underneath.
-The build database was never inspected, so the cache is the working diagnosis and not a proven one.
-Check the product before touching any source, the embedded copy and the standalone one both:
-
-```
-ls ~/Library/Developer/Xcode/DerivedData/mbitoDlar-*/Build/Products/*/{mbitoDlar.app/PlugIns/,}RateWidgetsExtension.appex/
-```
-
-Both targets compiling `_shared/Intents.swift` is the design and was not the fault here. Moving the
-file out of `_shared/` was tried and did not help, it only drops the app's copy.
+Both targets compiling `_shared/Intents.swift` is the design. Moving it out of `_shared/` does not
+restore the metadata, it only drops the app's copy.
 
 **The endpoint is hardcoded** in `getRates` (`packages/client/targets/_shared/Rates.swift`), so
 unlike android this side never reads `API_URL`. A build pointed at another host ships ios widgets
@@ -170,7 +151,7 @@ own, but three things block it: the app holds `{type: {stats: [...]}}` while bot
 renders from the other, so a rate gated in one corrupts a widget with no build error; and it would
 have to pass `usableRates` here and `parse` on android, the choke point that keeps a malformed
 payload off a widget. Taking the package out of that list also retires
-`packages/client/modules/widgetkit/`, which ships `reloadWidget`.
+`packages/client/modules/widgetkit/`, which ships `reloadAllTimelines`.
 
 ## Widget configuration
 
@@ -246,24 +227,53 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
 - **The widget sets the representation, the app the texts, watchOS the rest.** Rows are the two
   lines of the list widget. Settings hold the widget configuration, `excluded_rates` with the app
   key, `value_type` as the widget Mostrar parameter with its default. Restablecer is a `.bordered`
-  capsule and not a red row, an action at the end of a list and nothing destructive. Everything else
-  is the system component with its own spacing and font.
+  capsule and not a red row, it also clears the order, an action at the end of a list and nothing
+  destructive. Everything else is the system component with its own spacing and font.
 - **The last rate on cannot be turned off.** Every catalog rate excluded, left by a release that
   retires the only rate on, reads as none excluded in the list and in settings, the watch has no
   room for the empty view the app keeps there. A selected rate the payload lacks is left out, the
   unavailable view shows when none is left.
+- **Order follows the app**, the `rate_order`, `rate_order_direction` and `rate_types` keys with
+  the app values and texts and `getSortedRates` ported to the watch file, the widgets have no order.
+  Personalizar keeps Mostrar, an Orden row that pushes the criteria and the direction as inline
+  pickers, and the rate toggles in the manual order whatever the order shown, like the app customize
+  screen: a tap toggles, a long press drags (`.onMove`) and leaves the order manual and ascending.
+  Valor sorts by the value shown, the Mostrar end, the app by the higher end of the pair. No drawn
+  grip, it crowds the names on 40mm, and watchOS has no `editMode`. No rate detail, it
+  added little on the wrist.
+- **The converter is the second page**, a swipe from the list, one stack around both pages for the
+  titles. Horizontal on purpose: the HIG prefers vertical pages, but those go before a scrolling
+  one, which would put the converter ahead of the rates, and a toolbar button brings back the
+  truncated title. The amount starts at 1 and a tap opens a keypad sheet, watchOS has no numeric
+  keyboard and a `TextField` opens the full text input. A row swaps Divisa and Peso. The list floor
+  is 40pt, both rows the same height with about the air of the list cards, the 44pt default left a
+  short token in a tall platter.
+- **Amounts follow one policy**, on the converter and the list. When the longest row of a list does
+  not fit on one line every row drops its cents (`formatRateCurrency(cents:)`), measured with the
+  cents and from the data since a List only lays out the rows on screen. A converter row still too
+  long puts the amount under the name on the trailing edge, the list rows never wrap, they are the
+  widget layout.
+- **Personalizar closes the list**, a borderless footnote link in secondary with its icon in the
+  section footer, a 44pt target that also gives it air under the last card, and under Reintentar on
+  the empty screen. A capsule stood out more than the rate cards. A `.topBarTrailing` item centers
+  the time on watchOS 10 to 26 by design and the title under it truncates, a leading one reads as
+  navigation and `.bottomBar` floats over the last row.
 - **The title goes with the list only.** Error and empty are a plain `VStack` the system centers,
   loading a bare `ProgressView`. `ContentUnavailableView` anchors to the top on watchOS and
   `.frame` does not move it.
-- **FiraGO only in the rate rows**, for the arrows, sized from
-  `UIFont.preferredFont(forTextStyle:)`. A fixed base with `relativeTo:` takes the iOS sizes, and
-  `UITraitCollection` does not exist on watchOS.
+- **FiraGO only for data**, the rate cards, the converter rates, its amount input and the amount
+  typed on the keypad, for the arrows like the widget. Everything else is SF, FiraGO ships one
+  weight and the section titles, buttons and settings lose the semibold the system hierarchy rests
+  on. Sized from `UIFont.preferredFont(forTextStyle:)`. A fixed base with `relativeTo:` takes the
+  iOS sizes, and `UITraitCollection` does not exist on watchOS. Every view that uses it declares an
+  unread `@Environment(\.dynamicTypeSize)` so it redraws when the text size changes.
 - **Locale sensitive text has to force its locale**, apple-targets pins the watch bundle to `en` and
   `Locale.current` takes it. Number separators come from the region and are fine.
 - **The font is the same symlink with `UIAppFonts`**, the rule in Traps applies.
 - **Build it alone** with `-target RateWatchApp -sdk watchsimulator` on `mbitoDlar.xcodeproj`. The
   full app build takes the destination only, `-sdk iphonesimulator` drags the watch target onto the
-  ios sdk and fails on its icon.
+  ios sdk and fails on its icon. It also needs the watchOS runtime of its Xcode, the scheme embeds
+  the watch app.
 - **`simctl spawn <watch> defaults write` lands outside the app container**, in the device
   `data/Library/Preferences`, the app reads it and `simctl uninstall` keeps it. Set state from the
   app and clear it with uninstall.
