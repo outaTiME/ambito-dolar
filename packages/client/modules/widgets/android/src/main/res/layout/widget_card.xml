@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- the six slots every ios systemSmall view lays out: title / detail / gap / small / big / date.
-     Which value goes where and which one is colored is decided per widget in kotlin, so both the
-     rate and the spread render through this one layout.
-     It also serves as initialLayout, and that state is the bare card: an app update re-inflates
-     every widget from here and until the redraw lands the rates are loading, not missing. Saying
-     unavailable there would be a lie for the few seconds it takes.
-     The slots are ImageView and not TextView because the launcher resolves only system fonts in
-     its own process, so the text is drawn with our font on our side and travels as a bitmap.
-     Sizes and colors moved out with it: the sizes to Sizes.kt, one per role and shared with the
-     list, and the colors to the kotlin that fills each slot -->
+<!-- the six ios systemSmall slots as ImageViews, the launcher only resolves system fonts so kotlin draws the text -->
+<!-- as initialLayout it is the bare card, the rates are loading and not missing -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <!-- the card is square: its height comes from the width through the 1:1 drawable below, so it
-       never stretches to fill a cell that is taller than wide -->
+  <!-- square through the 1:1 drawable below, never stretched by a tall cell -->
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

@@ -17,6 +17,9 @@ private let valueTypeKey = "value_type"
 private let rateOrderKey = "rate_order"
 private let rateOrderDirectionKey = "rate_order_direction"
 private let rateTypesKey = "rate_types"
+// same keys as the app markets customization, hidden and manual order only
+private let excludedMarketsKey = "excluded_markets"
+private let marketTypesKey = "market_types"
 
 // the orders of the app, with its texts
 enum RateOrder: String, CaseIterable {
@@ -38,16 +41,15 @@ enum OrderDirection: String {
   case asc, desc
 }
 
-// FiraGO at the size of a system text style
-// the rate rows use it for the arrows, the other amounts so they read the same
+// FiraGO at the size of a system text style, the rows need it for the arrows and the amounts match them
 private func firaFont(_ style: UIFont.TextStyle) -> Font {
   Font.custom(fontName, fixedSize: UIFont.preferredFont(forTextStyle: style).pointSize)
 }
 
-// every catalog rate excluded, left by a release that retires the only rate on, reads as none
-private func excludedSet(_ raw: String) -> Set<String> {
+// every catalog item excluded, left by a payload that drops the only one on, reads as none
+private func excludedSet(_ raw: String, _ catalog: [RateType]) -> Set<String> {
   let excluded = Set(raw.split(separator: ",").map(String.init))
-  return Helper.getRateTypes().allSatisfy { excluded.contains($0.id) } ? [] : excluded
+  return catalog.allSatisfy { excluded.contains($0.id) } ? [] : excluded
 }
 
 // the position in the manual order, a rate missing from it goes last
@@ -71,10 +73,14 @@ private func sortedRates(_ rates: [RateValue], order: RateOrder, direction: Orde
   }
 }
 
-// the selection comes from the catalog, a selected rate the payload lacks is left out
-private func visibleRates(_ rates: [String: Any]?, excludedRates: String, valueType: ValueType, order: RateOrder, direction: OrderDirection, rateTypes: String) -> [RateValue] {
-  let excluded = excludedSet(excludedRates)
-  let values = lookupRateValues(rates: rates, rateTypes: Helper.getRateTypes().filter { !excluded.contains($0.id) }, valueType: valueType)
+// the types the payload carries, the only ones the app offers to customize
+private func available(_ types: [RateType], _ rates: [String: Any]?) -> [RateType] {
+  types.filter { rates?[$0.id] != nil }
+}
+
+private func visibleRates(_ catalog: [RateType], _ rates: [String: Any]?, excludedRates: String, valueType: ValueType, order: RateOrder, direction: OrderDirection, rateTypes: String) -> [RateValue] {
+  let excluded = excludedSet(excludedRates, catalog)
+  let values = lookupRateValues(rates: rates, rateTypes: catalog.filter { !excluded.contains($0.id) }, valueType: valueType)
   return sortedRates(values, order: order, direction: direction, rateTypes: rateTypes)
 }
 
@@ -82,18 +88,18 @@ private func visibleRates(_ rates: [String: Any]?, excludedRates: String, valueT
 final class RatesModel: ObservableObject {
   @Published var rates: [String: Any]? = storedRates()
   @Published var failed = false
-  // a second activation while the first call waits would request again, both see an old payload
+  // a second activation while the first call waits would request again
   private var refreshing = false
 
   // inside the window this is the stored payload and no request, so reopening the app is free
-  func refresh(cacheWindow: TimeInterval = ratesCacheWindow) async {
+  func refresh() async {
     guard !refreshing else {
       return
     }
     refreshing = true
     defer { refreshing = false }
     failed = false
-    let fresh = await getRates(cacheWindow: cacheWindow)
+    let fresh = await getRates(cacheWindow: ratesCacheWindow)
     // animated so the numeric transitions of the rows run, a widget gets that from the system
     withAnimation {
       rates = fresh
@@ -106,16 +112,46 @@ final class RatesModel: ObservableObject {
 struct RateWatchApp: App {
   @StateObject private var model = RatesModel()
   @Environment(\.scenePhase) private var scenePhase
+  // by tag and not by position, so the markets page showing up keeps the page in view
+  @State private var page = "rates"
+  @AppStorage(excludedRatesKey) private var excludedRates = ""
+  @AppStorage(valueTypeKey) private var valueType = ValueType.sell
+  @AppStorage(rateOrderKey) private var order = RateOrder.default
+  @AppStorage(rateOrderDirectionKey) private var direction = OrderDirection.asc
+  @AppStorage(rateTypesKey) private var rateTypes = ""
 
   var body: some Scene {
     WindowGroup {
-      // the converter a swipe away, one stack around both for the titles
+      // the pages only once there is a payload, like the InitialScreen of the app
       NavigationStack {
-        TabView {
-          ContentView(model: model)
-          ConverterView(model: model)
+        if model.rates == nil {
+          if model.failed {
+            // same message and action as InitialScreen in the app, a plain stack since ContentUnavailableView anchors to the top on watchOS
+            VStack {
+              Text("Imposible obtener las cotizaciones.")
+                .multilineTextAlignment(.center)
+              Button("Reintentar") {
+                Task { await model.refresh() }
+              }
+            }
+          } else {
+            ProgressView()
+          }
+        } else {
+          // the pages in the order of the app tabs, one stack around all of them for the titles
+          let catalog = available(Helper.getRateTypes(), model.rates)
+          let markets = available(Helper.getMarketTypes(), model.rates)
+          let rows = visibleRates(catalog, model.rates, excludedRates: excludedRates, valueType: valueType, order: order, direction: direction, rateTypes: rateTypes)
+          TabView(selection: $page) {
+            ContentView(catalog: catalog, rows: rows).tag("rates")
+            // only when the payload carries markets, like the app hides its tab
+            if !markets.isEmpty {
+              MarketsView(catalog: markets, rates: model.rates).tag("markets")
+            }
+            ConverterView(rates: rows).tag("converter")
+          }
+          .tabViewStyle(.page)
         }
-        .tabViewStyle(.page)
       }
       .onChange(of: scenePhase, initial: true) { _, phase in
         if phase == .active {
@@ -127,95 +163,90 @@ struct RateWatchApp: App {
 }
 
 struct ContentView: View {
-  @ObservedObject var model: RatesModel
-  @AppStorage(excludedRatesKey) private var excludedRates = ""
-  @AppStorage(valueTypeKey) private var valueType = ValueType.sell
-  @AppStorage(rateOrderKey) private var order = RateOrder.default
-  @AppStorage(rateOrderDirectionKey) private var direction = OrderDirection.asc
-  @AppStorage(rateTypesKey) private var rateTypes = ""
+  let catalog: [RateType]
+  let rows: [RateValue]
   @State private var showSettings = false
   @State private var trim = false
 
   var body: some View {
-    content
-      // a sheet like the watch apps settings, its stack is where Mostrar and Orden push
-      .sheet(isPresented: $showSettings) {
-        NavigationStack {
-          SettingsView()
-        }
-      }
-  }
-
-  @ViewBuilder
-  private var content: some View {
-    let rows = visibleRates(model.rates, excludedRates: excludedRates, valueType: valueType, order: order, direction: direction, rateTypes: rateTypes)
-    if model.rates == nil {
-      if model.failed {
-        // same message and action as InitialScreen in the app
-        retry("Imposible obtener las cotizaciones.") {
-          Task { await model.refresh() }
-        }
-      } else {
-        ProgressView()
-      }
-    } else if rows.isEmpty {
-      // same text as the list widget when none of its rates came back, other rates can be picked
-      VStack {
-        retry("Cotizaciones no disponibles") {
-          // the stored payload is what came back without these rates, so this one skips it
-          Task { await model.refresh(cacheWindow: 0) }
-        }
-        settingsButton
-      }
-    } else {
-      // the title goes with the list only, the other states center on the screen without it
-      // the most characters stands for the widest row, close enough for a proportional font
-      let longest = rows.max { ($0.name + $0.price).count < ($1.name + $1.price).count }
-      List {
-        Section {
-          ForEach(rows) { rate in
-            RateRow(rate: rate, cents: !trim)
-              .background {
-                if let longest {
-                  CentsProbe(name: longest.name, value: longest.price, trim: $trim)
-                }
+    // the most characters stands for the widest row, close enough for a proportional font
+    let longest = rows.max { ($0.name + $0.price).count < ($1.name + $1.price).count }
+    List {
+      Section {
+        ForEach(rows) { rate in
+          RateRow(rate: rate, cents: !trim)
+            .background {
+              if let longest {
+                CentsProbe(name: longest.name, value: longest.price, trim: $trim)
               }
-          }
-        } footer: {
-          // not in the corner, a trailing toolbar item centers the time on watchOS 10 to 26 and truncates the title
-          settingsButton
+            }
         }
+      } footer: {
+        // not in the corner, a trailing toolbar item centers the time on watchOS 10 to 26 and truncates the title
+        settingsButton { showSettings = true }
       }
-      .navigationTitle("Cotizaciones")
     }
-  }
-
-  // small and secondary so it goes with the rates, the whole 44pt row is the target and its air
-  private var settingsButton: some View {
-    Button {
-      showSettings = true
-    } label: {
-      Label("Personalizar", systemImage: "line.3.horizontal.decrease")
-        .frame(maxWidth: .infinity, minHeight: 44)
-        .contentShape(Rectangle())
-    }
-    .font(.footnote)
-    .foregroundStyle(.secondary)
-    .buttonStyle(.borderless)
-  }
-
-  // a plain stack the system centers, ContentUnavailableView anchors to the top on watchOS
-  private func retry(_ message: String, action: @escaping () -> Void) -> some View {
-    VStack {
-      Text(message)
-        .multilineTextAlignment(.center)
-      Button("Reintentar", action: action)
+    .navigationTitle("Cotizaciones")
+    // a sheet like the watch apps settings, its stack is where Mostrar and Orden push
+    .sheet(isPresented: $showSettings) {
+      NavigationStack {
+        SettingsView(catalog: catalog)
+      }
     }
   }
 }
 
-// a list drops every cent once its longest row no longer fits, measured with the cents so the answer
-// never feeds itself, and on every row since a List only lays out the visible ones
+// small and secondary so it goes with the list, the whole 44pt row is the target and its air
+private func settingsButton(action: @escaping () -> Void) -> some View {
+  Button(action: action) {
+    Label("Personalizar", systemImage: "line.3.horizontal.decrease")
+      .frame(maxWidth: .infinity, minHeight: 44)
+      .contentShape(Rectangle())
+  }
+  .font(.footnote)
+  .foregroundStyle(.secondary)
+  .buttonStyle(.borderless)
+}
+
+// the markets tab of the app on its own page, never mixed with the rates and in its manual order
+struct MarketsView: View {
+  let catalog: [RateType]
+  let rates: [String: Any]?
+  @AppStorage(excludedMarketsKey) private var excludedMarkets = ""
+  @AppStorage(marketTypesKey) private var marketTypes = ""
+  @State private var showSettings = false
+
+  var body: some View {
+    let excluded = excludedSet(excludedMarkets, catalog)
+    let rows = lookupRateValues(rates: rates, rateTypes: catalog.filter { !excluded.contains($0.id) })
+    List {
+      Section {
+        // without a saved order the manual one falls back to the core order, like the app
+        ForEach(sortedRates(rows, order: .custom, direction: .asc, rateTypes: marketTypes)) { market in
+          // a market carries its own decimals, so it never drops them
+          RateRow(rate: market, cents: true)
+        }
+      } footer: {
+        settingsButton { showSettings = true }
+      }
+    }
+    .navigationTitle("Indicadores")
+    .sheet(isPresented: $showSettings) {
+      NavigationStack {
+        List {
+          CustomizeSection(title: "Indicadores", hint: "Mantené presionado un indicador y arrastralo para ordenarlo.", catalog: catalog, excluded: $excludedMarkets, types: $marketTypes)
+          restoreButton {
+            excludedMarkets = ""
+            marketTypes = ""
+          }
+        }
+      }
+    }
+  }
+}
+
+// a list drops every cent once its longest row no longer fits, measured with the cents so it never feeds itself
+// on every row since a List only lays out the visible ones
 struct CentsProbe: View {
   let name: String
   let value: String
@@ -273,7 +304,6 @@ struct RateRow: View {
     VStack(alignment: .leading) {
       HStack(alignment: .firstTextBaseline) {
         Text(rate.name)
-          .minimumScaleFactor(0.9)
         Spacer()
         Text(cents ? rate.price : formatRateCurrency(num: rate.priceValue, cents: false))
           .layoutPriority(1)
@@ -299,6 +329,7 @@ struct RateRow: View {
 }
 
 struct SettingsView: View {
+  let catalog: [RateType]
   @AppStorage(excludedRatesKey) private var excludedRates = ""
   @AppStorage(valueTypeKey) private var valueType = ValueType.sell
   @AppStorage(rateOrderKey) private var order = RateOrder.default
@@ -306,8 +337,6 @@ struct SettingsView: View {
   @AppStorage(rateTypesKey) private var rateTypes = ""
 
   var body: some View {
-    // the app customize screen, the rates in the manual order whatever the order shown
-    let types = Helper.getRateTypes().sorted { manualIndex($0.id, rateTypes) < manualIndex($1.id, rateTypes) }
     List {
       // same options and default as the Mostrar parameter of the widgets
       Picker("Mostrar", selection: $valueType) {
@@ -326,61 +355,80 @@ struct SettingsView: View {
             .foregroundStyle(.secondary)
         }
       }
-      Section {
-        ForEach(types) { type in
-          Toggle(isOn: visible(type.id)) {
-            Text(type.displayString)
-              .lineLimit(1)
-          }
-          // the last rate on stays on, so the selection is never emptied by hand
-          .disabled(isLastVisible(type.id))
-        }
-        // a move leaves the order manual and ascending like the app
-        .onMove { from, to in
-          var ids = types.map(\.id)
-          ids.move(fromOffsets: from, toOffset: to)
-          // a drop where it was changes nothing, like the app
-          guard ids != types.map(\.id) else {
-            return
-          }
-          rateTypes = ids.joined(separator: ",")
-          order = .custom
-          direction = .asc
-        }
-      } header: {
-        Text("Cotizaciones")
-      } footer: {
-        Text("Mantené presionada una cotización y arrastrala para ordenarla.")
+      // a move leaves the order manual and ascending like the app
+      CustomizeSection(title: "Cotizaciones", hint: "Mantené presionada una cotización y arrastrala para ordenarla.", catalog: catalog, excluded: $excludedRates, types: $rateTypes) {
+        order = .custom
+        direction = .asc
       }
-      // an action and not a row, a capsule like Reordenar in the Workout settings
-      Section {
-        Button("Restablecer") {
-          excludedRates = ""
-          valueType = .sell
-          order = .default
-          direction = .asc
-          rateTypes = ""
-        }
-        .buttonStyle(.bordered)
-        .listRowBackground(Color.clear)
+      restoreButton {
+        excludedRates = ""
+        valueType = .sell
+        order = .default
+        direction = .asc
+        rateTypes = ""
       }
     }
   }
+}
 
-  private func isLastVisible(_ id: String) -> Bool {
-    let excluded = excludedSet(excludedRates)
-    return !excluded.contains(id) && Helper.getRateTypes().allSatisfy { $0.id == id || excluded.contains($0.id) }
+// the app customize screen, a toggle per item in the manual order and a drag to change it
+private struct CustomizeSection: View {
+  let title: String
+  let hint: String
+  let catalog: [RateType]
+  @Binding var excluded: String
+  @Binding var types: String
+  var onMove: () -> Void = {}
+
+  var body: some View {
+    // the manual order whatever the order shown
+    let sorted = catalog.sorted { manualIndex($0.id, types) < manualIndex($1.id, types) }
+    let hidden = excludedSet(excluded, catalog)
+    let on = catalog.filter { !hidden.contains($0.id) }.map(\.id)
+    Section {
+      ForEach(sorted) { type in
+        Toggle(isOn: visible(type.id, hidden)) {
+          Text(type.displayString)
+            .lineLimit(1)
+        }
+        // the last one on stays on, so the selection is never emptied by hand
+        .disabled(on == [type.id])
+      }
+      .onMove { from, to in
+        let before = sorted.map(\.id)
+        var ids = before
+        ids.move(fromOffsets: from, toOffset: to)
+        // a drop where it was changes nothing, like the app
+        guard ids != before else {
+          return
+        }
+        types = ids.joined(separator: ",")
+        onMove()
+      }
+    } header: {
+      Text(title)
+    } footer: {
+      Text(hint)
+    }
   }
 
-  private func visible(_ id: String) -> Binding<Bool> {
+  private func visible(_ id: String, _ hidden: Set<String>) -> Binding<Bool> {
     Binding(
-      get: { !excludedSet(excludedRates).contains(id) },
+      get: { !hidden.contains(id) },
       set: { isVisible in
-        let excluded = excludedSet(excludedRates)
-        let next = isVisible ? excluded.subtracting([id]) : excluded.union([id])
-        excludedRates = next.sorted().joined(separator: ",")
+        let next = isVisible ? hidden.subtracting([id]) : hidden.union([id])
+        excluded = next.sorted().joined(separator: ",")
       }
     )
+  }
+}
+
+// an action and not a row, a capsule like Reordenar in the Workout settings
+private func restoreButton(action: @escaping () -> Void) -> some View {
+  Section {
+    Button("Restablecer", action: action)
+      .buttonStyle(.bordered)
+      .listRowBackground(Color.clear)
   }
 }
 
@@ -410,12 +458,7 @@ struct OrderView: View {
 
 // the app conversion screen, a tap on the amount opens the keypad and one on the direction swaps it
 struct ConverterView: View {
-  @ObservedObject var model: RatesModel
-  @AppStorage(excludedRatesKey) private var excludedRates = ""
-  @AppStorage(valueTypeKey) private var valueType = ValueType.sell
-  @AppStorage(rateOrderKey) private var order = RateOrder.default
-  @AppStorage(rateOrderDirectionKey) private var direction = OrderDirection.asc
-  @AppStorage(rateTypesKey) private var rateTypes = ""
+  let rates: [RateValue]
   // the fonts read the text size on render, this redraws the rows when it changes
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @State private var amount: Double = 1
@@ -444,7 +487,6 @@ struct ConverterView: View {
           .frame(maxWidth: .infinity)
       }
       Section("Cotizaciones") {
-        let rates = visibleRates(model.rates, excludedRates: excludedRates, valueType: valueType, order: order, direction: direction, rateTypes: rateTypes)
         let longest = rates.max { ($0.name + converted($0)).count < ($1.name + converted($1)).count }
         ForEach(rates) { rate in
           fittingLine(rate.name, converted(rate, cents: !trim))

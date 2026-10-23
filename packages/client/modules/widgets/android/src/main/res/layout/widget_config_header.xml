@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- section title. The recipe is the one PreferenceCategory uses, read from its own layout and
-     styles: Body2, which is 14sp medium and not the regular the small appearance gives, the
-     accent color, and its 16dp of margin over 8dp of padding -->
+<!-- section title, the PreferenceCategory recipe: Body2, accent, 16dp margin over 8dp padding -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"

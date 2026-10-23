@@ -10,26 +10,22 @@ import java.util.Locale
 
 // mirrors packages/client/targets/_shared/Rates.swift and packages/core, keep the three in sync
 object Format {
-  // truncates like the core toFixedNoRounding, built per call so a locale change is picked up
-  private fun currency(): DecimalFormat =
-    DecimalFormat("#,##0.00", DecimalFormatSymbols(Locale.getDefault())).apply {
+  // truncates like the core toFixedNoRounding, per call so a locale change is picked up
+  private fun currency(digits: Int = 2): DecimalFormat =
+    DecimalFormat(if (digits > 0) "#,##0." + "0".repeat(digits) else "#,##0", DecimalFormatSymbols(Locale.getDefault())).apply {
       roundingMode = RoundingMode.DOWN
     }
 
-  // per call for the same reason as the currency one, a val would freeze its digits
-  private fun date(): DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM HH:mm")
+  private val DATE = DateTimeFormatter.ofPattern("dd/MM HH:mm")
 
   fun rateCurrency(value: Double): String = currency().format(value)
 
   // the ios spread reads the difference through the same formatter with the percent off
-  fun rateAmount(value: Double): String {
-    val format = currency()
+  fun rateAmount(value: Double, digits: Int = 2): String {
+    val format = currency(digits)
     val text = format.format(value)
     val zero = format.format(0.0)
-    // a value that formats to zero loses its sign first, or a change of a thousandth down would
-    // print as -0,00% right next to the equals sign that changeSymbol gives it for not moving.
-    // Decided on the magnitude and not on the text: the sign is whatever the locale uses, U+2212
-    // in the nordics and a mark plus a hyphen in arabic, so matching a string never held there
+    // a value that formats to zero loses its sign, decided on the magnitude since the minus sign is per locale
     return when {
       value < 0 && format.format(-value) == zero -> zero
       value > 0 -> "+$text"
@@ -56,8 +52,7 @@ object Format {
       else -> R.color.widget_red
     }
 
-  // the spread carries the newer of its two rates, and the second one when they tie, which is
-  // what the ios comparison falls through to
+  // the newer of the two, the second on a tie like the ios comparison
   fun later(first: String, second: String): String =
     shown(listOfNotNull(instant(second), instant(first)).maxOrNull())
 
@@ -72,7 +67,7 @@ object Format {
   fun timestamp(value: String): String = shown(instant(value))
 
   private fun shown(value: OffsetDateTime?): String =
-    value?.atZoneSameInstant(ZoneId.systemDefault())?.format(date()) ?: ""
+    value?.atZoneSameInstant(ZoneId.systemDefault())?.format(DATE) ?: ""
 
   // packages/client/targets/_shared/Helper.swift keeps the same list and order
   val RATE_TYPES =
@@ -91,11 +86,87 @@ object Format {
       "futuro" to "Futuro",
     )
 
-  fun rateTitle(type: String): String = RATE_TYPES.firstOrNull { it.first == type }?.second ?: type
+  // Helper.getMarketTypes() keeps the same list and order
+  val MARKET_TYPES =
+    listOf(
+      "inflacion" to "Inflación",
+      "inflacion_interanual" to "Inflación interanual",
+      "plazo_fijo" to "Plazo fijo",
+      "uva" to "UVA",
+      "riesgo_pais" to "Riesgo país",
+      "merval" to "Merval",
+      "reservas" to "Reservas",
+    )
 
-  // the same check as the ios Helper.getRateTypes().contains: a type it retired is dropped even
-  // while the service keeps sending it
-  fun isKnown(type: String): Boolean = RATE_TYPES.any { it.first == type }
+  // rates and markets share the /fetch keys and never repeat one
+  private val TITLES = (RATE_TYPES + MARKET_TYPES).toMap()
+
+  fun rateTitle(type: String): String = TITLES[type] ?: type
+
+  // the RateType short on ios, for names that do not fit a row
+  private val SHORT = mapOf("inflacion_interanual" to "Interanual")
+
+  fun shortTitle(type: String): String = SHORT[type] ?: rateTitle(type)
+
+  // the ios usableRates whitelist, a retired type is dropped while the service still sends it
+  fun isKnown(type: String): Boolean = type in TITLES
+
+  // display rules per market, the MARKETS of config/kinds.ts and marketFormats on ios
+  private class Market(
+    val decimals: Int = 2,
+    // pts, pb and US$ are left out like the tickers do, only % and the M of reservas stay
+    val suffix: String = "",
+    // a percentage moves in points, the others in percent
+    val points: Boolean = false,
+    // up is bad news, so the colors swap
+    val inverse: Boolean = false,
+    // a month or a day, never moved by the device timezone
+    val dated: String? = null,
+  )
+
+  private val MARKETS =
+    mapOf(
+      "inflacion" to Market(suffix = "%", points = true, inverse = true, dated = "MMMM"),
+      "inflacion_interanual" to Market(suffix = "%", points = true, inverse = true, dated = "MMMM"),
+      "plazo_fijo" to Market(suffix = "%", points = true, dated = "dd/MM"),
+      "uva" to Market(dated = "dd/MM"),
+      "riesgo_pais" to Market(decimals = 0, inverse = true),
+      "merval" to Market(decimals = 0),
+      "reservas" to Market(decimals = 0, suffix = " M", dated = "dd/MM"),
+    )
+
+  private fun market(type: String) = MARKETS.getValue(type)
+
+  fun marketValue(type: String, rate: Rate): String =
+    market(type).let { currency(it.decimals).format(rate.sell) + it.suffix }
+
+  // the close comes back from the percentage when missing
+  // rounded first because a float residue would truncate a whole step down
+  private fun marketDiff(type: String, rate: Rate): Double {
+    val close = rate.close ?: (rate.sell / (1 + rate.change / 100))
+    val scale = Math.pow(10.0, market(type).decimals.toDouble())
+    return Math.round((rate.sell - close) * scale) / scale
+  }
+
+  // formatMarketChange in its card form, with the arrow of the diff
+  fun marketChange(type: String, rate: Rate): String {
+    val diff = marketDiff(type, rate)
+    val format = market(type)
+    val text = if (format.points) rateAmount(diff, format.decimals) else rateChange(rate.change)
+    return text + " " + changeSymbol(diff)
+  }
+
+  fun marketColor(type: String, rate: Rate): Int =
+    marketDiff(type, rate).let { changeColor(if (market(type).inverse) -it else it) }
+
+  fun marketDate(type: String, timestamp: String): String {
+    val dated = market(type).dated ?: return timestamp(timestamp)
+    val text =
+      instant(timestamp)
+        ?.atZoneSameInstant(ZoneId.of("America/Argentina/Buenos_Aires"))
+        ?.format(DateTimeFormatter.ofPattern(dated, Locale.forLanguageTag("es-AR"))) ?: return ""
+    return text.replaceFirstChar { it.uppercase() }
+  }
 
   // ValueType.displayName on ios
   fun valueLabel(value: String): String =

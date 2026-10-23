@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- the chosen value of a setting, tapping it opens the picker. Same appearance, color and row
-     height the appcompat picker item has, so both surfaces measure the same. The accent lives on
-     the section title now, which is where PreferenceCategory puts it -->
+<!-- the chosen value, styled as the appcompat picker item so both measure the same -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"

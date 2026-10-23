@@ -109,14 +109,16 @@ Simulate the caption with every active rate before adding one. See `docs/product
 ## Widgets
 
 Written twice: native android in `packages/client/modules/widgets/`, SwiftUI on ios in
-`packages/client/targets/RateWidgets/` and `packages/client/targets/_shared/`. A rate, a label, a
-font size or a `/fetch` schema change has to move on both sides. The Apple Watch app in
-`packages/client/targets/RateWatch/` shares the rate list and the `/fetch` reading with the ios
-widget through `packages/client/targets/_shared/`.
+`packages/client/targets/RateWidgets/` and `packages/client/targets/_shared/`. A rate, a market, a
+label, a font size or a `/fetch` schema change has to move on both sides. The Apple Watch app in
+`packages/client/targets/RateWatch/` shares the rate and market lists and the `/fetch` reading with
+the ios widget through `packages/client/targets/_shared/`.
 
 Four things outside the widgets break them when moved, and none is in a widget file:
-`packages/client/assets/fonts/FiraGO-Regular.otf`, the `API_URL` env var, the `ambito-dolar` scheme
-with its `/rates[/type]` route, and the app `AppTheme`. Only the font is loud, and only on android.
+`packages/client/assets/fonts/FiraGO-Regular.otf`, the `API_URL` env var of the build (the
+CloudFront alias that caches `/fetch`, never the raw API Gateway url), the `ambito-dolar` scheme
+with its `/rates[/type]` and `/markets[/type]` routes, and the app `AppTheme`. Only the font and
+`API_URL` are loud, and only on android.
 
 Read `packages/client/docs/android-widgets.md` and `packages/client/docs/ios-widgets.md` before
 touching any of that.

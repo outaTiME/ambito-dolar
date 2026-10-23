@@ -26,6 +26,18 @@ struct Helper {
       RateType(identifier: "futuro", display: "Futuro")
     ]
   }
+  // same titles and default order as core getMarketTitle and getAvailableMarketTypes
+  static func getMarketTypes() -> [RateType] {
+    [
+      RateType(identifier: "inflacion", display: "Inflación"),
+      RateType(identifier: "inflacion_interanual", display: "Inflación interanual", short: "Interanual"),
+      RateType(identifier: "plazo_fijo", display: "Plazo fijo"),
+      RateType(identifier: "uva", display: "UVA"),
+      RateType(identifier: "riesgo_pais", display: "Riesgo país"),
+      RateType(identifier: "merval", display: "Merval"),
+      RateType(identifier: "reservas", display: "Reservas")
+    ]
+  }
   static func getDefaultRateType() -> RateType {
     getRateTypes().first!
   }

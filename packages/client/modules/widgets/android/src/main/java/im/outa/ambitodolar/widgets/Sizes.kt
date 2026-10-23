@@ -1,9 +1,6 @@
 package im.outa.ambitodolar.widgets
 
-// one role, one size, across every widget. The numbers are the ios point sizes of RateWidgets
-// scaled by a single factor, which is the one the card was measured at against the iphone, glyph
-// height over card width, a ratio that does not depend on screen or density.
-// A new widget picks its roles from here
+// one size per role, the ios point sizes times glyph height over card width measured against the iphone
 internal object Sizes {
   private const val IOS = 1.05f
 
@@ -23,7 +20,7 @@ internal object Sizes {
 
   const val ROW_CHANGE = 11 * IOS
 
-  // the two that ios keeps identical on every widget, and that had drifted apart here
+  // identical on every ios widget
   const val DATE = 11 * IOS
 
   const val EMPTY = 14 * IOS

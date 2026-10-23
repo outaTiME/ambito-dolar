@@ -3,8 +3,7 @@ package im.outa.ambitodolar.widgets
 import android.content.Context
 import android.util.Log
 
-// per widget instance settings. What the defaults are belongs to each widget, the same way the
-// ios intents carry their own default values
+// per widget settings, the defaults belong to each widget like the ios intents
 object WidgetConfig {
   private const val PREFS = "ambito_widgets"
   const val DEFAULT_VALUE = "sell"
@@ -27,25 +26,17 @@ object WidgetConfig {
     prefs(context).edit().putString("value_$widgetId", value).apply()
   }
 
-  // the last payload that parsed, so a widget re-inflated after a reboot or an app update whose
-  // first call fails still has something to draw. The ios getRates() falls back the same way
+  // the last payload that parsed, the fallback after a reboot or an app update like ios getRates()
   fun lastPayload(context: Context): String? = prefs(context).getString("last_payload", null)
 
-  // commit and not apply: this is the fallback the widget draws from when a fetch fails, so it
-  // is worth the synchronous write. We are already on the goAsync executor, off the main thread,
-  // and apply would only promise the value in memory, which dies with the process
+  // commit and not apply, already off the main thread and apply could die with the process
   fun setLastPayload(context: Context, body: String) {
     if (!prefs(context).edit().putString("last_payload", body).commit()) {
       Log.w(TAG, "the payload did not persist, a failed fetch will find no fallback")
     }
   }
 
-  // a restore hands the widgets new ids, so what was saved under the old ones has to move or the
-  // widget comes back on its defaults and the old keys stay forever. Android gives the mapping in
-  // onRestored and this is the only chance to use it.
-  // allowBackup is false, which used to mean this could never run, but from android 12 that flag
-  // stopped covering a device to device transfer: that one is dataExtractionRules and there is
-  // none here, so on the manufacturers that still allow it the widgets do come across
+  // a restore hands out new ids, and allowBackup false does not cover a device to device transfer
   fun move(context: Context, from: Int, to: Int, slots: Int) {
     val prefs = prefs(context)
     val editor = prefs.edit()

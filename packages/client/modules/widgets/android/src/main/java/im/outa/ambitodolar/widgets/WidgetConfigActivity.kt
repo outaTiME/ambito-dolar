@@ -10,25 +10,22 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 // one screen for every widget, which one comes from the id the launcher passes
-// sections with their values, every piece taken from the framework, see AGENTS
 class WidgetConfigActivity : AppCompatActivity() {
   private var widgetId = AppWidgetManager.INVALID_APPWIDGET_ID
   private lateinit var provider: WidgetProvider
-  // picking writes here and only Listo persists, so backing out of a widget being reconfigured
-  // leaves it exactly as it was, which is what the canceled result promises
+  // only Listo persists, so backing out leaves the widget as it was
   private lateinit var rateTypes: MutableList<String>
   private var valueType = WidgetConfig.DEFAULT_VALUE
-  // the launcher can recreate this activity, on a rotation for one, and a dialog held only by a
-  // local would stay attached to the destroyed one
+  // held in fields so a recreated activity can dismiss them
   private var dialog: AlertDialog? = null
   private var picker: AlertDialog? = null
-  // the rows are updated in place, so picking never rebuilds the dialog under the user
+  // updated in place, so picking never rebuilds the dialog
   private val rateRows = mutableListOf<TextView>()
   private var valueRow: TextView? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    // the launcher drops a freshly added widget unless the result says otherwise, so back cancels
+    // back cancels, the launcher drops a freshly added widget unless the result says otherwise
     setResult(RESULT_CANCELED)
     widgetId =
       intent.getIntExtra(
@@ -36,7 +33,7 @@ class WidgetConfigActivity : AppCompatActivity() {
         AppWidgetManager.INVALID_APPWIDGET_ID,
       )
     val info = AppWidgetManager.getInstance(this).getAppWidgetInfo(widgetId)
-    val target = Widgets.byName(info?.provider?.className)
+    val target = Widgets.ALL.firstOrNull { it.javaClass.name == info?.provider?.className }
     if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID || target == null) {
       finish()
       return
@@ -44,7 +41,7 @@ class WidgetConfigActivity : AppCompatActivity() {
     provider = target
     rateTypes = provider.rateTypes(this, widgetId).toMutableList()
     valueType = WidgetConfig.valueType(this, widgetId)
-    // a rotation mid pick would otherwise read the stored values back and drop the selection
+    // a rotation mid pick keeps the selection
     savedInstanceState?.getStringArrayList(STATE_RATES)?.let { rateTypes = it.toMutableList() }
     savedInstanceState?.getString(STATE_VALUE)?.let { valueType = it }
     show()
@@ -67,8 +64,10 @@ class WidgetConfigActivity : AppCompatActivity() {
   private fun show() {
     val view = layoutInflater.inflate(R.layout.widget_config_form, null)
     val form = view.findViewById<LinearLayout>(R.id.widget_config_form)
-    header(form, if (rateTypes.size > 1) R.string.widget_config_rates else R.string.widget_config_rate)
-    rateTypes.indices.forEach { rateRow(form, it) }
+    header(form, if (rateTypes.size > 1) provider.configTitles.second else provider.configTitles.first)
+    rateTypes.indices.forEach { slot ->
+      rateRows.add(row(form, Format.rateTitle(rateTypes[slot])) { showRatePicker(slot) })
+    }
     if (provider.hasValueType) {
       header(form, R.string.widget_config_value)
       valueRow = row(form, Format.valueLabel(valueType)) { showValuePicker() }
@@ -87,10 +86,6 @@ class WidgetConfigActivity : AppCompatActivity() {
     form.addView(view)
   }
 
-  private fun rateRow(form: LinearLayout, slot: Int) {
-    rateRows.add(row(form, Format.rateTitle(rateTypes[slot])) { showRatePicker(slot) })
-  }
-
   private fun row(form: LinearLayout, value: String, open: () -> Unit): TextView {
     val view = inflate(R.layout.widget_config_row, form) as TextView
     view.text = value
@@ -100,13 +95,14 @@ class WidgetConfigActivity : AppCompatActivity() {
   }
 
   private fun showRatePicker(slot: Int) {
+    val catalog = provider.catalog
     showPicker(
-      R.string.widget_config_rate,
-      Format.RATE_TYPES.map { it.second },
-      Format.RATE_TYPES.indexOfFirst { it.first == rateTypes[slot] },
+      provider.configTitles.first,
+      catalog.map { it.second },
+      catalog.indexOfFirst { it.first == rateTypes[slot] },
     ) { which ->
-      val chosen = Format.RATE_TYPES[which].first
-      // taking a rate another slot holds swaps them, so a widget never shows the same one twice
+      val chosen = catalog[which].first
+      // taking a rate another slot holds swaps them
       val holder = rateTypes.indexOf(chosen)
       if (holder >= 0 && holder != slot) {
         rateTypes[holder] = rateTypes[slot]
@@ -128,8 +124,7 @@ class WidgetConfigActivity : AppCompatActivity() {
   }
 
   private fun showPicker(title: Int, labels: List<String>, checked: Int, pick: (Int) -> Unit) {
-    // held only so onDestroy can close it if the activity leaves with it open, and let go the
-    // moment it closes, so the field never names a dialog that is already gone
+    // released on dismiss so the field never names a closed dialog
     picker =
       AlertDialog.Builder(this)
         .setTitle(title)

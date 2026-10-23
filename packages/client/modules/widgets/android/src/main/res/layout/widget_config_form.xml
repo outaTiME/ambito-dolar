@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- what goes inside the dialog. It scrolls because the list widget stacks three rate rows plus
-     the value row, and a short screen in landscape would not fit them -->
+<!-- scrolls because four rows do not fit a short landscape screen -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="wrap_content">

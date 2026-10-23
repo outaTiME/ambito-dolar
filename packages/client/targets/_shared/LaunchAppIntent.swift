@@ -13,7 +13,7 @@ import AppIntents
 struct LaunchAppIntent: ControlConfigurationIntent {
   static let title: LocalizedStringResource = "Ámbito Dólar"
   static let description = IntentDescription("Control para abrir la app desde el Centro de Control.")
-  static let isDiscoverable = true
+  static let isDiscoverable = false
   static let openAppWhenRun = true
   @MainActor
   func perform() async throws -> some IntentResult & OpensIntent {

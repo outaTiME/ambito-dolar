@@ -16,7 +16,7 @@ import android.view.View
 import android.widget.RemoteViews
 import kotlin.math.roundToInt
 
-// one rate of the list widget, its name against its price and under it the date against the change
+// one row of a list widget, name against price and date against change
 data class Row(
   val name: String,
   val price: String,
@@ -25,8 +25,7 @@ data class Row(
   val changeColor: Int,
 )
 
-// two shapes for the three ios views, the six slot card and the three rate list
-// rateType is what the tap opens, the ios list widget opens the app without one
+// the six slot card and the three row list, rateType is what the tap opens
 sealed class Content(val rateType: String?) {
   class Card(
     val title: String,
@@ -34,56 +33,68 @@ sealed class Content(val rateType: String?) {
     val small: String,
     val smallColor: Int,
     val big: String,
-    val bigColor: Int,
     val date: String,
     rateType: String,
+    val bigColor: Int = R.color.widget_foreground,
   ) : Content(rateType)
 
   class Rows(val rows: List<Row>) : Content(null)
 }
 
 abstract class WidgetProvider : AppWidgetProvider() {
-  // null shows the empty text, and the preview passes INVALID_APPWIDGET_ID, which has no keys
-  // saved against it and so reads back the defaults
+  // null shows the empty text, the preview passes INVALID_APPWIDGET_ID and so reads the defaults
   protected abstract fun card(context: Context, widgetId: Int, rates: Map<String, Rate>): Content?
 
   abstract val layout: Int
 
   abstract val emptyText: Int
 
-  // one entry per rate slot, in the order the widget lays them out. The config screen reads the
-  // count from here, and every slot falls back to its entry when nothing is stored yet
+  // one default per slot in layout order, the config screen reads the slot count from here
   abstract val defaultRates: List<String>
 
   // the ios spread intent is the one without a valueType parameter
   open val hasValueType: Boolean = true
 
-  // the configured rate of every slot, each one falling back to its own default. Pairing a slot
-  // with the wrong default is the kind of mistake that only shows up as a wrong widget. The config
-  // screen reads them through here too, so the pairing is written once
-  // a rate a release retired goes back to the default of its slot unless another slot holds it,
-  // then it stays and draws nothing like ios, so a widget never shows the same rate twice
+  // what the config screen offers and the tab the tap opens, markets never mix with rates
+  open val catalog = Format.RATE_TYPES
+
+  open val path = "rates"
+
+  // the ios intent parameter titles, one slot and many
+  open val configTitles = R.string.widget_config_rate to R.string.widget_config_rates
+
+  // a retired type goes back to its slot default unless another slot holds it, then it draws nothing like ios
   internal fun rateTypes(context: Context, widgetId: Int): List<String> {
     val stored =
       defaultRates.mapIndexed { slot, default ->
         WidgetConfig.rateType(context, widgetId, slot, default)
       }
     return stored.mapIndexed { slot, type ->
-      type.takeIf(Format::isKnown) ?: defaultRates[slot].takeIf { it !in stored } ?: type
+      type.takeIf { known -> catalog.any { it.first == known } } ?: defaultRates[slot].takeIf { it !in stored } ?: type
     }
   }
+
+  // ios drops the missing ones with compactMap and only goes empty when none is left
+  protected fun rows(
+    context: Context,
+    widgetId: Int,
+    rates: Map<String, Rate>,
+    row: (String, Rate) -> Row,
+  ): Content? =
+    rateTypes(context, widgetId)
+      .mapNotNull { type -> rates[type]?.let { row(type, it) } }
+      .takeIf { it.isNotEmpty() }
+      ?.let { Content.Rows(it) }
 
   // what the config screen puts on top, the same string the launcher shows in the picker
   abstract val label: Int
 
-  // the fetch cannot run on the main thread and a receiver can be killed as soon as onReceive
-  // returns, so the update is held with goAsync until the redraw is done
+  // the fetch cannot run on the main thread, goAsync keeps the receiver alive until the redraw is done
   override fun onReceive(context: Context, intent: Intent) {
     val manager = AppWidgetManager.getInstance(context)
     val ids =
       when (intent.action) {
-        // the separators come from the locale and the time from the zone, both read at render
-        // time, so a change to either leaves the widget wrong until something redraws it
+        // separators and time are read at render time
         Intent.ACTION_MY_PACKAGE_REPLACED,
         Intent.ACTION_LOCALE_CHANGED,
         Intent.ACTION_TIMEZONE_CHANGED -> all(context, manager)
@@ -91,9 +102,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
           intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS) ?: all(context, manager)
         else -> null
       }
-    // an empty list is not nothing to do: the picker preview of a provider nobody placed yet is
-    // refreshed from here too, and render knows to only do that part. Only an action we do not
-    // handle goes back to the base class
+    // an empty list still refreshes the picker preview, only an unhandled action goes to the base class
     if (ids == null) {
       super.onReceive(context, intent)
       return
@@ -119,8 +128,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
     appWidgetIds.forEach { WidgetConfig.clear(context, it, defaultRates.size) }
   }
 
-  // one piece of work serves every provider, so it only goes when the last widget of all of them
-  // is gone. onDisabled alone would cancel it while another provider still has widgets on screen
+  // the work serves every provider, so it only goes with the last widget of all of them
   override fun onDisabled(context: Context) {
     val manager = AppWidgetManager.getInstance(context)
     if (Widgets.ALL.all { it.all(context, manager).isEmpty() }) {
@@ -128,12 +136,8 @@ abstract class WidgetProvider : AppWidgetProvider() {
     }
   }
 
-  // APPWIDGET_UPDATE is a protected broadcast and only the system can send it, so the app and
-  // the config screen ask for a redraw through here instead.
-  // The receivers ship disabled below api 26 and the launcher never lists them, but this door is
-  // opened by the app and no manifest flag guards it, and behind it the text is drawn with
-  // Resources.getFont, which is api 26. That would raise a NoSuchMethodError, an Error and not an
-  // Exception, so nothing downstream would catch it and the app would go down on android 7
+  // APPWIDGET_UPDATE is protected, so the app and the config screen redraw through here
+  // no manifest flag guards this door and getFont below api 26 is an Error nothing catches
   fun refresh(context: Context, ids: IntArray? = null, trigger: String = "app") {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
       return
@@ -141,14 +145,13 @@ abstract class WidgetProvider : AppWidgetProvider() {
     Widgets.EXECUTOR.execute { renderNow(context, ids, trigger) }
   }
 
-  // blocking, so the caller owns the thread. The worker needs it this way to hold itself until
-  // the redraw is done
+  // blocking, the worker holds itself on it until the redraw is done
   internal fun renderNow(context: Context, ids: IntArray? = null, trigger: String = "app") {
     val manager = AppWidgetManager.getInstance(context)
     try {
       render(context, manager, ids ?: all(context, manager), trigger)
     } catch (e: Exception) {
-      // an exception thrown in here would die on the executor thread without a trace
+      // an exception would otherwise die on the executor thread without a trace
       Log.w(TAG, "redraw failed on $trigger", e)
     }
   }
@@ -162,54 +165,35 @@ abstract class WidgetProvider : AppWidgetProvider() {
     ids: IntArray,
     trigger: String,
   ) {
-    // a provider with nothing on a screen is only here for the picker preview, and below api 35
-    // there is no preview to publish, so there is nothing worth a request
-    if (ids.isEmpty() && Build.VERSION.SDK_INT < PREVIEW_SDK) {
+    // with nothing placed only the preview is left, and below api 35 there is none
+    if (ids.isEmpty() && Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
       return
     }
-    // before the fetch and whatever it answers. Hanging it off a good answer meant that a first
-    // widget added with no network never got one: nothing was scheduled, updatePeriodMillis is
-    // zero, and getting signal back is not an event, so it sat on its initial layout until the
-    // app was opened. The work carries the network constraint precisely so it can wait.
-    // The count is asked again and not taken from the snapshot, because onDisabled may have
-    // cancelled the work while this ran and putting it back with nothing on any screen would
-    // leave it waking up every half hour for nobody
+    // scheduled before the fetch, or a first widget added offline would never get a periodic run
+    // the count is asked again because onDisabled may have cancelled the work meanwhile
     if (all(context, manager).isNotEmpty()) {
       WidgetWorker.schedule(context)
     }
     val rates = RatesApi.fetch(context)
-    // a failed fetch leaves whatever the widget was showing, redrawing it empty would throw away
-    // good data over a dropped request. Null is the other case: the call failed and there was
-    // nothing on disk either, so what the widget would keep is the initial layout, a bare card
-    // with no text and no tap. That is the first run with no network and ios shows its empty text
-    // there, so it is drawn, but only while nothing better has been on it
+    // null means no answer and nothing on disk, the empty text beats a bare initialLayout
     if (rates == null) {
       for (id in ids) {
         manager.updateAppWidget(id, views(context, null, id))
       }
       return
     }
-    // the picker preview is limited to about two an hour, and the periodic run visits every provider
-    // every half hour, so a provider nobody placed would spend the whole quota on its own and
-    // leave none for the update that actually changes what the preview should show
-    val worthPreviewing = ids.isNotEmpty() || trigger != PERIODIC
     if (ids.isNotEmpty()) {
-      // an id removed while the fetch ran is not skipped: the host already dropped it and
-      // updateAppWidget on an id it does not know is a no op, never a widget brought back
+      // an id removed meanwhile is a no op for the host, never a widget brought back
       for (id in ids) {
         manager.updateAppWidget(id, views(context, card(context, id, rates), id))
       }
       Log.i(TAG, "${javaClass.simpleName} drew ${ids.size} on $trigger")
     }
-    // the preview is not for the widgets on a screen, it is for the ones in the picker that
-    // nobody placed yet, so it is published even when this provider has none. Cutting out on an
-    // empty id list left a provider you never used showing whatever preview was stored last, and
-    // a stored preview outlives an app update while resource ids do not survive a rebuild, so it
-    // ends up driving a view that is no longer the one it was built against.
-    // The widgets are already drawn, a preview that fails must not take the redraw down with it
-    if (!worthPreviewing) {
+    // the preview quota is about two an hour, a periodic run for an unplaced provider would spend it
+    if (ids.isEmpty() && trigger == PERIODIC) {
       return
     }
+    // published even with nothing placed, a stale stored preview outlives the resource ids it was built against
     try {
       publishPreview(context, manager, rates)
     } catch (e: Exception) {
@@ -217,11 +201,9 @@ abstract class WidgetProvider : AppWidgetProvider() {
     }
   }
 
-  // from android 15 the picker can show a real widget instead of a static image, which is what
-  // ios does by running the provider for its gallery. Capped at two calls per hour per provider,
-  // it returns false when the quota is spent and there is nothing to do about it
+  // from android 15 the picker shows a real widget like the ios gallery, false when the quota is spent
   private fun publishPreview(context: Context, manager: AppWidgetManager, rates: Map<String, Rate>) {
-    if (Build.VERSION.SDK_INT < PREVIEW_SDK) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
       return
     }
     val preview = card(context, AppWidgetManager.INVALID_APPWIDGET_ID, rates) ?: return
@@ -232,7 +214,6 @@ abstract class WidgetProvider : AppWidgetProvider() {
     )
   }
 
-  // widgetId is null for the picker preview, which has nothing to open
   private fun RemoteViews.slot(
     context: Context,
     id: Int,
@@ -241,44 +222,27 @@ abstract class WidgetProvider : AppWidgetProvider() {
     color: Int,
     wrap: Boolean = false,
     room: Int = 0,
-    floor: Float = 1f,
-  ) {
-    setImageViewBitmap(id, TextBitmap.of(context, text, sizeDp, context.getColor(color), wrap, room, floor))
-    // the slot is an image now, so without this talkback reads nothing where it used to read the
-    // text. Only the square that sizes the card stays hidden, that one is decoration
+  ): Int {
+    val bitmap = TextBitmap.of(context, text, sizeDp, context.getColor(color), wrap, room)
+    setImageViewBitmap(id, bitmap)
+    // an image has nothing for talkback to read otherwise
     setContentDescription(id, text)
+    return bitmap.width
   }
 
-  // a ceiling, never a layout. Sharing a row out is the LinearLayout job, done with the width it
-  // really has, and that is the whole reason these are real views and not one drawn image.
-  // Twice the card on purpose, because what the host reports is not what it lays out and the gap
-  // goes either way: measured, a galaxy s9 on one ui reports 174dp for a card it draws at 144,
-  // while the pixel launcher reports it to the dp. A ceiling set at the reported width would cut
-  // text that had room, and at twice it nothing normal is ever truncated while something
-  // pathological still is.
-  // The picker preview has no widget to ask, so it falls back to the width this provider itself
-  // declares as its minimum, which is ours and not a guess. A host that answers something absurd
-  // can drive this to zero, and zero reads as no ceiling: nothing is truncated, which beats a
-  // ceiling of a few pixels that would truncate everything
-  private fun roomPx(context: Context, reported: Int): Int {
+  // a ceiling and not a layout, twice the card because an s9 reports 174dp for a card it draws at 144
+  // the picker preview has no widget to ask and falls back to the declared minimum, zero means no ceiling
+  private fun roomPx(context: Context, reported: Int, padding: Int): Int {
     val card =
       if (reported > 0) {
         (reported * context.resources.displayMetrics.density).roundToInt()
       } else {
-        AppWidgetManager.getInstance(context)
-          .getInstalledProvidersForPackage(context.packageName, null)
-          .firstOrNull { it.provider.className == javaClass.name }
-          ?.minWidth ?: 0
+        context.resources.getDimensionPixelSize(R.dimen.widget_min_size)
       }
-    // the padding comes from the same resource the layouts lay out, so the two cannot drift
-    val padding = context.resources.getDimensionPixelSize(R.dimen.widget_padding)
     return CEILING * (card - 2 * padding)
   }
 
-  // OPTION_APPWIDGET_SIZES first, which android added in 12 for exactly this and its guide points
-  // at, saying of the older four extras that estimating from them "doesn't work in all
-  // situations". The list can come back empty from a launcher that does not fill it, and below 12
-  // it does not exist, so the old extra stays as the fallback
+  // OPTION_APPWIDGET_SIZES from android 12, the old extra when it is missing or empty
   @Suppress("DEPRECATION")
   private fun widthDp(options: Bundle): Int {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -290,36 +254,20 @@ abstract class WidgetProvider : AppWidgetProvider() {
     return options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
   }
 
-  // Sizes is a proportion of the card, glyph height over card width, so it only holds while the
-  // card is the width it was calibrated at. What decides that width is the host, not the android
-  // version: below api 31 it places by minWidth and adds its own margins, from 31 targetCellWidth
-  // hands over the whole cell, and a launcher with a dense grid can be tight on either. Measured
-  // on the emulators, 130dp of card on android 10 against 176 on android 12, with 140dp of
-  // content to fit in the first.
-  // Never above 1: a card at or over the reference keeps exactly the sizes it was drawn for, so
-  // everywhere the widget renders right today nothing moves
-  private fun scaleFor(reported: Int): Float {
-    if (reported <= 0) {
-      return 1f
-    }
-    return (reported / REFERENCE_DP).coerceIn(SCALE_FLOOR, 1f)
-  }
-
   private fun views(context: Context, content: Content?, widgetId: Int?): RemoteViews {
     val views = RemoteViews(context.packageName, layout)
     views.setViewVisibility(R.id.widget_content, if (content == null) View.GONE else View.VISIBLE)
     views.setViewVisibility(R.id.widget_empty, if (content == null) View.VISIBLE else View.GONE)
-    // the width the host reports for this widget, 0 for the picker preview which has none
+    // 0 for the picker preview, which has no widget to ask
     val reported =
       widgetId?.let { widthDp(AppWidgetManager.getInstance(context).getAppWidgetOptions(it)) } ?: 0
-    val scale = scaleFor(reported)
-    // the padding follows the text but at half its rate: fixed it turns into a frame around a
-    // card that shrank around it, and at the full rate it gives away more room than the content
-    // needs back
+    // Sizes is a proportion of the card, so a card under REFERENCE_DP scales down and never up
+    val scale = if (reported > 0) (reported / REFERENCE_DP).coerceIn(SCALE_FLOOR, 1f) else 1f
+    // the padding follows the text at half its rate
+    val padding =
+      (context.resources.getDimensionPixelSize(R.dimen.widget_padding) * (1f + scale) / 2f)
+        .roundToInt()
     if (scale < 1f) {
-      val padding =
-        (context.resources.getDimensionPixelSize(R.dimen.widget_padding) * (1f + scale) / 2f)
-          .roundToInt()
       views.setViewPadding(R.id.widget_content, padding, padding, padding, padding)
     }
     when (content) {
@@ -333,7 +281,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
           wrap = true,
         )
       is Content.Card -> {
-        val room = roomPx(context, reported)
+        val room = roomPx(context, reported, padding)
         views.slot(context, R.id.widget_title, content.title, Sizes.TITLE * scale, R.color.widget_foreground, room = room)
         views.slot(context, R.id.widget_detail, content.detail, Sizes.DETAIL * scale, R.color.widget_secondary, room = room)
         views.slot(context, R.id.widget_small, content.small, Sizes.CHANGE * scale, content.smallColor, room = room)
@@ -341,13 +289,14 @@ abstract class WidgetProvider : AppWidgetProvider() {
         views.slot(context, R.id.widget_date, content.date, Sizes.DATE * scale, R.color.widget_secondary, room = room)
       }
       is Content.Rows -> {
-        val room = roomPx(context, reported)
+        val room = roomPx(context, reported, padding)
+        // name and date get the reported card minus the value beside them, so a long one ellipsizes at the row size
+        // an s9 reports more than it draws and still lands on fitStart, the picker preview keeps the ceiling
+        val gap = (ROW_GAP_DP * context.resources.displayMetrics.density).roundToInt()
+        val beside = { value: Int -> if (reported > 0) (room / CEILING - value - gap).coerceAtLeast(1) else room }
         SLOTS.forEachIndexed { slot, ids ->
           val row = content.rows.getOrNull(slot)
-          // a slot without a rate stays invisible and not gone, so the rows that do have one
-          // keep their place. Invisible holds the size a view measured, and a row of ImageViews
-          // with no bitmap measures nothing, so the blank one is filled with a space at the same
-          // sizes: it is what ios does, two Text(" ") at 16 and 11 for every slot it is short
+          // a missing row stays invisible with spaces at the same sizes, so the others keep their place like ios
           val visibility = if (row == null) View.INVISIBLE else View.VISIBLE
           views.setViewVisibility(ids[0], visibility)
           views.setViewVisibility(ids[1], visibility)
@@ -357,26 +306,24 @@ abstract class WidgetProvider : AppWidgetProvider() {
             views.slot(context, ids[4], " ", Sizes.DATE * scale, R.color.widget_secondary)
             views.slot(context, ids[5], " ", Sizes.ROW_CHANGE * scale, R.color.widget_secondary)
           } else {
+            val price = views.slot(context, ids[3], row.price, Sizes.ROW_VALUE * scale, R.color.widget_foreground, room = room)
             views.slot(
               context,
               ids[2],
               row.name,
               Sizes.ROW_NAME * scale,
               R.color.widget_foreground,
-              room = room,
-              floor = SHRINK_FLOOR,
+              room = beside(price),
             )
-            views.slot(context, ids[3], row.price, Sizes.ROW_VALUE * scale, R.color.widget_foreground, room = room)
+            val change = views.slot(context, ids[5], row.change, Sizes.ROW_CHANGE * scale, row.changeColor, room = room)
             views.slot(
               context,
               ids[4],
               row.date,
               Sizes.DATE * scale,
               R.color.widget_secondary,
-              room = room,
-              floor = SHRINK_FLOOR,
+              room = beside(change),
             )
-            views.slot(context, ids[5], row.change, Sizes.ROW_CHANGE * scale, row.changeColor, room = room)
           }
         }
       }
@@ -390,10 +337,9 @@ abstract class WidgetProvider : AppWidgetProvider() {
     return views
   }
 
-  // the app already declares the ambito-dolar scheme with VIEW and BROWSABLE. The ios widgets
-  // open a universal link instead, which android would need a verified assetlinks for
+  // the ambito-dolar scheme the app declares, ios opens a universal link android would need assetlinks for
   private fun openApp(context: Context, widgetId: Int, type: String?): PendingIntent {
-    val uri = "ambito-dolar://rates" + if (type != null) "/$type" else ""
+    val uri = "ambito-dolar://$path" + if (type != null) "/$type" else ""
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri)).setPackage(context.packageName)
     return PendingIntent.getActivity(
       context,
@@ -407,27 +353,17 @@ abstract class WidgetProvider : AppWidgetProvider() {
     // how many cards wide a text may be before it is cut, see roomPx
     private const val CEILING = 2
 
-    // the card width Sizes was calibrated against, and the rule for it is to stay under the
-    // narrowest report of a device where the widget already renders right, so that every one of
-    // them lands over 1 and the coerce leaves it at exactly 1. Measured: a galaxy s9 reports 174
-    // and looks right, an android 12 emulator reports 175 and looks right, an android 10 emulator
-    // reports 130 and overflows. 170 clears the first two with room and still corrects the third
+    // under the narrowest report that renders right, the 174 of an s9, see android-widgets.md
     private const val REFERENCE_DP = 170f
 
-    // past this the card is so small that shrinking further reads worse than letting the ellipsis
-    // do its work, which TextBitmap already does through room and floor
+    // past this the ellipsis reads better than shrinking further
     private const val SCALE_FLOOR = 0.7f
 
-    // where setWidgetPreview starts existing
-    private const val PREVIEW_SDK = 35
+    // the marginStart of the price and the change in widget_list.xml
+    private const val ROW_GAP_DP = 4f
 
-    // the trigger the periodic work reports, shared with it so renaming one cannot leave the
-    // other comparing against a string nobody sends any more
+    // the trigger the periodic work reports
     const val PERIODIC = "worker"
-
-    // ios lets a name and a date give a tenth of their size before the ellipsis takes over, and
-    // declares it on those two only, .minimumScaleFactor(0.9) in RateWidgets.swift
-    private const val SHRINK_FLOOR = 0.9f
 
     // row container, meta container, name, price, date and change of each list slot
     private val SLOTS =

@@ -26,10 +26,12 @@ struct RateValue: Identifiable, Equatable {
   let dateValue: Double
 }
 
+// the API_URL of the build environment, the same the app and the android widgets read
+private let apiUrl = (Bundle.main.object(forInfoDictionaryKey: "ApiUrl") as? String).flatMap(URL.init(string:))
+
 private let ratesCacheKey = "last_rates"
 private let ratesCacheAtKey = "last_rates_at"
-// the default is a minute, which is long enough for the system to kill the extension while it
-// waits, the android widgets bound the same call to four seconds for the same reason
+// the default is a minute, long enough for the system to kill the extension while it waits
 private let ratesSession: URLSession = {
   let configuration = URLSessionConfiguration.default
   configuration.timeoutIntervalForRequest = 4
@@ -37,35 +39,17 @@ private let ratesSession: URLSession = {
   return URLSession(configuration: configuration)
 }()
 
-// an error body is valid json too, so taking any dictionary as success would blank the widgets
-// and leave that body as the fallback for the next failure, which is what android avoids by
-// requiring the parse to yield at least one rate.
-// The shape is checked and not only the presence, because lookupRateValues reads this array by
-// index and forces its casts: a short array or a string where a number goes takes the extension
-// down with it
+// lookupRateValues indexes this array and forces its casts, a bad shape would crash the extension
+// checked as Double like the casts, an integer past 2^53 is an NSNumber that is not one
 private func wellFormed(_ value: Any) -> Bool {
-  guard let rate = value as? [Any], rate.count >= 3, rate[0] is String else {
-    return false
-  }
-  // the value is a number on its own or a pair of them, the two shapes lookupRateValues reads
-  let amount: Bool
-  if rate[1] is NSNumber {
-    amount = true
-  } else if let pair = rate[1] as? [Any] {
-    amount = pair.count >= 2 && pair.allSatisfy { $0 is NSNumber }
-  } else {
-    amount = false
-  }
-  return amount && rate[2] is NSNumber
+  guard let rate = value as? [Any], rate.count >= 3, rate[0] is String, rate[2] is Double else { return false }
+  return rate[1] is Double || (rate[1] as? [Any]).map { $0.count >= 2 && $0.allSatisfy { $0 is Double } } == true
 }
 
-// only the rates that are shaped the way lookupRateValues reads them, which is the android rule
-// of dropping what does not parse instead of keeping it. Keeping the whole payload because one
-// rate was fine let a malformed one through, and once it was persisted it came back to kill the
-// extension on every later snapshot inside the cache window
+// drops what does not parse like android, a persisted malformed rate would crash every later read
 private func usableRates(_ rates: [String: Any]) -> [String: Any] {
   var kept: [String: Any] = [:]
-  for type in Helper.getRateTypes() {
+  for type in Helper.getRateTypes() + Helper.getMarketTypes() {
     if let rate = rates[type.id], wellFormed(rate) {
       kept[type.id] = rate
     }
@@ -86,40 +70,26 @@ func storedRates() -> [String: Any]? {
 
 // inside the window the stored payload is returned without a request
 func getRates(cacheWindow: TimeInterval) async -> [String: Any]? {
-  // a clock moved backwards makes the age negative, and negative passes any upper bound, which
-  // would freeze the widget on the stored payload until the clock catches up
+  // a clock moved backwards makes the age negative, which would freeze the stored payload
   let age = Date().timeIntervalSince1970 - UserDefaults.standard.double(forKey: ratesCacheAtKey)
   if age >= 0, age < cacheWindow, let fresh = storedRates() {
     return fresh
   }
-  let url = URL(string: "https://api.ambito-dolar.app/fetch")!
-  var rates: [String: Any]?
-  // awaited, never waited on. snapshot and timeline are async since AppIntentTimelineProvider,
-  // and Apple asks not to block on a semaphore from a task
-  if let (data, response) = try? await ratesSession.data(from: url),
-     // an error body is json too, so the status is what says whether this is rates at all
+  // awaited and never blocked on a semaphore, as Apple asks from a task
+  if let url = apiUrl?.appendingPathComponent("fetch"),
+     let (data, response) = try? await ratesSession.data(from: url),
+     // an error body is json too, so the status says whether this is rates
      let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status),
-     let parsed = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-    rates = parsed
-  }
-  // what is kept is what is well formed, so nothing that could be indexed by force ever reaches
-  // lookupRateValues or the stored payload. An answer that yields nothing usable is a failure
-  if let rates = rates {
-    let kept = usableRates(rates)
-    if !kept.isEmpty {
-      // only replace the stored payload when there is one to store, set with nil removes the key
-      // and would leave the fallback empty for the next failure
-      if let data = try? JSONSerialization.data(withJSONObject: kept) {
-        UserDefaults.standard.set(data, forKey: ratesCacheKey)
-        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: ratesCacheAtKey)
-      }
-      return kept
+     let parsed = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+     // an answer with nothing usable is a failure and never replaces the stored payload
+     case let kept = usableRates(parsed), !kept.isEmpty {
+    if let data = try? JSONSerialization.data(withJSONObject: kept) {
+      UserDefaults.standard.set(data, forKey: ratesCacheKey)
+      UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: ratesCacheAtKey)
     }
+    return kept
   }
-  // a failed call keeps the last payload instead of blanking the widget, which is what the
-  // android one does by not calling updateAppWidget. No window here, whatever its age it beats
-  // an empty card. A call that does succeed without the configured rate still falls through to
-  // the unavailable text, same as before
+  // a failed call keeps the last payload whatever its age, like android skipping updateAppWidget
   return storedRates()
 }
 
@@ -142,54 +112,113 @@ extension ValueType {
   }
 }
 
+// display rules per market, the same as MARKETS in config/kinds.ts
+private struct MarketFormat {
+  enum Dated { case month, day }
+  var decimals = 2
+  // pts, pb and US$ are left out like the tickers do, only % and the M of reservas stay
+  var suffix = ""
+  // a percentage moves in points, the others in percent
+  var points = false
+  // up is bad news, so the colors swap
+  var inverse = false
+  var dated: Dated? = nil
+}
+
+private let marketFormats: [String: MarketFormat] = [
+  "inflacion": MarketFormat(suffix: "%", points: true, inverse: true, dated: .month),
+  "inflacion_interanual": MarketFormat(suffix: "%", points: true, inverse: true, dated: .month),
+  "plazo_fijo": MarketFormat(suffix: "%", points: true, dated: .day),
+  "uva": MarketFormat(dated: .day),
+  "riesgo_pais": MarketFormat(decimals: 0, inverse: true),
+  "merval": MarketFormat(decimals: 0),
+  "reservas": MarketFormat(decimals: 0, suffix: " M", dated: .day),
+]
+
+// a time follows the device zone like android and the app, a day or a month stays in buenos aires
+private func formatMarketDate(_ date: Date, _ dated: MarketFormat.Dated?) -> String {
+  let formatter = DateFormatter()
+  if dated != nil {
+    formatter.timeZone = TimeZone(identifier: "America/Argentina/Buenos_Aires")
+    formatter.locale = Locale(identifier: "es_AR")
+  }
+  switch dated {
+  case .month:
+    formatter.dateFormat = "MMMM"
+    return formatter.string(from: date).capitalized
+  case .day:
+    formatter.dateFormat = "dd/MM"
+  case nil:
+    formatter.dateFormat = "dd/MM HH:mm"
+  }
+  return formatter.string(from: date)
+}
+
+// formatMarketValue and formatMarketChange of config/kinds.ts, the card form with its arrow
+private func marketValue(_ rateType: RateType, _ format: MarketFormat, _ rate: [Any], _ value: Double, _ percentage: Double, _ date: Date) -> RateValue {
+  // the close the change is measured against, given back by the percentage when it is missing
+  let close = (rate.count > 3 ? rate[3] as? Double : nil) ?? value / (1 + percentage / 100)
+  let scale = pow(10, Double(format.decimals))
+  // rounded first, a float residue would truncate a whole step down
+  let diff = ((value - close) * scale).rounded() / scale
+  let text = format.points
+    // a tiny negative residue rounds to -0, which would print with its sign
+    ? (diff > 0 ? "+" : "") + formatRateCurrency(num: diff == 0 ? 0 : diff, cents: format.decimals > 0)
+    : formatRateChange(num: percentage, percent: true, symbol: false)
+  return RateValue(
+    id: rateType.id,
+    name: rateType.short ?? rateType.displayString,
+    change: text + " " + getChangeSymbol(num: diff),
+    plainChange: text,
+    changeColor: getChangeColor(num: format.inverse ? -diff : diff),
+    changeValue: diff,
+    price: formatRateCurrency(num: value, cents: format.decimals > 0) + format.suffix,
+    priceValue: value,
+    date: formatMarketDate(date, format.dated),
+    dateValue: date.timeIntervalSince1970 * 1000.0
+  )
+}
+
 // usableRates already dropped the unknown types, so a missing entry is a rate not available
 func lookupRateValues(rates: [String: Any]?, rateTypes: [RateType], valueType: ValueType = ValueType.sell) -> [RateValue] {
   return rateTypes.compactMap { rateType in
     guard let rate = rates?[rateType.id] as? [Any] else {
       return nil
     }
-    let rateValue = rate[1]
     let value: Double
     var detail: String?
-    if rateValue is Double {
-      value = rateValue as! Double
+    if let single = rate[1] as? Double {
+      value = single
     } else {
-      var arr = [Double]()
-      for item in rateValue as! NSArray {
-        arr.append(item as! Double)
-      }
-      let buy = arr[0]
-      let sell = arr[1]
-      if valueType == ValueType.buy {
-        value = buy
-      } else if valueType == ValueType.avg {
-        value = (buy + sell) / 2
-      } else {
-        value = sell
+      let pair = rate[1] as! [Double]
+      switch valueType {
+      case .buy: value = pair[0]
+      case .avg: value = (pair[0] + pair[1]) / 2
+      case .sell: value = pair[1]
       }
       detail = valueType.displayName
     }
-    let rateChange = rate[2] as! Double
-    // the default options reject fractional seconds, so a timestamp that grows milliseconds
-    // parses to nil and unwrapping it would take the extension down, the android side drops
-    // the rate instead
+    // the default options reject fractional seconds, such a timestamp drops the rate like android
     guard let timestamp = rate[0] as? String,
           let rateDate = ISO8601DateFormatter().date(from: timestamp) else {
       return nil
     }
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "dd/MM HH:mm"
+    let rateChange = rate[2] as! Double
+    if let format = marketFormats[rateType.id] {
+      return marketValue(rateType, format, rate, value, rateChange, rateDate)
+    }
+    let plain = formatRateChange(num: rateChange, percent: true, symbol: false)
     return RateValue(
       id: rateType.id,
-      name: rateType.displayString,
+      name: rateType.short ?? rateType.displayString,
       detail: detail,
-      change: formatRateChange(num: rateChange, type: .percentage),
-      plainChange: formatRateChange(num: rateChange, type: .percentage, symbol: false),
+      change: plain + " " + getChangeSymbol(num: rateChange),
+      plainChange: plain,
       changeColor: getChangeColor(num: rateChange),
       changeValue: rateChange,
       price: formatRateCurrency(num: value),
       priceValue: value,
-      date: dateFormatter.string(from: rateDate),
+      date: formatMarketDate(rateDate, nil),
       dateValue: rateDate.timeIntervalSince1970 * 1000.0
     )
   }
@@ -215,10 +244,10 @@ private func getChangeSymbol(num: Double) -> String {
   return "↓"
 }
 
-func formatRateChange(num: Double, type: ChangeType = .amount, symbol: Bool = true) -> String {
-  let change = (num > 0 ? "+" : "") + formatRateCurrency(num: num) + (type == ChangeType.percentage ? "%" : "")
-  if symbol == true {
-    return change + " " + getChangeSymbol(num: num)
-  }
-  return change
+func formatRateChange(num: Double, percent: Bool = false, symbol: Bool = true) -> String {
+  // a value that formats to zero loses its sign, like rateAmount on android
+  let zero = formatRateCurrency(num: 0)
+  let amount = num <= 0 && formatRateCurrency(num: -num) == zero ? zero : formatRateCurrency(num: num)
+  let change = (num > 0 ? "+" : "") + amount + (percent ? "%" : "")
+  return symbol ? change + " " + getChangeSymbol(num: num) : change
 }

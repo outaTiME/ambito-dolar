@@ -2,8 +2,7 @@ package im.outa.ambitodolar.widgets
 
 import android.content.Context
 
-// SpreadWidgetEntryView on ios, the difference small and plain and the percentage big and
-// colored, both sides read at their sell value because the ios intent has no value type
+// SpreadWidgetEntryView on ios, both sides at their sell value because its intent has no value type
 class SpreadWidget : WidgetProvider() {
   override val emptyText = R.string.widget_empty_plural
 
@@ -24,14 +23,13 @@ class SpreadWidget : WidgetProvider() {
     val firstValue = first.value(WidgetConfig.DEFAULT_VALUE)
     val secondValue = second.value(WidgetConfig.DEFAULT_VALUE)
     val change = (firstValue / secondValue - 1) * 100
-    // a divisor at zero comes out infinite from two finite sides, reaches DecimalFormat and
-    // prints as if it were a number. The empty text is the honest answer
+    // a zero divisor would print infinity as a number
     if (!change.isFinite()) {
       return null
     }
     return Content.Card(
       title = TITLE,
-      detail = Format.rateTitle(firstType) + " → " + Format.rateTitle(secondType),
+      detail = Format.shortTitle(firstType) + " → " + Format.shortTitle(secondType),
       small = Format.rateAmount(firstValue - secondValue),
       smallColor = R.color.widget_foreground,
       // no arrow on this one, ios reads the plain change here

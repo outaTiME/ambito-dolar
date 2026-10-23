@@ -9,25 +9,33 @@ import WidgetKit
 import SwiftUI
 import AppIntents
 
-// the three widgets reload in the same batch and every one of them asks for its timeline, its
-// snapshot and its placeholder, which is one request each. Inside the window the first one pays
-// and the rest read what it brought, which is still the real rates and not a sample, so the
-// preview keeps showing live numbers
+// the widgets reload together, inside the window the first request serves the rest with live rates
 private let ratesCacheWindow: TimeInterval = 60
 
-private func getWidgetUrl(id: String? = nil) -> URL? {
-  if let id = id {
-    return URL(string: "https://www.ambito-dolar.app/rates/" + id)
+// rates or markets on the same views like the app, the raw value is the route the widget opens
+enum WidgetKind: String {
+  case rates
+  case markets
+  var unavailable: String {
+    self == .rates ? "Cotización no disponible" : "Indicador no disponible"
   }
-  return URL(string: "https://www.ambito-dolar.app/rates")
+  var unavailablePlural: String {
+    self == .rates ? "Cotizaciones no disponibles" : "Indicadores no disponibles"
+  }
+}
+
+private func getWidgetUrl(_ kind: WidgetKind = .rates, id: String? = nil) -> URL? {
+  if let id = id {
+    return URL(string: "https://www.ambito-dolar.app/\(kind.rawValue)/" + id)
+  }
+  return URL(string: "https://www.ambito-dolar.app/\(kind.rawValue)")
 }
 
 private let placeholderPrice: Double = 1000
 
-// placeholder is synchronous by protocol and Apple asks it to return immediately, so it never
-// goes to the network. WidgetKit paints it as the widget content until the first timeline lands,
-// so returning nothing shows the unavailable text right after an install. Equal and non zero
-// prices on purpose: the spread widget divides one by the other
+// synchronous and never on the network, Apple asks it to return immediately
+// painted until the first timeline lands, so it never comes back empty after an install
+// equal non zero prices, the spread widget divides one by the other
 private func placeholderEntry(rateTypes: [RateType]) -> SimpleEntry {
   let stored = lookupRateValues(rates: storedRates(), rateTypes: rateTypes)
   if !stored.isEmpty {
@@ -36,9 +44,9 @@ private func placeholderEntry(rateTypes: [RateType]) -> SimpleEntry {
   let rates = rateTypes.map { rateType in
     RateValue(
       id: rateType.id,
-      name: rateType.displayString,
-      change: formatRateChange(num: 0, type: .percentage),
-      plainChange: formatRateChange(num: 0, type: .percentage, symbol: false),
+      name: rateType.short ?? rateType.displayString,
+      change: formatRateChange(num: 0, percent: true),
+      plainChange: formatRateChange(num: 0, percent: true, symbol: false),
       changeColor: getChangeColor(num: 0),
       changeValue: 0,
       price: formatRateCurrency(num: placeholderPrice),
@@ -63,22 +71,48 @@ extension View {
   func widgetBackground() -> some View {
     containerBackground(Color.black, for: .widget)
   }
+  // the frame, padding, tap target and background of every system widget
+  func card(_ url: URL?, alignment: Alignment = .center) -> some View {
+    frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
+      .padding(16)
+      .widgetURL(url)
+      .widgetBackground()
+  }
 }
 
-struct RateProvider: AppIntentTimelineProvider {
-  private func rateTypes(for configuration: SelectRateTypeIntent) -> [RateType] {
-    [configuration.rateType]
+private func unavailable(_ text: String, url: URL?) -> some View {
+  Text(text)
+    .font(.custom(fontName, size: 14))
+    .foregroundColor(fgColor)
+    .multilineTextAlignment(.center)
+    .card(url)
+}
+
+private func circularUnavailable(url: URL?) -> some View {
+  ZStack {
+    AccessoryWidgetBackground()
+    Text("N/D")
+      .font(.custom(fontName, size: 13))
+      .lineLimit(1)
+      .widgetAccentable()
+      .padding(.horizontal, 2)
   }
+  .widgetURL(url)
+  .widgetBackground()
+}
+
+// one provider for every widget, the intent says which types and how to show them
+struct RateTypesProvider<Intent: RateTypesIntent>: AppIntentTimelineProvider {
   func placeholder(in context: Context) -> SimpleEntry {
-    placeholderEntry(rateTypes: [Helper.getDefaultRateType()])
+    placeholderEntry(rateTypes: Intent.defaultTypes)
   }
-  func snapshot(for configuration: SelectRateTypeIntent, in context: Context) async -> SimpleEntry {
-    let rates = lookupRateValues(rates: await getRates(cacheWindow: ratesCacheWindow), rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
+  func snapshot(for configuration: Intent, in context: Context) async -> SimpleEntry {
+    let rates = lookupRateValues(rates: await getRates(cacheWindow: ratesCacheWindow), rateTypes: configuration.types, valueType: configuration.valueType)
     return SimpleEntry(date: Date(), rates: rates)
   }
-  func timeline(for configuration: SelectRateTypeIntent, in context: Context) async -> Timeline<SimpleEntry> {
+  func timeline(for configuration: Intent, in context: Context) async -> Timeline<SimpleEntry> {
     let date = Date()
-    let rates = lookupRateValues(rates: await getRates(cacheWindow: ratesCacheWindow), rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
+    let rates = lookupRateValues(rates: await getRates(cacheWindow: ratesCacheWindow), rateTypes: configuration.types, valueType: configuration.valueType)
     let entry = SimpleEntry(date: date, rates: rates)
     let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
     return Timeline(entries: [entry], policy: .after(reloadDate))
@@ -87,7 +121,8 @@ struct RateProvider: AppIntentTimelineProvider {
 
 struct RateWidgetEntryView : View {
   @Environment(\.widgetFamily) var widgetFamily
-  let entry: RateProvider.Entry
+  let entry: SimpleEntry
+  var kind = WidgetKind.rates
   var body: some View {
     let rates = entry.rates
     switch widgetFamily {
@@ -113,21 +148,10 @@ struct RateWidgetEntryView : View {
               .padding(.horizontal, 8)
           }
         }
-        .widgetURL(getWidgetUrl(id: rate.id))
+        .widgetURL(getWidgetUrl(kind, id: rate.id))
         .widgetBackground()
       } else {
-        ZStack {
-          AccessoryWidgetBackground()
-          VStack {
-            Text("N/D")
-              .font(.custom(fontName, size: 13))
-              .lineLimit(1)
-              .widgetAccentable()
-          }
-          .padding(.horizontal, 2)
-        }
-        .widgetURL(getWidgetUrl())
-        .widgetBackground()
+        circularUnavailable(url: getWidgetUrl(kind))
       }
     default:
       if let rate = rates.first {
@@ -159,28 +183,9 @@ struct RateWidgetEntryView : View {
             .lineLimit(1)
             .contentTransition(.numericText(value: rate.dateValue))
         }
-        .frame(
-          maxWidth: .infinity,
-          maxHeight: .infinity,
-          alignment: .topLeading
-        )
-        .padding(16)
-        .widgetURL(getWidgetUrl(id: rate.id))
-        .widgetBackground()
+        .card(getWidgetUrl(kind, id: rate.id), alignment: .topLeading)
       } else {
-        VStack {
-          Text("Cotización no disponible")
-            .font(.custom(fontName, size: 14))
-            .foregroundColor(fgColor)
-            .multilineTextAlignment(.center)
-        }
-        .frame(
-          maxWidth: .infinity,
-          maxHeight: .infinity
-        )
-        .padding(16)
-        .widgetURL(getWidgetUrl())
-        .widgetBackground()
+        unavailable(kind.unavailable, url: getWidgetUrl(kind))
       }
     }
   }
@@ -189,7 +194,7 @@ struct RateWidgetEntryView : View {
 struct RateWidget: Widget {
   let kind: String = "RateWidget"
   var body: some WidgetConfiguration {
-    AppIntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateProvider()) { entry in
+    AppIntentConfiguration(kind: kind, intent: SelectRateTypeIntent.self, provider: RateTypesProvider<SelectRateTypeIntent>()) { entry in
       RateWidgetEntryView(entry: entry)
         .environment(\.colorScheme, .dark)
         .environment(\.sizeCategory, .large)
@@ -201,29 +206,9 @@ struct RateWidget: Widget {
   }
 }
 
-struct ListRatesProvider: AppIntentTimelineProvider {
-  private func rateTypes(for configuration: SelectRateTypesIntent) -> [RateType] {
-    let selected = configuration.rateTypes
-    return selected.isEmpty ? Helper.getDefaultRateTypes() : selected
-  }
-  func placeholder(in context: Context) -> SimpleEntry {
-    placeholderEntry(rateTypes: Helper.getDefaultRateTypes())
-  }
-  func snapshot(for configuration: SelectRateTypesIntent, in context: Context) async -> SimpleEntry {
-    let rates = lookupRateValues(rates: await getRates(cacheWindow: ratesCacheWindow), rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
-    return SimpleEntry(date: Date(), rates: rates)
-  }
-  func timeline(for configuration: SelectRateTypesIntent, in context: Context) async -> Timeline<SimpleEntry> {
-    let date = Date()
-    let rates = lookupRateValues(rates: await getRates(cacheWindow: ratesCacheWindow), rateTypes: rateTypes(for: configuration), valueType: configuration.valueType)
-    let entry = SimpleEntry(date: date, rates: rates)
-    let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
-    return Timeline(entries: [entry], policy: .after(reloadDate))
-  }
-}
-
 struct ListRatesWidgetEntryView : View {
-  let entry: ListRatesProvider.Entry
+  let entry: SimpleEntry
+  var kind = WidgetKind.rates
   var body: some View {
     let rates = entry.rates
     if !rates.isEmpty {
@@ -233,7 +218,6 @@ struct ListRatesWidgetEntryView : View {
             Text(rate.name)
               .font(.custom(fontName, size: 14))
               .foregroundColor(fgColor)
-              .minimumScaleFactor(0.9) // ~ 12.6
               .lineLimit(1)
             Spacer()
             Text(rate.price)
@@ -246,7 +230,6 @@ struct ListRatesWidgetEntryView : View {
             Text(rate.date)
               .font(.custom(fontName, size: 11))
               .foregroundColor(fgSecondaryColor)
-              .minimumScaleFactor(0.9) // ~ 9.9
               .lineLimit(1)
               .contentTransition(.numericText(value: rate.dateValue))
             Spacer()
@@ -274,28 +257,9 @@ struct ListRatesWidgetEntryView : View {
           }
         }
       }
-      .frame(
-        maxWidth: .infinity,
-        maxHeight: .infinity,
-        alignment: .topLeading
-      )
-      .padding(16)
-      .widgetURL(getWidgetUrl())
-      .widgetBackground()
+      .card(getWidgetUrl(kind), alignment: .topLeading)
     } else {
-      VStack {
-        Text("Cotizaciones no disponibles")
-          .font(.custom(fontName, size: 14))
-          .foregroundColor(fgColor)
-          .multilineTextAlignment(.center)
-      }
-      .frame(
-        maxWidth: .infinity,
-        maxHeight: .infinity
-      )
-      .padding(16)
-      .widgetURL(getWidgetUrl())
-      .widgetBackground()
+      unavailable(kind.unavailablePlural, url: getWidgetUrl(kind))
     }
   }
 }
@@ -303,7 +267,7 @@ struct ListRatesWidgetEntryView : View {
 struct ListRatesWidget: Widget {
   let kind: String = "ListRatesWidget"
   var body: some WidgetConfiguration {
-    AppIntentConfiguration(kind: kind, intent: SelectRateTypesIntent.self, provider: ListRatesProvider()) { entry in
+    AppIntentConfiguration(kind: kind, intent: SelectRateTypesIntent.self, provider: RateTypesProvider<SelectRateTypesIntent>()) { entry in
       ListRatesWidgetEntryView(entry: entry)
         .environment(\.colorScheme, .dark)
         .environment(\.sizeCategory, .large)
@@ -315,70 +279,40 @@ struct ListRatesWidget: Widget {
   }
 }
 
-struct SpreadProvider: AppIntentTimelineProvider {
-  private func rateTypes(for configuration: SelectSpreadRateTypesIntent) -> [RateType] {
-    let selected = configuration.rateTypes
-    return selected.isEmpty ? Helper.getDefaultSpreadRateTypes() : selected
-  }
-  func placeholder(in context: Context) -> SimpleEntry {
-    placeholderEntry(rateTypes: Helper.getDefaultSpreadRateTypes())
-  }
-  func snapshot(for configuration: SelectSpreadRateTypesIntent, in context: Context) async -> SimpleEntry {
-    let rates = lookupRateValues(rates: await getRates(cacheWindow: ratesCacheWindow), rateTypes: rateTypes(for: configuration))
-    return SimpleEntry(date: Date(), rates: rates)
-  }
-  func timeline(for configuration: SelectSpreadRateTypesIntent, in context: Context) async -> Timeline<SimpleEntry> {
-    let date = Date()
-    let rates = lookupRateValues(rates: await getRates(cacheWindow: ratesCacheWindow), rateTypes: rateTypes(for: configuration))
-    let entry = SimpleEntry(date: date, rates: rates)
-    let reloadDate = Calendar.current.date(byAdding: .minute, value: 15, to: date)!
-    return Timeline(entries: [entry], policy: .after(reloadDate))
-  }
-}
-
 struct SpreadWidgetEntryView : View {
   @Environment(\.widgetFamily) var widgetFamily
-  let entry: SpreadProvider.Entry
+  let entry: SimpleEntry
   var body: some View {
     let rates = entry.rates
     // a rate that stopped coming back leaves the array short and a subscript would trap
     let firstRate = rates.first
     let secondRate = rates.dropFirst().first
     var spreadRate: RateValue? {
-      if let firstRate = firstRate, let secondRate = secondRate {
-        let detail =  "\(firstRate.name) → \(secondRate.name)"
-        let value = firstRate.priceValue - secondRate.priceValue
-        let price = formatRateChange(num: value, symbol: false)
-        let rateChange = (firstRate.priceValue / secondRate.priceValue - 1) * 100
-        let changeType = ChangeType.percentage
-        let plainChange = formatRateChange(num: rateChange, type: changeType, symbol: false)
-        let changeColor = getChangeColor(num: rateChange)
-        let (date, dateValue) = {
-          if (firstRate.dateValue > secondRate.dateValue) {
-            return (firstRate.date, firstRate.dateValue)
-          }
-          return (secondRate.date, secondRate.dateValue)
-        }()
-        return RateValue(
-          id: "spread",
-          name: "Brecha",
-          detail: detail,
-          // the spread renders no arrow on either layout, so both carry the plain form
-          change: plainChange,
-          plainChange: plainChange,
-          changeColor: changeColor,
-          changeValue: rateChange,
-          price: price,
-          priceValue: value,
-          date: date,
-          dateValue: dateValue
-        )
+      guard let firstRate, let secondRate else {
+        return nil
       }
-      return nil
+      let value = firstRate.priceValue - secondRate.priceValue
+      let rateChange = (firstRate.priceValue / secondRate.priceValue - 1) * 100
+      // the spread renders no arrow on either layout, so both carry the plain form
+      let plainChange = formatRateChange(num: rateChange, percent: true, symbol: false)
+      let latest = firstRate.dateValue > secondRate.dateValue ? firstRate : secondRate
+      return RateValue(
+        id: "spread",
+        name: "Brecha",
+        detail: "\(firstRate.name) → \(secondRate.name)",
+        change: plainChange,
+        plainChange: plainChange,
+        changeColor: getChangeColor(num: rateChange),
+        changeValue: rateChange,
+        price: formatRateChange(num: value, symbol: false),
+        priceValue: value,
+        date: latest.date,
+        dateValue: latest.dateValue
+      )
     }
     switch widgetFamily {
     case .accessoryCircular:
-      if let spreadRate = spreadRate {
+      if let spreadRate, let firstRate {
         ZStack {
           AccessoryWidgetBackground()
           VStack {
@@ -399,24 +333,13 @@ struct SpreadWidgetEntryView : View {
               .padding(.horizontal, 8)
           }
         }
-        .widgetURL(getWidgetUrl(id: firstRate!.id))
+        .widgetURL(getWidgetUrl(id: firstRate.id))
         .widgetBackground()
       } else {
-        ZStack {
-          AccessoryWidgetBackground()
-          VStack {
-            Text("N/D")
-              .font(.custom(fontName, size: 13))
-              .lineLimit(1)
-              .widgetAccentable()
-          }
-          .padding(.horizontal, 2)
-        }
-        .widgetURL(getWidgetUrl())
-        .widgetBackground()
+        circularUnavailable(url: getWidgetUrl())
       }
     default:
-      if let spreadRate = spreadRate {
+      if let spreadRate, let firstRate {
         VStack(alignment: .leading) {
           Text(spreadRate.name)
             .font(.custom(fontName, size: 20))
@@ -445,28 +368,9 @@ struct SpreadWidgetEntryView : View {
             .lineLimit(1)
             .contentTransition(.numericText(value: spreadRate.dateValue))
         }
-        .frame(
-          maxWidth: .infinity,
-          maxHeight: .infinity,
-          alignment: .topLeading
-        )
-        .padding(16)
-        .widgetURL(getWidgetUrl(id: firstRate!.id))
-        .widgetBackground()
+        .card(getWidgetUrl(id: firstRate.id), alignment: .topLeading)
       } else {
-        VStack {
-          Text("Cotizaciones no disponibles")
-            .font(.custom(fontName, size: 14))
-            .foregroundColor(fgColor)
-            .multilineTextAlignment(.center)
-        }
-        .frame(
-          maxWidth: .infinity,
-          maxHeight: .infinity
-        )
-        .padding(16)
-        .widgetURL(getWidgetUrl())
-        .widgetBackground()
+        unavailable(WidgetKind.rates.unavailablePlural, url: getWidgetUrl())
       }
     }
   }
@@ -475,7 +379,7 @@ struct SpreadWidgetEntryView : View {
 struct SpreadWidget: Widget {
   let kind: String = "SpreadWidget"
   var body: some WidgetConfiguration {
-    AppIntentConfiguration(kind: kind, intent: SelectSpreadRateTypesIntent.self, provider: SpreadProvider()) { entry in
+    AppIntentConfiguration(kind: kind, intent: SelectSpreadRateTypesIntent.self, provider: RateTypesProvider<SelectSpreadRateTypesIntent>()) { entry in
       SpreadWidgetEntryView(entry: entry)
         .environment(\.colorScheme, .dark)
         .environment(\.sizeCategory, .large)
@@ -483,6 +387,36 @@ struct SpreadWidget: Widget {
     .configurationDisplayName("Brechas")
     .description("Consultá las brechas entre cotizaciones a lo largo del día.")
     .supportedFamilies([.systemSmall, .accessoryCircular])
+    .contentMarginsDisabled()
+  }
+}
+
+struct MarketWidget: Widget {
+  let kind: String = "MarketWidget"
+  var body: some WidgetConfiguration {
+    AppIntentConfiguration(kind: kind, intent: SelectMarketTypeIntent.self, provider: RateTypesProvider<SelectMarketTypeIntent>()) { entry in
+      RateWidgetEntryView(entry: entry, kind: .markets)
+        .environment(\.colorScheme, .dark)
+        .environment(\.sizeCategory, .large)
+    }
+    .configurationDisplayName("Indicadores")
+    .description("Consultá los indicadores a lo largo del día.")
+    .supportedFamilies([.systemSmall, .accessoryCircular])
+    .contentMarginsDisabled()
+  }
+}
+
+struct ListMarketsWidget: Widget {
+  let kind: String = "ListMarketsWidget"
+  var body: some WidgetConfiguration {
+    AppIntentConfiguration(kind: kind, intent: SelectMarketTypesIntent.self, provider: RateTypesProvider<SelectMarketTypesIntent>()) { entry in
+      ListRatesWidgetEntryView(entry: entry, kind: .markets)
+        .environment(\.colorScheme, .dark)
+        .environment(\.sizeCategory, .large)
+    }
+    .configurationDisplayName("Lista de indicadores")
+    .description("Consultá los indicadores a lo largo del día.")
+    .supportedFamilies([.systemSmall])
     .contentMarginsDisabled()
   }
 }
@@ -508,31 +442,10 @@ struct RateWidgets: WidgetBundle {
     RateWidget()
     ListRatesWidget()
     SpreadWidget()
+    MarketWidget()
+    ListMarketsWidget()
     if #available(iOS 18.0, *) {
       LaunchControlWidget()
-    }
-  }
-}
-
-struct RateWidgets_Previews: PreviewProvider {
-  static var previews: some View {
-    let entry = placeholderEntry(rateTypes: Helper.getDefaultRateTypes())
-    Group {
-      RateWidgetEntryView(entry: entry)
-        .previewContext(WidgetPreviewContext(family: .systemSmall))
-        .previewDisplayName("RateWidget")
-      RateWidgetEntryView(entry: entry)
-        .previewContext(WidgetPreviewContext(family: .accessoryCircular))
-        .previewDisplayName("RateWidget (Lock screen)")
-      ListRatesWidgetEntryView(entry: entry)
-        .previewContext(WidgetPreviewContext(family: .systemSmall))
-        .previewDisplayName("ListRatesWidget")
-      SpreadWidgetEntryView(entry: entry)
-        .previewContext(WidgetPreviewContext(family: .systemSmall))
-        .previewDisplayName("SpreadWidget")
-      SpreadWidgetEntryView(entry: entry)
-        .previewContext(WidgetPreviewContext(family: .accessoryCircular))
-        .previewDisplayName("SpreadWidget (Lock screen)")
     }
   }
 }

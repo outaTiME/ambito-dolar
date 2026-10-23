@@ -9,7 +9,7 @@ lines, this file carries everything else.
 Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews and XML layouts, no react-native, no Compose. Android stays CNG: `packages/client/android/` is generated, only the module is checked in, and autolinking merges its manifest and `res/` into the app, so no config plugin.
 
 - **The card is square** through an ImageView with `adjustViewBounds` over a 1:1 shape drawable. Never `match_parent`. Sizing the card from what the launcher reports is unreliable, measured on two phones: a Moto Edge 30 Ultra cropped 16dp, a Galaxy S9 scaled to 78%.
-- **The text sizes scale to the reported width, `scaleFor` in `WidgetProvider.kt`.** `Sizes` is a
+- **The text sizes scale to the reported width, `scale` in `WidgetProvider.views()`.** `Sizes` is a
   proportion of the card, so every size is multiplied by `reported / REFERENCE_DP`, clamped to
   `SCALE_FLOOR .. 1`, and the padding follows at `(1 + scale) / 2`. `REFERENCE_DP` is 170 and has to
   stay **under the narrowest report that still renders right**, the 174 of an s9. `SCALE_FLOOR` is
@@ -17,24 +17,26 @@ Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews
   Measured with `uiautomator dump`, reported against drawn: s9 on android 10 and one ui 174/144
   right, android 12 emulator 175/176 right, android 10 emulator 130/130 overflows. The two do not
   track, so the ratio is the signal.
+- **A list row never shrinks a name or a date**, every row keeps one size and a long one ellipsizes, as ios and the watch do with no `minimumScaleFactor`. The slot is an ImageView with `fitStart` that would scale an overflowing bitmap down, so the name and the date get the reported card minus the value beside them and `ROW_GAP_DP`, the margin in `widget_list.xml`. A host that reports more than it draws still lands on `fitStart`; the picker preview keeps the ceiling.
+- **Every text bitmap is tagged with the current density** in `TextBitmap`. The default tag is the physical density, so with a changed display size the host scaled every slot by the ratio of the two, the values grew and the names shrank. `adb shell wm density` reproduces it; the app process keeps the old density until it restarts.
 - **One role, one size, in `Sizes.kt`.** The ios point sizes times `1.05`, measured as glyph height over card width, independent of screen and density. In dp not sp, so the system font scale cannot move them, which is what `sizeCategory large` does on ios.
 - **A date that looks lighter on one widget is antialiasing or the launcher scaling it down**, never a different color. Roles live in `views()`, each widget declares only which slot carries the change color, because ios colors the small one on the rate and the big one on the spread.
 - **Gated to api 26** with `android:enabled="@bool/widget_supported"` plus a `values-v26` override, because `Resources.getFont` is api 26 and the text is drawn with it. Below that the launcher never lists the widgets.
 - **`android:fontFamily` does NOT work here.** The launcher builds the views in its own process and resolves only system typefaces, so the font falls back with no error and no log line. Measured on four devices: holds on One UI, fails on pixel, motorola, emulator. Not a format problem, a `.ttf` fails the same.
-- **The text is drawn here and travels as a bitmap.** `TextBitmap.of()` is the one routine every slot goes through, so a fourth widget writes no render code. Only the glyphs are pixels, the card and layout stay real views. Around 325 KB per list redraw against a 1 MB binder ceiling, `ALPHA_8` plus a tint would cut it to a quarter.
+- **The text is drawn here and travels as a bitmap.** `TextBitmap.of()` is the one routine every slot goes through, so a new widget writes no render code. Only the glyphs are pixels, the card and layout stay real views. Around 325 KB per list redraw against a 1 MB binder ceiling, `ALPHA_8` plus a tint would cut it to a quarter.
 - **A restore does hand out new ids**, so `onRestored` moves the config keys across and is not dead code. `allowBackup` is false in `packages/client/app.config.ts` but from android 12 that no longer covers a device to device transfer, which is `dataExtractionRules` and there is none, so where a manufacturer still allows it the default applies.
 - **Redraw triggers**: `APPWIDGET_UPDATE`, `MY_PACKAGE_REPLACED`, `LOCALE_CHANGED`, `TIMEZONE_CHANGED`, all through `goAsync` and all hitting `/fetch`, plus `reloadWidgets()` from `withRateUpdates` and the config save. Locale and zone matter because separators and time are read at render. `MY_PACKAGE_REPLACED` matters because an app update re-inflates every widget from `initialLayout` and without it they sit bare up to half an hour.
 - **The periodic redraw is a WorkManager `PeriodicWorkRequest`**, 30 min behind a network constraint. `updatePeriodMillis` is 0 on purpose: it is an alarm, it fires with no network, and those redraws died in milliseconds on a doze wake. A failed fetch returns `Result.retry()` with no count of our own, WorkManager re-evaluates the constraint and backs off 30s doubling to five hours.
 - `adb shell am broadcast APPWIDGET_UPDATE` is protected and does NOT force a redraw, call `provider.refresh(context)`.
-- **The endpoint is not hardcoded.** The module `build.gradle` emits `widget_api_url` from the same `API_URL` the app reads, falling back to production. The trap: `resValue` reads `System.getenv` at gradle configuration time and a bare `./gradlew assembleRelease` does not load `packages/client/.env`, while the js bundle comes from `expo export:embed`, which does. So a `.env` pointed at staging ships a staging app with production widgets, silently. `expo run:android --variant release` and eas read both from the same place.
-- **One `/fetch` for a burst.** `RatesApi` holds the payload 10s, collapsing the three providers into one request. It has to stay under WorkManager's 30s minimum backoff or the first retry lands inside the window and reports success on stale data. ios holds 60s through `ratesCacheWindow` in `RateWidgets.swift`, on disk, because each reload there can be a separate extension invocation while the three android providers share the app process. One attempt, `connectTimeout` and `readTimeout` at 4s each, body capped at 256K characters and not bytes because an `OutOfMemoryError` is an `Error` no catch would hold.
+- **The endpoint is not hardcoded.** The module `build.gradle` emits `widget_api_url` from the same `API_URL` the app reads, with no fallback: a build without it fails at configuration. The trap: `resValue` reads `System.getenv` at gradle configuration time and a bare `./gradlew assembleRelease` does not load `packages/client/.env`, while the js bundle comes from `expo export:embed`, which does. Without `API_URL` in the shell it fails, with a different one exported it ships widgets pointed elsewhere than the app, silently. `expo run:android --variant release` and eas read both from the same place.
+- **One `/fetch` for a burst.** `RatesApi` holds the payload 10s, collapsing the five providers into one request. It has to stay under WorkManager's 30s minimum backoff or the first retry lands inside the window and reports success on stale data. ios holds 60s through `ratesCacheWindow` in `RateWidgets.swift`, on disk, because each reload there can be a separate extension invocation while the five android providers share the app process. One attempt, `connectTimeout` and `readTimeout` at 4s each, body capped at 256K characters and not bytes because an `OutOfMemoryError` is an `Error` no catch would hold.
 - **Neither side stores an answer it cannot use**, both require a 2xx and at least one known rate before replacing the persisted payload: an error body is valid json too. ios stores the filtered rates, android the raw body, filtered again on read.
 - **A failed fetch never lowers what a widget shows.** `fetch` answers with the last call that came back or the payload on disk, and only another call that came back replaces it.
 - **Null means this process never got an answer and there is nothing on disk.** Then every id draws the empty text instead of the bare `initialLayout`, which has no text and not even a tap. Verified on a device: data cleared, booted with no network, all three drew the empty text.
 - **Nothing is cached across a locale change.** The `DecimalFormat` is built per call and not held in a lazy, which would freeze the separators of whatever locale was set the first time a widget drew.
-- **Unknown rate types are dropped at parse time**, `Format.isKnown` mirroring the ios `Helper.getRateTypes().contains`. A type the app retires can still arrive from the service, and without the filter the widget titles a rate with its raw id. Survivors keep their order and compact to the top, blanks pad the bottom, same as the ios `compactMap`. The spread needs both sides or it goes empty, the list only when none of the three survives.
+- **Unknown rate types are dropped at parse time**, `Format.isKnown` over `RATE_TYPES` and `MARKET_TYPES`, mirroring the ios `usableRates` whitelist. A type the app retires can still arrive from the service, and without the filter the widget titles a rate with its raw id. Survivors keep their order and compact to the top, blanks pad the bottom, same as the ios `compactMap`. The spread needs both sides or it goes empty, the list only when none of the three survives.
 - **Widget order in the picker follows the labels, not the declaration.** The launcher sorts alphabetically. Measured twice: two declaration orders gave the same picker, and renaming the labels to `Zzz`/`Aaa`/`Mmm` reordered it. Labels have to match `.configurationDisplayName(...)`, so the order is not ours to pick.
-- **`previewImage`**: regenerate from a live device with `node scripts/widget-preview.js assets/widgets/android-rate-2x2.png [--device serial]` from `packages/client`, ImageOptim after. The module `build.gradle` copies the three pngs into `drawable-nodpi` straight from `packages/client/assets/widgets/` at build time, no prebuild step between. From android 15 `setWidgetPreview` replaces them at runtime with the real rates, capped at two calls per hour per provider.
+- **`previewImage`**: regenerate from a live device with `node scripts/widget-preview.js assets/widgets/android-rate-2x2.png [--device serial]` from `packages/client`, ImageOptim after. The module `build.gradle` `copyWidgetRes` task copies `packages/client/assets/fonts/FiraGO-Regular.otf` into `font` as `widget_firago_regular.otf` and every `android-*-2x2.png` into `drawable-nodpi`, straight from `packages/client/assets/` at build time, no prebuild step between. From android 15 `setWidgetPreview` replaces them at runtime with the real rates, capped at two calls per hour per provider.
 - Android cannot re-render a widget on a system theme change, so they are forced dark like ios.
 - **Logs**: `adb logcat -s AmbitoWidgets` prints nothing on One UI even with the lines in the buffer, measured on a galaxy s9: 0 against 324 for the same log. Use `adb logcat AmbitoWidgets:I *:S`. One line per redraw with its trigger and how many widgets it drew, one per call to the service with its duration.
 - Module resources are all prefixed `widget_`, plus `Theme.Widget.Config`. Keep it, everything merges into one namespace with the app.
@@ -47,16 +49,32 @@ gets shipped.
 - **A rate added or retired**: `packages/client/targets/_shared/Helper.swift`
   `getRateTypes()` and `Format.kt` `RATE_TYPES`, both mirroring `getAvailableRateTypes()` in
   `packages/core`, which owns the order. `getRateTitle` there is a third copy of the labels that has
-  to agree. Retired ones stay commented on the ios list, absent from the kotlin one which doubles as
-  the picker, and an android widget still on a retired type goes back to the default of its slot
-  unless another slot holds it, then it stays and draws nothing.
-- **A rate label**: the `display` of the ios entry and the second half of the kotlin pair.
+  to agree, `packages/client/test.js` checks the three. Retired ones stay commented on the ios
+  list, absent from the kotlin one which doubles as the picker, and an android widget still on a
+  retired type goes back to the default of its slot unless another slot holds it, then it stays and
+  draws nothing.
+- **A market added or retired**: `getMarketTypes()` in `Helper.swift` and `Format.kt`
+  `MARKET_TYPES`, mirroring core `getAvailableMarketTypes()`, checked by `packages/client/test.js`,
+  plus its entry in `marketFormats` (`Rates.swift`) and `Format.MARKETS`, which no test checks.
+  Without it android throws on `MARKETS.getValue` and ios falls back to the rate format, silently.
+- **A rate label**: the `display` of the ios entry and the second half of the kotlin pair. Widgets
+  and watch show `short ?? display`, `short` on the ios entry and `Format.SHORT` on android, the
+  app the full name. `short ?? display` stays within 11 characters, "Riesgo país", the longest
+  that fits the list row (~131pt), the watch row (~148pt) and the circular; `packages/client/test.js`
+  checks the cap.
 - **A font size**: `RateWidgets.swift` carries the point sizes and `Sizes.kt` the same numbers
   times 1.05. Change the role, not the factor.
 - **A default**: ios in `Helper.swift`, `getDefaultRateType`, `getDefaultRateTypes` and
   `getDefaultSpreadRateTypes`, read from `RateTypeQuery.defaultResult` for the single rate and from
-  each provider's `rateTypes(for:)` fallback for the two lists; android in each provider's
-  `defaultRates`.
+  each intent's `types` fallback for the two lists, the markets inline in `Intents.swift`, the first
+  and the first three of `getMarketTypes()`; android in each provider's `defaultRates`.
+- **Rates and markets share the flat keys of `/fetch`**, so an id never repeats between core
+  `getAvailableRateTypes` and `getAvailableMarketTypes`, a core test fails otherwise. The market
+  display rules are ported twice, `marketFormats` in `Rates.swift` and `Format.MARKETS`, from
+  `MARKETS` in `packages/client/config/kinds.ts`: a change there moves all three. The native ones
+  drop the units on purpose, like the tickers, Merval `2.848.945`, Riesgo país `1.684`, Reservas
+  `50.043 M`; the app keeps `pts`, `pb` and `US$`. A month or a day is formatted in
+  Buenos Aires with es-AR, a time (Merval, Riesgo país) in the device zone like the rates.
 - **A /fetch schema change**: ios first, always, it reaches the widget and the watch app through
   `packages/client/targets/_shared/Rates.swift`. `lookupRateValues` reads the array by index and
   forces its casts, surviving only because `wellFormed` filters ahead of it, the stored payload
@@ -67,22 +85,22 @@ gets shipped.
 ### A new widget
 
 - **iOS**: a `struct X: Widget` with its `kind`, added to the `RateWidgets` bundle, plus a
-  `WidgetConfigurationIntent` with its parameters in
+  `RateTypesIntent` with its parameters in
   `packages/client/targets/_shared/Intents.swift`, which compiles into every target, the app, the
-  widget and the watch app.
+  widget, the watch app and its complication.
 - **Android**: a `WidgetProvider` subclass, one line in `Widgets.ALL`, a `<receiver>`, an
   `packages/client/modules/widgets/android/src/main/res/xml/widget_x_info.xml`, label and description in `strings.xml`, the preview png in
-  `packages/client/assets/widgets/` and its line in the module `build.gradle`. Four are static
+  `packages/client/assets/widgets/` named `android-<name>-2x2.png`, which the module `build.gradle` copies as `widget_<name>_preview` with `-` turned into `_`. Four are static
   registrations android demands and cannot be factored away. Reusing `widget_card.xml` or
   `widget_list.xml` costs nothing more, a new shape needs a `Content` subtype and a branch in
   `views()`.
-- The config screen takes a new widget with no changes as long as it picks rates and, optionally,
-  buy/average/sell. Anything else is a change there.
+- The config screen takes a new widget with no changes as long as it picks from the provider
+  `catalog` and, optionally, buy/average/sell. Anything else is a change there.
 
 The root `AGENTS.md` lists the four things outside the widgets that break them when moved. Two of
 them are only documented here:
 
-- **The deep link**, the `ambito-dolar` scheme and the `/rates[/type]` route, hardcoded in `WidgetProvider.openApp`. Changing the scheme in `app.config.ts` leaves the tap doing nothing, silently.
+- **The deep link**, the `ambito-dolar` scheme and the `/rates[/type]` or `/markets[/type]` route, the provider `path`, built in `WidgetProvider.openApp`. Changing the scheme in `app.config.ts` leaves the tap doing nothing, silently.
 - **The theme.** `Theme.Widget.Config` and the app `AppTheme` are siblings under `Theme.AppCompat.DayNight.NoActionBar`, not parent and child, so nothing set on the app theme reaches the config screen, which inherits appcompat's own accent instead. Two consequences: the screen follows the system light or dark and not the in-app Tema setting, because that one is applied by react native and the launcher usually starts this activity in a process where it never ran; and moving it under `AppTheme` is the change to make if the two are ever meant to agree.
 
 Going the other way there is a single line: `withRateUpdates` calls `reloadWidgets()` next to the ios `WidgetKit.reloadAllTimelines()`. Both cost a `/fetch`, the app payload and the service one are not the same shape.
@@ -105,4 +123,4 @@ Going the other way there is a single line: `withRateUpdates` calls `reloadWidge
 - **iOS is the base for meaning, not for format.** New Android copy derives verb + noun from the iOS `.description(...)`, never invented fresh.
 - iOS `.description(...)` is a full sentence with a trailing period, Android `description` is imperative, 4-8 words, **no trailing period**, matching the android picker style. iOS `Consultá las cotizaciones a lo largo del día.` becomes Android `Consultá las cotizaciones del día`. Shorter is always safe, the picker truncates.
 - `label` (Android) and `.configurationDisplayName(...)` (iOS) are the same string.
-- Config section titles come from the `@Parameter(title:)` of each `WidgetConfigurationIntent`: `Cotización` or `Cotizaciones` plus `Mostrar`. Singular when the widget takes one rate, plural when it takes several.
+- Config section titles come from the `@Parameter(title:)` of each `WidgetConfigurationIntent`: `Cotización` or `Cotizaciones` plus `Mostrar`, `Indicador` or `Indicadores` alone for the markets. Singular when the widget takes one rate, plural when it takes several.

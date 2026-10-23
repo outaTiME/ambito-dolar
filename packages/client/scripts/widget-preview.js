@@ -18,7 +18,7 @@ const path = require('path');
 const { PNG } = require('pngjs');
 const { parseArgs } = require('util');
 
-// the 20dp corner of widget_card_background.xml over the 130dp a 2x2 card reports
+// widget_corner in dimens.xml over the 130dp a 2x2 card reports
 const RADIUS_RATIO = 20 / 130;
 // a card pixel is this dark, the launcher wallpaper never is
 const DARK = 30;
@@ -83,7 +83,7 @@ const findCards = (img) => {
   };
   const cards = [];
   for (const column of runs(columns, width)) {
-    // cards stacked in the in app preview share a column band, split it by rows too.
+    // cards stacked in the in app preview share a column band, split it by rows too
     // a whole row of the band, not a single scanline, text would break that one
     const band = new Uint8Array(height);
     for (let y = 0; y < height; y++) {

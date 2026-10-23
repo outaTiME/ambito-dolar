@@ -1,5 +1,6 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import test from 'ava';
+import { readFileSync } from 'node:fs';
 
 import { getSortedRates } from './utilities/Customize.ts';
 import {
@@ -135,4 +136,48 @@ test('Customize should order by the persisted criterion and direction', (t) => {
   ]);
   // without a saved custom order it keeps the core one
   t.deepEqual(sorted('custom'), ['oficial', 'informal', 'mep']);
+});
+
+test('Widget catalogs should match core on both platforms and fit the rows', (t) => {
+  const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
+  // the commented out rates of Helper.swift are gated ones, never shown
+  const swift = [
+    ...read('targets/_shared/Helper.swift').matchAll(
+      /^\s*RateType\(identifier: "(\w+)", display: "([^"]+)"(?:, short: "([^"]+)")?\)/gm,
+    ),
+  ].map(([, id, display, short]) => [id, display, short ?? null]);
+  const kotlin = read(
+    'modules/widgets/android/src/main/java/im/outa/ambitodolar/widgets/Format.kt',
+  );
+  const shorts = Object.fromEntries(
+    [
+      ...kotlin
+        .match(/val SHORT = mapOf\((.*)\)/)[1]
+        .matchAll(/"(\w+)" to "([^"]+)"/g),
+    ].map(([, id, short]) => [id, short]),
+  );
+  // the catalog pairs are the only lines that start with a quoted id, SHORT sits on one line
+  const android = [...kotlin.matchAll(/^\s*"(\w+)" to "([^"]+)"/gm)].map(
+    ([, id, display]) => [id, display, shorts[id] ?? null],
+  );
+  t.deepEqual(android, swift);
+  // core owns the ids, the order and the titles of both catalogs
+  t.deepEqual(
+    swift.map(([id, display]) => [id, display]),
+    [
+      ...AmbitoDolar.getAvailableRateTypes().map((id) => [
+        id,
+        AmbitoDolar.getRateTitle(id),
+      ]),
+      ...AmbitoDolar.getAvailableMarketTypes().map((id) => [
+        id,
+        AmbitoDolar.getMarketTitle(id),
+      ]),
+    ],
+  );
+  // as long as riesgo pais, measured to fit the widget list row, the watch row and the circular
+  t.deepEqual(
+    swift.filter(([, display, short]) => (short ?? display).length > 11),
+    [],
+  );
 });

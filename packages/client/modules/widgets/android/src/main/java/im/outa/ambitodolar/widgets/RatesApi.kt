@@ -9,47 +9,43 @@ import java.net.URL
 import org.json.JSONArray
 import org.json.JSONObject
 
-// one rate as the service sends it: [timestamp, value, change, previous], where value is either a
-// number or a [buy, sell] pair
-data class Rate(val timestamp: String, val buy: Double?, val sell: Double, val change: Double) {
-  val hasPair: Boolean
-    get() = buy != null
-
+// [timestamp, value, change, previous] as the service sends it, value a number or a [buy, sell] pair
+// only the markets read the previous value
+data class Rate(
+  val timestamp: String,
+  val buy: Double?,
+  val sell: Double,
+  val change: Double,
+  val close: Double? = null,
+) {
   fun value(type: String): Double =
     when {
       buy == null -> sell
       type == "buy" -> buy
-      // halved before adding, which cannot overflow the way adding first can
+      // halved before adding so it cannot overflow
       type == "average" -> buy / 2 + sell / 2
       else -> sell
     }
 }
 
-// the widget brings its own data, same as the ios one which does its own URLSession call
+// the widget fetches on its own like the ios URLSession call
 object RatesApi {
-  // collapses a burst into one call, the three providers of a periodic run included. Counted from
-  // the start of the request, so it is not a guarantee, only what a burst takes. Has to stay under
-  // WorkManager's 30s minimum backoff or the first retry lands inside it and reports success on
-  // stale data without asking the service
+  // collapses a burst into one call, under WorkManager's 30s backoff or a retry reads stale data as success
   private const val CACHE_MS = 10_000L
 
-  // connect and read each get this, the same four the ios extension uses
+  // connect and read each, the four seconds of the ios extension
   private const val TIMEOUT_MS = 4_000
 
-  // characters and not bytes, a couple of hundred times what the service sends. A cap and not a
-  // guess: an OutOfMemoryError is an Error no catch here would hold, so a runaway body would take
-  // the process down instead of failing the fetch
+  // characters and not bytes, far above any real payload, a runaway body would raise an OutOfMemoryError no catch here holds
   private const val MAX_BODY = 256 * 1024
 
-  // the last call that came back, only ever replaced by another one that came back: nothing a
-  // failed call finds can take rates off a widget
+  // only replaced by another call that came back, so a failure never takes rates off a widget
   private var cached: Map<String, Rate>? = null
 
-  // elapsed and not wall clock: the user moving the clock back would freeze the cache
+  // elapsed and not wall clock, moving the clock back would freeze the cache
   private var nextCallAt = 0L
 
-  // whether the last call produced rates worth keeping, which is not whether there is something
-  // to draw: a call that failed still answers with what is cached or stored. Only the worker asks
+  // whether the last call came back, a failed one still answers with the cache, only the worker asks
   var usable = true
     private set
 
@@ -63,29 +59,26 @@ object RatesApi {
       Log.i(TAG, "fetch took ${SystemClock.elapsedRealtime() - now}ms, ${fresh?.size ?: "failed"}")
       fresh?.let { cached = it }
     }
-    // the stored payload is only reached when this process never got an answer, which is a reboot
-    // or an app update. The ios getRates() falls back the same way
+    // disk only when this process never got an answer, like the ios getRates()
     return cached ?: last(context)
   }
 
-  // one attempt, null when it did not come back. The retry is WorkManager's
+  // one attempt, the retry is WorkManager's
   private fun request(context: Context): Map<String, Rate>? =
     try {
-      val endpoint = context.getString(R.string.widget_api_url) + "/fetch"
+      val endpoint = context.getString(R.string.widget_api_url).trimEnd('/') + "/fetch"
       val connection =
         (URL(endpoint).openConnection() as HttpURLConnection).apply {
           connectTimeout = TIMEOUT_MS
           readTimeout = TIMEOUT_MS
         }
       try {
-        // reading the status runs the request. Any 2xx is taken, which is what the ios getRates
-        // does, and only the body decides whether it is usable
+        // any 2xx like the ios getRates, the body decides whether it is usable
         if (connection.responseCode !in 200..299) {
           throw IOException("service answered ${connection.responseCode}")
         }
         val body = body(connection)
-        // a payload that parses to nothing is a failure and not an empty board, so the worker
-        // gets to come back
+        // a payload that parses to nothing is a failure, so the worker comes back
         parse(JSONObject(body)).takeIf { it.isNotEmpty() }?.also {
           WidgetConfig.setLastPayload(context, body)
         }
@@ -93,12 +86,11 @@ object RatesApi {
         connection.disconnect()
       }
     } catch (e: Exception) {
-      // the class and the message inline, a stack alone does not survive the logcat buffer
+      // inline, a stack alone does not survive the logcat buffer
       Log.w(TAG, "rates fetch failed with ${e.javaClass.simpleName}: ${e.message}", e)
       null
     }
 
-  // whatever the service left us with, as long as it parses to at least one rate
   private fun last(context: Context): Map<String, Rate>? =
     WidgetConfig.lastPayload(context)?.let {
       try {
@@ -108,8 +100,7 @@ object RatesApi {
       }
     }
 
-  // capped, for the Error above. Time is bounded by connectTimeout and readTimeout, each of which
-  // covers one stalled read rather than the whole response, which is what every google sample does
+  // capped by MAX_BODY, the timeouts cover each stalled read like the google samples
   private fun body(connection: HttpURLConnection): String =
     connection.inputStream.bufferedReader().use { reader ->
       val text = StringBuilder()
@@ -131,18 +122,14 @@ object RatesApi {
         continue
       }
       val stat = json.optJSONArray(type) ?: continue
-      // a timestamp that does not parse would render as a blank date and, worse, get persisted
-      // as the last good payload
+      // an unparsable timestamp would draw a blank date and be persisted as the last good payload
       val timestamp = stat.optString(0).takeIf { Format.instant(it) != null } ?: continue
-      // no default: a missing change comes back as NaN and the finite check drops the rate,
-      // instead of drawing a blue zero that reads as a rate that did not move
+      // a missing change is NaN and drops the rate instead of drawing a blue zero
       val change = stat.optDouble(2).takeIf { it.isFinite() } ?: continue
-      // a missing or non numeric value comes back as NaN and would render as the literal text
+      // a missing or non numeric value would render NaN as text
       when (val value = stat.opt(1)) {
         is JSONArray -> {
-          // opt(n) and not optDouble: optDouble coerces a numeric string and the scalar branch
-          // below does not, so a pair of strings was kept while a single one was dropped. ios
-          // requires NSNumber on both and is the reference
+          // opt and not optDouble, which coerces a numeric string where ios requires NSNumber
           val buy = (value.opt(0) as? Number)?.toDouble() ?: Double.NaN
           val sell = (value.opt(1) as? Number)?.toDouble() ?: Double.NaN
           if (buy.isFinite() && sell.isFinite()) {
@@ -151,7 +138,7 @@ object RatesApi {
         }
         is Number ->
           value.toDouble().takeIf { it.isFinite() }?.let {
-            rates[type] = Rate(timestamp, null, it, change)
+            rates[type] = Rate(timestamp, null, it, change, stat.optDouble(3).takeIf { it.isFinite() })
           }
       }
     }
