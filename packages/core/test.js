@@ -181,6 +181,17 @@ test('Rates should be from today when any of them is', (t) => {
   );
 });
 
+test('Rate and market ids should never collide', (t) => {
+  // both share the flat keys of /fetch, a repeated id hides one of them
+  const markets = AmbitoDolar.getAvailableMarketTypes();
+  t.deepEqual(
+    AmbitoDolar.getAvailableRateTypes().filter((type) =>
+      markets.includes(type),
+    ),
+    [],
+  );
+});
+
 test('Available rates should drop what is not released yet', (t) => {
   // a gated rate keeps its constant, it is only commented out of the available list
   t.false(AmbitoDolar.getAvailableRates({ [AmbitoDolar.QATAR_TYPE]: 1 }));
