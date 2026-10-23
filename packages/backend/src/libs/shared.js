@@ -300,21 +300,19 @@ const getTickets = (date, type) =>
 
 const getRatesJsonObject = () => getJsonObject(QUOTES_OBJECT_KEY);
 
-// the last stat per type, what /fetch serves from S3 and from its lambda
+// the last stat per type
 const getLastStats = (items) =>
   _.mapValues(items, (item) => _.last(item.stats));
 
 // an unreadable quotes file throws, so a manual notify fails loud and its event retries
 // a plain error keeps a string code like Z_DATA_ERROR out of the route status
+const readRatesJsonObject = () =>
+  getRatesJsonObject().catch((error) => {
+    throw new Error('Unable to read the rates', { cause: error });
+  });
+
 const getRates = async (base_rates) =>
-  getLastStats(
-    (
-      base_rates ||
-      (await getRatesJsonObject().catch((error) => {
-        throw new Error('Unable to read the rates', { cause: error });
-      }))
-    ).rates,
-  );
+  getLastStats((base_rates || (await readRatesJsonObject())).rates);
 
 const storeObject = (key, content, compressed = true, opts = {}) => {
   const bucket = Resource.Bucket.name;
@@ -350,8 +348,12 @@ const storeTickets = (date, type, json) =>
 
 const storePublicJsonObject = (key, json) => storeJsonObject(key, json);
 
-const storeFetchJsonObject = (rates) => {
-  const json = getLastStats(rates.rates);
+// rates and markets share the flat keys of /fetch, core keeps their ids apart
+const getFetchStats = (quotes) =>
+  getLastStats({ ...quotes.markets, ...quotes.rates });
+
+const storeFetchJsonObject = (quotes) => {
+  const json = getFetchStats(quotes);
   const opts = { suffix: '' };
   return Promise.all([
     storeJsonObject(FETCH_OBJECT_KEY, json, opts),
@@ -426,7 +428,7 @@ const storeHistoricalRatesJsonObject = async (rates) => {
 };
 
 const storeRatesJsonObject = (quotes, is_updated) => {
-  // markets only travel on quotes
+  // markets only travel on quotes and /fetch
   const rates = _.omit(quotes, ['markets']);
   const legacy_rates = pickRates(rates.rates, LEGACY_RATE_TYPES, true);
   return Promise.all([
@@ -441,7 +443,7 @@ const storeRatesJsonObject = (quotes, is_updated) => {
     }),
     storePublicJsonObject(QUOTES_OBJECT_KEY, quotes),
     // keep a non-suffixed key to serve GET /fetch from cloudfront+s3
-    is_updated && storeFetchJsonObject(rates),
+    is_updated && storeFetchJsonObject(quotes),
     // save historical rates
     is_updated && storeHistoricalRatesJsonObject(quotes),
   ]);
@@ -887,7 +889,9 @@ export default {
   getJsonObject,
   getTickets,
   getRatesJsonObject,
+  readRatesJsonObject,
   getRates,
+  getFetchStats,
   storeObject,
   storeJsonObject,
   storeTickets,

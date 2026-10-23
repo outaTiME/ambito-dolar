@@ -15,7 +15,8 @@ SST v4, Lambda handlers.
   `packages/client/docs/android-widgets.md`.
 - **The `GET /fetch` lambda in `infra/api.ts` is a kept fallback**, CloudFront serves `/fetch` from S3
   in front of it and the lambda takes over if CloudFront goes. Both build the body with
-  `getLastStats` in `shared.js`.
+  `getFetchStats` in `shared.js`. The S3 object is only rewritten on an `is_updated` run, so a body
+  change shows after the first update following the deploy, not on the deploy.
 - `is_open` in the rates payload drives how often the client asks for rates. Dropping it or changing
   its meaning fails silently, see `docs/product-policies.md`. It must not go into `/fetch` while
   `storeFetchJsonObject` is gated on `is_updated`: a gated write leaves it stale on exactly the
@@ -23,12 +24,15 @@ SST v4, Lambda handlers.
   payload outside `Process` has to carry the flag over,
   `packages/backend/src/routes/update-rates.js` reads the stored one for that, and the stored
   `markets` when the body has none.
-- **Markets live in `quotes.json` under `markets` and in both historical-quotes files, nowhere
-  else.** `rates*.json`, `rate-stats`, `/fetch`, the realtime board and `notify` stay rates only. The
+- **Markets live in `quotes.json` under `markets`, in both historical-quotes files and in `/fetch`,
+  nowhere else.** `/fetch` carries them flat next to the rates for the widgets and the watch app,
+  so an id never repeats between the two, a core test fails otherwise. `rates*.json`, `rate-stats`,
+  the realtime board and `notify` stay rates only. The
   legacy files pick a fixed list (`LEGACY_RATE_TYPES`, `V5_RATE_TYPES` in
   `packages/backend/src/libs/shared.js`), so a new rate or market never reaches them. A new market
   enters core `getAvailableMarketTypes` and `getDataProviderForMarket` with the processor change, or
-  the client hides it and the detail names the wrong source.
+  the client hides it and the detail names the wrong source. It also enters the widget and watch lists,
+  `Helper.swift` and `Format.kt`, or `packages/client/test.js` fails.
 - **The repair routes rewrite history.** `/update-rates` keeps each type's history before the
   body's first stat and replaces the rest with the body, so a body older than the stored
   `quotes.json` loses every day after its last stat; build it from a download taken after the 18:00
