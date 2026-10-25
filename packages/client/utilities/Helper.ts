@@ -109,8 +109,6 @@ const formatFloatingPointNumber = (value, maxDigits = FRACTION_DIGITS) => {
   return formatted;
 };
 
-const TABBAR_HEIGHT_UIKIT = 49;
-
 const promiseRetry = AmbitoDolar.promiseRetry;
 
 export default {
@@ -338,12 +336,6 @@ export default {
   },
   getInvertedTheme(theme) {
     return theme === 'light' ? 'dark' : 'light';
-  },
-  // https://github.com/software-mansion/react-native-screens/issues/2536
-  getTabBarHeight(insets) {
-    if (insets) {
-      return TABBAR_HEIGHT_UIKIT + insets.bottom;
-    }
   },
   getStackScreenOptions({ theme, fonts, modal = false }) {
     return {

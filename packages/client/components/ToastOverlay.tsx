@@ -11,12 +11,12 @@ import Helper from '@/utilities/Helper';
 // plugins/withAndroidBottomNavDimens, base M3 is 80dp)
 const TAB_BAR_HEIGHT = Platform.OS === 'android' ? 64 : 49;
 
-function ToastOverlay() {
+export default function ToastOverlay() {
   const insets = useSafeAreaInsets();
   const [activityToast, setActivityToast] =
     Helper.useSharedState('activityToast');
   const [activeToast, setActiveToast] = React.useState<any>();
-  const timeoutRef = React.useRef(null);
+  const timeoutRef = React.useRef<any>(null);
   React.useEffect(() => {
     if (activityToast) {
       setActivityToast(null);
@@ -58,13 +58,7 @@ function ToastOverlay() {
         isVisible={activeToast?.isVisible}
         text={activeToast?.message}
         hiddenOffset={TAB_BAR_HEIGHT}
-        onCompleted={() => {}}
       />
     </View>
   );
 }
-
-// classic Tabs on android renders toasts via ToastBottomTabBar, skip overlay
-const isAndroidClassicTabs =
-  Platform.OS === 'android' && !Settings.USE_NATIVE_TABS_ANDROID;
-export default isAndroidClassicTabs ? () => null : ToastOverlay;

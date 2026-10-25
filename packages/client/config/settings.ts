@@ -78,8 +78,6 @@ const CHART_STROKE_WIDTH = 3 - 0.5;
 
 // toggle native formSheet (true) or gorhom bottom-sheet (false) for the donation modal
 const USE_NATIVE_DONATION_SHEET = false;
-// toggle NativeTabs (true, parity with iOS) or classic Tabs (false) on android
-const USE_NATIVE_TABS_ANDROID = true;
 
 const Settings: any = {
   PADDING,
@@ -126,7 +124,6 @@ const Settings: any = {
   APP_REVIEW_URI,
   CAFECITO_URL,
   USE_NATIVE_DONATION_SHEET,
-  USE_NATIVE_TABS_ANDROID,
   CHART_STROKE_WIDTH,
   IS_TABLET,
   IS_HANDSET,

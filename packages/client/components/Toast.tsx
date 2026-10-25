@@ -3,7 +3,6 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
-  runOnJS,
 } from 'react-native-reanimated';
 
 import Settings from '@/config/settings';
@@ -19,25 +18,17 @@ const springConfig = {
   restSpeedThreshold: 0.001,
 };
 
-export default ({ isVisible, text, onCompleted, hiddenOffset = undefined }) => {
+export default ({ isVisible, text, hiddenOffset }) => {
   const targetTranslate = -Settings.CONTENT_MARGIN * 2;
-  // subhead lineHeight + vertical padding
-  const distance = hiddenOffset ?? (20 + Settings.PADDING) / 2;
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(
-        isVisible ? 1 : 0,
-        {
-          duration: 200,
-        },
-        (isFinished) => {
-          onCompleted && runOnJS(onCompleted)(isVisible, isFinished);
-        },
-      ),
+      opacity: withTiming(isVisible ? 1 : 0, {
+        duration: 200,
+      }),
       transform: [
         {
           translateY: withSpring(
-            isVisible ? targetTranslate : distance,
+            isVisible ? targetTranslate : hiddenOffset,
             springConfig,
           ),
         },
@@ -55,7 +46,7 @@ export default ({ isVisible, text, onCompleted, hiddenOffset = undefined }) => {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: Settings.getBackgroundColor(invertedTheme, true),
-          borderRadius: distance,
+          borderRadius: hiddenOffset,
           borderCurve: 'continuous',
           bottom: 0,
           maxWidth: Settings.CONTENT_WIDTH - 38,
