@@ -7,7 +7,7 @@ import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
 export const unstable_settings = {
-  initialRouteName: 'index',
+  anchor: 'index',
 };
 
 export default function RatesStackLayout() {

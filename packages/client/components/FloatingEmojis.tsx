@@ -4,7 +4,7 @@ import { Animated, View, StyleSheet, Platform } from 'react-native';
 import FloatingEmoji from '@/components/FloatingEmoji';
 
 function useTimeout() {
-  const handle = useRef(null);
+  const handle = useRef<any>(null);
   const start = useCallback((func, ms) => {
     handle.current = setTimeout(func, ms);
   }, []);
@@ -17,7 +17,7 @@ function useTimeout() {
   return [start, stop, handle] as const;
 }
 
-const EMPTY_ARRAY = [];
+const EMPTY_ARRAY: any[] = [];
 const getEmoji = (emojis) => Math.floor(Math.random() * emojis.length);
 const getRandomNumber = (min, max) => Math.random() * (max - min) + min;
 

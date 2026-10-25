@@ -29,7 +29,7 @@ export const getReAskMs = (lifetimeTotal = 0) => {
 };
 
 // sum lifetime in local currency via current product prices (approximation)
-export const computeLifetime = (transactions = [], priceMap = {}) =>
+export const computeLifetime = (transactions: any[] = [], priceMap = {}) =>
   transactions.reduce(
     (sum, tx) => sum + (priceMap[tx?.productIdentifier ?? ''] ?? 0),
     0,
@@ -51,7 +51,7 @@ export const getDonationReAsk = (customerInfo, priceMap) => {
   const lifetimeTotal = computeLifetime(transactions, priceMap);
   const reAskMs = lastPurchaseDate ? getReAskMs(lifetimeTotal) : null;
   const due =
-    !lastPurchaseDate || now - new Date(lastPurchaseDate).getTime() >= reAskMs;
+    reAskMs === null || now - new Date(lastPurchaseDate).getTime() >= reAskMs;
   return { lastPurchaseDate, lifetimeTotal, reAskMs, due };
 };
 

@@ -113,7 +113,7 @@ export default ({ data, domain, color, selectionIndex, width, height }) => {
         .line<any>()
         .x((datum) => scale(datum.x, domain.x, range.x))
         .y((datum) => scale(datum.y, domain.y, range.y))
-        .curve(d3Shape.curveMonotoneX)(data),
+        .curve(d3Shape.curveMonotoneX)(data)!,
     [data, domain, range],
   );
   const length = useSharedValue(width);

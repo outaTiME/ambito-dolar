@@ -302,7 +302,7 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
 - **Locale sensitive text has to force its locale**, apple-targets pins the watch bundle to `en` and
   `Locale.current` takes it. Number separators come from the region and are fine.
 - **The font is the same symlink with `UIAppFonts`**, the rule in Traps applies.
-- **Build it alone** with `-target RateWatchApp -sdk watchsimulator` on `mbitoDlar.xcodeproj`. The
+- **Build it alone** with `-target RateWatchApp -sdk watchsimulator` on `AmbitoDolar.xcodeproj`. The
   full app build takes the destination only, `-sdk iphonesimulator` drags the watch target onto the
   ios sdk and fails on its icon. It also needs the watchOS runtime of its Xcode, the scheme embeds
   the watch app.

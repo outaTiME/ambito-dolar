@@ -2,12 +2,12 @@
 import 'expo-dev-client';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { NavigationBar } from 'expo-navigation-bar';
-import { Stack } from 'expo-router';
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
+  Stack,
   ThemeProvider as NavigationThemeProvider,
-} from 'expo-router/react-navigation';
+} from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
@@ -59,6 +59,8 @@ const ThemedLayout = () => {
       dark: isDark,
       colors: {
         ...baseTheme.colors,
+        // the screens color, a transition shows it behind them
+        background: Settings.getBackgroundColor(colorScheme),
         card: Settings.getContentColor(colorScheme),
         border: Settings.getSeparatorColor(colorScheme),
       },
@@ -125,7 +127,13 @@ const ThemedLayout = () => {
               <BottomSheetModalProvider>
                 <AppContainer>
                   <Stack key={layoutKey} screenOptions={stackScreenOptions}>
-                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen
+                      name="(tabs)"
+                      options={{
+                        // the index redirect replaces into this screen after the first commit since router 58
+                        animation: 'none',
+                      }}
+                    />
                     <Stack.Screen
                       name="(modals)"
                       options={{

@@ -23,6 +23,10 @@ def copyWidgetRes = tasks.register('copyWidgetRes', Copy) {
 
 android {
   namespace 'im.outa.ambitodolar.widgets'
+  // off by default for a library since agp 9, widget_api_url needs it
+  buildFeatures {
+    resValues true
+  }
   defaultConfig {
     // agp ignores both on a library but expo-autolinking fails without versionName
     versionCode 1
@@ -36,7 +40,9 @@ android {
   }
   sourceSets {
     main {
-      res.srcDir widgetGeneratedRes
+      // a File and not the provider, agp 9 rejects providers here
+      // preBuild carries the dependency
+      res.srcDir widgetGeneratedRes.get().asFile
     }
   }
 }
@@ -46,7 +52,8 @@ dependencies {
   implementation 'androidx.appcompat:appcompat:1.7.1'
 
   // the periodic redraw, with the reboot, the network constraint and the unique work built in
-  implementation 'androidx.work:work-runtime-ktx:2.10.1'
+  // older versions crash at launch once r8 shrinks a release build
+  implementation 'androidx.work:work-runtime-ktx:2.12.0'
 }
 
 tasks.named('preBuild') {

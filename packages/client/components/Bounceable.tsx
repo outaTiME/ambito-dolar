@@ -26,9 +26,9 @@ export default ({
   immediatePress = true,
   duration = 160,
 }) => {
-  const onLongPressTimeoutId = useSharedValue(null);
-  const activeScaleTimeoutRef = React.useRef(null);
-  const endScaleTimeoutRef = React.useRef(null);
+  const onLongPressTimeoutId = useSharedValue<any>(null);
+  const activeScaleTimeoutRef = React.useRef<any>(null);
+  const endScaleTimeoutRef = React.useRef<any>(null);
   React.useEffect(
     () => () => {
       if (activeScaleTimeoutRef.current) {

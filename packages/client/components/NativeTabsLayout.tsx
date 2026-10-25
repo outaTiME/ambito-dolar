@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/native-tabs';
 import { Platform } from 'react-native';
 
 import I18n from '@/config/I18n';
@@ -16,7 +16,7 @@ export default function NativeTabsLayout() {
       minimizeBehavior="never"
       tintColor={Settings.getForegroundColor(theme)}
       iconColor={Settings.getStrokeColor(theme)}
-      {...Platform.select({
+      {...Platform.select<any>({
         android: {
           // bg matches header card color for coherent surface
           backgroundColor: Settings.getContentColor(theme),

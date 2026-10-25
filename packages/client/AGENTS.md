@@ -7,6 +7,9 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 - **Both platforms CNG**: `packages/client/android/` and `packages/client/ios/` are regen by `expo prebuild`. Build output, gitignored, no hand-edit. Modify via `packages/client/app.config.ts` or a config plugin.
 - **iOS widgets live in `packages/client/targets/`**, generated into the Xcode project by the `@bacons/apple-targets` plugin. Source, committed. `packages/client/targets/RateWidgets/` is the widget extension. `packages/client/targets/RateWatch/` is the Apple Watch app, `packages/client/targets/RateWatchComplications/` its launcher complication. `packages/client/targets/_shared/` is the code they share. Read `packages/client/docs/ios-widgets.md` before touching it.
 - **After a version, dep or SDK bump**: `yarn run client:prebuild -p ios`, nothing else. It regenerates `packages/client/ios/` and runs `pod install`, there is nothing left in there to preserve. Xcode project settings live in `packages/client/app.config.ts` and each `packages/client/targets/*/expo-target.config.js`. Never `--no-clean`, see `packages/client/docs/ios-widgets.md`. Build output that looks like a code bug after a prebuild or a target rename: delete `DerivedData` before touching the source, same doc.
+- **A local release build uploads to the production Sentry project** when `SENTRY_AUTH_TOKEN` is in
+  the environment, source maps and debug symbols on both platforms plus the R8 mapping on android.
+  Set `SENTRY_DISABLE_AUTO_UPLOAD=true` for a local one.
 - **An `Alert` carries one sentence as its title and an empty message**, under two lines because
   RN's `DialogTitle` caps it there and ellipsizes. Moving the copy to the message is not the way out,
   RN always sends a title key and an empty one still costs its band.
@@ -15,7 +18,7 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 
 ## Lint
 
-- `expo lint` fails here, scope it from the root instead, `yarn eslint "packages/client/<path>"`.
+- No `lint` script in the client, lint from the root, `yarn eslint "packages/client/<path>"`.
 - React Compiler rules are off on purpose (`react-hooks/{immutability,refs,set-state-in-effect,purity}`):
   the project is not on the compiler and they false positive on Reanimated `.value` and on
   intentional ref and effect patterns. Fix a real prop reassign, do not mute those rules.
@@ -67,8 +70,9 @@ Everything that keeps the rates in sync is in
 
 ## TypeScript discipline
 
-`tsconfig`: `strict:false`, `noImplicitAny:false`. Implicit `any` is fine, and real types come with
-the TS migration, never as a side effect of cleaning one up.
+`tsconfig`: `strict:false`, `strictNullChecks:true` (router 58 types demand a navigator `id`
+without it), `noImplicitAny:false`. Implicit `any` is fine, and real types come with the TS
+migration, never as a side effect of cleaning one up.
 
 `yarn client:typecheck` from the repo root already tells you which casts are load bearing: drop one,
 run it, put it back if it fails. What it cannot tell you is that the repair was worse than the
@@ -91,11 +95,15 @@ error, and that is the whole of this section.
 - No global nav/state refactors for small tasks.
 - Preserve iOS/Android/web behavior. Date/time + formatting via `@ambito-dolar/core` helpers.
 - **Android modal bottom inset**: native-stack modals lack the bottom safe-area inset, content slips under the transparent nav bar. `FixedScrollView` pads via `isModal` prop, new scrolling modal screen must pass it.
-- `isModal` computed once in `withContainer` (from `useLocalSearchParams`), threaded as prop down the tree. Never re-call `useLocalSearchParams` for it in nested components.
+- `isModal` computed once in `withContainer` from the navigator id (`/(modals)`, the layout path), threaded as prop down the tree. The tab check reads the parent id (`/(tabs)`), router 58 tab state has no `type` on first render. Renaming a group breaks its check, the ids are compared as literals.
 
 ## Navigation centralization
 
-- **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Tabs`, `Slot`, `Redirect`, `useNavigation` (setOptions), `useLocalSearchParams`, `useFocusEffect`, `usePathname`, `useSegments`, plus `NativeTabs` from `expo-router/unstable-native-tabs`, `HeaderButton` from `expo-router/react-navigation` and `BottomTabBar` from `expo-router/js-tabs`.
+- **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Slot`, `Redirect`, `useNavigation` (setOptions), `useLocalSearchParams`, `useFocusEffect`, `useSegments`, `ThemeProvider`, `DarkTheme`, `DefaultTheme`, plus `NativeTabs` from `expo-router/native-tabs` and `HeaderButton` from `expo-router/react-navigation`.
+- **`(tabs)` in `packages/client/components/RootLayout.tsx` has `animation: 'none'`.** The Stack
+  mounts on `app/index.tsx`, at launch and again when `AppContainer` brings it back (rates cleared,
+  locale reload), and its redirect runs after the first commit since router 58, so the replace would
+  slide the whole app in. Static plugin `redirects` and `+native-intent` only cover the launch.
 - **`SplashScreen` comes from `expo-splash-screen`, never from `expo-router`.** The router ships its own wrapper marked `@hidden`.
 - Helpers: `goToX` (nav), `goBack` (guarded), `dismissToTop` (guarded pop), `clearRouteParam(name)`.
 - **A new route goes into `SCREENS` in `packages/client/hooks/app/useNavigationTrackingRouter.ts`**, a

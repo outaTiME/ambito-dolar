@@ -23,7 +23,6 @@ export default function ModalsLayout() {
     >
       <Stack.Screen
         name="customize-rates/index"
-        initialParams={{ modal: 'true' }}
         options={{
           title: Helper.getScreenTitle(I18n.t('customize_rates')),
           // android headerLeft comes from parent customHeaderBackOptions spread
@@ -36,7 +35,6 @@ export default function ModalsLayout() {
       />
       <Stack.Screen
         name="customize-markets/index"
-        initialParams={{ modal: 'true' }}
         options={{
           title: Helper.getScreenTitle(I18n.t('markets')),
           // android headerLeft comes from parent customHeaderBackOptions spread
@@ -49,7 +47,6 @@ export default function ModalsLayout() {
       />
       <Stack.Screen
         name="customize-rates/order"
-        initialParams={{ modal: 'true' }}
         options={{
           title: Helper.getScreenTitle(I18n.t('rate_order')),
         }}

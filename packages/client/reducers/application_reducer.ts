@@ -33,7 +33,7 @@ import {
 } from '@/actions/types';
 import DateUtils from '@/utilities/Date';
 
-const INITIAL_STATE = {
+const INITIAL_STATE: Record<string, any> = {
   push_token: null,
   sending_push_token: false,
   // days_used_for_review: 0,

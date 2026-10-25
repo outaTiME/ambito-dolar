@@ -10,7 +10,7 @@ import Helper from '@/utilities/Helper';
 export default ({ style, text, onDoubleTap, onLongPress }) => {
   const { theme, fonts } = Helper.useTheme();
   const gesture = React.useMemo(() => {
-    const gestures = [];
+    const gestures: any[] = [];
     if (onDoubleTap) {
       gestures.push(
         Gesture.Tap()

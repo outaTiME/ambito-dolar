@@ -1,5 +1,5 @@
-const version = '14.2.0';
-const buildNumber = 236;
+const version = '15.0.0';
+const buildNumber = 237;
 
 export default {
   name: 'Ámbito Dólar',
@@ -50,6 +50,8 @@ export default {
       {
         organization: 'ambito-dolar',
         project: 'expo',
+        // r8 obfuscates release builds since SDK 58, the gradle plugin uploads the mapping
+        experimental_android: { enableAndroidGradlePlugin: true },
       },
     ],
     [

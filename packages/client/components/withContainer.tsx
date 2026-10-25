@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useNavigation } from 'expo-router';
 import React from 'react';
 import { View, Platform } from 'react-native';
 
@@ -7,10 +7,10 @@ import Helper from '@/utilities/Helper';
 
 export default (Component: any) => (props: any) => {
   const navigation = useNavigation();
-  const params = useLocalSearchParams();
   const { theme } = Helper.useTheme();
-  const isModal = params?.modal === 'true';
-  const hasBottomTab = navigation?.getParent()?.getState()?.type === 'tab';
+  // the navigator id is the layout path, set from the first render
+  const isModal = navigation?.getId() === '/(modals)';
+  const hasBottomTab = navigation?.getParent()?.getId() === '/(tabs)';
   const isRoot = !(isModal || hasBottomTab) && Platform.OS !== 'web';
   const backgroundColor = Settings.getBackgroundColor(theme, isRoot, isModal);
   const containerStyle = React.useMemo(
