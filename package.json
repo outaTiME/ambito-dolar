@@ -15,7 +15,7 @@
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
     "astro-eslint-parser": "^3.2.0",
-    "ava": "^8.1.2",
+    "ava": "^8.2.0",
     "eslint": "^9.39.5",
     "eslint-config-universe": "^16.1.2",
     "eslint-plugin-astro": "^3.2.1",
