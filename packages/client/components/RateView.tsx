@@ -7,6 +7,7 @@ import { View, Text, Platform, PixelRatio } from 'react-native';
 import CardView from '@/components/CardView';
 import MiniRateChartView from '@/components/VictoryMiniRateChartView';
 import Settings from '@/config/settings';
+import useContentLayout from '@/hooks/useContentLayout';
 import Helper from '@/utilities/Helper';
 
 const InlineRateView = ({ title, value, onSelected, compact }) => {
@@ -72,6 +73,7 @@ const InlineRateDetailView = ({
   smallPadding,
 }) => {
   const { theme, fonts } = Helper.useTheme();
+  const contentWidth = useContentLayout();
   if (large) {
     return (
       <>
@@ -140,7 +142,7 @@ const InlineRateDetailView = ({
   const showMiniRateChart =
     stats.length > 1 &&
     changeWidth + Settings.CONTENT_MARGIN * 2 + Settings.PADDING <=
-      Helper.roundToNearestEven(Settings.CONTENT_WIDTH / 2);
+      Helper.roundToNearestEven(contentWidth / 2);
   return (
     <View
       style={{
@@ -192,6 +194,12 @@ const InlineRateDetailView = ({
   );
 };
 
+// a leaf, the tick refreshes the relative time without re-rendering the card
+const RelativeTimestamp = ({ timestamp, formatDate }) => {
+  Helper.useNow();
+  return formatDate(timestamp, 'relative');
+};
+
 const RateView = ({
   type,
   stats,
@@ -209,7 +217,6 @@ const RateView = ({
   formatDate,
 }) => {
   const { theme } = Helper.useTheme();
-  const now = Helper.useNow();
   const [timestamp, value, change] = React.useMemo(
     () => stats[stats.length - 1],
     [stats],
@@ -223,8 +230,13 @@ const RateView = ({
     [formatValue, value],
   );
   const timestamp_fmt = React.useMemo(
-    () => formatDate(timestamp, relativeDates ? 'relative' : 'card'),
-    [timestamp, now, relativeDates, formatDate],
+    () =>
+      relativeDates ? (
+        <RelativeTimestamp {...{ timestamp, formatDate }} />
+      ) : (
+        formatDate(timestamp, 'card')
+      ),
+    [timestamp, relativeDates, formatDate],
   );
   const change_fmt = React.useMemo(
     () => formatChange(stats[stats.length - 1]),

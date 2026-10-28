@@ -132,7 +132,7 @@ const ConversionScreen = ({ rates, rateTypes, backgroundColor }) => {
       style={{ flex: 1, backgroundColor }}
     >
       <TouchableWithoutFeedback onPress={dismissKeyboard} accessible={false}>
-        <View style={{ alignItems: 'center' }}>
+        <View>
           <ContentView
             contentContainerStyle={Settings.CONTENT_TOP_SHRINK_STYLE}
           >
@@ -171,14 +171,12 @@ const ConversionScreen = ({ rates, rateTypes, backgroundColor }) => {
               values={CURRENCY_TYPES}
               selectedIndex={currencyIndex}
               onTabPress={handleCurrencyTypeChange}
-              animated
               showDirectionalArrow
             />
             <SegmentedControlTab
               values={CONVERSION_TYPES}
               selectedIndex={typeIndex}
               onTabPress={handleConversionTypeChange}
-              animated
             />
           </ContentView>
         </View>

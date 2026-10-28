@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { Pressable, StyleSheet, Text, View, PixelRatio } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -9,75 +9,36 @@ import Animated, {
   withSequence,
 } from 'react-native-reanimated';
 
-import Settings from '@/config/settings';
-
-const SPRING = {
-  stiffness: 150,
-  damping: 20,
-  mass: 1,
-  overshootClamping: false,
-  restSpeedThreshold: 0.001,
-  restDisplacementThreshold: 0.001,
-};
-
-const rp = (n) => {
-  const s = PixelRatio.get();
-  return Math.round((n ?? 0) * s) / s;
-};
+const SPRING = { stiffness: 150, damping: 20, mass: 1 };
+const ARROW_GAP = 30;
+const GUTTER = 1;
 
 export default function AnimatedSegmentedControl({
-  segments = [],
-  currentIndex = 0,
-  onChange = () => {},
-  isRTL = false,
-  containerMargin = 0,
+  segments,
+  currentIndex,
+  onChange,
   segmentedControlWrapper,
   pressableWrapper,
   tileStyle,
-  activeTextStyle,
-  inactiveTextStyle,
-  arrowWrapperStyle,
-  arrowTextStyle,
-  showDirectionalArrow = false,
-  arrowGapWidth = 30,
-  gutter = 1,
-  endInset = 2,
-  selectorRadius = 6,
+  textStyle,
+  showDirectionalArrow,
 }) {
-  const count = Array.isArray(segments) ? segments.length : 0;
-  const hasSegments = count > 0;
-  const safeIndex = hasSegments
-    ? Math.min(Math.max(0, currentIndex), count - 1)
-    : 0;
+  const count = segments.length;
   const arrowMode = showDirectionalArrow && count === 2;
 
-  const baseWidth = rp((Settings?.CONTENT_WIDTH ?? 0) - containerMargin * 2);
-  const innerWidth = rp(baseWidth - gutter * 2);
-  const gap = arrowMode ? rp(arrowGapWidth) : 0;
-  const availableWidth = rp(Math.max(0, innerWidth - gap));
-  const cols = arrowMode ? 2 : Math.max(1, count);
-  const segmentWidth = hasSegments ? rp(availableWidth / cols) : 0;
-  const tileWidth = segmentWidth;
-
-  const startInset = 0;
-  const travelRange = rp(
-    Math.max(0, innerWidth - tileWidth - startInset - endInset),
-  );
-  const maxX = travelRange;
-  const step = !arrowMode && cols > 1 ? rp(travelRange / (cols - 1)) : 0;
-  const posA = startInset;
-  const posB = startInset + maxX;
-  const arrowLeft = rp(baseWidth / 2 - 12);
-  const epsilon = 1 / PixelRatio.get();
-
-  const idxSV = useSharedValue(safeIndex);
+  const gap = arrowMode ? ARROW_GAP : 0;
+  // the selected index, the spring runs on the ui thread
+  const position = useSharedValue(currentIndex);
   React.useEffect(() => {
-    idxSV.value = safeIndex;
-  }, [safeIndex]);
+    position.value = withSpring(currentIndex, SPRING);
+  }, [currentIndex]);
 
   const arrowScale = useSharedValue(1);
   const arrowOpacity = useSharedValue(1);
   React.useEffect(() => {
+    if (!arrowMode) {
+      return;
+    }
     arrowScale.value = withSequence(
       withTiming(0.9, { duration: 110 }),
       withTiming(1, { duration: 160 }),
@@ -86,167 +47,95 @@ export default function AnimatedSegmentedControl({
       withTiming(0.7, { duration: 110 }),
       withTiming(1, { duration: 160 }),
     );
-  }, [safeIndex]);
+  }, [currentIndex, arrowMode]);
 
   const arrowAnimatedStyle = useAnimatedStyle(() => ({
     opacity: arrowOpacity.value,
     transform: [{ scale: arrowScale.value }],
   }));
 
-  const tileAnimatedStyle = useAnimatedStyle(() => {
-    'worklet';
-    if (!hasSegments) {
-      return {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        width: 0,
-        borderRadius: selectorRadius,
-        borderCurve: 'continuous',
-        transform: [{ translateX: 0 }],
-      };
-    }
-    const idx = idxSV.value;
-    let x = 0;
-    if (arrowMode) {
-      x = !isRTL ? (idx === 0 ? posA : posB) : idx === 0 ? posB : posA;
-    } else {
-      x = !isRTL
-        ? startInset + step * idx
-        : startInset + step * (cols - 1 - idx);
-    }
-    const clamped = Math.max(
-      startInset,
-      Math.min(x, startInset + maxX - epsilon),
-    );
+  // the slot is static, the spring only moves a transform and never lays out the row
+  const trackSlotStyle = {
+    left: 0,
+    right: `${100 - 100 / count}%`,
+    marginRight: gap / 2,
+  };
+  const trackAnimatedStyle = useAnimatedStyle(() => {
+    const p = position.value;
+    // a percent translate is relative to the tile, one slot per step plus the arrow gap
     return {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: undefined,
-      bottom: 0,
-      width: tileWidth,
-      borderRadius: selectorRadius,
-      borderCurve: 'continuous',
-      transform: [{ translateX: withSpring(clamped, SPRING) }],
+      transform: [{ translateX: `${p * 100}%` }, { translateX: p * gap }],
     };
   });
-
-  const activeText = {
-    fontSize: 15,
-    fontWeight: '600',
-    textAlign: 'center',
-    ...activeTextStyle,
-  };
-  const inactiveText = {
-    fontSize: 15,
-    textAlign: 'center',
-    ...inactiveTextStyle,
-  };
 
   const renderSegment = (label, i) => (
     <Pressable
       key={i}
       onPress={() => onChange(i)}
-      style={[
-        arrowMode ? styles.segmentFixed : styles.segmentFlex,
-        arrowMode && { width: segmentWidth },
-        pressableWrapper,
-      ]}
+      style={[styles.segmentFlex, pressableWrapper]}
     >
       <View style={styles.textWrapper}>
-        <Text
-          style={[safeIndex === i ? activeText : inactiveText]}
-          numberOfLines={1}
-        >
+        <Text style={[styles.text, textStyle]} numberOfLines={1}>
           {label}
         </Text>
       </View>
     </Pressable>
   );
 
-  if (!hasSegments) {
-    return null;
-  }
-
-  const arrowChar = isRTL
-    ? safeIndex === 0
-      ? '←'
-      : '→'
-    : safeIndex === 0
-      ? '→'
-      : '←';
+  const arrowChar = currentIndex === 0 ? '→' : '←';
   return (
-    <Animated.View
+    <View
       style={[
         styles.wrapper,
-        { width: baseWidth, paddingHorizontal: gutter },
+        { paddingHorizontal: GUTTER },
         segmentedControlWrapper,
       ]}
     >
-      <Animated.View
-        style={[
-          tileAnimatedStyle,
-          { backgroundColor: 'transparent' },
-          tileStyle,
-        ]}
-      />
-      {arrowMode && (
+      {/* inside the padding, the track and the segments share one geometry */}
+      <View style={[styles.row, { columnGap: gap }]}>
         <Animated.View
-          style={[
-            { pointerEvents: 'none' },
-            styles.arrowWrapper,
-            { left: arrowLeft },
-            arrowAnimatedStyle,
-            arrowWrapperStyle,
-          ]}
+          style={[styles.track, trackSlotStyle, trackAnimatedStyle]}
         >
-          <Text style={[styles.arrowText, arrowTextStyle]}>{arrowChar}</Text>
+          <View style={[{ flex: 1, borderCurve: 'continuous' }, tileStyle]} />
         </Animated.View>
-      )}
-      {arrowMode ? (
-        <>
-          {renderSegment(segments[0], 0)}
-          <View style={{ width: gap }} />
-          {renderSegment(segments[1], 1)}
-        </>
-      ) : (
-        segments.map((s, i) => renderSegment(s, i))
-      )}
-    </Animated.View>
+        {arrowMode && (
+          <Animated.View style={[styles.arrowWrapper, arrowAnimatedStyle]}>
+            <Text style={[styles.arrowText, textStyle]}>{arrowChar}</Text>
+          </Animated.View>
+        )}
+        {segments.map(renderSegment)}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    position: 'relative',
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
     borderCurve: 'continuous',
   },
-  segmentFlex: { flex: 1, elevation: 9, paddingVertical: 12 },
-  segmentFixed: { elevation: 9, paddingVertical: 12 },
+  segmentFlex: { flex: 1 },
+  row: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  track: { position: 'absolute', top: 0, bottom: 0 },
   textWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text: { textAlign: 'center' },
   arrowWrapper: {
+    pointerEvents: 'none',
     position: 'absolute',
     zIndex: 10,
     top: 0,
     bottom: 0,
+    left: '50%',
     width: 24,
+    marginLeft: -12,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'transparent',
   },
-  arrowText: {
-    fontSize: 14,
-    fontWeight: '700',
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-  },
+  arrowText: { includeFontPadding: false },
 });

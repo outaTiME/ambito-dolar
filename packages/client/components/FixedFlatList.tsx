@@ -50,7 +50,6 @@ export const FooterComponent = ({ ListFooterComponent, note }) => {
         padding: Settings.PADDING,
         marginTop: 0,
         marginHorizontal: Settings.CONTENT_MARGIN * 2,
-        justifyContent: 'flex-start',
       }}
     >
       <Text

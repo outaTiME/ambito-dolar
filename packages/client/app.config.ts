@@ -95,17 +95,13 @@ export default {
       usesNonExemptEncryption: false,
     },
     supportsTablet: true,
-    requireFullScreen: true,
     infoPlist: {
       // CFBundleLocalizations: ['es-419'],
       CFBundleDevelopmentRegion: 'es-419',
       // https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html#//apple_ref/doc/uid/TP40009254-SW9
+      // no orientation field, the ipad takes all four and the iphone stays portrait here
       'UISupportedInterfaceOrientations~iphone': [
         'UIInterfaceOrientationPortrait',
-      ],
-      'UISupportedInterfaceOrientations~ipad': [
-        'UIInterfaceOrientationLandscapeLeft',
-        'UIInterfaceOrientationLandscapeRight',
       ],
       LSApplicationQueriesSchemes: [
         'twitter',

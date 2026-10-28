@@ -1,8 +1,7 @@
 // @ts-nocheck
 import Constants from 'expo-constants';
-import * as Device from 'expo-device';
 import { isLiquidGlassAvailable } from 'expo-glass-effect';
-import { Platform, Dimensions } from 'react-native';
+import { Platform } from 'react-native';
 import { human, iOSColors } from 'react-native-typography';
 
 const PADDING = 16;
@@ -12,9 +11,6 @@ const CARD_PADDING = 10;
 // outer container margin around content/cards; pair sums PADDING (Apple layout standard)
 const CONTENT_MARGIN = Platform.OS === 'web' ? CARD_PADDING : PADDING / 2;
 
-const DEVICE_TYPE = Device.deviceType;
-const IS_TABLET = DEVICE_TYPE === Device.DeviceType.TABLET;
-const IS_HANDSET = DEVICE_TYPE === Device.DeviceType.PHONE;
 const HAPTICS_ENABLED = Platform.OS === 'ios';
 
 // cache the Liquid Glass availability once, it is an ios 26 capability check
@@ -76,9 +72,6 @@ const APP_REVIEW_URI = `${APP_STORE_URI}${
 const CAFECITO_URL = 'https://cafecito.app/ambitodolar';
 const CHART_STROKE_WIDTH = 3 - 0.5;
 
-// toggle native formSheet (true) or gorhom bottom-sheet (false) for the donation modal
-const USE_NATIVE_DONATION_SHEET = false;
-
 const Settings: any = {
   PADDING,
   SMALL_PADDING,
@@ -123,10 +116,7 @@ const Settings: any = {
   APP_STORE_URI,
   APP_REVIEW_URI,
   CAFECITO_URL,
-  USE_NATIVE_DONATION_SHEET,
   CHART_STROKE_WIDTH,
-  IS_TABLET,
-  IS_HANDSET,
   HAPTICS_ENABLED,
   // https://sarunw.com/posts/dark-color-cheat-sheet/
   // https://noahgilmore.com/blog/dark-mode-uicolor-compatibility/
@@ -244,25 +234,5 @@ const Settings: any = {
     };
   },
 };
-
-export function updateSettings({ width } = Dimensions.get('window')) {
-  // use 50% of landscape viewing area on tablets
-  const MAX_CONTENT_WIDTH = IS_HANDSET ? width : width * 0.5;
-  const CONTENT_WIDTH = Math.min(width, MAX_CONTENT_WIDTH);
-  // https://github.com/nirsky/react-native-size-matters/blob/master/lib/scaling-utils.js#L7
-  const guidelineBaseWidth = 350;
-  const scale = (size) => (CONTENT_WIDTH / guidelineBaseWidth) * size;
-  const moderateScale = (size, factor = 0.5) =>
-    size + (scale(size) - size) * factor;
-  // set global layout values before UI mounts
-  Object.assign(Settings, {
-    DEVICE_WIDTH: width,
-    CONTENT_WIDTH,
-    moderateScale,
-  });
-}
-
-// update layout defaults at module load time
-updateSettings();
 
 export default Settings;

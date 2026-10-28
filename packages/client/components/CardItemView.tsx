@@ -107,7 +107,6 @@ export default ({
                   },
                   {
                     // flex: 1,
-                    flexShrink: 0,
                     flexGrow: 1,
                   },
                 ]}
@@ -143,7 +142,6 @@ export default ({
                       color: Settings.getGrayColor(theme),
                       textAlign: 'right',
                       flexShrink: 1,
-                      flexGrow: 0,
                     },
                     extra.valueStyle,
                   ]}
@@ -205,7 +203,6 @@ export default ({
                     paddingVertical:
                       Settings.CARD_PADDING + Settings.SMALL_PADDING,
                     marginRight: Settings.PADDING,
-                    flexShrink: 0,
                     flexGrow: 1,
                   },
                 ]}

@@ -1,10 +1,5 @@
 // @ts-nocheck
 import AmbitoDolar from '@ambito-dolar/core';
-import {
-  BottomSheetBackdrop,
-  BottomSheetView,
-  BottomSheetModal,
-} from '@gorhom/bottom-sheet';
 import { compose } from '@reduxjs/toolkit';
 import * as Device from 'expo-device';
 import * as Localization from 'expo-localization';
@@ -12,58 +7,28 @@ import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
 import * as _ from 'lodash';
 import React from 'react';
-import { LogBox, View, Text } from 'react-native';
+import { LogBox } from 'react-native';
 import Purchases from 'react-native-purchases';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 import * as actions from '@/actions';
-import ActionButton from '@/components/ActionButton';
 import withRateUpdates from '@/components/withRateUpdates';
 import withRates from '@/components/withRates';
-import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
-import { trackScreen } from '@/hooks/app/useNavigationTrackingRouter';
 import useAppState from '@/hooks/useAppState';
-import {
-  formatProductPrice,
-  useDonationProducts,
-} from '@/hooks/useDonationProducts';
-import { useDonationPurchase } from '@/hooks/useDonationPurchase';
+import { useDonationProducts } from '@/hooks/useDonationProducts';
 import InitialScreen from '@/screens/InitialScreen';
 import Amplitude from '@/utilities/Amplitude';
 import DateUtils from '@/utilities/Date';
-import {
-  donationModal,
-  getDonationCooldown,
-  getDonationReAsk,
-} from '@/utilities/Donation';
+import { getDonationCooldown, getDonationReAsk } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import { goToDonateModal } from '@/utilities/Navigation';
 import Sentry from '@/utilities/Sentry';
 
-// dev overlay noise, the reanimated one is @gorhom/bottom-sheet issue #2758
+// dev overlay noise
 if (__DEV__) {
-  LogBox.ignoreLogs([
-    /\[RevenueCat\]/,
-    /\[Reanimated\] dependencies should only be used/,
-  ]);
+  LogBox.ignoreLogs([/\[RevenueCat\]/]);
 }
-
-const DONATION_PURCHASE_SLUGS = [
-  '¡Wow, usás {APP_NAME} un montón!',
-  '¡Increíble lo fiel que sos a {APP_NAME}!',
-  '¡Wow, no parás de entrar a {APP_NAME}!',
-  '¡{APP_NAME} ya es parte de tu rutina diaria!',
-  '¡Siempre con {APP_NAME} a mano!',
-  '¡Sos inseparable de {APP_NAME}!',
-  '¡No pasás un día sin mirar {APP_NAME}!',
-  '¡Wow, abrís {APP_NAME} a cada rato!',
-  '¡No te despegás de {APP_NAME} ni un segundo!',
-  '¡Wow, no hay descanso entre vos y {APP_NAME}!',
-  '¡Ya sos usuario nivel experto de {APP_NAME}!',
-  '¡No hay quien te gane usando {APP_NAME}!',
-];
 
 // last usage day the modal was asked for, module scope so a remount does not re-arm it
 let donationShownDay = null;
@@ -104,8 +69,8 @@ const withAppUpdateCheck = (Component) => (props) => {
   return <Component {...props} />;
 };
 
-const withAppStatistics = (Component) => (props) => {
-  const isActiveAppState = useAppState('active');
+// a leaf, the tick must not re-render the hoc chain every interval
+const UsageDayTick = ({ isActiveAppState }) => {
   const dispatch = useDispatch();
   // TODO: how to handle local store cleaning (use last_day_used / days_used / usages ?)
   const now = Helper.useNow();
@@ -114,12 +79,23 @@ const withAppStatistics = (Component) => (props) => {
       dispatch(actions.registerApplicationUsageDay());
     }
   }, [now, isActiveAppState, dispatch]);
+  return null;
+};
+
+const withAppStatistics = (Component) => (props) => {
+  const isActiveAppState = useAppState('active');
+  const dispatch = useDispatch();
   React.useEffect(() => {
     if (isActiveAppState) {
       dispatch(actions.registerApplicationUsage());
     }
   }, [dispatch, isActiveAppState]);
-  return <Component {...props} />;
+  return (
+    <>
+      <UsageDayTick isActiveAppState={isActiveAppState} />
+      <Component {...props} />
+    </>
+  );
 };
 
 Notifications.setNotificationHandler({
@@ -162,10 +138,7 @@ const withUserActivity = (Component) => (props) => {
   const dispatch = useDispatch();
   // PERMISSIONS && USER ACTIVITY
   const alreadyHandlingRef = React.useRef(false);
-  const [, setAllowNotifications] = Helper.useSharedState(
-    'allowNotifications',
-    false,
-  );
+  const setAllowNotifications = Helper.useSharedSetter('allowNotifications');
   React.useEffect(() => {
     // only took values from the store when the app state is active or on startup
     if (isActiveAppState) {
@@ -261,24 +234,19 @@ const withUserActivity = (Component) => (props) => {
 };
 
 const withPurchases = (Component) => (props) => {
-  const [, setPurchasesConfigured] = Helper.useSharedState(
-    'purchasesConfigured',
-    false,
-  );
+  const setPurchasesConfigured = Helper.useSharedSetter('purchasesConfigured');
   const installationId = props.installationId;
   React.useEffect(() => {
-    const configure = async () => {
+    try {
       Purchases.setLogLevel(Purchases.LOG_LEVEL.WARN);
       Purchases.configure({
         apiKey: Settings.REVENUECAT_API_KEY,
         appUserID: installationId,
       });
-    };
-    configure()
-      .then(() => {
-        setPurchasesConfigured(true);
-      })
-      .catch(console.warn);
+      setPurchasesConfigured(true);
+    } catch (e) {
+      console.warn(e);
+    }
   }, [installationId, setPurchasesConfigured]);
   return <Component {...props} />;
 };
@@ -339,37 +307,24 @@ const withAppDonation = (Component) => (props) => {
     }),
     shallowEqual,
   );
-  const { products: donationProducts, priceMap } = useDonationProducts();
-  const purchaseSlug = React.useMemo(
-    () =>
-      _.replace(
-        DONATION_PURCHASE_SLUGS[daysUsed % DONATION_PURCHASE_SLUGS.length],
-        '{APP_NAME}',
-        Settings.APP_NAME,
-      ),
-    [daysUsed],
-  );
-  const bottomSheetRef = React.useRef();
-  const [appDonationModal, setAppDonationModal] = Helper.useSharedState(
-    'appDonationModal',
-    false,
-  );
-  // shared with the native formSheet route (packages/client/app/donate.tsx)
-  const [, setDonationSlug] = Helper.useSharedState('donationSlug');
-  // the open on screen came from the developer screen
-  const forcedRef = React.useRef(false);
-  // this presentation ended in a purchase, reset when the next one opens
-  const donatedRef = React.useRef(false);
   const {
-    loadingProductId,
-    loadingRef,
-    donate: handleDonate,
-  } = useDonationPurchase(() => {
-    donatedRef.current = true;
-    bottomSheetRef.current?.dismiss();
-  });
+    products: donationProducts,
+    priceMap,
+    ensureProducts,
+  } = useDonationProducts();
+  // a failed boot fetch changes no dep, the next foreground retries it
+  // here and not in the hook, every screen using it would re-render on each app state change
+  const isActive = useAppState('active');
   React.useEffect(() => {
-    if (!purchasesConfigured || !donationProducts?.length) {
+    if (isActive && purchasesConfigured && !donationProducts.length) {
+      ensureProducts();
+    }
+  }, [isActive, purchasesConfigured, donationProducts.length, ensureProducts]);
+  const [appDonationModal] = Helper.useSharedState('appDonationModal', false);
+  // the initial screen mounts no navigator, the route would never open
+  const hasRates = Helper.isValid(props.rates);
+  React.useEffect(() => {
+    if (!hasRates || !purchasesConfigured || !donationProducts.length) {
       return;
     }
     const forced = !!appDonationModal;
@@ -392,10 +347,6 @@ const withAppDonation = (Component) => (props) => {
       Helper.debug('💖 Donation already asked today', { daysUsed });
       return;
     }
-    if (!forced && donationModal.open) {
-      Helper.debug('💖 Donation already on screen', { daysUsed });
-      return;
-    }
     // a dep change or an unmount drops a check left in flight
     let cancelled = false;
     Purchases.getCustomerInfo()
@@ -414,35 +365,16 @@ const withAppDonation = (Component) => (props) => {
           daysUsed,
           ignoreDonationCount,
           forced,
-          native: !!Settings.USE_NATIVE_DONATION_SHEET,
         });
         donationShownDay = daysUsed;
-        // a forced open stays forced until it is dismissed
-        // an automatic check crossing a usage day must not downgrade it
-        if (forced) {
-          forcedRef.current = true;
-        }
-        if (Settings.USE_NATIVE_DONATION_SHEET) {
-          setDonationSlug(purchaseSlug);
-          goToDonateModal();
-        } else {
-          // spend the trigger here, a dismiss that never fires would leave it armed
-          if (forced) {
-            setAppDonationModal(false);
-          }
-          donatedRef.current = false;
-          // the sheet is no route, the native one is tracked as /donate
-          trackScreen('DonationModal');
-          bottomSheetRef.current?.present();
-        }
-        // after the open, a navigation that throws must not leave it set
-        donationModal.open = true;
+        goToDonateModal();
       })
       .catch(console.warn);
     return () => {
       cancelled = true;
     };
   }, [
+    hasRates,
     purchasesConfigured,
     donationProducts,
     daysUsed,
@@ -450,129 +382,7 @@ const withAppDonation = (Component) => (props) => {
     ignoreDonationCount,
     appDonationModal,
   ]);
-  const renderBackdrop = React.useCallback(
-    (props) => (
-      <BottomSheetBackdrop
-        {...props}
-        appearsOnIndex={0}
-        disappearsOnIndex={-1}
-        pressBehavior="close"
-      />
-    ),
-    [],
-  );
-  const dispatch = useDispatch();
-  // onChange skips a close that interrupts the opening animation, teardown always reaches this one
-  const handleDismiss = React.useCallback(() => {
-    const forcedOpen = forcedRef.current;
-    forcedRef.current = false;
-    donationModal.open = false;
-    const donated = donatedRef.current;
-    const loading = loadingRef.current;
-    // the other half of the check above, it says whether the dismiss spent the cooldown
-    Helper.debug('💖 Donation dismissed', { forcedOpen, donated, loading });
-    // purchase in flight resolves on its own, skip ignore dispatch
-    if (donated || loading) {
-      return;
-    }
-    // a forced open must not spend the cooldown
-    if (!forcedOpen) {
-      dispatch(actions.ignoreApplicationDonation());
-    }
-  }, [dispatch]);
-  const safeAreaInsets = useSafeAreaInsets();
-  const colorScheme = 'light';
-  const { fonts } = Helper.useTheme(colorScheme);
-  return (
-    <>
-      <Component {...props} />
-      <BottomSheetModal
-        ref={bottomSheetRef}
-        detached
-        enablePanDownToClose
-        style={{
-          marginLeft: (Settings.DEVICE_WIDTH - Settings.CONTENT_WIDTH) / 2,
-          width: Settings.CONTENT_WIDTH,
-        }}
-        backgroundStyle={{
-          marginHorizontal: Settings.CONTENT_MARGIN * 2,
-          // borderRadius: Settings.BORDER_RADIUS,
-        }}
-        bottomInset={safeAreaInsets.bottom + Settings.CONTENT_MARGIN * 2}
-        onDismiss={handleDismiss}
-        handleComponent={null}
-        backdropComponent={renderBackdrop}
-      >
-        <BottomSheetView>
-          <View
-            style={{
-              marginHorizontal: Settings.CONTENT_MARGIN * 2,
-              padding: Settings.PADDING * 2,
-              alignItems: 'center',
-            }}
-          >
-            <Text
-              style={[
-                fonts.extraLargeTitle,
-                { paddingHorizontal: Settings.PADDING / 2 },
-              ]}
-            >
-              🥰
-            </Text>
-            <Text
-              style={[
-                fonts.body,
-                {
-                  textAlign: 'center',
-                  paddingVertical: Settings.PADDING * 2,
-                },
-              ]}
-            >
-              {`${purchaseSlug}\n\n${I18n.t('donate_modal_note')}`}
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                gap: Settings.PADDING,
-              }}
-            >
-              {donationProducts.map((product, index) => {
-                const productId = product?.identifier ?? `product_${index}`;
-                return (
-                  <ActionButton
-                    key={productId}
-                    title={formatProductPrice(product)}
-                    handleOnPress={
-                      loadingProductId === null
-                        ? () => handleDonate(product, productId)
-                        : undefined
-                    }
-                    alternativeBackground
-                    loading={loadingProductId === productId}
-                  />
-                );
-              })}
-            </View>
-            <ActionButton
-              borderless
-              title={I18n.t('not_now')}
-              handleOnPress={
-                loadingProductId === null
-                  ? () => {
-                      bottomSheetRef.current?.dismiss();
-                    }
-                  : undefined
-              }
-              colorScheme
-              style={{ marginTop: Settings.PADDING * 2 }}
-            />
-          </View>
-        </BottomSheetView>
-      </BottomSheetModal>
-    </>
-  );
+  return <Component {...props} />;
 };
 
 export default compose(

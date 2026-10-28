@@ -31,8 +31,10 @@ export default ({
   return (
     <View style={{ flex: 1, backgroundColor }}>
       <SafeAreaView
-        // ios applies the native safe area inset, android native tabs already do it
-        edges={Platform.OS === 'ios' ? edges : {}}
+        // ios applies the native safe area inset plus the rail, android native tabs already do it
+        edges={
+          Platform.OS === 'ios' ? { ...edges, left: true, right: true } : {}
+        }
         style={{ flex: 1, justifyContent: 'center' }}
       >
         {content}

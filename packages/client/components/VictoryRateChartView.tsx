@@ -167,6 +167,9 @@ const withAxisDimension = (Component) => (props) => {
         <Component
           {...{
             ...layoutData,
+            // the size follows the layout, the snapshot only syncs data and axis
+            width: props.width,
+            height: props.height,
           }}
         />
       )}
@@ -219,7 +222,7 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
         height -
         (AXIS_OFFSET + axis_font_height_rounded + Settings.PADDING * 2),
     }),
-    [axis_y_width_rounded, axis_font_height_rounded],
+    [axis_y_width_rounded, axis_font_height_rounded, width, height],
   );
   const axis_x_format = React.useCallback(
     // invalid values when animated
@@ -320,8 +323,8 @@ const InteractiveRateChartView = compose(withAxisDimension)(({
           animate={false}
         >
           <VictoryAxis
-            // prevent rendering issues when values are close to 0
-            offsetY={Settings.PADDING + AXIS_LABEL_PADDING + 1}
+            // on the plot bottom, the area ends there on any font height
+            offsetY={victory_padding.bottom}
             tickValues={ticks_x}
             tickFormat={axis_x_format}
             tickLabelComponent={<VictoryLabel dy={AXIS_LABEL_PADDING} />}
@@ -471,7 +474,7 @@ export default ({
   const selection_index = useSharedValue(null);
   // layout
   const { onLayout, width, height } = useLayout();
-  const hasLayout = React.useMemo(() => width && height, [width, height]);
+  const hasLayout = width && height;
   return (
     <>
       <RateChartHeaderView
@@ -484,7 +487,7 @@ export default ({
             flex: 1,
             marginTop: Settings.PADDING,
           }}
-          {...(!hasLayout && { onLayout })}
+          onLayout={onLayout}
         >
           {hasLayout ? (
             <InteractiveRateChartView

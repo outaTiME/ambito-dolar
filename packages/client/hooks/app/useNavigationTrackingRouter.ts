@@ -36,8 +36,7 @@ const getScreenPattern = (segments) =>
     .filter((segment) => !(segment.startsWith('(') && segment.endsWith(')')))
     .join('/');
 
-// a screen that is not a route, like the donation sheet, reports itself through here too
-export const trackScreen = (name) => {
+const trackScreen = (name) => {
   Helper.debug('👀 Track screen', name);
   Sentry.addBreadcrumb({
     message: `${name} screen`,

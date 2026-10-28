@@ -3,12 +3,12 @@
 Read this before changing the donation flow, its catalog, donor re-asks or the Developer screen
 bypass.
 
-- `donate_choose_note` on the DonateScreen card says the charge is one time and repeatable, which
-  answers a question a user sent to support. `getOfferings` in
-  `packages/client/hooks/useDonationProducts.ts` reads whichever offering is current, so the ladder is
-  whatever that one holds and `donations` has to stay the current one. Nothing in the code filters by
-  product category any more, so a subscription dropped into the current offering would render and the
-  note would lie. Keep it consumables only.
+- `donate_choose_note` on the `packages/client/screens/DonateScreen.tsx` card says the charge is one
+  time and repeatable, which answers a question a user sent to support. `getOfferings` in
+  `packages/client/hooks/useDonationProducts.ts` reads whichever offering is current, so the ladder
+  is whatever that one holds and `donations` has to stay the current one. Nothing in the code
+  filters by product category any more, so a subscription dropped into the current offering would
+  render and the note would lie. Keep it consumables only.
 - The offering is the catalog and the dashboard is where the ladder changes, with no release. A
   package removed from it also drops its key from `priceMap`, so past transactions of that product
   stop counting in `computeLifetime`, and a donor whose reduced total falls into a lower step gets
@@ -17,34 +17,34 @@ bypass.
 - Both schedules and the checks applying them, `getDonationCooldown` and `getDonationReAsk`, live in `packages/client/utilities/Donation.ts`, tested in `packages/client/test.js`. `getCooldownDays` governs the first appearance and every post-dismiss wait: 15, 30, 45, 60 and 75 usage days, capped. `getReAskMs` governs the ask after a donation, date based so a donor is not penalized for low usage, with the one exception spelled out further down: 90, 180 or 360 days for a total donated under 2, under 10, or 10 and over. The top step stretches the wait, it does not end it, and there is no amount that stops the asking.
 - The re-ask measures from `customerInfo.requestDate`, the server time of that snapshot, and the device clock only when it is missing. A clock months ahead would re-ask a donor the next day, one behind would never re-ask. A cached snapshot carries an older time, so it can only push the ask to the next usage day and never bring it forward.
 - Forced opens via Developer screen bypass cooldown but don't increment dismiss counter.
+- The modal is the `packages/client/app/donate.tsx` route, a native `formSheet` with `fitToContents`
+  opened by `goToDonateModal()`. `withAppDonation` in `packages/client/components/AppContainer.tsx`
+  only decides when, and waits for valid rates: the initial screen mounts no navigator, `navigate`
+  would spend `donationShownDay` on a route that never mounts. The route owns the purchase and the
+  dismiss accounting. Native, so it follows a fold or a resize and Android back closes it.
 - The forced open is a one shot trigger and it is spent where the modal is shown, never where it is
-  dismissed: next to `present()` in `packages/client/components/AppContainer.tsx` and on mount in
-  the `packages/client/app/donate.tsx` route. A trigger left armed reopens the modal on the next
-  dependency change, which is what shipped for a while and reads as the modal reopening at random.
-- Keep the sheet dismiss accounting on `onDismiss`. A completed close can skip `onChange` when the
-  current index is already `-1`, which is what a close interrupting the opening animation does. This
-  sheet leaves `enableDismissOnClose` at its default `true`, so its completed close reaches
-  `onDismiss` through the modal teardown. Moving the accounting back to `onChange` brings the whole
-  class of bugs back.
-- Whether the open was forced is remembered in a ref. It is stamped only on a forced presentation
-  and cleared on every dismiss, which is what keeps the two leaks shut: an automatic check crossing
-  a usage day while the modal is still open would otherwise reclassify a forced open and spend the
-  cooldown on it, and a stamp that outlived its own modal would exempt the next automatic dismissal
-  from the cooldown instead.
+  dismissed: on mount in the route. A trigger left armed reopens the modal on the next dependency
+  change, which is what shipped for a while and reads as the modal reopening at random.
+- The dismiss accounting hangs off the route unmount cleanup, which every close reaches: the swipe,
+  the backdrop tap, Android back and Ahora no. A purchase reaches it too, `donatedRef` exempts it.
+  `onDonated` pops the route only while `navigation.isFocused()`, a sheet closed before the payment
+  sheet showed must not pop the screen below.
+- Whether the open was forced is read once on mount into a ref, which dies with the route. An
+  automatic check crossing a usage day while the modal is still open cannot reclassify a forced
+  open and spend the cooldown on it, and the stamp cannot outlive its own modal and exempt the next
+  automatic dismissal.
 - `donationShownDay` caps the automatic ask at one per usage day. It is a module variable and not a
   persisted field, so it survives a remount and resets on a process restart, which is the cap this
   is meant to be. A forced open stamps it too, so forcing suppresses the automatic ask for that
   usage day in the same runtime. The effect also drops a check left in flight, so a dependency
   change mid check cannot present against state that already moved, and a failing `getCustomerInfo`
   leaves the day unspent on purpose so a later dependency change retries.
-- `donationModal.open` in `packages/client/utilities/Donation.ts` blocks the automatic ask while a
-  modal is on screen. A modal left open past midnight crosses a usage day with the cooldown still
-  due, and without it the check presents again: the sheet resets `donatedRef` and the route swaps
-  its slug, `router.navigate` reuses the open one. Stamped once the modal opens, cleared on
-  the sheet `onDismiss` and on the route unmount. A forced open ignores it.
+- A modal left open past midnight reruns the check on the new usage day, `router.navigate` reuses
+  the open route and the slug stays, taken on mount. That day is stamped in `donationShownDay` and
+  the close spends the cooldown as usual.
 - Only two persisted state fields: `ignore_donation_days_used` (snapshot of `days_used` at last dismiss), `ignore_donation_count` (consecutive dismisses, resets on donate). New fields only with strong reason.
 - The usage day gate runs before the re-ask, so a donor under 15 usage days waits for both. Donating resets the snapshot to `0` and not to the current `days_used`, so `elapsedDays` becomes the whole history and anyone past 15 days clears it at once. The deviation from "never penalized" only reaches someone who donated that early, and it asks them less rather than more.
-- `computeLifetime` sums today's prices in the store's own currency, and the 2 and 10 thresholds read as USD. A storefront in another currency applies the same numeric thresholds without converting, so the step a donor lands on follows the raw number and not what it is worth. `currencyCode` comes back from the catalog and nothing reads it.
+- `computeLifetime` sums today's prices in the store's own currency, and the 2 and 10 thresholds read as USD. A storefront in another currency applies the same numeric thresholds without converting, so the step a donor lands on follows the raw number and not what it is worth. `currencyCode` comes back from the catalog and nothing reads it. `formatProductPrice` and the Statistics total use the app currency format labelled `US$`, on purpose, so prices read like the rest of the app. `price` comes in the store currency: the products are defined in USD, each store sets the local price per country, and Argentina buys in USD on both. Do not switch to the store `priceString`, its format does not match the app.
 - The donation history belongs to `installation_id`, the RevenueCat App User ID, and RevenueCat holds
   a store account's purchases for one App User ID at a time. The id is persisted in the app
   container, so an app update keeps it and a clean install mints a new one that reads zero, which is
@@ -64,16 +64,12 @@ bypass.
   turn taking by killing the transfer that recovers a reinstalled donor, the more common case. The
   icloud keychain is the one technique that works, ios only and a native module.
 - When someone asks for their donations back, transfer by Order ID from the RevenueCat dashboard.
-- A purchase goes through `useDonationPurchase` in `packages/client/hooks/useDonationPurchase.ts`, one at a time, from both modals and the DonateScreen. Settings keeps its own guard, its wait also covers loading the products.
-- Closing the sheet with a purchase in flight or just finished is not a dismiss, `donatedRef` and `loadingRef` hold it back. Without that, donating and closing would count against the donor.
+- A purchase goes through `useDonationPurchase` in `packages/client/hooks/useDonationPurchase.ts`, one at a time, from the `/donate` route and `packages/client/screens/DonateScreen.tsx`. Settings keeps its own guard, its wait also covers loading the products.
+- Closing the modal with a purchase in flight or just finished is not a dismiss, `donatedRef` and `loadingRef` hold it back. Without that, donating and closing would count against the donor.
 - `purchaseDonation`, in `packages/client/hooks/useDonationPurchase.ts`, resolves `true` once charged and reports any failure itself, callers only branch on it. A pending purchase (ask to buy, a pending store payment) rejects with `PAYMENT_PENDING_ERROR` and is not a failure: no alert and no Sentry. Its close still counts as a dismiss on purpose: nothing registers a donation until the transaction lands, so a close that spent no cooldown would ask again on the next usage day while the approval is pending. Once it lands the re-ask gate reads the transaction.
-- A failed boot fetch of the catalog leaves no dep changed, so `useDonationProducts` retries on the next foreground. Without it a launch without network skips the automatic modal for as long as the process lives.
-- The two paths agree on the gating, on spending the trigger at show time, on the purchase in
-  flight guard and on hanging the dismiss accounting off the teardown, the sheet on `onDismiss` and
-  the route on its unmount cleanup. Where they part is which ancestor owns them. Clearing the rates
-  removes the navigator rendered inside `AppContainer`, so an open donation route unmounts and
-  records a dismiss unless it was forced, a purchase is in flight or a purchase succeeded, while the
-  sheet belongs to the donation wrapper around it and stays mounted. Unmounting the sheet itself is
-  not exempt either: the gorhom `Portal` cleanup calls `handlePortalOnUnmount`, which can reach
-  `onDismiss`. Verify the teardown on both before flipping `USE_NATIVE_DONATION_SHEET`.
-- `USE_NATIVE_DONATION_SHEET` is the way out of `@gorhom/bottom-sheet` and both paths are kept alive on purpose. It is `false`, so the `BottomSheetModal` in `packages/client/components/AppContainer.tsx` is what ships and the `packages/client/app/donate.tsx` route opened by `goToDonateModal()` sits dormant. That route is not dead code, deleting it burns the escape hatch, and a change to the donation modal has to land on both sides.
+- A failed boot fetch of the catalog leaves no dep changed, so `withAppDonation` retries on the next foreground, through `ensureProducts` of `useDonationProducts`. The retry lives there and not in the hook, every screen using the hook would re-render on each app state change. Without it a launch without network skips the automatic modal for as long as the process lives.
+- Clearing the rates removes the navigator rendered inside `AppContainer`, so an open donation route
+  unmounts and records a dismiss unless it was forced, a purchase is in flight or a purchase
+  succeeded. A locale reload does the same. A notification tap pushes the tabs over the sheet and
+  the rates `popToTop` closes it, counting a dismiss too. The Conversor quick action leaves it below
+  the new tabs. `router.dismissTo` cannot replace that `navigate`, between tabs it does nothing.

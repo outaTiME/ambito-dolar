@@ -3,6 +3,7 @@ import React from 'react';
 import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { COLUMN_STYLE } from '@/components/ContentView';
 import Toast from '@/components/Toast';
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
@@ -43,7 +44,13 @@ export default function ToastOverlay() {
     },
     [],
   );
-  const bottom = insets.bottom + TAB_BAR_HEIGHT;
+  // the focused screen inset, published by withContainer
+  const [screenInset] = Helper.useSharedState('toastInset');
+  const bottom =
+    Platform.OS === 'ios'
+      ? (screenInset?.bottom ?? insets.bottom)
+      : insets.bottom +
+        (screenInset?.hasBottomTab === false ? 0 : TAB_BAR_HEIGHT);
   return (
     <View
       style={{
@@ -51,14 +58,19 @@ export default function ToastOverlay() {
         left: 0,
         right: 0,
         bottom,
+        // over the content column of the focused screen
+        paddingLeft: screenInset?.left ?? insets.left,
+        paddingRight: screenInset?.right ?? insets.right,
         pointerEvents: 'none',
       }}
     >
-      <Toast
-        isVisible={activeToast?.isVisible}
-        text={activeToast?.message}
-        hiddenOffset={TAB_BAR_HEIGHT}
-      />
+      <View style={COLUMN_STYLE}>
+        <Toast
+          isVisible={activeToast?.isVisible}
+          text={activeToast?.message}
+          hiddenOffset={TAB_BAR_HEIGHT}
+        />
+      </View>
     </View>
   );
 }

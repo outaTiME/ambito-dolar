@@ -31,6 +31,17 @@ Any user facing string follows `packages/client/docs/copy-register.md`: voseo, e
 
 Store description and the "What's New" entry follow `packages/client/docs/store-listing.md`.
 
+## Adaptive layout
+
+Read `packages/client/docs/adaptive-layout.md` before touching `ContentView`, `useContentLayout`,
+the toast insets in `withContainer`, `ToastOverlay`, `Toast`, the donate route in
+`packages/client/app/donate.tsx`, the mini chart in `RateView`, the detail chart height in
+`RateDetailScreen`, `AnimatedSegmentedControl`, the Done button in
+`packages/client/app/(modals)/_layout.tsx` or the orientation keys and `ScreenOrientationLock`.
+iPhone Duo, resizable iPad windows and Android tablets break there without showing on a phone. Side
+insets come from the `SafeAreaView` of `react-native-screens/experimental`, an experimental API:
+after a `react-native-screens` bump rotate and fold the Duo once.
+
 ## Donation modal
 
 Read `packages/client/docs/donation-modal.md` before touching the flow, donor re-asks or the
@@ -79,10 +90,10 @@ run it, put it back if it fails. What it cannot tell you is that the repair was 
 error, and that is the whole of this section.
 
 - **Never add code to remove an `any`**: no fake defaults (`= undefined`/`= false`), fake fields
-  (`DEVICE_WIDTH: 0`), or optional params (`_theme?`) the method ignores. Never swap one for two.
+  the object never sets, or optional params (`_theme?`) the method ignores. Never swap one for two.
 - **Never force a type in its place.** If `:any` is the only annotation tsc needs, that is the
   annotation: no `:View`, no `:TextInput`, no `<{x:number;y:number}>`.
-- **`Settings` (`packages/client/config/settings.ts`) is `any`.** Dropping it is 14 typecheck errors
+- **`Settings` (`packages/client/config/settings.ts`) is `any`.** Dropping it is 12 typecheck errors
   and the repair that passes is the wrong one: never wrap callsites as `(Settings as any).foo`,
   `Settings.foo` already returns `any`.
 - **`forwardRef((props:any, ref:any))` stays.** Adding `<any,any>` or `<View,any>` generics to kill
@@ -96,18 +107,23 @@ error, and that is the whole of this section.
 - Preserve iOS/Android/web behavior. Date/time + formatting via `@ambito-dolar/core` helpers.
 - **Android modal bottom inset**: native-stack modals lack the bottom safe-area inset, content slips under the transparent nav bar. `FixedScrollView` pads via `isModal` prop, new scrolling modal screen must pass it.
 - `isModal` computed once in `withContainer` from the navigator id (`/(modals)`, the layout path), threaded as prop down the tree. The tab check reads the parent id (`/(tabs)`), router 58 tab state has no `type` on first render. Renaming a group breaks its check, the ids are compared as literals.
+- **A component that only publishes shared state takes `Helper.useSharedSetter`.**
+  `useSharedState` reads `data`, swr subscribes the caller, and a hoc or a screen holding only its
+  setter re-renders on every publish. An effect that only runs on the tick sits in a leaf
+  (`RatesTick`, `UsageDayTick`, `GeneralNote`, `RelativeTimestamp`, `RatesTitle`), so the 60s tick
+  never re-renders the hoc chain, the screen or the rate cards.
 
 ## Navigation centralization
 
-- **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Slot`, `Redirect`, `useNavigation` (setOptions), `useLocalSearchParams`, `useFocusEffect`, `useSegments`, `ThemeProvider`, `DarkTheme`, `DefaultTheme`, plus `NativeTabs` from `expo-router/native-tabs` and `HeaderButton` from `expo-router/react-navigation`.
+- **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Slot`, `Redirect`, `useNavigation` (setOptions, isFocused, getId, getParent), `useLocalSearchParams`, `useFocusEffect`, `useSegments`, `ThemeProvider`, `DarkTheme`, `DefaultTheme`, plus `NativeTabs` from `expo-router/native-tabs` and `HeaderButton` from `expo-router/react-navigation`.
 - **`(tabs)` in `packages/client/components/RootLayout.tsx` has `animation: 'none'`.** The Stack
   mounts on `app/index.tsx`, at launch and again when `AppContainer` brings it back (rates cleared,
   locale reload), and its redirect runs after the first commit since router 58, so the replace would
   slide the whole app in. Static plugin `redirects` and `+native-intent` only cover the launch.
 - **`SplashScreen` comes from `expo-splash-screen`, never from `expo-router`.** The router ships its own wrapper marked `@hidden`.
 - Helpers: `goToX` (nav), `goBack` (guarded), `dismissToTop` (guarded pop), `clearRouteParam(name)`.
-- **A new route goes into `SCREENS` in `packages/client/hooks/app/useNavigationTrackingRouter.ts`**, a
-  screen that is no route reports through `trackScreen`; development warns `Untracked screen` otherwise.
+- **A new route goes into `SCREENS` in `packages/client/hooks/app/useNavigationTrackingRouter.ts`**,
+  development warns `Untracked screen` otherwise.
 - New route to a `goToX` helper. Modal variant = separate helper (`goToDonate` settings tab vs `goToDonateModal` root modal). Use `router.navigate` not `push` (dedupes, prevents double-tap stacks).
 - Clear a consumed deeplink/intent param (`focus=true`, `popToTop=true`) via `clearRouteParam('focus')`, not inline `router.setParams({focus: undefined})`.
 

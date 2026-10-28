@@ -1,11 +1,15 @@
 // @ts-nocheck
+import { useNavigation } from 'expo-router';
+import * as _ from 'lodash';
 import React from 'react';
 import { Platform, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useDispatch } from 'react-redux';
+import { SafeAreaView } from 'react-native-screens/experimental';
+import { useDispatch, useSelector } from 'react-redux';
 
 import * as actions from '@/actions';
 import ActionButton from '@/components/ActionButton';
+import { COLUMN_STYLE } from '@/components/ContentView';
 import I18n from '@/config/I18n';
 import Settings from '@/config/settings';
 import {
@@ -13,17 +17,40 @@ import {
   useDonationProducts,
 } from '@/hooks/useDonationProducts';
 import { useDonationPurchase } from '@/hooks/useDonationPurchase';
-import { donationModal } from '@/utilities/Donation';
 import Helper from '@/utilities/Helper';
 import { goBack } from '@/utilities/Navigation';
 
+const DONATION_PURCHASE_SLUGS = [
+  '¡Wow, usás {APP_NAME} un montón!',
+  '¡Increíble lo fiel que sos a {APP_NAME}!',
+  '¡Wow, no parás de entrar a {APP_NAME}!',
+  '¡{APP_NAME} ya es parte de tu rutina diaria!',
+  '¡Siempre con {APP_NAME} a mano!',
+  '¡Sos inseparable de {APP_NAME}!',
+  '¡No pasás un día sin mirar {APP_NAME}!',
+  '¡Wow, abrís {APP_NAME} a cada rato!',
+  '¡No te despegás de {APP_NAME} ni un segundo!',
+  '¡Wow, no hay descanso entre vos y {APP_NAME}!',
+  '¡Ya sos usuario nivel experto de {APP_NAME}!',
+  '¡No hay quien te gane usando {APP_NAME}!',
+];
+
 const DonateScreen = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const colorScheme = 'light';
   const { fonts } = Helper.useTheme(colorScheme);
   const safeAreaInsets = useSafeAreaInsets();
   const { products } = useDonationProducts();
-  const [slug] = Helper.useSharedState('donationSlug');
+  const daysUsed = useSelector(({ application }) => application.days_used);
+  // taken on mount, a usage day crossed while open keeps the text
+  const [slug] = React.useState(() =>
+    _.replace(
+      DONATION_PURCHASE_SLUGS[daysUsed % DONATION_PURCHASE_SLUGS.length],
+      '{APP_NAME}',
+      Settings.APP_NAME,
+    ),
+  );
   const [appDonationModal, setAppDonationModal] = Helper.useSharedState(
     'appDonationModal',
     false,
@@ -38,7 +65,10 @@ const DonateScreen = () => {
     donate: handleDonate,
   } = useDonationPurchase(() => {
     donatedRef.current = true;
-    goBack();
+    // a sheet closed before the payment sheet showed must not pop another screen
+    if (navigation.isFocused()) {
+      goBack();
+    }
   });
   // spend the trigger here, an unmount that never runs would leave it armed
   React.useEffect(() => {
@@ -48,94 +78,104 @@ const DonateScreen = () => {
   }, [setAppDonationModal]);
   React.useEffect(() => {
     return () => {
-      donationModal.open = false;
-      // purchase in flight resolves on its own, skip ignore dispatch
-      if (donatedRef.current || loadingRef.current) {
-        return;
+      Helper.debug('💖 Donation dismissed', {
+        forcedOpen: forcedRef.current,
+        donated: donatedRef.current,
+        loading: loadingRef.current,
+      });
+      // a purchase in flight or done, or a forced open, spends no cooldown
+      if (!donatedRef.current && !loadingRef.current && !forcedRef.current) {
+        dispatch(actions.ignoreApplicationDonation());
       }
-      // a forced open must not spend the cooldown
-      if (forcedRef.current) {
-        return;
-      }
-      dispatch(actions.ignoreApplicationDonation());
     };
   }, []);
-  // mirror bottom inset on top plus breathing room
-  // iOS sheet absorbs the bottom inset, android does not so paddingBottom keeps it
   const isAndroid = Platform.OS === 'android';
-  const verticalPadding = safeAreaInsets.bottom || Settings.PADDING * 2;
-  const extra = Settings.PADDING;
-  const paddingBottom = isAndroid
-    ? verticalPadding + extra
-    : verticalPadding - safeAreaInsets.bottom + extra;
   return (
     <View
-      style={{
-        backgroundColor: Settings.getContentColor(colorScheme),
-        paddingTop: verticalPadding + extra,
-        paddingHorizontal: Settings.PADDING * 2,
-        paddingBottom,
-        alignItems: 'center',
-        // android formSheet lacks native top corner radius
-        ...(isAndroid && {
-          borderTopLeftRadius: Settings.BORDER_RADIUS * 2,
-          borderTopRightRadius: Settings.BORDER_RADIUS * 2,
-        }),
-      }}
-    >
-      <Text
-        style={[
-          fonts.extraLargeTitle,
-          { paddingHorizontal: Settings.PADDING / 2 },
-        ]}
-      >
-        🥰
-      </Text>
-      <Text
-        style={[
-          fonts.body,
+      // detached card at the column width, the android formSheet spans the window
+      style={
+        isAndroid && [
+          COLUMN_STYLE,
           {
-            textAlign: 'center',
-            paddingVertical: Settings.PADDING * 2,
+            paddingHorizontal: Settings.CONTENT_MARGIN * 2,
+            paddingBottom: safeAreaInsets.bottom + Settings.CONTENT_MARGIN * 2,
           },
-        ]}
-      >
-        {slug
-          ? `${slug}\n\n${I18n.t('donate_modal_note')}`
-          : I18n.t('donate_modal_note')}
-      </Text>
+        ]
+      }
+    >
       <View
         style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: Settings.PADDING,
+          backgroundColor: Settings.getContentColor(colorScheme),
+          alignItems: 'center',
+          padding: Settings.PADDING * 2,
+          ...(isAndroid
+            ? { borderRadius: Settings.BORDER_RADIUS * 2 }
+            : // the iphone sheet inset gives room, the ipad one is small or none, the duo open takes the iphone padding
+              {
+                paddingVertical: Platform.isPad
+                  ? Settings.PADDING * 2
+                  : Settings.PADDING,
+              }),
         }}
       >
-        {products.map((product, index) => {
-          const productId = product?.identifier ?? `product_${index}`;
-          return (
+        {!isAndroid && (
+          // the sheet adds its bottom inset below the content, the same on top keeps both ends even
+          <SafeAreaView edges={{ bottom: true }} style={{ flex: 0 }} />
+        )}
+        <Text
+          style={[
+            fonts.extraLargeTitle,
+            { paddingHorizontal: Settings.PADDING / 2 },
+          ]}
+        >
+          🥰
+        </Text>
+        <Text
+          style={[
+            fonts.body,
+            {
+              textAlign: 'center',
+              paddingVertical: Settings.PADDING * 2,
+            },
+          ]}
+        >
+          {`${slug}\n\n${I18n.t('donate_modal_note')}`}
+        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: Settings.PADDING,
+          }}
+        >
+          {products.map((product) => (
             <ActionButton
-              key={productId}
+              key={product.identifier}
               title={formatProductPrice(product)}
               handleOnPress={
                 loadingProductId === null
-                  ? () => handleDonate(product, productId)
+                  ? () => handleDonate(product)
                   : undefined
               }
               alternativeBackground
-              loading={loadingProductId === productId}
+              loading={loadingProductId === product.identifier}
+              colorScheme={colorScheme}
             />
-          );
-        })}
+          ))}
+        </View>
+        <ActionButton
+          borderless
+          title={I18n.t('not_now')}
+          handleOnPress={loadingProductId === null ? goBack : undefined}
+          colorScheme={colorScheme}
+          // the button padding below its text reads as extra bottom space
+          style={{
+            marginTop: Settings.PADDING * 2,
+            marginBottom: -Settings.PADDING / 2,
+          }}
+        />
       </View>
-      <ActionButton
-        borderless
-        title={I18n.t('not_now')}
-        handleOnPress={loadingProductId === null ? goBack : undefined}
-        colorScheme
-        style={{ marginTop: Settings.PADDING * 2 }}
-      />
     </View>
   );
 };

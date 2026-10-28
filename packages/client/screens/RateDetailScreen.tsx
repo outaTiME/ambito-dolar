@@ -2,7 +2,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { Text, View, Alert } from 'react-native';
+import { Text, View, Alert, StyleSheet } from 'react-native';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
 import * as actions from '@/actions';
@@ -121,6 +121,11 @@ const Spreads = withRates(true)(({ type, stat, rates, rateTypes }) => {
 
 // no stats keeps the hooks running until the redirect lands
 const EMPTY_STATS = [];
+
+// the old moderateScale(300) of the column, 150 plus 3/7 of its width, laid out natively
+// the strut sits 4 CONTENT_MARGIN inside the column, two from ContentView and two from CardView
+// https://github.com/nirsky/react-native-size-matters/blob/master/lib/scaling-utils.js#L7
+const CHART_HEIGHT_BASE = 150 + (Settings.CONTENT_MARGIN * 4 * 3) / 7;
 
 const RateDetailScreen = ({ kind, backgroundColor }) => {
   const {
@@ -255,9 +260,6 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
     () => getKind(kind).goToRawDetail(type, rangeIndex),
     [kind, type, rangeIndex],
   );
-  const onTabPress = React.useCallback((index) => {
-    setRangeIndex(index);
-  }, []);
   if (!stat) {
     return null;
   }
@@ -268,31 +270,38 @@ const RateDetailScreen = ({ kind, backgroundColor }) => {
         <SegmentedControlTab
           values={rangeLabels}
           selectedIndex={rangeIndex}
-          onTabPress={onTabPress}
+          onTabPress={setRangeIndex}
           enabled={loading === false}
-          animated
         />
       )}
       <CardView style={{ flex: 1 }} plain>
-        <View
-          style={[
-            {
-              flexGrow: 1,
-              // the header alone when there is no line to draw
-              height:
-                chartStats.length > 1 ? Settings.moderateScale(300) : undefined,
-              padding: Settings.PADDING,
-            },
-          ]}
-        >
-          <VictoryRateChartView
-            stats={chartStats}
-            formatValue={chartProps.formatValue}
-            inverse={chartProps.inverse}
-            formatDate={chartProps.formatDate}
-            formatChange={chartProps.formatRowChange}
-            formatAxis={chartProps.formatAxis}
-          />
+        <View style={{ flexGrow: 1 }}>
+          {/* the header alone when there is no line to draw */}
+          {chartStats.length > 1 && (
+            // stretch alone gives the aspectRatio strut a smaller width
+            <View
+              style={{
+                width: '100%',
+                marginTop: CHART_HEIGHT_BASE,
+                aspectRatio: 7 / 3,
+              }}
+            />
+          )}
+          <View
+            style={[
+              chartStats.length > 1 && StyleSheet.absoluteFill,
+              { padding: Settings.PADDING },
+            ]}
+          >
+            <VictoryRateChartView
+              stats={chartStats}
+              formatValue={chartProps.formatValue}
+              inverse={chartProps.inverse}
+              formatDate={chartProps.formatDate}
+              formatChange={chartProps.formatRowChange}
+              formatAxis={chartProps.formatAxis}
+            />
+          </View>
         </View>
         <CardItemView
           title={I18n.t('show_detail')}

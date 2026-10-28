@@ -1,9 +1,23 @@
-import { useNavigation } from 'expo-router';
+import { useFocusEffect, useNavigation } from 'expo-router';
 import React from 'react';
 import { View, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
+
+// ios tab screens hold the tab bar in their bottom inset only while it runs along the bottom
+// a leaf, a new inset must not re-render the screen
+const ToastInsetPublisher = ({ hasBottomTab }) => {
+  const { bottom, left, right } = useSafeAreaInsets();
+  const setToastInset = Helper.useSharedSetter('toastInset');
+  useFocusEffect(
+    React.useCallback(() => {
+      setToastInset({ bottom, left, right, hasBottomTab });
+    }, [bottom, left, right, hasBottomTab, setToastInset]),
+  );
+  return null;
+};
 
 export default (Component: any) => (props: any) => {
   const navigation = useNavigation();
@@ -23,6 +37,7 @@ export default (Component: any) => (props: any) => {
   );
   return (
     <View collapsable={false} style={containerStyle}>
+      <ToastInsetPublisher hasBottomTab={hasBottomTab} />
       <Component {...{ backgroundColor, isModal, ...props }} />
     </View>
   );

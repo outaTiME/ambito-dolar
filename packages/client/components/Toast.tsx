@@ -37,7 +37,9 @@ export default ({ isVisible, text, hiddenOffset }) => {
   });
   const { invertedTheme } = Helper.useTheme();
   return (
-    <Animated.View style={[animatedStyle, { pointerEvents: 'none' }]}>
+    <Animated.View
+      style={[animatedStyle, { marginHorizontal: 19, pointerEvents: 'none' }]}
+    >
       <View
         style={{
           alignSelf: 'center',
@@ -49,7 +51,7 @@ export default ({ isVisible, text, hiddenOffset }) => {
           borderRadius: hiddenOffset,
           borderCurve: 'continuous',
           bottom: 0,
-          maxWidth: Settings.CONTENT_WIDTH - 38,
+          maxWidth: '100%',
           position: 'absolute',
           zIndex: 100,
           // https://github.com/rainbow-me/rainbow/blob/develop/src/components/toasts/Toast.tsx#L33

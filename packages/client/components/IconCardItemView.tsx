@@ -23,7 +23,6 @@ export default ({
         <View
           style={[
             {
-              flexShrink: 0,
               flexGrow: 1,
               flexDirection: 'row',
               alignItems: 'center',
