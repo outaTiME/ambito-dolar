@@ -70,12 +70,15 @@ export default function SettingsStackLayout() {
           title: Helper.getScreenTitle(I18n.t('about')),
         }}
       />
-      <Stack.Screen
-        name="developer"
-        options={{
-          title: Helper.getScreenTitle(I18n.t('developer')),
-        }}
-      />
+      {/* the settings button is dev only, a deep link must not open it in a release */}
+      <Stack.Protected guard={__DEV__}>
+        <Stack.Screen
+          name="developer"
+          options={{
+            title: Helper.getScreenTitle(I18n.t('developer')),
+          }}
+        />
+      </Stack.Protected>
       <Stack.Screen
         name="donate"
         options={{
