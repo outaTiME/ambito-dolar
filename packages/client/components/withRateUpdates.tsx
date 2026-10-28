@@ -18,6 +18,16 @@ import Sentry from '@/utilities/Sentry';
 // half the tick and flat across cadences, absorbs its drift so a foreground entry can refresh early
 const SLACK = Settings.RATES_REFRESH_INTERVAL / 2;
 
+// a leaf, the tick must not re-render the hoc chain every interval
+// the only periodic trigger, the in-flight guard drops its second mount call
+const RatesTick = ({ fetchRates }) => {
+  const now = Helper.useNow();
+  React.useEffect(() => {
+    fetchRates();
+  }, [now, fetchRates]);
+  return null;
+};
+
 const withRateUpdates = (Component) => (props) => {
   const dispatch = useDispatch();
   const [loadingError, setLoadingError] = React.useState(false);
@@ -145,11 +155,6 @@ const withRateUpdates = (Component) => (props) => {
     });
     return () => subscription.remove();
   }, []);
-  // the only periodic trigger, the in-flight guard drops its second mount call
-  const now = Helper.useNow();
-  React.useEffect(() => {
-    fetchRates();
-  }, [now, fetchRates]);
   React.useEffect(() => {
     // a push brings rates the screen may not show yet, received with the app open or tapped
     const subscriptions = [
@@ -185,13 +190,16 @@ const withRateUpdates = (Component) => (props) => {
     });
   }, [fetchRates]);
   return (
-    <Component
-      {...{
-        ...props,
-        loadingError,
-        fetchRates,
-      }}
-    />
+    <>
+      <RatesTick fetchRates={fetchRates} />
+      <Component
+        {...{
+          ...props,
+          loadingError,
+          fetchRates,
+        }}
+      />
+    </>
   );
 };
 

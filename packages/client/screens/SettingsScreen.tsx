@@ -36,6 +36,14 @@ import {
   goToStatistics,
 } from '@/utilities/Navigation';
 
+// a leaf, the tick refreshes the relative time without re-rendering the screen
+const GeneralNote = ({ updatedAt }) => {
+  Helper.useNow();
+  return I18n.t('opts_general_note', {
+    lastUpdate: DateUtils.get(updatedAt).calendar(),
+  });
+};
+
 const SettingsScreen = () => {
   const { updatedAt, pushToken, appearance, showUpdateToast, installationId } =
     useSelector(
@@ -85,10 +93,7 @@ const SettingsScreen = () => {
   }, []);
   const [contactAvailable] = Helper.useSharedState('contactAvailable', false);
   const [storeAvailable] = Helper.useSharedState('storeAvailable', false);
-  // subscribe to shared tick so relative time string stays fresh
-  Helper.useNow();
   const marketsEnabled = Helper.useMarketsEnabled();
-  const updatedAtFromNow = DateUtils.get(updatedAt).calendar();
   const dispatch = useDispatch();
   const [purchasesConfigured] = Helper.useSharedState(
     'purchasesConfigured',
@@ -136,9 +141,7 @@ const SettingsScreen = () => {
     <FixedScrollView>
       <CardView
         title={I18n.t('opts_general')}
-        note={I18n.t('opts_general_note', {
-          lastUpdate: updatedAtFromNow,
-        })}
+        note={<GeneralNote updatedAt={updatedAt} />}
         plain
       >
         <CardItemView
@@ -216,12 +219,13 @@ const SettingsScreen = () => {
           <CardItemView
             title={I18n.t('donate')}
             useSwitch={false}
-            chevron={donationProducts?.length !== 1}
+            chevron={donationProducts.length !== 1}
             onAction={onPressDonate}
             loading={purchaseLoading}
-            {...(donationProducts?.length === 1 && {
-              value: formatProductPrice(donationProducts[0]),
-            })}
+            value={
+              donationProducts.length === 1 &&
+              formatProductPrice(donationProducts[0])
+            }
           />
         )}
         {contactAvailable && (

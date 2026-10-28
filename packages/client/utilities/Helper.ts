@@ -14,7 +14,7 @@ import semverCoerce from 'semver/functions/coerce';
 import semverDiff from 'semver/functions/diff';
 import semverValid from 'semver/functions/valid';
 import { ThemeContext } from 'styled-components';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 
 import rates from '@/assets/rates.json';
 import I18n from '@/config/I18n';
@@ -368,12 +368,17 @@ export default {
     });
     return [state, setState];
   },
+  // a setter alone, reading data from useSWR subscribes the caller to every publish
+  useSharedSetter: (key) => {
+    const { mutate } = useSWRConfig();
+    return React.useCallback((value) => mutate(key, value), [mutate, key]);
+  },
   useNow() {
     const [now] = this.useSharedState('now', Date.now());
     return now;
   },
   useTickProvider(enabled = true) {
-    const [, setNow] = this.useSharedState('now', Date.now());
+    const setNow = this.useSharedSetter('now');
     const isActive = useAppState('active');
     React.useEffect(() => {
       if (!isActive || !enabled) {
@@ -426,9 +431,9 @@ export default {
   },
   useApplicationConstants() {
     const [constantsLoaded, setConstantsLoaded] = React.useState(false);
-    const [, setContactAvailable] = this.useSharedState('contactAvailable');
-    const [, setStoreAvailable] = this.useSharedState('storeAvailable');
-    const [, setInstallationTime] = this.useSharedState('installationTime');
+    const setContactAvailable = this.useSharedSetter('contactAvailable');
+    const setStoreAvailable = this.useSharedSetter('storeAvailable');
+    const setInstallationTime = this.useSharedSetter('installationTime');
     React.useEffect(() => {
       // a rejected constant hides its own row without blocking startup
       Promise.allSettled([
@@ -454,15 +459,18 @@ export default {
     return theme === 'light' ? 'black' : 'white';
   },
   useActivityToast() {
-    const [, setActivityToast] = this.useSharedState('activityToast');
-    const showToast = React.useCallback((message, feedback = false) => {
-      setActivityToast({
-        message,
-        feedback,
-        // force data change
-        timestamp: Date.now(),
-      });
-    }, []);
+    const setActivityToast = this.useSharedSetter('activityToast');
+    const showToast = React.useCallback(
+      (message, feedback = false) => {
+        setActivityToast({
+          message,
+          feedback,
+          // force data change
+          timestamp: Date.now(),
+        });
+      },
+      [setActivityToast],
+    );
     return showToast;
   },
   removeProtocol: (url) => url.replace(/^https?:\/\//, ''),

@@ -12,7 +12,7 @@ import { goToConversion, goToRatesWithPopToTop } from '@/utilities/Navigation';
 
 const DeveloperScreen = () => {
   const dispatch = useDispatch();
-  const [, setAppDonationModal] = Helper.useSharedState('appDonationModal');
+  const setAppDonationModal = Helper.useSharedSetter('appDonationModal');
   const showActivityToast = Helper.useActivityToast();
   return (
     <FixedScrollView>
