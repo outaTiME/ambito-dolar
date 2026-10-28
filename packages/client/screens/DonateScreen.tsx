@@ -13,13 +13,6 @@ import {
 } from '@/hooks/useDonationProducts';
 import { useDonationPurchase } from '@/hooks/useDonationPurchase';
 
-// fall back to store-provided title when i18n key missing
-const getLocalTitle = (product) => {
-  const key = `donate_product_${product.identifier}`;
-  const localized = I18n.t(key, { defaultValue: '' });
-  return localized || product.title;
-};
-
 const DonateScreen = () => {
   const { products } = useDonationProducts();
   const { loadingProductId, donate: handleDonate } = useDonationPurchase();
@@ -36,7 +29,10 @@ const DonateScreen = () => {
           {products.map((product) => (
             <CardItemView
               key={product.identifier}
-              title={getLocalTitle(product)}
+              // the store title for a tier with no translation yet
+              title={I18n.t(`donate_product_${product.identifier}`, {
+                defaultValue: product.title,
+              })}
               useSwitch={false}
               chevron={false}
               value={formatProductPrice(product)}

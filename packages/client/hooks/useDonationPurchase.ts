@@ -14,24 +14,19 @@ export const showGenericErrorAlert = () => {
   });
 };
 
-// ask to buy or a pending store payment, it completes outside the app
-const isPurchasePending = (e) =>
-  e?.code === Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR;
-
-const showPurchaseErrorAlert = (e) => {
-  if (e?.userCancelled || isPurchasePending(e)) {
-    return;
-  }
-  Sentry.captureException(new Error('Purchase error', { cause: e }));
-  showGenericErrorAlert();
-};
-
 // true once the store charged, a failure is already reported here
 export const purchaseDonation = (product) =>
   Purchases.purchaseStoreProduct(product).then(
     () => true,
     (e) => {
-      showPurchaseErrorAlert(e);
+      // ask to buy or a pending store payment completes outside the app
+      if (
+        !e?.userCancelled &&
+        e?.code !== Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR
+      ) {
+        Sentry.captureException(new Error('Purchase error', { cause: e }));
+        showGenericErrorAlert();
+      }
       return false;
     },
   );
@@ -42,12 +37,12 @@ export const useDonationPurchase = (onDonated) => {
   const [loadingProductId, setLoadingProductId] = React.useState(null);
   // mirrors loadingProductId so dismiss callbacks see the latest value
   const loadingRef = React.useRef(false);
-  const donate = async (product, productId = product.identifier) => {
+  const donate = async (product) => {
     if (loadingRef.current) {
       return;
     }
     loadingRef.current = true;
-    setLoadingProductId(productId);
+    setLoadingProductId(product.identifier);
     try {
       if (await purchaseDonation(product)) {
         dispatch(actions.registerApplicationDonation());

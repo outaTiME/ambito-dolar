@@ -2,7 +2,6 @@
 import React from 'react';
 import Purchases from 'react-native-purchases';
 
-import useAppState from '@/hooks/useAppState';
 import Helper from '@/utilities/Helper';
 
 // module-level state dedupes parallel fetches
@@ -14,40 +13,14 @@ const fetchProductsOnce = () => {
   }
   // mock products in dev, emulators and simulators have no live store billing
   if (__DEV__) {
-    const mockProducts = [
-      {
-        identifier: 'small_contribution',
-        price: 0.99,
-        priceString: 'US$0,99',
-        title: 'Small',
-        currencyCode: 'USD',
-      },
-      {
-        identifier: 'medium_contribution',
-        price: 2.99,
-        priceString: 'US$2,99',
-        title: 'Medium',
-        currencyCode: 'USD',
-      },
-      {
-        identifier: 'large_contribution',
-        price: 4.99,
-        priceString: 'US$4,99',
-        title: 'Large',
-        currencyCode: 'USD',
-      },
-      {
-        identifier: 'extra_large_contribution',
-        price: 9.99,
-        priceString: 'US$9,99',
-        title: 'Extra large',
-        currencyCode: 'USD',
-      },
-    ];
-    inflight = Promise.resolve(mockProducts).finally(() => {
-      inflight = null;
-    });
-    return inflight;
+    return Promise.resolve(
+      [
+        ['small', 0.99],
+        ['medium', 2.99],
+        ['large', 4.99],
+        ['extra_large', 9.99],
+      ].map(([size, price]) => ({ identifier: `${size}_contribution`, price })),
+    );
   }
   // the current offering drives the ladder, so tiers move without a release
   inflight = Purchases.getOfferings()
@@ -63,12 +36,8 @@ const fetchProductsOnce = () => {
   return inflight;
 };
 
-// shared cache, filled by a silent boot fetch or by ensureProducts() on tap
+// shared cache, filled by withAppDonation or by ensureProducts() on tap
 export const useDonationProducts = () => {
-  const [purchasesConfigured] = Helper.useSharedState(
-    'purchasesConfigured',
-    false,
-  );
   const [products, setProducts] = Helper.useSharedState('donationProducts', []);
   const fetchAndCache = React.useCallback(async () => {
     const items = await fetchProductsOnce();
@@ -77,13 +46,6 @@ export const useDonationProducts = () => {
     }
     return items;
   }, [setProducts]);
-  // a failed boot fetch changes no dep, the next foreground retries it
-  const isActive = useAppState('active');
-  React.useEffect(() => {
-    if (isActive && purchasesConfigured && !products.length) {
-      fetchAndCache();
-    }
-  }, [isActive, purchasesConfigured, products.length, fetchAndCache]);
   const ensureProducts = React.useCallback(
     async () => (products.length ? products : fetchAndCache()),
     [products, fetchAndCache],
@@ -95,6 +57,6 @@ export const useDonationProducts = () => {
   return { products, priceMap, ensureProducts };
 };
 
-// rounded localized currency to avoid toFixedNoRounding truncation (e.g. 2.99 to 2.98)
+// the app currency format, rounded so toFixedNoRounding does not show 2.99 as 2.98
 export const formatProductPrice = (product) =>
-  Helper.getCurrency(Math.round((product?.price ?? 0) * 100) / 100, true, true);
+  Helper.getCurrency(Math.round(product.price * 100) / 100, true, true);

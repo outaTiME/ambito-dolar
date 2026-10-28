@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 
 import { getSortedRates } from './utilities/Customize.ts';
 import {
+  computeLifetime,
   getCooldownDays,
   getDonationCooldown,
   getDonationReAsk,
@@ -63,6 +64,27 @@ test('Donation re-ask should follow the total and the server time', (t) => {
   // a bigger total waits longer
   t.false(getDonationReAsk(info(bought, 'large', at(90)), prices).due);
   t.true(getDonationReAsk(info(bought, 'large', at(180)), prices).due);
+});
+
+test('Donation lifetime should sum every purchase at the current catalog', (t) => {
+  const prices = { small: 1, large: 5 };
+  const tx = (productIdentifier, purchaseDate) => ({
+    productIdentifier,
+    purchaseDate,
+  });
+  t.is(computeLifetime([tx('small'), tx('large'), tx('small')], prices), 7);
+  // a tier removed from the offering stops counting
+  t.is(computeLifetime([tx('small'), tx('retired')], prices), 1);
+  // two small donations reach the next step and wait from the last one
+  const info = {
+    requestDate: '2026-04-15T00:00:00Z',
+    nonSubscriptionTransactions: [
+      tx('small', '2025-06-01T00:00:00Z'),
+      tx('small', '2026-01-01T00:00:00Z'),
+    ],
+  };
+  t.false(getDonationReAsk(info, prices).due);
+  t.is(getDonationReAsk(info, prices).reAskMs, 180 * DAY);
 });
 
 // the payload a release serves next to what an older one persisted
