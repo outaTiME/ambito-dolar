@@ -1,8 +1,10 @@
 const version = '15.0.0';
 const buildNumber = 237;
+// the visible name, name stays ascii for expo/eas-cli#4715
+const displayName = 'Ámbito Dólar';
 
 export default {
-  name: 'Ámbito Dólar',
+  name: 'Ambito Dolar',
   slug: 'ambito-dolar',
   owner: 'outatime',
   runtimeVersion: version,
@@ -14,9 +16,11 @@ export default {
   icon: './assets/icon.png',
   scheme: 'ambito-dolar',
   web: {
+    name: displayName,
     bundler: 'metro',
   },
   extra: {
+    appName: displayName,
     ratesUri: process.env.RATES_URI,
     historicalRatesUri: process.env.HISTORICAL_RATES_URI,
     sentryDsn: process.env.SENTRY_DSN,
@@ -37,6 +41,7 @@ export default {
     'expo-localization',
     'expo-image',
     './plugins/withAndroidBottomNavDimens',
+    ['./plugins/withAndroidAppName', displayName],
     // native os translucent scrim behind the 3-button nav bar
     ['expo-navigation-bar', { enforceContrast: true }],
     [
@@ -96,6 +101,7 @@ export default {
     },
     supportsTablet: true,
     infoPlist: {
+      CFBundleDisplayName: displayName,
       // CFBundleLocalizations: ['es-419'],
       CFBundleDevelopmentRegion: 'es-419',
       // https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html#//apple_ref/doc/uid/TP40009254-SW9

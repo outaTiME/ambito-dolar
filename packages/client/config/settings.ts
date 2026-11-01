@@ -38,11 +38,11 @@ const ICON_SIZE = 24;
 const SOCIAL_ICON_SIZE = 17;
 const {
   expoConfig: {
-    name: APP_NAME,
     version: APP_VERSION,
     // empty on web
     android: { package: ANDROID_APP_ID } = {},
     extra: {
+      appName: APP_NAME,
       ratesUri: RATES_URI,
       historicalRatesUri: HISTORICAL_RATES_URI,
       sentryDsn: SENTRY_DSN,
