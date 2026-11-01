@@ -95,7 +95,9 @@ rail on either side), resizable iPad windows and Android tablets.
   slot, so a resize never waits for js. A new selection springs a percent `translateX` only, no
   frame of it lays out the row.
 - **Done in the modals is a native `Stack.Toolbar` button on Liquid Glass**, a react `headerRight`
-  view in that header broke on a window resize. iOS before Liquid Glass keeps `headerRight`.
+  view in that header broke on a window resize. Its `style` carries the FiraGO family and foreground
+  color of `HeaderButton.Text`, a native item inherits neither. iOS before Liquid Glass keeps
+  `headerRight`.
 - **Still a frame late on a live resize**: the detail chart, Victory draws an svg at a measured
   size, and the rates list in Personalizar, `Sortable.Grid` sets each row width from its measured
   container. `Sortable.Flex` does not pass `itemStyle` to its cells, so it cannot take a native

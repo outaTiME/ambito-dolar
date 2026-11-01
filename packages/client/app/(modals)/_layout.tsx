@@ -22,7 +22,13 @@ export default function ModalsLayout() {
   // a native item, a react view in the Liquid Glass header breaks on window resize
   const doneToolbar = Settings.IS_LIQUID_GLASS && (
     <Stack.Toolbar placement="right">
-      <Stack.Toolbar.Button onPress={goBack}>
+      <Stack.Toolbar.Button
+        onPress={goBack}
+        style={{
+          fontFamily: fonts.body.fontFamily,
+          color: Settings.getForegroundColor(theme),
+        }}
+      >
         {I18n.t('done')}
       </Stack.Toolbar.Button>
     </Stack.Toolbar>
