@@ -10,11 +10,9 @@ import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { init, tx } from '@instantdb/admin';
 import * as Sentry from '@sentry/aws-serverless';
 import { parallelScan } from '@shelf/dynamodb-parallel-scan';
-import { NodeHttpHandler } from '@smithy/node-http-handler';
 // eslint-disable-next-line import/namespace -- expo-server-sdk v7 ships json import attributes universe parser cannot read
 import { Expo } from 'expo-server-sdk';
 import { JWT } from 'google-auth-library';
-import https from 'https';
 import _ from 'lodash';
 import pLimit from 'promise-limit';
 import semverLt from 'semver/functions/lt.js';
@@ -32,15 +30,15 @@ const MAX_SOCKETS = 250;
 const ddbClient = new DynamoDBClient({
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_util_retry.html#maxattempts
   // retryStrategy: new StandardRetryStrategy(5),
-  requestHandler: new NodeHttpHandler({
-    httpsAgent: new https.Agent({
+  requestHandler: {
+    // options and not an Agent, the sdk keeps its keep alive and a new https.Agent turns it off
+    httpsAgent: {
       // prevent warnings on parallelScan (half of the concurrency value)
       maxSockets: MAX_SOCKETS,
-      // keepAlive: false,
-    }),
+    },
     // connectionTimeout: 1000,
     // socketTimeout: 2000,
-  }),
+  },
 });
 
 const s3Client = new S3Client({
@@ -349,8 +347,11 @@ const storeTickets = (date, type, json) =>
 const storePublicJsonObject = (key, json) => storeJsonObject(key, json);
 
 // rates and markets share the flat keys of /fetch, core keeps their ids apart
+// the widgets and the watch app read the date, value, change and close, never the notified value or the hash
 const getFetchStats = (quotes) =>
-  getLastStats({ ...quotes.markets, ...quotes.rates });
+  _.mapValues(getLastStats({ ...quotes.markets, ...quotes.rates }), (stat) =>
+    stat?.slice(0, 4),
+  );
 
 const storeFetchJsonObject = (quotes) => {
   const json = getFetchStats(quotes);

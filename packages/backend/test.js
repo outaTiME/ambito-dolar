@@ -63,6 +63,17 @@ test('Stats should merge by market day', (t) => {
   ]);
 });
 
+test('Fetch stats should carry the last stat without the notified value and the hash', (t) => {
+  const stat = ['2026-10-02T12:00:00-03:00', 3, 0, 1, 1, 'h'];
+  t.deepEqual(
+    Shared.getFetchStats({
+      rates: { oficial: { stats: [['d', 1, 0], stat] } },
+      markets: { merval: { stats: [stat] }, uva: { stats: [] } },
+    }),
+    { merval: stat.slice(0, 4), oficial: stat.slice(0, 4), uva: undefined },
+  );
+});
+
 test('Notifications should follow the day and the notified value', (t) => {
   const rates = { a: ['d', 1, 0, 1, 100], b: ['d', 1, 0, 1, 100] };
   const new_rates = { a: ['d', 2, 0, 1, 100], b: ['d', 2, 0, 1, 101] };
