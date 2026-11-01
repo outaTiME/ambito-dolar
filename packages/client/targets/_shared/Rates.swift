@@ -30,7 +30,8 @@ struct RateValue: Identifiable, Equatable {
 private let apiUrl = (Bundle.main.object(forInfoDictionaryKey: "ApiUrl") as? String).flatMap(URL.init(string:))
 
 private let ratesCacheKey = "last_rates"
-private let ratesCacheAtKey = "last_rates_at"
+// the last successful fetch, the watch app shows it under its lists
+let ratesCacheAtKey = "last_rates_at"
 // the default is a minute, long enough for the system to kill the extension while it waits
 private let ratesSession: URLSession = {
   let configuration = URLSessionConfiguration.default

@@ -8,7 +8,7 @@ Read before touching `packages/client/targets/`, `expo-target.config.js`, or the
 ```
 packages/client/targets/
   _shared/                             every target: app, widget, watch app and complications
-    LaunchAppIntent.swift              ios only, behind #if os(iOS)
+    LaunchAppIntent.swift              the Control Center control, one intent per platform
     Intents.swift                      AppEntity, AppEnum, RateTypesIntent and its five intents
     Helper.swift                       the rate and market lists, mirrored by Format.kt on android
     Rates.swift                        getRates, RateValue and lookupRateValues, the formatting
@@ -27,9 +27,12 @@ packages/client/targets/
   RateWatchComplications/
     expo-target.config.js              type watch-widget, embedded in the watch app
     Info.plist                         widgetkit extension point only
-    RateWatchComplications.swift       the launcher complication, @main Widget
-    Assets.xcassets/                   symlink to the widget AppWidgetIcon.symbolset
+    RateWatchComplications.swift       the launcher complication and control, @main WidgetBundle
+    Assets.xcassets/                   symbolset of file symlinks to the widget one
 ```
+
+A symlink on the symbolset folder itself compiles no `Assets.car`, the icon shows as a question mark
+in the control and is missing from the complications. Each file goes as its own symlink.
 
 `@bacons/apple-targets` links the folder as a `PBXFileSystemSynchronizedRootGroup`: Xcode globs it
 at build time, so **any file dropped in becomes part of the target** and Swift-only edits do not
@@ -179,7 +182,7 @@ together, all of it load bearing:
   placed by users when they update. Verified on device.
 - `static let isDiscoverable = false`. AppIntents flips the SiriKit default: without this the five
   configuration intents show up in the Shortcuts app as actions named in English. `LaunchAppIntent`
-  carries it too, the Control Center gallery not verified on device yet.
+  carries it on both branches. The watch control was checked in the simulator, not on a device yet.
 - Every query is an `EntityStringQuery` through `RateTypeCatalogQuery`, so
   `entities(matching:)` backs the search field in every rate picker. It does not decide whether a
   picker opens compact or full screen; what does is not known.
@@ -242,7 +245,11 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
   covers coming back. No timer while open, the
   screen sleeps in 15 to 70s and a timer left running keeps requesting under always on. No
   background refresh and no data complications, both would request all day with nobody looking.
-  No last update footer either, a fetch on open made it read "ahora" almost always.
+  The footer of Cotizaciones and Indicadores shows `last_rates_at`, the last successful fetch, in
+  the app `shortRelative` wording, an old time is a lost connection. The stored time only moves on
+  a fetch, a `TimelineView(.everyMinute)` redraws the minutes between, no request. It is the fetch,
+  not the time of each row, centered alone in the footer. A pull to reveal it was tried and dropped,
+  a gesture nobody finds.
 - **The pages show once there is a payload**, like `InitialScreen` in the app: before that one
   screen, a spinner or "Imposible obtener las cotizaciones." with Reintentar. Indicadores only
   shows when the payload carries markets, like `useMarketsEnabled` hides the app tab.
@@ -254,8 +261,11 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
   show `short ?? display` and the markets without `pts`, `pb` or `US$`, see `android-widgets.md`.
 - **The complication only launches the app**, no `widgetURL`, one per page would fall out of sync
   the day a page goes. `RateWatchComplications`, the app icon, circular and corner, the corner
-  labeled with the name, nothing fetched, one entry with `.never`. The
-  plugin embeds a `watch-widget` in the first watch target it already made and targets go in folder
+  labeled with the name, nothing fetched, one entry with `.never`. The same extension carries the
+  Control Center control from watchOS 26, the shared `LaunchControlWidget` behind `#available` in
+  its `WidgetBundle`, with the watch branch of `LaunchAppIntent` that only brings the app forward.
+  The phone control does not reach the watch, watchOS leaves out the controls that open the phone app.
+  The plugin embeds a `watch-widget` in the first watch target it already made and targets go in folder
   order, so the folder sorts after `RateWatch/` or the extension lands in the iPhone app.
 - **The widget sets the representation, the app the texts, watchOS the rest.** Rows are the two
   lines of the list widget. Settings hold the widget configuration, `excluded_rates` with the app
@@ -286,10 +296,11 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
   cents and from the data since a List only lays out the rows on screen. A converter row still too
   long puts the amount under the name on the trailing edge, the list rows never wrap, they are the
   widget layout.
-- **Personalizar closes the list**, a borderless footnote link in secondary with its icon in the
-  section footer, a 44pt target that also gives it air under the last card. A capsule stood out more than the rate cards. A `.topBarTrailing` item centers
-  the time on watchOS 10 to 26 by design and the title under it truncates, a leading one reads as
-  navigation and `.bottomBar` floats over the last row.
+- **Personalizar is a `.topBarTrailing` button** on Cotizaciones and Indicadores, every version.
+  Up to watchOS 26 it centers the time and truncates the title, 27 does not (SE 40mm), accepted for
+  one layout. The system title stays in the bar whatever the display mode. Tried and dropped: a
+  footer link or capsule competed with the last update, `.primaryAction` hides until a pull, a
+  leading item reads as navigation and `.bottomBar` floats over the last row.
 - **The title goes with the list only.** Error is a plain `VStack` the system centers,
   loading a bare `ProgressView`. `ContentUnavailableView` anchors to the top on watchOS and
   `.frame` does not move it.

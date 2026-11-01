@@ -182,11 +182,11 @@ struct ContentView: View {
             }
         }
       } footer: {
-        // not in the corner, a trailing toolbar item centers the time on watchOS 10 to 26 and truncates the title
-        settingsButton { showSettings = true }
+        UpdatedFooter()
       }
     }
     .navigationTitle("Cotizaciones")
+    .toolbar { settingsToolbar { showSettings = true } }
     // a sheet like the watch apps settings, its stack is where Mostrar and Orden push
     .sheet(isPresented: $showSettings) {
       NavigationStack {
@@ -196,16 +196,53 @@ struct ContentView: View {
   }
 }
 
-// small and secondary so it goes with the list, the whole 44pt row is the target and its air
-private func settingsButton(action: @escaping () -> Void) -> some View {
-  Button(action: action) {
-    Label("Personalizar", systemImage: "line.3.horizontal.decrease")
-      .frame(maxWidth: .infinity, minHeight: 44)
-      .contentShape(Rectangle())
+// shortRelative of utilities/Date.ts, a time in the device zone like the rows
+// the weekday stays lowercase, it follows Actualizado
+private func relativeText(_ date: Date, now: Date) -> String {
+  let elapsed = now.timeIntervalSince(date)
+  let minutes = Int(elapsed / 60)
+  if minutes < 1 {
+    return "ahora"
   }
-  .font(.footnote)
-  .foregroundStyle(.secondary)
-  .buttonStyle(.borderless)
+  if minutes < 60 {
+    return "hace \(minutes) min"
+  }
+  let calendar = Calendar.current
+  let formatter = DateFormatter()
+  formatter.locale = Locale(identifier: "es_AR")
+  if calendar.isDateInToday(date) {
+    formatter.dateFormat = "'hoy' HH:mm"
+  } else if calendar.isDateInYesterday(date) {
+    formatter.dateFormat = "'ayer' HH:mm"
+  } else if elapsed < 7 * 86400 {
+    formatter.dateFormat = "EEE HH:mm"
+  } else {
+    formatter.dateFormat = calendar.isDate(date, equalTo: now, toGranularity: .year) ? "dd/MM" : "dd/MM/yy"
+  }
+  return formatter.string(from: date)
+}
+
+// up to watchOS 26 a trailing item centers the time and truncates the title, accepted for one layout
+private func settingsToolbar(action: @escaping () -> Void) -> some ToolbarContent {
+  ToolbarItem(placement: .topBarTrailing) {
+    Button("Personalizar", systemImage: "line.3.horizontal.decrease", action: action)
+  }
+}
+
+// the last successful fetch under the rows, so a lost connection reads as an old time
+// the stored time only moves on a fetch, the timeline redraws the minutes between
+private struct UpdatedFooter: View {
+  @AppStorage(ratesCacheAtKey) private var updatedAt = 0.0
+
+  var body: some View {
+    if updatedAt > 0 {
+      TimelineView(.everyMinute) { context in
+        Text("Actualizado " + relativeText(Date(timeIntervalSince1970: updatedAt), now: context.date))
+          .multilineTextAlignment(.center)
+          .frame(maxWidth: .infinity)
+      }
+    }
+  }
 }
 
 // the markets tab of the app on its own page, never mixed with the rates and in its manual order
@@ -227,10 +264,11 @@ struct MarketsView: View {
           RateRow(rate: market, cents: true)
         }
       } footer: {
-        settingsButton { showSettings = true }
+        UpdatedFooter()
       }
     }
     .navigationTitle("Indicadores")
+    .toolbar { settingsToolbar { showSettings = true } }
     .sheet(isPresented: $showSettings) {
       NavigationStack {
         List {

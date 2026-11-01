@@ -43,8 +43,7 @@ struct LaunchView: View {
 }
 
 // no widgetURL, a tap opens the app where it was left
-@main
-struct RateWatchComplications: Widget {
+struct LaunchComplication: Widget {
   var body: some WidgetConfiguration {
     StaticConfiguration(kind: "LaunchComplication", provider: LaunchProvider()) { _ in
       LaunchView()
@@ -53,5 +52,15 @@ struct RateWatchComplications: Widget {
     .configurationDisplayName("Ámbito Dólar")
     .description("Complicación para abrir la app desde la esfera.")
     .supportedFamilies([.accessoryCircular, .accessoryCorner])
+  }
+}
+
+@main
+struct RateWatchComplications: WidgetBundle {
+  var body: some Widget {
+    LaunchComplication()
+    if #available(watchOS 26.0, *) {
+      LaunchControlWidget()
+    }
   }
 }
