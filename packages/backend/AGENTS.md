@@ -53,9 +53,10 @@ SST v4, Lambda handlers.
   `getBusinessDay` took that trade so six retries could not outlast the minute `Process` gets.
 - **ky skips POST and PATCH.** A POST that is a query opts back in per call with
   `retry: { methods: ['post'] }`, the way `getBusinessDay` does. `promiseRetry` covers what ky
-  cannot reach: `notify.js`, the media still processing in `social/instagram.js`, and the social
-  targets in `shared.js`. Retrying a publish can repeat it, and with lambda retries off in
-  `infra/defaults.ts` that is the only way a post goes out twice.
+  cannot reach: `notify.js`, the media still processing in
+  `packages/backend/src/libs/social/instagram.js`, and the social targets in `shared.js`. Retrying
+  a publish can repeat it, and with lambda retries off in `infra/defaults.ts` that is the only way
+  a post goes out twice.
 - **The expo push retries on 429 and 503, never on 504.** The sdk only retries 429 itself, so an
   upstream 503 otherwise loses the whole chunk. Expo's docs say to retry every 5xx and
   `expo/expo#18650` is what happens when you do: a 504 means the gateway gave up on a request expo
@@ -72,7 +73,9 @@ SST v4, Lambda handlers.
   and the push unsent, which is worse than dying before it.
 - **Do not reorder `process.js`.** `storeRatesJsonObject` -> `updateRealtimeData` -> `notify` is
   load bearing, a push landing before the board is written shows stale rates to the clients still
-  on it.
+  on it. Inside `storeRatesJsonObject` the history lands before every other object, a client that
+  sees new rates asks for the history again, and a failed one writes none of them so the next run
+  retries.
 - **Rate math lives in `packages/backend/src/libs/shared.js`, AVA tested**: `getNextRateStat`
   (close, pct, notify threshold), `getNotifications` (which pushes), `addStat` /
   `mergeHistoricalStats` (payload and historical file), `getBodyMessage` / `getSocialCaption` (push

@@ -428,10 +428,14 @@ const storeHistoricalRatesJsonObject = async (rates) => {
   ]);
 };
 
-const storeRatesJsonObject = (quotes, is_updated) => {
+const storeRatesJsonObject = async (quotes, is_updated) => {
   // markets only travel on quotes and /fetch
   const rates = _.omit(quotes, ['markets']);
   const legacy_rates = pickRates(rates.rates, LEGACY_RATE_TYPES, true);
+  if (is_updated) {
+    // the history lands before the rates, a failed one leaves them for the next run
+    await storeHistoricalRatesJsonObject(quotes);
+  }
   return Promise.all([
     is_updated && storeRateStats(rates.rates),
     storePublicJsonObject(RATES_LEGACY_OBJECT_KEY, {
@@ -445,8 +449,6 @@ const storeRatesJsonObject = (quotes, is_updated) => {
     storePublicJsonObject(QUOTES_OBJECT_KEY, quotes),
     // keep a non-suffixed key to serve GET /fetch from cloudfront+s3
     is_updated && storeFetchJsonObject(quotes),
-    // save historical rates
-    is_updated && storeHistoricalRatesJsonObject(quotes),
   ]);
 };
 
