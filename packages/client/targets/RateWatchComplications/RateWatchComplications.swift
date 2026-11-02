@@ -23,21 +23,18 @@ struct LaunchProvider: TimelineProvider {
   }
 }
 
-// the app icon, the corner also names the app
+// the app icon alone, scaled to the slot because the face caps a font in it
 struct LaunchView: View {
   @Environment(\.widgetFamily) var family
   var body: some View {
-    if family == .accessoryCorner {
-      // the label already names the app
-      Image(decorative: "AppWidgetIcon")
-        .font(.title2)
-        .widgetLabel("Ámbito Dólar")
-    } else {
-      ZStack {
+    ZStack {
+      if family == .accessoryCircular {
         AccessoryWidgetBackground()
-        Image("AppWidgetIcon", label: Text("Ámbito Dólar"))
-          .font(.title2)
       }
+      Image("AppWidgetIcon", label: Text("Ámbito Dólar"))
+        .resizable()
+        .scaledToFit()
+        .scaleEffect(family == .accessoryCorner ? 0.6 : 0.5)
     }
   }
 }

@@ -132,8 +132,8 @@ After a prebuild the extension shipped without its AppIntents metadata and every
 rendered redacted. After a target rename the old copy shipped next to the new one and the install
 failed. Delete `DerivedData` and build again before touching any source.
 
-Both targets compiling `_shared/Intents.swift` is the design. Moving it out of `_shared/` does not
-restore the metadata, it only drops the app's copy.
+Both targets compiling `packages/client/targets/_shared/Intents.swift` is the design. Moving it out
+of `_shared/` does not restore the metadata, it only drops the app's copy.
 
 **The endpoint is the `API_URL` of the build environment**, never written in the source. The
 `ApiUrl` key of both `Info.plist` holds `$(API_URL)`, which `xcodebuild` resolves from its
@@ -182,7 +182,7 @@ together, all of it load bearing:
   placed by users when they update. Verified on device.
 - `static let isDiscoverable = false`. AppIntents flips the SiriKit default: without this the five
   configuration intents show up in the Shortcuts app as actions named in English. `LaunchAppIntent`
-  carries it on both branches. The watch control was checked in the simulator, not on a device yet.
+  carries it on both branches.
 - Every query is an `EntityStringQuery` through `RateTypeCatalogQuery`, so
   `entities(matching:)` backs the search field in every rate picker. It does not decide whether a
   picker opens compact or full screen; what does is not known.
@@ -260,10 +260,11 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
   are the rate row with the market format, never trimmed, a market carries its own decimals. Rows
   show `short ?? display` and the markets without `pts`, `pb` or `US$`, see `android-widgets.md`.
 - **The complication only launches the app**, no `widgetURL`, one per page would fall out of sync
-  the day a page goes. `RateWatchComplications`, the app icon, circular and corner, the corner
-  labeled with the name, nothing fetched, one entry with `.never`. The same extension carries the
-  Control Center control from watchOS 26, the shared `LaunchControlWidget` behind `#available` in
-  its `WidgetBundle`, with the watch branch of `LaunchAppIntent` that only brings the app forward.
+  the day a page goes. `RateWatchComplications`, the app icon, circular and corner, no label,
+  scaled to the slot because the face caps a font there, half the circle and 60% of the corner,
+  nothing fetched, one entry with `.never`. The same extension carries the Control Center control
+  from watchOS 26, the shared `LaunchControlWidget` behind `#available` in its `WidgetBundle`, with
+  the watch branch of `LaunchAppIntent` that only brings the app forward.
   The phone control does not reach the watch, watchOS leaves out the controls that open the phone app.
   The plugin embeds a `watch-widget` in the first watch target it already made and targets go in folder
   order, so the folder sorts after `RateWatch/` or the extension lands in the iPhone app.
