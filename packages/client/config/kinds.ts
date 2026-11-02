@@ -151,6 +151,7 @@ const KINDS = {
       AmbitoDolar.getRateChange([null, stat[1], null, stat[3]]),
     formatDate: (type, timestamp, style) =>
       DateUtils.humanize(timestamp, style),
+    formatRange: (type, from, to) => DateUtils.formatRange(from, to),
     getRanges: () => RANGES,
     goToDetail: goToRateDetail,
     goToRawDetail: goToRateRawDetail,
@@ -181,6 +182,8 @@ const KINDS = {
     formatValue: formatMarketValue,
     formatChange: (type, stat) => formatMarketChange(type, stat, 'diff'),
     formatDate: formatMarketDate,
+    formatRange: (type, from, to) =>
+      DateUtils.formatRange(from, to, getMarket(type).dated !== undefined),
     // a monthly series has too few points for the short ranges
     getRanges: (type) =>
       getMarket(type).dated === 'month' ? MONTHLY_RANGES : RANGES,

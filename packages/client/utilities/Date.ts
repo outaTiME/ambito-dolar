@@ -34,9 +34,10 @@ export default {
   get(date = undefined, format = undefined) {
     return AmbitoDolar.getDate(date, format);
   },
-  formatRange(from, to) {
-    from = this.get(from);
-    to = this.get(to);
+  // a dated series reads on the buenos aires calendar like humanizeDay, the rest like humanize
+  formatRange(from, to, dated = false) {
+    from = dated ? AmbitoDolar.getTimezoneDate(from) : this.get(from);
+    to = dated ? AmbitoDolar.getTimezoneDate(to) : this.get(to);
     if (from.isSame(to, 'year')) {
       if (from.isSame(to, 'month')) {
         return `${from.date()} ${Settings.DASH_SEPARATOR} ${to.format('ll')}`;

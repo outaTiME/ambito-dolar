@@ -10,7 +10,6 @@ import FixedFlatList from '@/components/FixedFlatList';
 import withContainer from '@/components/withContainer';
 import { getKind } from '@/config/kinds';
 import Settings from '@/config/settings';
-import DateUtils from '@/utilities/Date';
 import Helper from '@/utilities/Helper';
 
 // fonts.body + fonts.footnote (lineheight)
@@ -104,12 +103,13 @@ const RateRawDetailScreen = ({ kind }) => {
   const title = React.useMemo(
     () =>
       chartStats.length > 0
-        ? DateUtils.formatRange(
+        ? getKind(kind).formatRange(
+            type,
             chartStats[0][0],
             chartStats[chartStats.length - 1][0],
           )
         : undefined,
-    [chartStats],
+    [chartStats, kind, type],
   );
   // reverse the order and normalize
   const data = React.useMemo(
