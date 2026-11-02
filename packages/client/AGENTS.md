@@ -6,7 +6,7 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 
 - **Both platforms CNG**: `packages/client/android/` and `packages/client/ios/` are regen by `expo prebuild`. Build output, gitignored, no hand-edit. Modify via `packages/client/app.config.ts` or a config plugin.
 - **iOS widgets live in `packages/client/targets/`**, generated into the Xcode project by the `@bacons/apple-targets` plugin. Source, committed. `packages/client/targets/RateWidgets/` is the widget extension. `packages/client/targets/RateWatch/` is the Apple Watch app, `packages/client/targets/RateWatchComplications/` its launcher complication. `packages/client/targets/_shared/` is the code they share. Read `packages/client/docs/ios-widgets.md` before touching it.
-- **`name` in `app.config.ts` stays ascii** until expo/eas-cli#4715 ships, eas-cli 27 misses the SDK 58 iOS target of an accented name. Text a user sees reads `displayName` (`CFBundleDisplayName`, `web.name`, `extra.appName` for `Settings.APP_NAME`, `plugins/withAndroidAppName.js`), never `expoConfig.name`, and `targets/RateWatch/expo-target.config.js` repeats it by hand. Once it ships, `name: displayName` and drop `CFBundleDisplayName`, `web.name` and the plugin, `extra.appName` stays.
+- **`name` in `app.config.ts` stays ascii** until expo/eas-cli#4715 ships, eas-cli 27 misses the SDK 58 iOS target of an accented name. Text a user sees reads `displayName` (`CFBundleDisplayName`, `web.name`, `extra.appName` for `Settings.APP_NAME`, `packages/client/plugins/withAndroidAppName.js`), never `expoConfig.name`, and `packages/client/targets/RateWatch/expo-target.config.js` and `packages/client/targets/RateWatchComplications/expo-target.config.js` repeat it by hand. Once it ships, `name: displayName` and drop `CFBundleDisplayName`, `web.name` and the plugin, `extra.appName` stays.
 - **After a version, dep or SDK bump**: `yarn run client:prebuild -p ios`, nothing else. It regenerates `packages/client/ios/` and runs `pod install`, there is nothing left in there to preserve. Xcode project settings live in `packages/client/app.config.ts` and each `packages/client/targets/*/expo-target.config.js`. Never `--no-clean`, see `packages/client/docs/ios-widgets.md`. Build output that looks like a code bug after a prebuild or a target rename: delete `DerivedData` before touching the source, same doc.
 - **A local release build uploads to the production Sentry project** when `SENTRY_AUTH_TOKEN` is in
   the environment, source maps and debug symbols on both platforms plus the R8 mapping on android.
@@ -118,9 +118,10 @@ error, and that is the whole of this section.
 
 - **All `router.X` calls in `packages/client/utilities/Navigation.ts`.** Never import `router` from `expo-router` elsewhere. Screens/components import only `Stack`, `Slot`, `Redirect`, `useNavigation` (setOptions, isFocused, getId, getParent), `useLocalSearchParams`, `useFocusEffect`, `useSegments`, `ThemeProvider`, `DarkTheme`, `DefaultTheme`, plus `NativeTabs` from `expo-router/native-tabs` and `HeaderButton` from `expo-router/react-navigation`.
 - **`(tabs)` in `packages/client/components/RootLayout.tsx` has `animation: 'none'`.** The Stack
-  mounts on `app/index.tsx`, at launch and again when `AppContainer` brings it back (rates cleared,
-  locale reload), and its redirect runs after the first commit since router 58, so the replace would
-  slide the whole app in. Static plugin `redirects` and `+native-intent` only cover the launch.
+  mounts on `packages/client/app/index.tsx`, at launch and again when `AppContainer` brings it
+  back (rates cleared, locale reload), and its redirect runs after the first commit since router
+  58, so the replace would slide the whole app in. Static plugin `redirects` and `+native-intent`
+  only cover the launch.
 - **`SplashScreen` comes from `expo-splash-screen`, never from `expo-router`.** The router ships its own wrapper marked `@hidden`.
 - Helpers: `goToX` (nav), `goBack` (guarded), `dismissToTop` (guarded pop), `clearRouteParam(name)`.
 - **A new route goes into `SCREENS` in `packages/client/hooks/app/useNavigationTrackingRouter.ts`**,

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!-- labels match the ios .configurationDisplayName, descriptions its .description without the period -->
+  <!-- labels match the ios .configurationDisplayName, descriptions keep its verb and noun without the period -->
   <string name="widget_rate_label">Cotizaciones</string>
   <string name="widget_rate_description">Consultá las cotizaciones del día</string>
   <string name="widget_list_label">Lista de cotizaciones</string>

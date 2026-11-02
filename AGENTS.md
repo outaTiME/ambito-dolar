@@ -96,9 +96,8 @@ See `docs/product-policies.md`.
 
 ## Where the rates payload is served from
 
-The URI the app reads is an env var and what it points at is a settled decision, re-litigated more
-than once and recorded outside this repo. Do not change it as an optimization. Cadence contract in
-`docs/product-policies.md`.
+The URI the app reads is an env var and what it points at is a settled decision. Do not change it
+as an optimization. Cadence contract in `docs/product-policies.md`.
 
 ## Notification body and social caption
 
