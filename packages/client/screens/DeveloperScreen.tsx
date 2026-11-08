@@ -34,6 +34,15 @@ const DeveloperScreen = () => {
           }}
         />
         <CardItemView
+          title="Simular error de carga"
+          useSwitch={false}
+          chevron={false}
+          onAction={() => {
+            Helper.failNextRates = true;
+            dispatch(actions.clearRates());
+          }}
+        />
+        <CardItemView
           title="Ver cotizaciones"
           useSwitch={false}
           chevron={false}

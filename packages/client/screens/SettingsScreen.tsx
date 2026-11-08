@@ -38,6 +38,8 @@ import {
 
 // a leaf, the tick refreshes the relative time without re-rendering the screen
 const GeneralNote = ({ updatedAt }) => {
+  // calendar() reads the clock, the compiler would keep the first text
+  'use no memo';
   Helper.useNow();
   return I18n.t('opts_general_note', {
     lastUpdate: DateUtils.get(updatedAt).calendar(),
@@ -200,7 +202,7 @@ const SettingsScreen = () => {
             goToStatistics();
           }}
         />
-        {__DEV__ && (
+        {(__DEV__ || Settings.UNATTENDED) && (
           <CardItemView
             title={I18n.t('developer')}
             useSwitch={false}

@@ -328,6 +328,10 @@ const withAppDonation = (Component) => (props) => {
       return;
     }
     const forced = !!appDonationModal;
+    // an unattended build opens it only forced, a cooldown run would cover a capture or a test
+    if (!forced && Settings.UNATTENDED) {
+      return;
+    }
     const cooldown = getDonationCooldown(
       daysUsed,
       ignoreDonationDaysUsed,

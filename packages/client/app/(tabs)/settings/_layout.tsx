@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 
 import { customHeaderBackOptions } from '@/components/HeaderButton';
 import I18n from '@/config/I18n';
+import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
 export default function SettingsStackLayout() {
@@ -70,8 +71,8 @@ export default function SettingsStackLayout() {
           title: Helper.getScreenTitle(I18n.t('about')),
         }}
       />
-      {/* the settings button is dev only, a deep link must not open it in a release */}
-      <Stack.Protected guard={__DEV__}>
+      {/* dev and unattended builds only, a deep link must not open it in a store release */}
+      <Stack.Protected guard={__DEV__ || Settings.UNATTENDED}>
         <Stack.Screen
           name="developer"
           options={{

@@ -49,6 +49,7 @@ const {
       amplitudeKey: AMPLITUDE_KEY,
       isProduction: IS_PRODUCTION,
       apiUrl: API_URL,
+      unattended: UNATTENDED,
       revenueCat: {
         ios: REVENUECAT_IOS_API_KEY,
         android: REVENUECAT_ANDROID_API_KEY,
@@ -94,6 +95,7 @@ const Settings: any = {
   AMPLITUDE_KEY,
   IS_PRODUCTION: Platform.OS === 'web' ? IS_PRODUCTION : !__DEV__,
   API_URL,
+  UNATTENDED: UNATTENDED === true,
   REVENUECAT_API_KEY: Platform.select({
     ios: REVENUECAT_IOS_API_KEY,
     android: REVENUECAT_ANDROID_API_KEY,

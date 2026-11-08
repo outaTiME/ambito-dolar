@@ -7,7 +7,7 @@ bypass.
   time and repeatable, which answers a question a user sent to support. `getOfferings` in
   `packages/client/hooks/useDonationProducts.ts` reads whichever offering is current, so the ladder
   is whatever that one holds and `donations` has to stay the current one. Nothing in the code
-  filters by product category any more, so a subscription dropped into the current offering would
+  filters by product category, so a subscription dropped into the current offering would
   render and the note would lie. Keep it consumables only.
 - The offering is the catalog and the dashboard is where the ladder changes, with no release. A
   package removed from it also drops its key from `priceMap`, so past transactions of that product
@@ -17,6 +17,8 @@ bypass.
 - Both schedules and the checks applying them, `getDonationCooldown` and `getDonationReAsk`, live in `packages/client/utilities/Donation.ts`, tested in `packages/client/test.js`. `getCooldownDays` governs the first appearance and every post-dismiss wait: 15, 30, 45, 60 and 75 usage days, capped. `getReAskMs` governs the ask after a donation, date based so a donor is not penalized for low usage, with the one exception spelled out further down: 90, 180 or 360 days for a total donated under 2, under 10, or 10 and over. The top step stretches the wait, it does not end it, and there is no amount that stops the asking.
 - The re-ask measures from `customerInfo.requestDate`, the server time of that snapshot, and the device clock only when it is missing. A clock months ahead would re-ask a donor the next day, one behind would never re-ask. A cached snapshot carries an older time, so it can only push the ask to the next usage day and never bring it forward.
 - Forced opens via Developer screen bypass cooldown but don't increment dismiss counter.
+- An unattended build (`Settings.UNATTENDED`, the local screenshot and e2e builds) opens it forced
+  only, never by cooldown, a run would capture it or break a test.
 - The modal is the `packages/client/app/donate.tsx` route, a native `formSheet` with `fitToContents`
   opened by `goToDonateModal()`. `withAppDonation` in `packages/client/components/AppContainer.tsx`
   only decides when, and waits for valid rates: the initial screen mounts no navigator, `navigate`
@@ -24,9 +26,10 @@ bypass.
   dismiss accounting. Native, so it follows a fold or a resize and Android back closes it.
 - The forced open is a one shot trigger and it is spent where the modal is shown, never where it is
   dismissed: on mount in the route. A trigger left armed reopens the modal on the next dependency
-  change, which is what shipped for a while and reads as the modal reopening at random.
+  change, which reads as the modal reopening at random.
 - The dismiss accounting hangs off the route unmount cleanup, which every close reaches: the swipe,
-  the backdrop tap, Android back and Ahora no. A purchase reaches it too, `donatedRef` exempts it.
+  the backdrop tap, Android back and Ahora no. A purchase in flight or just finished reaches it too,
+  `loadingRef` and `donatedRef` exempt it, or donating and closing would count against the donor.
   `onDonated` pops the route only while `navigation.isFocused()`, a sheet closed before the payment
   sheet showed must not pop the screen below.
 - Whether the open was forced is read once on mount into a ref, which dies with the route. An
@@ -65,7 +68,6 @@ bypass.
   icloud keychain is the one technique that works, ios only and a native module.
 - When someone asks for their donations back, transfer by Order ID from the RevenueCat dashboard.
 - A purchase goes through `useDonationPurchase` in `packages/client/hooks/useDonationPurchase.ts`, one at a time, from the `/donate` route and `packages/client/screens/DonateScreen.tsx`. Settings keeps its own guard, its wait also covers loading the products.
-- Closing the modal with a purchase in flight or just finished is not a dismiss, `donatedRef` and `loadingRef` hold it back. Without that, donating and closing would count against the donor.
 - `purchaseDonation`, in `packages/client/hooks/useDonationPurchase.ts`, resolves `true` once charged and reports any failure itself, callers only branch on it. A pending purchase (ask to buy, a pending store payment) rejects with `PAYMENT_PENDING_ERROR` and is not a failure: no alert and no Sentry. Its close still counts as a dismiss on purpose: nothing registers a donation until the transaction lands, so a close that spent no cooldown would ask again on the next usage day while the approval is pending. Once it lands the re-ask gate reads the transaction.
 - A failed boot fetch of the catalog leaves no dep changed, so `withAppDonation` retries on the next foreground, through `ensureProducts` of `useDonationProducts`. The retry lives there and not in the hook, every screen using the hook would re-render on each app state change. Without it a launch without network skips the automatic modal for as long as the process lives.
 - Clearing the rates removes the navigator rendered inside `AppContainer`, so an open donation route

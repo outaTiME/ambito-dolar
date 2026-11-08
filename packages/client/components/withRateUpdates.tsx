@@ -97,7 +97,9 @@ const withRateUpdates = (Component) => (props) => {
           return;
         }
         // measured when the update lands, a slow answer past the window arrives silently
+        // an unattended build shows none, it would land in a capture or a test
         const shouldShowToast =
+          !Settings.UNATTENDED &&
           previousUpdatedAt &&
           timeInForeground.current &&
           Date.now() - timeInForeground.current <=

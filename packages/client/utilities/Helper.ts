@@ -146,7 +146,13 @@ export default {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  // the developer screen fails the next fetch once to show the retry button
+  failNextRates: false,
   async getRates() {
+    if (this.failNextRates) {
+      this.failNextRates = false;
+      throw new Error('Simulated rates failure');
+    }
     if (Settings.RATES_URI) {
       return getJson(Settings.RATES_URI);
     }

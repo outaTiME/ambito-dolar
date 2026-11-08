@@ -1,6 +1,6 @@
 # Product policies
 
-Rules that only bite when touching the area they name. `AGENTS.md` carries the pointer and the
+Rules that bite only when touching the area they name. `AGENTS.md` carries the pointer and the
 one line that must not be broken by accident.
 
 ## Rate rollout gating
@@ -17,45 +17,46 @@ Release after approval: delete only the `// TODO:` line + that rate entry. Prese
 ## Rate refresh cadence
 
 The client polls `Settings.RATES_URI` from `packages/client/components/withRateUpdates.tsx`,
-the interval comes from `getPollInterval` in `packages/client/utilities/Polling.ts`.
+interval from `getPollInterval` in `packages/client/utilities/Polling.ts`.
 
 - Cadence comes from `is_open` in the rates payload, `base_rates.is_open = !close_day`
   (`packages/backend/src/subscribers/process.js`): true on every 5 minute run, false from
-  `ProcessClose` at 18:00, and false through a non-working day because the business day guard returns
+  `ProcessClose` at 18:00, false through a non-working day because the business day guard returns
   early. That covers nights, weekends and holidays with no calendar on the client. The guard
-  preserves the value and never repairs it, so a missed close leaves the app polling fast until the
+  preserves the value and never repairs it: a missed close leaves the app polling fast until the
   next open.
-- **`cadence` in the payload slows that polling, clamped so it can only slow and never speed up.** It
-  carries the open market value and the client derives the closed one, so an already resolved value
-  must never be sent. It does not reach the widgets or the watch app, which keep their own.
+- **`cadence` in the payload slows that polling, clamped so it can only slow, never speed up.** It
+  carries the open market value, the client derives the closed one, so never send an already
+  resolved value. It does not reach the widgets or the watch app, which keep their own.
 - **An answer that yields nothing renderable is a failure**, not an empty screen. `fetchRates`
-  throws before the dispatch so a bad payload cannot replace rates that were working, which is the
-  rule the widgets and the watch app already apply before replacing their stored payload.
-- **The effective interval is the cadence minus `SLACK`**, half the tick and flat across cadences,
-  30 seconds today, which absorbs the tick drift and lets a foreground entry refresh early. A
-  backend that sends a cadence to shed load has to count on the client asking that much sooner.
+  throws before the dispatch so a bad payload cannot replace working rates, the same rule the
+  widgets and the watch app apply before replacing their stored payload.
+- **The effective interval is the cadence minus `SLACK`**, half the tick, flat across cadences
+  (30 seconds with the current tick). It absorbs tick drift and lets a foreground entry refresh
+  early. A backend sending a cadence to shed load must count on the client asking that much sooner.
 - **Never derive a market date from the device.** `DateUtils.get` parses without a timezone, so a
-  comparison at `'day'` follows the phone and not the market. `getTimezoneDate` in `packages/core`
-  is the one that knows about Argentina.
+  comparison at `'day'` follows the phone, not the market. `getTimezoneDate` in `packages/core`
+  knows about Argentina.
 - **The cadence gate lives inside `fetchRates`, not in the effects**, so every trigger shares it.
-  The callers that bypass it with `{ force: true }` are the store clear, the retry button, the
-  connectivity listener and a push, received with the app open or tapped.
-- **`historical_rates` is persisted on purpose.** It is what draws yesterday's chart when the
-  refetch fails instead of raising the alert, so it cannot be blacklisted out of the store to keep
-  the blob small. The cost is that it rides along on every rewrite of the rates slice.
+  Callers bypassing it with `{ force: true }`: the store clear, the retry button, the connectivity
+  listener and a push, received with the app open or tapped.
+- **`historical_rates` is persisted on purpose.** It draws yesterday's chart when the refetch fails
+  instead of raising the alert, so never blacklist it out of the store to keep the blob small. Cost:
+  it rides along on every rewrite of the rates slice.
 - **An empty screen belongs to the retry button.** With no rates in the store and a failed attempt
-  behind it the tick is not blocked, it does not run: `useTickProvider` takes the same test
-  `AppContainer` makes, so the interval stops exactly where the button appears. It comes back when
-  the button clears the error, which is before its fetch answers, and the in-flight guard absorbs the
-  tick calls that land in between. The guard inside `fetchRates` still covers the other triggers.
+  behind it the tick does not run (not blocked): `useTickProvider` takes the same test
+  `AppContainer` makes, so the interval stops exactly where the button appears. It resumes when the
+  button clears the error, before its fetch answers, and the in-flight guard absorbs the tick calls
+  in between. The guard inside `fetchRates` still covers the other triggers.
 - **`NetInfo` covers the fast failure only**, a hung socket still takes the whole `timeout` from
   `packages/core` before the retry button appears. Do not add a retry layer on top of ky.
+- **An unattended build (`Settings.UNATTENDED`) shows no update toast**, it would land in a capture
+  or a test.
 - **`FOREGROUND_TOAST_WINDOW` is the toast's only job.** An update landing within it of the app
-  reaching foreground reads as belonging to that open, so `Actualizado` announces it, and anything
-  later arrives silently. The mount counts as an open, the first render of a cold start can see
-  the app as `background` or `inactive` before `active` lands. The ten seconds are a judgement about
-  what still feels like the same open, not a number derived from anything else, so there is nothing
-  to recompute it from.
+  reaching foreground belongs to that open, so `Actualizado` announces it; anything later arrives
+  silently. The mount counts as an open: the first render of a cold start can see the app as
+  `background` or `inactive` before `active` lands. The ten seconds are a judgement of what still
+  feels like the same open, derived from nothing else, so there is nothing to recompute it from.
 
 ## Notification body and social caption
 
