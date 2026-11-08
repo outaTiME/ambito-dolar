@@ -20,7 +20,7 @@ rail on either side), resizable iPad windows and Android tablets.
   the Medium and the default Large text size on iOS 18, 632 and 664. Apple publishes no number and
   widened that guide to 896 on iOS 26, Android 840 is a layout breakpoint, not a column width.
   Phones never reach the cap. The width only moves the mini chart rule below a column of about 400.
-  Replaced the old 50% of the screen on tablets.
+  Never 50% of the screen on tablets.
 - **Centered in the safe area, like UIKit's `readableContentGuide`**. `ContentView` wraps the column
   (`COLUMN_STYLE`, `alignSelf: 'center'`, `width: MAX_CONTENT_WIDTH`, `maxWidth: '100%'`) in the
   `SafeAreaView` of `react-native-screens/experimental` with the left and right edges. With the rail
@@ -40,7 +40,7 @@ rail on either side), resizable iPad windows and Android tablets.
   Android modal and the Android donate card only pad the bottom.
 - **The js width only drives decisions**, the mini chart. `useContentLayout` reads
   `useSafeAreaFrame` plus the safe area insets of the nearest provider per render, never a module
-  global. The old global plus a `key` on the root `Stack` remounted the whole navigation on every
+  global. A module global plus a `key` on the root `Stack` remounted the whole navigation on every
   size change and lost the tab, the detail and the converter amount on a fold.
 - **A modal needs no provider of its own**: the `SafeAreaView` reads the insets of its own
   `RNSScreen`, an iPad `pageSheet` or a Duo open sheet away from the rail included.
@@ -60,6 +60,15 @@ rail on either side), resizable iPad windows and Android tablets.
   only while the bar runs along the bottom (iPhone, Duo open portrait). iPad puts it on top and
   the Duo folded or open landscape in the rail, so the toast drops to the bottom edge there.
 - **Android**: the tab bar is not in the inset, so the bar height is added on tab screens only.
+
+## Tab bar
+
+- **iPad**: icons only, like the other platforms. The floating bar on top does not read
+  `accessibilityLabel` (the bottom bar of iPhone, Duo and Android does), nor a `testID`, so
+  VoiceOver has no tab names on iPad and a test taps the tabs by position. A visible label is the
+  only way to name them there, drawn in the system font, no UIKit API reaches it
+  (`UITabBarAppearance`, `UITab` and `labelStyle` tested on iPadOS 18 to 27). Only a compact size
+  class brings back the bottom bar, and it turns the whole app compact.
 
 ## Orientation
 
@@ -92,8 +101,9 @@ rail on either side), resizable iPad windows and Android tablets.
   `marginTop` plus a 7/3 `aspectRatio` strut, so a fold moves the scroll below it in the same frame.
   The strut needs `width: '100%'`, stretch alone gave it a smaller width there.
 - **The segmented control lays out natively**, the segments flex and the tile sits in a percent
-  slot, so a resize never waits for js. A new selection springs a percent `translateX` only, no
-  frame of it lays out the row.
+  slot, so a resize never waits for js. A new selection springs a percent `translateX` of the
+  track, which spans the row, no frame lays out the row. A percent of the slot would add up its
+  rounding.
 - **Done in the modals is a native `Stack.Toolbar` button on Liquid Glass**, a react `headerRight`
   view in that header broke on a window resize. Its `style` carries the FiraGO family and foreground
   color of `HeaderButton.Text`, a native item inherits neither. iOS before Liquid Glass keeps
@@ -103,12 +113,6 @@ rail on either side), resizable iPad windows and Android tablets.
   container. `Sortable.Flex` does not pass `itemStyle` to its cells, so it cannot take a native
   width either. The mini chart shows or hides from the js width, the change text rewraps after the
   column.
-- **Larger Text changed with the app in the background, iOS only**: `RateView` reads
-  `PixelRatio.getFontScale()` per render and is memoized, the change width stays at the old scale
-  until the stats change and the percent can ellipsize. The old `updateSettings` global remounted
-  the whole `Stack` on any window dimension change, font scale included. Accepted, reading
-  `useWindowDimensions` in each card fixes it but re-renders every card on a rotation or a window
-  resize.
 - **The donate route is a native `formSheet` with `fitToContents`**, it follows a fold natively. iOS
   adds the sheet bottom inset below the content, 34 on an iPhone or the Duo folded, about 10 on an
   iPad window docked at the bottom, none on the centered iPad or Duo open card. An empty rn-screens

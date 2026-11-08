@@ -29,7 +29,8 @@ export default function NativeTabsLayout() {
         ios: !Settings.IS_LIQUID_GLASS && { blurEffect: theme },
       })}
     >
-      <NativeTabs.Trigger name="rates">
+      {/* labels hidden, the bottom bar hands screen readers this name, the iPad bar does not */}
+      <NativeTabs.Trigger name="rates" accessibilityLabel={I18n.t('rates')}>
         <NativeTabs.Trigger.Icon
           src={
             <NativeTabs.Trigger.VectorIcon
@@ -42,7 +43,11 @@ export default function NativeTabsLayout() {
           {I18n.t('rates')}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="markets" hidden={!marketsEnabled}>
+      <NativeTabs.Trigger
+        name="markets"
+        hidden={!marketsEnabled}
+        accessibilityLabel={I18n.t('markets')}
+      >
         <NativeTabs.Trigger.Icon
           src={
             <NativeTabs.Trigger.VectorIcon
@@ -55,7 +60,10 @@ export default function NativeTabsLayout() {
           {I18n.t('markets')}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="conversion">
+      <NativeTabs.Trigger
+        name="conversion"
+        accessibilityLabel={I18n.t('conversion')}
+      >
         <NativeTabs.Trigger.Icon
           src={
             <NativeTabs.Trigger.VectorIcon
@@ -68,7 +76,10 @@ export default function NativeTabsLayout() {
           {I18n.t('conversion')}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="settings">
+      <NativeTabs.Trigger
+        name="settings"
+        accessibilityLabel={I18n.t('settings')}
+      >
         <NativeTabs.Trigger.Icon
           src={
             <NativeTabs.Trigger.VectorIcon

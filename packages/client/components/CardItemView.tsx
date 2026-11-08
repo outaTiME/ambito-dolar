@@ -108,6 +108,8 @@ export default ({
                   {
                     // flex: 1,
                     flexGrow: 1,
+                    // a long title truncates instead of pushing what follows it off the row
+                    flexShrink: 1,
                   },
                 ]}
               >
@@ -155,6 +157,8 @@ export default ({
           {loading && <LoadingActionView />}
           {!loading && useSwitch && (
             <Switch
+              // the row title, a screen reader reads a bare switch otherwise
+              accessibilityLabel={typeof title === 'string' ? title : undefined}
               value={value === true}
               onValueChange={onValueChange}
               disabled={disableSwitch}
