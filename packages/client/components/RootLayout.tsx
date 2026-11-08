@@ -61,6 +61,8 @@ if (Platform.OS === 'android' && isCompactScreen()) {
 
 // a leaf, a resize must not re-render ThemedLayout
 const ScreenOrientationLock = () => {
+  // isCompactScreen reads Dimensions, the compiler would keep the first lock
+  'use no memo';
   // only re-renders on a change, the display size comes from screen
   useWindowDimensions();
   const isCompact = isCompactScreen();

@@ -23,7 +23,7 @@ module.exports = (async () => {
     {
       files: ['packages/client/**/*.{js,jsx,ts,tsx}'],
       extends: [nativeConfig],
-      // react-hooks@7 ships React Compiler rules; project does not use the compiler
+      // react-hooks ships React Compiler rules
       // they false-positive on Reanimated shared values and intentional ref/effect patterns
       rules: {
         'react-hooks/immutability': 'off',

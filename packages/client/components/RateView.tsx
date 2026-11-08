@@ -2,7 +2,7 @@
 import AmbitoDolar from '@ambito-dolar/core';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import React from 'react';
-import { View, Text, Platform, PixelRatio } from 'react-native';
+import { View, Text, Platform, useWindowDimensions } from 'react-native';
 
 import CardView from '@/components/CardView';
 import MiniRateChartView from '@/components/VictoryMiniRateChartView';
@@ -74,6 +74,8 @@ const InlineRateDetailView = ({
 }) => {
   const { theme, fonts } = Helper.useTheme();
   const contentWidth = useContentLayout();
+  // a font size change re-renders the card
+  const { fontScale } = useWindowDimensions();
   if (large) {
     return (
       <>
@@ -135,8 +137,7 @@ const InlineRateDetailView = ({
     );
   }
   const changeWidth = Helper.roundToNearestEven(
-    140 *
-      Math.min(PixelRatio.getFontScale(), Settings.MAX_FONT_SIZE_MULTIPLIER),
+    140 * Math.min(fontScale, Settings.MAX_FONT_SIZE_MULTIPLIER),
   );
   // a single stat draws no line
   const showMiniRateChart =
@@ -196,6 +197,8 @@ const InlineRateDetailView = ({
 
 // a leaf, the tick refreshes the relative time without re-rendering the card
 const RelativeTimestamp = ({ timestamp, formatDate }) => {
+  // formatDate reads the clock, the compiler would keep the first text
+  'use no memo';
   Helper.useNow();
   return formatDate(timestamp, 'relative');
 };

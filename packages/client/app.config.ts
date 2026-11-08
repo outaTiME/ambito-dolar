@@ -10,6 +10,9 @@ export default {
   runtimeVersion: version,
   version,
   platforms: ['android', 'ios', 'web'],
+  experiments: {
+    reactCompiler: true,
+  },
   githubUrl:
     'https://github.com/outaTiME/ambito-dolar/tree/master/packages/client',
   userInterfaceStyle: 'automatic',
@@ -27,6 +30,8 @@ export default {
     amplitudeKey: process.env.AMPLITUDE_KEY,
     isProduction: process.env.IS_PRODUCTION === 'true',
     apiUrl: process.env.API_URL,
+    // the local screenshot and e2e builds, a store build never sets it
+    unattended: process.env.UNATTENDED === 'true',
     revenueCat: {
       ios: process.env.REVENUECAT_IOS_API_KEY,
       android: process.env.REVENUECAT_ANDROID_API_KEY,
