@@ -1,0 +1,25 @@
+steps:
+  - echo: a cold start, the rates list first
+  - launch: im.outa.AmbitoDolar
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - await: { idle: true }
+  - tap: { text: Ajustes }
+  - await: { visible: { text: Fechas relativas }, timeout: 15000 }
+  - tap: { text: Donar }
+  - when: { platform: ios }
+    steps:
+      - echo: the four amounts show with their store price
+      - await: { visible: { text: Elegí tu aporte } }
+      - await: { visible: { text: Pequeño US$ }, timeout: 15000 }
+      - assert: { visible: { text: Mediano US$ } }
+      - assert: { visible: { text: Grande US$ } }
+      - assert: { visible: { text: Enorme US$ } }
+  - when: { platform: android }
+    steps:
+      - echo: an emulator without a google account gets no products, the app says so
+      - await:
+          {
+            visible: { text: Imposible completar la operación },
+            timeout: 15000,
+          }
+      - tap: { text: Aceptar }

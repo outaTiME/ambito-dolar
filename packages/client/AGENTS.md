@@ -21,8 +21,18 @@ Rules for `packages/client`, loaded on top of the root `AGENTS.md` when working 
 
 - No `lint` script in the client, lint from the root, `yarn eslint "packages/client/<path>"`.
 - React Compiler rules are off on purpose (`react-hooks/{immutability,refs,set-state-in-effect,purity}`):
-  the project is not on the compiler and they false positive on Reanimated `.value` and on
-  intentional ref and effect patterns. Fix a real prop reassign, do not mute those rules.
+  they false positive on Reanimated `.value` and on intentional ref and effect patterns. Fix a real
+  prop reassign, do not mute those rules.
+
+## React Compiler
+
+- `experiments.reactCompiler` memoizes every render it compiles, a render reading outside props,
+  state and hooks keeps its first output: the clock (`'relative'`, `.calendar()`, `Date.now()`),
+  `Dimensions.get`, `PixelRatio`, a module variable. A hook called only to re-render
+  (`Helper.useNow();`) does not refresh it. Read the value from the hook, or `'use no memo'` in that
+  component. The lint does not catch it.
+- `RateDetailScreen` is not compiled, `useItems` comes from `getKind(kind)` and the compiler bails
+  out on a hook that can change. Its `useMemo` and `useCallback` are load bearing, keep them.
 
 ## Copy register
 
@@ -30,7 +40,9 @@ Any user facing string follows `packages/client/docs/copy-register.md`: voseo, e
 
 ## Store listing
 
-Store description and the "What's New" entry follow `packages/client/docs/store-listing.md`.
+Store description and the "What's New" entry follow `packages/client/docs/store-listing.md`. The
+store screenshot flows in `packages/screenshots/flows/` reach screens by tab and row names, a
+rename breaks them, see `docs/store-screenshots.md`.
 
 ## Adaptive layout
 
@@ -140,3 +152,28 @@ error, and that is the whole of this section.
 - No `"type": "module"` here, like the official Expo template. `@bacons/apple-targets` `require`s
   each `packages/client/targets/*/expo-target.config.js` and reads `.type` without unwrapping
   `.default`, so it cannot be ESM. The `test` script mutes `MODULE_TYPELESS_PACKAGE_JSON` instead.
+
+## E2E
+
+- Argent YAML in `packages/client/.argent/e2e/`, one flow per file, `yarn client:e2e` runs them all
+  on the booted device, iOS or Android. One alone:
+  `yarn workspace @ambito-dolar/client exec argent e2e run <name>`. With several devices booted
+  pass `--platform ios|android` or `--device <udid>`.
+- Run on an unattended build (`UNATTENDED=true`, `Settings.UNATTENDED`): the developer screen in a
+  Release, the activity toast, clear rates and load error flows go through it, no update toast or
+  donation modal of its own. The `yarn screenshots` one, installed by hand:
+  `xcrun simctl install <udid> packages/screenshots/out/build/AmbitoDolar.app` or
+  `adb install -r packages/screenshots/out/build/app-release.apk`.
+- Device in `es-AR` (iOS Language & Region, Android
+  `adb shell cmd locale set-app-locales im.outa.AmbitoDolar --locales es-AR`), iOS system strings
+  (`Barra de pestañas`) and Android differences go under `when: { platform: ... }`: the Android
+  toast is outside the accessibility tree, and an emulator without a Google account gets no donation
+  products, the flow checks the error instead.
+- Selectors by visible text, the app has no `testID`. `text` matches a case-insensitive substring,
+  a row title holding the text of what it shows (`Ver toast de actividad`) needs an anchored regex.
+- `echo` in English, the feature or behaviour checked, never the Spanish label the step taps:
+  `the theme follows light and dark and goes back to system`. Same in `packages/screenshots/flows/`.
+- A failed run of `relative-dates` or `appearance` can leave the setting changed, restore it by hand
+  before the next run.
+- On iOS the donate flow checks the four amounts and their price only, a purchase needs a store
+  account. Appearance only switches the theme, the colors are checked by eye.

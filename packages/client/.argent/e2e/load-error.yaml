@@ -1,0 +1,16 @@
+steps:
+  - echo: a failed load with no rates shows the retry button, retrying loads the list
+  - launch: im.outa.AmbitoDolar
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - await: { idle: true }
+  - tap: { text: Ajustes }
+  - await: { visible: { text: Fechas relativas }, timeout: 15000 }
+  - tap: { text: Desarrollador }
+  - await: { visible: { text: Simular error de carga } }
+  - await: { idle: true }
+  - tap: { text: Simular error de carga }
+  - await:
+      { visible: { text: Imposible obtener las cotizaciones }, timeout: 15000 }
+  - await: { visible: { text: Reintentar } }
+  - tap: { text: Reintentar }
+  - await: { visible: { text: Oficial }, timeout: 30000 }

@@ -1,0 +1,34 @@
+steps:
+  - echo: relative dates on, the default, no row shows the fixed day and time
+  - launch: im.outa.AmbitoDolar
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - await: { idle: true }
+  - assert: { hidden: { text: { matches: '\d{2}/\d{2} \d{2}:\d{2}' } } }
+  - echo: turn relative dates off in settings
+  - tap: { text: Ajustes }
+  - await: { visible: { text: Fechas relativas }, timeout: 15000 }
+  - echo: the switch carries the row title, the smallest exact match beats the label
+  - tap: { text: Fechas relativas }
+  - when: { platform: ios }
+    steps:
+      - tap: { text: Cotizaciones, within: { text: Barra de pestañas } }
+  - when: { platform: android }
+    steps:
+      - echo: the settings list holds a rates row too, the tab is the one below the developer row
+      - tap: { text: Cotizaciones, after: { text: Desarrollador } }
+  - await: { visible: { text: Oficial } }
+  - await: { idle: true }
+  - echo: off, the rows show the fixed day and time
+  - await: { visible: { text: { matches: '\d{2}/\d{2} \d{2}:\d{2}' } } }
+  - echo: turn it back on, the fixed day and time go away
+  - tap: { text: Ajustes }
+  - await: { visible: { text: Fechas relativas }, timeout: 15000 }
+  - tap: { text: Fechas relativas }
+  - when: { platform: ios }
+    steps:
+      - tap: { text: Cotizaciones, within: { text: Barra de pestañas } }
+  - when: { platform: android }
+    steps:
+      - tap: { text: Cotizaciones, after: { text: Desarrollador } }
+  - await: { visible: { text: Oficial } }
+  - await: { hidden: { text: { matches: '\d{2}/\d{2} \d{2}:\d{2}' } } }

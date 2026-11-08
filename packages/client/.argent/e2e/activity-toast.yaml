@@ -1,0 +1,22 @@
+steps:
+  - echo: the developer screen shows the activity toast, it leaves on its own
+  - launch: im.outa.AmbitoDolar
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - await: { idle: true }
+  - tap: { text: Ajustes }
+  - await: { visible: { text: Fechas relativas }, timeout: 15000 }
+  - tap: { text: Desarrollador }
+  - await: { visible: { text: Limpiar cotizaciones } }
+  - await: { idle: true }
+  - tap: { text: Ver toast de actividad }
+  - when: { platform: ios }
+    steps:
+      - echo: anchored, the row that shows it also holds that text
+      - await: { visible: { text: { matches: '^Toast de actividad$' } } }
+      - await:
+          {
+            hidden: { text: { matches: '^Toast de actividad$' } },
+            timeout: 10000,
+          }
+  - echo: the screen stays usable, android draws the toast outside the accessibility tree
+  - await: { visible: { text: Ver toast de actividad } }

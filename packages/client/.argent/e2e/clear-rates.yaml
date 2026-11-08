@@ -1,0 +1,14 @@
+steps:
+  - echo: clearing the rates swaps the app for the initial screen, then the list loads again
+  - launch: im.outa.AmbitoDolar
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - await: { idle: true }
+  - tap: { text: Ajustes }
+  - await: { visible: { text: Fechas relativas }, timeout: 15000 }
+  - tap: { text: Desarrollador }
+  - await: { visible: { text: Limpiar cotizaciones } }
+  - await: { idle: true }
+  - tap: { text: Limpiar cotizaciones }
+  - echo: the developer screen is gone, the spinner is too short to wait on
+  - assert: { hidden: { text: Limpiar cotizaciones } }
+  - await: { visible: { text: Oficial }, timeout: 30000 }
