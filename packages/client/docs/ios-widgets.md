@@ -31,12 +31,12 @@ packages/client/targets/
     Assets.xcassets/                   symbolset of file symlinks to the widget one
 ```
 
-A symlink on the symbolset folder itself compiles no `Assets.car`, the icon shows as a question mark
-in the control and is missing from the complications. Each file goes as its own symlink.
+The complications symbolset is one symlink per file. A symlink on the symbolset folder compiles no
+`Assets.car`: the icon shows as a question mark in the control and is missing from the complications.
 
 `@bacons/apple-targets` links the folder as a `PBXFileSystemSynchronizedRootGroup`: Xcode globs it
-at build time, so **any file dropped in becomes part of the target** and Swift-only edits do not
-need a prebuild. Adding, renaming or removing a file in `_shared/` does.
+at build time, so **any file dropped in becomes part of the target** and Swift-only edits need no
+prebuild. Adding, renaming or removing a file in `packages/client/targets/_shared/` does.
 
 **Names follow one pattern**: the folder names the thing (`RateWidgets/`, `RateWatch/`), the main
 file is named after its `@main` type, `name` adds the product kind (`RateWidgetsExtension`,
@@ -45,32 +45,32 @@ file is named after its `@main` type, `name` adds the product kind (`RateWidgets
 `.watchkitapp.complications`, or a new widget `kind` (`LaunchComplication` included), drops what
 users placed, a new `name` changes the module the saved intents point at.
 
-The intents live in `packages/client/targets/_shared/` and not next to the views, so the
-**main app target compiles them too**, which the plugin README asks for. The app target is 16.4
-against the extension's 17.0, which is why the five `WidgetConfigurationIntent` carry
-`@available(iOS 17.0, *)`. The entity, the enum and the queries are iOS 16 API and need none.
+The intents live in `packages/client/targets/_shared/` so the **main app target compiles them
+too**, which the plugin README asks for. Moving them out does not fix missing AppIntents metadata,
+it only drops the app's copy.
+
+**Deployment target is 17.0**, above the app's 16.4, because `AppIntentConfiguration` requires it.
+Deliberate, it costs widgets on iOS 16.4 to 16.7 only. The five `WidgetConfigurationIntent` carry
+`@available(iOS 17.0, *)` for the app target; the entity, the enum and the queries are iOS 16 API.
 
 ## Traps
 
-**The font is a symlink** to the same `packages/client/assets/fonts/FiraGO-Regular.otf` `expo-font`
-puts in the app. Never turn it into a copy. Measured on device: an extension loads fonts only from
-its own bundle, so the file in the target folder, `UIAppFonts` in the target `Info.plist` and
-`Font.custom("FiraGO-Regular", ...)` are all three required, dropping either of the first two falls
-back to the system font silently. Survives EAS, measured by simulating the upload, the symlink and its target both go because
-`packages/client/assets/` ships.
+**The font is a symlink** to the `packages/client/assets/fonts/FiraGO-Regular.otf` `expo-font` puts
+in the app, never a copy. An extension loads fonts only from its own bundle (measured on device):
+the file in the target folder, `UIAppFonts` in the target `Info.plist` and
+`Font.custom("FiraGO-Regular", ...)` are all required, missing either of the first two falls back
+to the system font silently. Survives EAS (simulated upload), `packages/client/assets/` ships.
 
-**`Assets.xcassets` is compiled whole, only part of it is source.** Xcode globs the folder, anything
-in it lands in `Assets.car`. `AppWidgetIcon.symbolset` is hand made and committed, WidgetKit picks
-it up by name, so it needs no target config entry and must not go in `images:` or the SVG lands
-twice. The colorsets and the watch appiconset are plugin output, rewritten every prebuild, ignored
-by git and EAS.
+**`Assets.xcassets` is compiled whole, only part of it is source.** Anything in the folder lands in
+`Assets.car`. `AppWidgetIcon.symbolset` is hand made and committed, WidgetKit picks it up by name:
+no target config entry, never in `images:` or the SVG lands twice. The colorsets and the watch
+appiconset are plugin output, rewritten every prebuild, ignored by git and EAS.
 
-**`colors:` owns the colorset and the build setting together, you cannot keep one without the
-other.** Per name it writes the colorset into the source tree each prebuild, and
-`with-xcode-changes.js` sets `ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME` /
-`ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME` only while the entry exists. The trick that
-keeps `AppWidgetIcon.symbolset` out of `images:` has no equivalent: drop `$accent` and the colorset
-survives but the gallery button goes black.
+**`colors:` owns the colorset and the build setting together, one cannot stay without the other.**
+Per name it writes the colorset each prebuild, and `with-xcode-changes.js` sets
+`ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME` /
+`ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME` only while the entry exists. Drop `$accent` and
+the colorset survives but the gallery button goes black; the symbolset trick has no equivalent here.
 
 **The hex in `colors:` is p3, not sRGB.** `with-ios-colorset.js` always emits
 `color-space: display-p3`, so `#007AFF` goes in as `#3478F6` and `#0A84FF` as `#3B82F7` or the tone
@@ -78,25 +78,22 @@ comes out visibly off. A system color reference (`{"platform":"ios","reference":
 tried, the next prebuild overwrote it. Doing it properly needs our own config plugin after
 `apple-targets`, not worth a difference that only shows under increased contrast.
 
-**Never pass `--no-clean`.** Cleaning is the default. Upstream issues 201 and 202 report
-`--no-clean` crashing the plugin and duplicating targets; not reproduced here, and not worth
-reproducing.
+**Never pass `--no-clean`**, cleaning is the default. Upstream issues 201 and 202 report it
+crashing the plugin and duplicating targets; not reproduced here, not worth reproducing.
 
-**Deployment target is 17.0**, above the app's 16.4, because `AppIntentConfiguration` requires it.
-Deliberate. It costs widgets on iOS 16.4 to 16.7 only, the app itself needs 16.4.
-
-**Extension reports `CFBundleDevelopmentRegion = en`**, hand written project said `es-419`. Not
-fixable from the target `Info.plist`, `GENERATE_INFOPLIST_FILE` synthesises it from project level
-`developmentRegion` and no Expo option exposes that. Measured twice. Harmless, every string is a
-Swift literal and the store listing still reads Spanish. Localizing one day needs a config plugin.
+**Extension reports `CFBundleDevelopmentRegion = en`.** `GENERATE_INFOPLIST_FILE` synthesises it
+from project level `developmentRegion`, no Expo option exposes that and the target `Info.plist`
+cannot override it (measured twice). Harmless, every string is a Swift literal and the store
+listing still reads Spanish. Localizing needs a config plugin.
 
 **No `icon` in the RateWidgets target config**, so the extension inherits the project level
 `ASSETCATALOG_COMPILER_APPICON_NAME`. Fine with a plain PNG app icon, revisit before moving to an
 Xcode 26 `.icon` bundle. Upstream issue 159.
 
-**The rate parameters have to be non optional.** `[RateType]?` is what Xcode's converter emits and
-with it the editor opens on three "Seleccionar" rows while the widget renders fine off the intent
-`types` fallback. Dropping the `?` and giving the parameter its own query fixes it:
+**Every parameter, rates and markets, is non optional, each collection with its own query.**
+`[RateType]?` is what Xcode's converter emits and with it the editor opens on three "Seleccionar"
+rows while the widget renders fine off the intent `types` fallback. Dropping the `?` and giving the
+parameter its own query fixes it, and is the whole reason a fresh widget opens on its defaults:
 
 ```swift
 @Parameter(title: "Cotizaciones", size: [...], query: ListRateTypesQuery())
@@ -109,10 +106,10 @@ implements `defaultResult()`." `DefaultValue` is an associated type, one per que
 Brechas each need their own `EntityQuery` to keep their own defaults. Per parameter queries exist
 for collections, declared in `AppIntents.swiftinterface`.
 
-Only the collections needed this, the single rate parameter opened on Oficial while still
-`RateType?`. Why was never established. It is non optional too for symmetry, and that is the gap:
-its upgrade path was never re-tested from an App Store build, the collections were. A widget coming
-back from an update having lost its rate, look here first.
+The single rate parameter opened on Oficial while still `RateType?`, why was never established. It
+is non optional too for symmetry, and that is the gap: its upgrade path was never re-tested from an
+App Store build, the collections were. A widget that loses its rate after an update, look here
+first.
 
 **The non optional warning is deliberate, do not silence it with `?`.** The metadata processor
 prints, twice per parameter:
@@ -122,92 +119,85 @@ Encountered a non-optional type for parameter: rateTypes. Conformance to the fol
 protocols requires all parameter types to be optional: ... AppIntents.WidgetConfigurationIntent
 ```
 
-Making the parameter optional to quiet it is what breaks the defaults. The risk it points at was
-measured and does not happen: a widget configured under the SiriKit build keeps its rates after
-updating onto the non optional parameter, tested on device with four widgets, two hand configured
-and two on defaults. Re-test whenever Xcode or the deployment target moves.
+Making the parameter optional is what breaks the defaults. The risk it points at does not happen,
+tested on device with four widgets, two hand configured and two on defaults: a widget configured
+under the SiriKit build keeps its rates after updating onto the non optional parameter. Re-test
+whenever Xcode or the deployment target moves.
 
-**A stale `DerivedData` breaks the build output silently**, and the symptom reads like a code bug.
+**A stale `DerivedData` breaks the build output silently**, the symptom reads like a code bug.
 After a prebuild the extension shipped without its AppIntents metadata and every gallery preview
 rendered redacted. After a target rename the old copy shipped next to the new one and the install
 failed. Delete `DerivedData` and build again before touching any source.
 
-Both targets compiling `packages/client/targets/_shared/Intents.swift` is the design. Moving it out
-of `_shared/` does not restore the metadata, it only drops the app's copy.
-
-**The endpoint is the `API_URL` of the build environment**, never written in the source. The
-`ApiUrl` key of both `Info.plist` holds `$(API_URL)`, which `xcodebuild` resolves from its
-environment, and `getRates` appends `/fetch`. expo run and eas pass it. A build without it, Xcode
-opened from the Dock included, ships widgets and a watch app that never request, silently: they
-draw the stored payload or the unavailable text.
+**The endpoint is the `API_URL` of the build environment**, never in the source. The `ApiUrl` key
+of both `Info.plist` holds `$(API_URL)`, which `xcodebuild` resolves from its environment, and
+`getRates` appends `/fetch`. expo run and eas pass it. A build without it, Xcode opened from the
+Dock included, ships widgets and a watch app that never request, silently: they draw the stored
+payload or the unavailable text.
 
 **One provider for every widget**, `RateTypesProvider<Intent>`, reading `types`, `valueType` and
 `defaultTypes` from the `RateTypesIntent` the intent conforms to. The markets widgets, Indicadores
-and Lista de indicadores, reuse the rate card and the list views with a `WidgetKind`, which picks
-the unavailable text and the `/markets` route. They pick from `Helper.getMarketTypes()` through
-their own queries and never mix with the rates, like the app tabs, so dropping them touches no
-rate widget.
+and Lista de indicadores, reuse the rate card and list views with a `WidgetKind`, which picks the
+unavailable text and the `/markets` route. They pick from `Helper.getMarketTypes()` through their
+own queries and never mix with the rates, like the app tabs, so dropping them touches no rate
+widget.
 
 **`placeholder(in:)` is synchronous and must stay off the network.** Apple documents it as
 returning a `TimelineEntry` immediately and `AppIntentTimelineProvider` makes only `snapshot` and
-`timeline` async, so `getRates` is `async` and awaited from those two, never blocked on a
-`DispatchSemaphore`. `placeholder` reads `storedRates()` and nothing else.
+`timeline` async, so `getRates` is `async`, awaited from those two, never blocked on a
+`DispatchSemaphore`. `placeholder` reads `storedRates()` only. It cannot return no rates: WidgetKit
+paints the placeholder as the widget content until the first timeline lands, so an empty one shows
+"Cotizaciones no disponibles" right after an install. `placeholderEntry` falls back to synthesised
+values, **equal and non zero on purpose**: `SpreadWidgetEntryView` divides one price by the other
+and a pair of zeros gives NaN. If revisited, install and look at the widgets before opening the app.
 
-Returning no rates is not an option, WidgetKit paints the placeholder as the widget content until
-the first timeline lands so an empty one shows "Cotizaciones no disponibles" right after an install.
-`placeholderEntry` falls back to synthesised values, **equal and non zero on purpose** because
-`SpreadWidgetEntryView` divides one price by the other and a pair of zeros gives NaN. If revisited,
-install and look at the widgets before opening the app.
+**Nothing serialises the five widgets**, `getRates` reads the cache at the top and writes it once
+the response lands, so a concurrent reload may cost one request per widget instead of one. Never
+measured. Android has no hole here, `RatesApi.fetch` is `@Synchronized` on a single thread executor.
 
-**Nothing serialises the five widgets**, `getRates` reads the cache at the top and writes it
-once the response lands, so a concurrent reload may cost one request per widget instead of one.
-Never measured. Android has no hole here, `RatesApi.fetch` is `@Synchronized` on a single thread executor.
-
-**`@bacons/apple-targets` is in `expo.autolinking.exclude`** so its `ExtensionStorageModule` stays
-unlinked. That module is the App Group bridge and would let a widget render without a request of its
-own, but three things block it: the app holds `{type: {stats: [...]}}` while both widgets parse
-`{type: [ts, value, change]}`; an injected payload renders from one source while the fallback
-renders from the other, so a rate gated in one corrupts a widget with no build error; and it would
-have to pass `usableRates` here and `parse` on android, the choke point that keeps a malformed
-payload off a widget. Taking the package out of that list also retires
-`packages/client/modules/widgetkit/`, which ships `reloadAllTimelines`.
+**`@bacons/apple-targets` is in `expo.autolinking.exclude`** so its `ExtensionStorageModule`, the
+App Group bridge that would let a widget render without its own request, stays unlinked. Three
+things block it: the app holds `{type: {stats: [...]}}` while both widgets parse
+`{type: [ts, value, change]}`; an injected payload and the fallback render from different sources,
+so a rate gated in one corrupts a widget with no build error; and it would have to pass
+`usableRates` here and `parse` on android, the choke point that keeps a malformed payload off a
+widget. Taking the package out of that list also retires `packages/client/modules/widgetkit/`,
+which ships `reloadAllTimelines`.
 
 ## Widget configuration
 
-Configuration is App Intents, not the SiriKit `.intentdefinition` it used to be. What holds it
-together, all of it load bearing:
+App Intents migrated from a SiriKit `.intentdefinition`. All load bearing:
 
-- `CustomIntentMigratedAppIntent` + `static let intentClassName` on the three rate intents, the
-  markets ones are new and carry none. This is what keeps the configuration of widgets already
-  placed by users when they update. Verified on device.
-- `static let isDiscoverable = false`. AppIntents flips the SiriKit default: without this the five
-  configuration intents show up in the Shortcuts app as actions named in English. `LaunchAppIntent`
-  carries it on both branches.
-- Every query is an `EntityStringQuery` through `RateTypeCatalogQuery`, so
-  `entities(matching:)` backs the search field in every rate picker. It does not decide whether a
-  picker opens compact or full screen; what does is not known.
+- `CustomIntentMigratedAppIntent` + `static let intentClassName` on the three rate intents, none on
+  the markets ones. Keeps the configuration of widgets users already placed across the update.
+  Verified on device.
+- `static let isDiscoverable = false`. AppIntents flips the SiriKit default: without it the five
+  configuration intents show up in Shortcuts as actions named in English. `LaunchAppIntent` carries
+  it on both branches.
+- Every query is an `EntityStringQuery` through `RateTypeCatalogQuery`, so `entities(matching:)`
+  backs the search field in every rate picker. It does not decide whether a picker opens compact or
+  full screen; what does is not known.
 - `entities(for:)` resolves in the order asked for. The list widget lets the user drag its rates
-  around and that order is the configuration.
-- `@Parameter(size: [...])` replaces `INIntentParameterArraySizes`. All eight families are listed
-  exactly as the `.intentdefinition` had them even though only two are supported, for schema parity.
-  The markets list intent is new, so it lists only the `.systemSmall` it renders.
-- Every parameter, rates and markets, is **non optional**, and the collections each carry their own
-  query. See the trap above, this is the whole reason a fresh widget opens on its defaults.
+  and that order is the configuration.
+- `@Parameter(size: [...])` replaces `INIntentParameterArraySizes`. All eight families listed as
+  the `.intentdefinition` had them, only two supported, for schema parity. The markets list intent
+  lists only the `.systemSmall` it renders.
+- Every parameter is non optional, see Traps.
 
 A rate retired from `Helper.getRateTypes()` no longer resolves, so `entities(for:)` drops it from
-the selection. The intent `types` only substitutes `defaultTypes` when that leaves the selection empty,
-otherwise the remaining rates stay. It already rendered nothing before, since `usableRates`
-drops unknown types before `lookupRateValues` reads them.
+the selection. The intent `types` substitutes `defaultTypes` only when that leaves the selection
+empty, otherwise the remaining rates stay. It rendered nothing before either, `usableRates` drops
+unknown types before `lookupRateValues` reads them.
 
 ### The blank rows on the first open of a migrated widget
 
 A widget carried over from the SiriKit build shows its collection rows empty the first time its
-configuration sheet opens, right count and drag handles but no labels. Close and reopen and they are
-there for good. Once per placed widget, never on one added new, and the widget renders the right
-rates throughout. Accepted: the stored configuration is intact and closing the sheet untouched
-writes nothing over it. Not the "Seleccionar" defect, which was ours and is fixed above. On the open
-that paints blank the query does answer, measured with `os_log` on device: three identifiers in,
-three entities out, three display representations handed over, three empty rows drawn.
+configuration sheet opens: right count and drag handles, no labels. Close and reopen and they stay.
+Once per placed widget, never on a new one, and the widget renders the right rates throughout.
+Accepted: the stored configuration is intact and closing the sheet untouched writes nothing over
+it. Not the "Seleccionar" defect, fixed above. On the blank open the query does answer, measured
+with `os_log` on device: three identifiers in, three entities out, three display representations
+handed over, three empty rows drawn.
 
 Tested on device and fallen, do not re-run:
 
@@ -225,8 +215,8 @@ Tested on device and fallen, do not re-run:
 ## Rollback
 
 The plugin only runs at prebuild, never at runtime. If it breaks: `expo prebuild -p ios`, commit
-the generated `packages/client/ios/`, drop `@bacons/apple-targets` from `app.config.ts` and un-ignore
-`packages/client/ios/`. The Xcode project becomes hand maintained again, as it was before 2026-08.
+the generated `packages/client/ios/`, drop `@bacons/apple-targets` from `app.config.ts` and
+un-ignore `packages/client/ios/`. The Xcode project becomes hand maintained again.
 
 ## Watch app
 
@@ -237,37 +227,36 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
 
 - **Its data is independent of the phone, no sync**, the install is not: without
   `WKRunsIndependentlyOfCompanionApp` it needs the iPhone app, and setting it cannot be undone in a
-  later build. It calls `/fetch` itself, through the phone connection when it is near and wifi or
-  LTE when not. App Groups do not cross from the phone to the watch, a sync needs
-  WatchConnectivity and a native module on the RN side.
-- **Requests only while open**: on `scenePhase` `.active`, and only when the stored payload is older
-  than 300s, the cloudfront TTL of `/fetch`. A wrist raise reactivates the frontmost app, so that
-  covers coming back. No timer while open, the
-  screen sleeps in 15 to 70s and a timer left running keeps requesting under always on. No
-  background refresh and no data complications, both would request all day with nobody looking.
-  The footer of Cotizaciones and Indicadores shows `last_rates_at`, the last successful fetch, in
-  the app `shortRelative` wording, an old time is a lost connection. The stored time only moves on
-  a fetch, a `TimelineView(.everyMinute)` redraws the minutes between, no request. It is the fetch,
-  not the time of each row, centered alone in the footer. A pull to reveal it was tried and dropped,
-  a gesture nobody finds.
+  later build. It calls `/fetch` itself, through the phone connection when near, wifi or LTE when
+  not. App Groups do not cross to the watch, a sync needs WatchConnectivity and a native module on
+  the RN side.
+- **Requests only while open**: on `scenePhase` `.active`, only when the stored payload is older
+  than 300s, the CloudFront TTL of `/fetch`. A wrist raise reactivates the frontmost app, which
+  covers coming back. No timer while open: the screen sleeps in 15 to 70s and a running timer keeps
+  requesting under always on. No background refresh and no data complications, both would request
+  all day with nobody looking.
+- **The footer of Cotizaciones and Indicadores shows `last_rates_at`**, the last successful fetch,
+  not the time of each row, centered alone, in the app `shortRelative` wording; an old time is a
+  lost connection. It moves only on a fetch, a `TimelineView(.everyMinute)` redraws the minutes
+  between with no request. No pull to reveal it, a gesture nobody finds.
 - **The pages show once there is a payload**, like `InitialScreen` in the app: before that one
   screen, a spinner or "Imposible obtener las cotizaciones." with Reintentar. Indicadores only
   shows when the payload carries markets, like `useMarketsEnabled` hides the app tab.
 - **Indicadores is a page between Cotizaciones and Conversor**, the order of the app tabs.
   Personalizar hides and drags them like the app markets customization, `excluded_markets` and
-  `market_types`, no Mostrar or Orden, over the markets the payload carries like the app; the last
-  one on stays on. `CustomizeSection` and `restoreButton` are shared with the rates settings. Rows
-  are the rate row with the market format, never trimmed, a market carries its own decimals. Rows
-  show `short ?? display` and the markets without `pts`, `pb` or `US$`, see `android-widgets.md`.
+  `market_types`, no Mostrar or Orden; the last one on stays on. `CustomizeSection` and
+  `restoreButton` are shared with the rates settings. Rows are the rate row with the market format,
+  never trimmed, a market carries its own decimals. Rows show `short ?? display` and the markets
+  without `pts`, `pb` or `US$`, see `packages/client/docs/android-widgets.md`.
 - **The complication only launches the app**, no `widgetURL`, one per page would fall out of sync
   the day a page goes. `RateWatchComplications`, the app icon, circular and corner, no label,
   scaled to the slot because the face caps a font there, half the circle and 60% of the corner,
   nothing fetched, one entry with `.never`. The same extension carries the Control Center control
   from watchOS 26, the shared `LaunchControlWidget` behind `#available` in its `WidgetBundle`, with
-  the watch branch of `LaunchAppIntent` that only brings the app forward.
-  The phone control does not reach the watch, watchOS leaves out the controls that open the phone app.
-  The plugin embeds a `watch-widget` in the first watch target it already made and targets go in folder
-  order, so the folder sorts after `RateWatch/` or the extension lands in the iPhone app.
+  the watch branch of `LaunchAppIntent` that only brings the app forward. The phone control does
+  not reach the watch, watchOS leaves out the controls that open the phone app. The plugin embeds a
+  `watch-widget` in the first watch target it already made and targets go in folder order, so the
+  folder sorts after `RateWatch/` or the extension lands in the iPhone app.
 - **The widget sets the representation, the app the texts, watchOS the rest.** Rows are the two
   lines of the list widget. Settings hold the widget configuration, `excluded_rates` with the app
   key, `value_type` as the widget Mostrar parameter with its default. Restablecer is a `.bordered`
@@ -283,14 +272,14 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
   pickers, and the rate toggles in the manual order whatever the order shown, like the app customize
   screen: a tap toggles, a long press drags (`.onMove`) and leaves the order manual and ascending.
   Valor sorts by the value shown, the Mostrar end, the app by the higher end of the pair. No drawn
-  grip, it crowds the names on 40mm, and watchOS has no `editMode`. No rate detail, it
-  added little on the wrist.
-- **The converter is the last page**, after Indicadores when it shows, one stack around every page for the
-  titles. Horizontal on purpose: the HIG prefers vertical pages, but those go before a scrolling
-  one, which would put the converter ahead of the rates, and a toolbar button brings back the
-  truncated title. The amount starts at 1 and a tap opens a keypad sheet, watchOS has no numeric
-  keyboard and a `TextField` opens the full text input. A row swaps Divisa and Peso. The list floor
-  is 40pt, both rows the same height with about the air of the list cards, the 44pt default left a
+  grip, it crowds the names on 40mm, and watchOS has no `editMode`. No rate detail, it added little
+  on the wrist.
+- **The converter is the last page**, after Indicadores when it shows, one stack around every page
+  for the titles. Horizontal on purpose: the HIG prefers vertical pages, but those go before a
+  scrolling one, putting the converter ahead of the rates, and a toolbar button brings back the
+  truncated title. The amount starts at 1, a tap opens a keypad sheet: watchOS has no numeric
+  keyboard and a `TextField` opens the full text input. A row swaps Divisa and Peso. List floor
+  40pt, both rows the same height with about the air of the list cards; the 44pt default left a
   short token in a tall platter.
 - **Amounts follow one policy**, on the converter and the list. When the longest row of a list does
   not fit on one line every row drops its cents (`formatRateCurrency(cents:)`), measured with the
@@ -302,18 +291,18 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
   one layout. The system title stays in the bar whatever the display mode. Tried and dropped: a
   footer link or capsule competed with the last update, `.primaryAction` hides until a pull, a
   leading item reads as navigation and `.bottomBar` floats over the last row.
-- **The title goes with the list only.** Error is a plain `VStack` the system centers,
-  loading a bare `ProgressView`. `ContentUnavailableView` anchors to the top on watchOS and
-  `.frame` does not move it.
+- **The title goes with the list only.** Error is a plain `VStack` the system centers, loading a
+  bare `ProgressView`. `ContentUnavailableView` anchors to the top on watchOS and `.frame` does not
+  move it.
 - **FiraGO only for data**, the rate cards, the converter rates, its amount input and the amount
   typed on the keypad, for the arrows like the widget. Everything else is SF, FiraGO ships one
   weight and the section titles, buttons and settings lose the semibold the system hierarchy rests
   on. Sized from `UIFont.preferredFont(forTextStyle:)`. A fixed base with `relativeTo:` takes the
   iOS sizes, and `UITraitCollection` does not exist on watchOS. Every view that uses it declares an
-  unread `@Environment(\.dynamicTypeSize)` so it redraws when the text size changes.
+  unread `@Environment(\.dynamicTypeSize)` so it redraws when the text size changes. The font is the
+  same symlink with `UIAppFonts`, the rule in Traps applies.
 - **Locale sensitive text has to force its locale**, apple-targets pins the watch bundle to `en` and
   `Locale.current` takes it. Number separators come from the region and are fine.
-- **The font is the same symlink with `UIAppFonts`**, the rule in Traps applies.
 - **Build it alone** with `-target RateWatchApp -sdk watchsimulator` on `AmbitoDolar.xcodeproj`. The
   full app build takes the destination only, `-sdk iphonesimulator` drags the watch target onto the
   ios sdk and fails on its icon. It also needs the watchOS runtime of its Xcode, the scheme embeds
