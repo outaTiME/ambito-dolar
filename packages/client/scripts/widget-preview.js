@@ -4,6 +4,8 @@
 //   node scripts/widget-preview.js assets/widgets/android-rate-2x2.png --size 716 --index 1
 //   node scripts/widget-preview.js assets/widgets/android-rate-2x2.png --device emulator-5554
 //
+// --index is the position in the printed card list, the order follows the layout
+//
 // Place the widget on the home screen, leave it visible, then run this with a device
 // connected. It screencaps, finds the card, cuts it out with transparent rounded
 // corners and writes the asset. The widgets module copies it from here at build time,
@@ -18,8 +20,8 @@ const path = require('path');
 const { PNG } = require('pngjs');
 const { parseArgs } = require('util');
 
-// widget_corner in dimens.xml over the 130dp a 2x2 card reports
-const RADIUS_RATIO = 20 / 130;
+// widget_corner in dimens.xml over about the card side of the capture phone, slightly inside on a bigger card
+const RADIUS_RATIO = 20 / 170;
 // a card pixel is this dark, the launcher wallpaper never is
 const DARK = 30;
 // pulls the cut inside the antialiased boundary so no wallpaper survives

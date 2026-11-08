@@ -1,29 +1,33 @@
 # Android widgets
 
-Read this before touching anything under `packages/client/modules/widgets/`, the ios
-`RateWidgets` target, or the widget previews. `AGENTS.md` carries the pointer and the trap
-lines, this file carries everything else.
+Read before touching `packages/client/modules/widgets/`, the ios `RateWidgets` target, or the
+widget previews. The root `AGENTS.md` carries the pointer and the trap lines, this file the rest.
 
 ## The module
 
 Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews and XML layouts, no react-native, no Compose. Android stays CNG: `packages/client/android/` is generated, only the module is checked in, and autolinking merges its manifest and `res/` into the app, so no config plugin.
 
-- **The card is square** through an ImageView with `adjustViewBounds` over a 1:1 shape drawable. Never `match_parent`. Sizing the card from what the launcher reports is unreliable, measured on two phones: a Moto Edge 30 Ultra cropped 16dp, a Galaxy S9 scaled to 78%.
-- **The text sizes scale to the reported width, `scale` in `WidgetProvider.views()`.** `Sizes` is a
-  proportion of the card, so every size is multiplied by `reported / REFERENCE_DP`, clamped to
-  `SCALE_FLOOR .. 1`, and the padding follows at `(1 + scale) / 2`. `REFERENCE_DP` is 170 and has to
-  stay **under the narrowest report that still renders right**, the 174 of an s9. `SCALE_FLOOR` is
-  0.7, past it `TextBitmap` ellipsizes. The picker preview has no widget to ask and gets 1.
-  Measured with `uiautomator dump`, reported against drawn: s9 on android 10 and one ui 174/144
-  right, android 12 emulator 175/176 right, android 10 emulator 130/130 overflows. The two do not
-  track, so the ratio is the signal.
-- **A list row never shrinks a name or a date**, every row keeps one size and a long one ellipsizes, as ios and the watch do with no `minimumScaleFactor`. The slot is an ImageView with `fitStart` that would scale an overflowing bitmap down, so the name and the date get the reported card minus the value beside them and `ROW_GAP_DP`, the margin in `widget_list.xml`. A host that reports more than it draws still lands on `fitStart`; the picker preview keeps the ceiling.
+- **The card is square on the shorter side of the cell** through an ImageView with `adjustViewBounds` over a 1:1 shape drawable larger than any cell, inside a `wrap_content` `RelativeLayout` that pins the content to it. Never `match_parent`: a tablet cell is wider than tall and stretched the card. Sizing the card from what the launcher reports is unreliable, measured on two phones: a Moto Edge 30 Ultra cropped 16dp, a Galaxy S9 scaled to 78%.
+- **One variant per cell size, each with its own scale, `responsive()` in `WidgetProvider.kt`.**
+  From android 12 `RemoteViews(Map<SizeF, RemoteViews>)` over `OPTION_APPWIDGET_SIZES`, one
+  variant per reported size, a foldable reports four, and the host draws the one that fits; below
+  it `RemoteViews(landscape, portrait)` from the four min/max extras. Each variant takes its card side, the shorter of width and height,
+  and `Sizes`, a proportion of the card, is multiplied by `side / REFERENCE_DP`, at least
+  `SCALE_FLOOR`, the padding at `(1 + scale) / 2`. Measured: Pixel phone card 181dp, Pixel Tablet
+  landscape 233dp, both with the text in the proportion of the preview png. `REFERENCE_DP` is 170
+  and has to stay **under the narrowest report that still renders right**, the 174 of an s9.
+  `SCALE_FLOOR` is 0.7, past it `TextBitmap` ellipsizes. Measured with `uiautomator dump`, reported
+  against drawn: s9 on android 10 and one ui 174/144 right, android 12 emulator 175/176 right,
+  android 10 emulator 130/130 overflows. The two do not track, so the ratio is the signal.
+- **The picker preview goes at scale 1**, it has no widget to ask, so on a tablet picker it reads
+  smaller than the placed widget.
+- **Names and dates ellipsize to the reported room**, every row keeps one size and a long one ellipsizes, as ios and the watch do with no `minimumScaleFactor`. The slot is an ImageView with `fitStart` that would scale an overflowing bitmap down, so the name and the date get the reported card minus the value beside them and `ROW_GAP_DP`, the margin in `widget_list.xml`. A host that reports more than it draws lands on `fitStart`, which shrinks them; the picker preview keeps the ceiling.
 - **Every text bitmap is tagged with the current density** in `TextBitmap`. The default tag is the physical density, so with a changed display size the host scaled every slot by the ratio of the two, the values grew and the names shrank. `adb shell wm density` reproduces it; the app process keeps the old density until it restarts.
 - **One role, one size, in `Sizes.kt`.** The ios point sizes times `1.05`, measured as glyph height over card width, independent of screen and density. In dp not sp, so the system font scale cannot move them, which is what `sizeCategory large` does on ios.
 - **A date that looks lighter on one widget is antialiasing or the launcher scaling it down**, never a different color. Roles live in `views()`, each widget declares only which slot carries the change color, because ios colors the small one on the rate and the big one on the spread.
 - **Gated to api 26** with `android:enabled="@bool/widget_supported"` plus a `values-v26` override, because `Resources.getFont` is api 26 and the text is drawn with it. Below that the launcher never lists the widgets.
 - **`android:fontFamily` does NOT work here.** The launcher builds the views in its own process and resolves only system typefaces, so the font falls back with no error and no log line. Measured on four devices: holds on One UI, fails on pixel, motorola, emulator. Not a format problem, a `.ttf` fails the same.
-- **The text is drawn here and travels as a bitmap.** `TextBitmap.of()` is the one routine every slot goes through, so a new widget writes no render code. Only the glyphs are pixels, the card and layout stay real views. Around 325 KB per list redraw against a 1 MB binder ceiling, `ALPHA_8` plus a tint would cut it to a quarter.
+- **The text is drawn here and travels as a bitmap.** `TextBitmap.of()` is the one routine every slot goes through, so a new widget writes no render code. Only the glyphs are pixels, the card and layout stay real views. The bitmap bytes grow with the scale squared, one set per size variant, against a `RemoteViews` ceiling that depends on the display, `ALPHA_8` plus a tint would cut them to a quarter.
 - **A restore does hand out new ids**, so `onRestored` moves the config keys across and is not dead code. `allowBackup` is false in `packages/client/app.config.ts` but from android 12 that no longer covers a device to device transfer, which is `dataExtractionRules` and there is none, so where a manufacturer still allows it the default applies.
 - **Redraw triggers**: `APPWIDGET_UPDATE`, `MY_PACKAGE_REPLACED`, `LOCALE_CHANGED`, `TIMEZONE_CHANGED`, all through `goAsync` and all hitting `/fetch`, plus `reloadWidgets()` from `withRateUpdates` and the config save. Locale and zone matter because separators and time are read at render. `MY_PACKAGE_REPLACED` matters because an app update re-inflates every widget from `initialLayout` and without it they sit bare up to half an hour.
 - **The periodic redraw is a WorkManager `PeriodicWorkRequest`**, 30 min behind a network constraint. `updatePeriodMillis` is 0 on purpose: it is an alarm, it fires with no network, and those redraws died in milliseconds on a doze wake. A failed fetch returns `Result.retry()` with no count of our own, WorkManager re-evaluates the constraint and backs off 30s doubling to five hours.
@@ -36,7 +40,7 @@ Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews
 - **Nothing is cached across a locale change.** The `DecimalFormat` is built per call and not held in a lazy, which would freeze the separators of whatever locale was set the first time a widget drew.
 - **Unknown rate types are dropped at parse time**, `Format.isKnown` over `RATE_TYPES` and `MARKET_TYPES`, mirroring the ios `usableRates` whitelist. A type the app retires can still arrive from the service, and without the filter the widget titles a rate with its raw id. Survivors keep their order and compact to the top, blanks pad the bottom, same as the ios `compactMap`. The spread needs both sides or it goes empty, the list only when none of the three survives.
 - **Widget order in the picker follows the labels, not the declaration.** The launcher sorts alphabetically. Measured twice: two declaration orders gave the same picker, and renaming the labels to `Zzz`/`Aaa`/`Mmm` reordered it. Labels have to match `.configurationDisplayName(...)`, so the order is not ours to pick.
-- **`previewImage`**: regenerate from a live device with `node scripts/widget-preview.js assets/widgets/android-rate-2x2.png [--device serial]` from `packages/client`, ImageOptim after. The module `build.gradle` `copyWidgetRes` task copies `packages/client/assets/fonts/FiraGO-Regular.otf` into `font` as `widget_firago_regular.otf` and every `android-*-2x2.png` into `drawable-nodpi`, straight from `packages/client/assets/` at build time, no prebuild step between. From android 15 `setWidgetPreview` replaces them at runtime with the real rates, capped at two calls per hour per provider.
+- **`previewImage`**: regenerate from a live device with `node scripts/widget-preview.js assets/widgets/android-rate-2x2.png [--index n] [--device serial]` from `packages/client`, `oxipng -o 4 --strip safe` after. The module `build.gradle` `copyWidgetRes` task copies `packages/client/assets/fonts/FiraGO-Regular.otf` into `font` as `widget_firago_regular.otf` and every `android-*-2x2.png` into `drawable-nodpi`, straight from `packages/client/assets/` at build time, no prebuild step between. From android 15 `setWidgetPreview` replaces them at runtime with the real rates, capped at two calls per hour per provider.
 - Android cannot re-render a widget on a system theme change, so they are forced dark like ios.
 - **Logs**: `adb logcat -s AmbitoWidgets` prints nothing on One UI even with the lines in the buffer, measured on a galaxy s9: 0 against 324 for the same log. Use `adb logcat AmbitoWidgets:I *:S`. One line per redraw with its trigger and how many widgets it drew, one per call to the service with its duration.
 - Module resources are all prefixed `widget_`, plus `Theme.Widget.Config`. Keep it, everything merges into one namespace with the app.
@@ -67,14 +71,15 @@ gets shipped.
 - **A default**: ios in `Helper.swift`, `getDefaultRateType`, `getDefaultRateTypes` and
   `getDefaultSpreadRateTypes`, read from `RateTypeQuery.defaultResult` for the single rate and from
   each intent's `types` fallback for the two lists, the markets inline in `Intents.swift`, the first
-  and the first three of `getMarketTypes()`; android in each provider's `defaultRates`.
+  and the first three of `getMarketTypes()`; android in each provider's `defaultRates`. Rate
+  `oficial`, list `oficial, bna, informal`, spread `informal, bna` on both.
 - **Rates and markets share the flat keys of `/fetch`**, so an id never repeats between core
   `getAvailableRateTypes` and `getAvailableMarketTypes`, a core test fails otherwise. The market
   display rules are ported twice, `marketFormats` in `Rates.swift` and `Format.MARKETS`, from
   `MARKETS` in `packages/client/config/kinds.ts`: a change there moves all three. The native ones
-  drop the units on purpose, like the tickers, Merval `2.848.945`, Riesgo país `1.684`, Reservas
+  drop the units on purpose, like the tickers, MSCI Merval `84.093`, Riesgo país `1.684`, Reservas
   `50.043 M`; the app keeps `pts`, `pb` and `US$`. A month or a day is formatted in
-  Buenos Aires with es-AR, a time (Merval, Riesgo país) in the device zone like the rates.
+  Buenos Aires with es-AR, a time (MSCI Merval, Riesgo país) in the device zone like the rates.
 - **A /fetch schema change**: ios first, always, it reaches the widget and the watch app through
   `packages/client/targets/_shared/Rates.swift`. `lookupRateValues` reads the array by index and
   forces its casts, surviving only because `wellFormed` filters ahead of it, the stored payload
@@ -116,7 +121,7 @@ Going the other way there is a single line: `withRateUpdates` calls `reloadWidge
 - Rows update in place after a pick, the dialog is never rebuilt under the user. Both it and the picker are held in fields and dismissed in `onDestroy`, the pending selection survives a rotation through `onSaveInstanceState`.
 - Per widget config in SharedPreferences `ambito_widgets`, keys `rate0_<id>`, `rate1_<id>`, `rate2_<id>` and `value_<id>`, cleaned on delete. The same file also holds `last_payload`, which is the fallback above and is not per widget, so it is never cleaned.
 - Picking a rate another slot holds swaps them, so a widget never shows the same rate twice.
-- Defaults belong to each widget and mirror the ios ones: rate `oficial`, list `oficial, bna, informal`, spread `informal, bna`.
+- Defaults belong to each widget, see "A default" above.
 
 ## Picker copy
 

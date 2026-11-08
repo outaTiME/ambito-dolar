@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.util.Log
 import android.util.SizeF
 import android.view.View
@@ -178,14 +177,14 @@ abstract class WidgetProvider : AppWidgetProvider() {
     // null means no answer and nothing on disk, the empty text beats a bare initialLayout
     if (rates == null) {
       for (id in ids) {
-        manager.updateAppWidget(id, views(context, null, id))
+        manager.updateAppWidget(id, responsive(context, null, id))
       }
       return
     }
     if (ids.isNotEmpty()) {
       // an id removed meanwhile is a no op for the host, never a widget brought back
       for (id in ids) {
-        manager.updateAppWidget(id, views(context, card(context, id, rates), id))
+        manager.updateAppWidget(id, responsive(context, card(context, id, rates), id))
       }
       Log.i(TAG, "${javaClass.simpleName} drew ${ids.size} on $trigger")
     }
@@ -210,7 +209,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
     manager.setWidgetPreview(
       ComponentName(context, javaClass),
       AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
-      views(context, preview, null),
+      views(context, preview, null, 0),
     )
   }
 
@@ -242,34 +241,47 @@ abstract class WidgetProvider : AppWidgetProvider() {
     return CEILING * (card - 2 * padding)
   }
 
-  // OPTION_APPWIDGET_SIZES from android 12, the old extra when it is missing or empty
+  // one variant per cell size the host reports, each scaled to its own card, the square on the shorter
+  // side, so a rotation or a phone's short landscape cell never reuses another size's text
   @Suppress("DEPRECATION")
-  private fun widthDp(options: Bundle): Int {
+  private fun responsive(context: Context, content: Content?, widgetId: Int): RemoteViews {
+    val options = AppWidgetManager.getInstance(context).getAppWidgetOptions(widgetId)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      options
-        .getParcelableArrayList<SizeF>(AppWidgetManager.OPTION_APPWIDGET_SIZES)
-        ?.minOfOrNull { it.width }
-        ?.let { return it.toInt() }
+      val sizes = options.getParcelableArrayList<SizeF>(AppWidgetManager.OPTION_APPWIDGET_SIZES)
+      if (!sizes.isNullOrEmpty()) {
+        // the constructor throws past 16 sizes
+        return RemoteViews(
+          sizes.distinct().take(16).associateWith { views(context, content, widgetId, minOf(it.width, it.height).toInt()) },
+        )
+      }
     }
-    return options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
+    val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
+    val maxWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 0)
+    val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0)
+    val maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
+    // before android 12 the four extras: portrait is min width by max height, landscape max width by min height
+    if (minWidth > 0 && maxWidth > 0 && minHeight > 0 && maxHeight > 0) {
+      return RemoteViews(
+        views(context, content, widgetId, minOf(maxWidth, minHeight)),
+        views(context, content, widgetId, minOf(minWidth, maxHeight)),
+      )
+    }
+    return views(context, content, widgetId, minWidth)
   }
 
-  private fun views(context: Context, content: Content?, widgetId: Int?): RemoteViews {
+  // reported is the card side in dp, 0 for the picker preview, which has no widget to ask
+  private fun views(context: Context, content: Content?, widgetId: Int?, reported: Int): RemoteViews {
     val views = RemoteViews(context.packageName, layout)
     views.setViewVisibility(R.id.widget_content, if (content == null) View.GONE else View.VISIBLE)
     views.setViewVisibility(R.id.widget_empty, if (content == null) View.VISIBLE else View.GONE)
-    // 0 for the picker preview, which has no widget to ask
-    val reported =
-      widgetId?.let { widthDp(AppWidgetManager.getInstance(context).getAppWidgetOptions(it)) } ?: 0
-    // Sizes is a proportion of the card, so a card under REFERENCE_DP scales down and never up
-    val scale = if (reported > 0) (reported / REFERENCE_DP).coerceIn(SCALE_FLOOR, 1f) else 1f
+    // Sizes is a proportion of the card, so the text follows it both ways, a tablet card is bigger
+    val scale = if (reported > 0) (reported / REFERENCE_DP).coerceAtLeast(SCALE_FLOOR) else 1f
     // the padding follows the text at half its rate
     val padding =
       (context.resources.getDimensionPixelSize(R.dimen.widget_padding) * (1f + scale) / 2f)
         .roundToInt()
-    if (scale < 1f) {
-      views.setViewPadding(R.id.widget_content, padding, padding, padding, padding)
-    }
+    // always set, a host reusing the view across size variants keeps the last padding otherwise
+    views.setViewPadding(R.id.widget_content, padding, padding, padding, padding)
     when (content) {
       null ->
         views.slot(

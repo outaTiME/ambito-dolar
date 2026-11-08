@@ -6,15 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <!-- square through the 1:1 drawable below, never stretched by a tall cell -->
-  <FrameLayout
-      android:layout_width="match_parent"
+  <!-- square on the shorter side of the cell, the 1:1 drawable sizes it and the content is pinned to it -->
+  <RelativeLayout
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
       android:background="@drawable/widget_card_background">
 
     <ImageView
-        android:layout_width="match_parent"
+        android:id="@+id/widget_square"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:importantForAccessibility="no"
@@ -23,8 +24,12 @@
     <LinearLayout
         android:id="@+id/widget_content"
         android:screenReaderFocusable="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignStart="@id/widget_square"
+        android:layout_alignTop="@id/widget_square"
+        android:layout_alignEnd="@id/widget_square"
+        android:layout_alignBottom="@id/widget_square"
         android:orientation="vertical"
         android:padding="@dimen/widget_padding"
         android:visibility="gone">
@@ -68,7 +73,7 @@
         android:id="@+id/widget_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_centerInParent="true"
         android:visibility="gone" />
-  </FrameLayout>
+  </RelativeLayout>
 </FrameLayout>
