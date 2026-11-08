@@ -1,0 +1,10 @@
+steps:
+  - launch: im.outa.AmbitoDolar
+  - echo: a cold start fetches the rates before the list shows
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - await: { idle: true, timeout: 20000 }
+  - echo: the iPad tab bar shows icons only and exposes no name or id, its markets icon by position, landscape in portrait axes
+  - tool: gesture-tap
+    args: { x: 0.935, y: 0.480 }
+  - await: { visible: { text: Merval } }
+  - await: { idle: true, timeout: 20000 }

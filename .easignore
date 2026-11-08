@@ -6,6 +6,8 @@
 dist/
 web-build/
 expo-env.d.ts
+.metro-health-check*
+*.tsbuildinfo
 
 # Native
 build/
@@ -15,6 +17,7 @@ build/
 *.p12
 *.key
 *.mobileprovision
+*.pem
 
 # Agent skills, installed per machine and not part of the project
 .agents/
@@ -45,7 +48,7 @@ packages/client/targets/*/Assets.xcassets/*.colorset/
 packages/client/targets/*/Assets.xcassets/*.appiconset/
 
 # Environment variables
-.env
+.env*
 
 # Firebase (Android) Google services
 google-services.json
@@ -76,10 +79,14 @@ packages/backend/*
 !packages/client
 packages/client/test.js
 packages/client/scripts/
+packages/client/.argent/
 !packages/core
 packages/core/*
 !packages/core/index.js
 !packages/core/package.json
+!packages/screenshots
+packages/screenshots/*
+!packages/screenshots/package.json
 !packages/website
 packages/website/*
 !packages/website/package.json

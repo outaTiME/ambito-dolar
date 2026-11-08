@@ -1,0 +1,11 @@
+steps:
+  - launch: im.outa.AmbitoDolar
+  - echo: a cold start fetches the rates before the list shows
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - await: { idle: true, timeout: 20000 }
+  - tap: { text: Ajustes }
+  - await: { visible: { text: Notificaciones } }
+  - tap: { text: Notificaciones }
+  - echo: simulators show the settings without the permission, the shot shows the defaults
+  - await: { visible: { text: Cierre de jornada } }
+  - await: { idle: true, timeout: 20000 }

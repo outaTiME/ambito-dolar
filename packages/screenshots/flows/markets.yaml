@@ -1,0 +1,8 @@
+steps:
+  - launch: im.outa.AmbitoDolar
+  - echo: a cold start fetches the rates before the list shows
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - await: { idle: true, timeout: 20000 }
+  - tap: { text: Indicadores }
+  - await: { visible: { text: Merval } }
+  - await: { idle: true, timeout: 20000 }

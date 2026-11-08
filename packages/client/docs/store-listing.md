@@ -1,7 +1,26 @@
 # Store listing
 
-Applies when writing the App Store / Google Play description or the "What's New" entry of a release.
+Applies when writing the App Store / Google Play listing or the "What's New" entry of a release.
 Same copy register as the app (`packages/client/docs/copy-register.md`): voseo, no tuteo, no `colaborar`.
+
+## Writing
+
+- No device or platform names in the description, the screenshots show them.
+- Edit the current text instead of rewriting it. Name, subtitle and short description stay.
+
+## Fields
+
+Same in both stores unless noted.
+
+- Name: `Ámbito Dólar`.
+- Subtitle (App Store) and short description (Play): `Simple, elegante y efectiva`.
+- App Store promotional text: empty.
+- App Store keywords, 100 characters, no spaces, no word already in the name or subtitle. `riesgo`
+  and `pais` go apart, Apple combines them:
+
+```
+euro,real,blue,bna,tarjeta,ccl,mep,cripto,mayorista,conversor,widget,inflacion,merval,riesgo,pais
+```
 
 ## Description
 
@@ -9,7 +28,7 @@ Same copy register as the app (`packages/client/docs/copy-register.md`): voseo, 
   indicators with `getAvailableMarketTypes`, names as the cards show them.
 - No "tiempo real": rates update automatically during the market day, by polling.
 - No colons, sections `COTIZACIONES` and `INDICADORES` as the only headings, features in one sentence.
-- Current text, 2026-10 (14.2.0):
+- Current text:
 
 ```
 Ámbito Dólar es la aplicación líder para seguir las cotizaciones de las principales divisas en Argentina. Simple, elegante y efectiva, te muestra el dólar blue, el oficial, el MEP y los indicadores económicos más relevantes, actualizados automáticamente durante la jornada.
@@ -22,7 +41,7 @@ COTIZACIONES
 INDICADORES
 - Inflación mensual e interanual
 - Plazo fijo y UVA
-- Riesgo país y Merval
+- Riesgo país y MSCI Merval
 - Reservas del BCRA
 
 Ámbito Dólar va más allá con notificaciones de apertura, cierre y variaciones, gráficos históricos, brechas entre cotizaciones, un conversor integrado y widgets para tu pantalla principal, todo configurable a tu medida.
@@ -49,6 +68,12 @@ One entry per release, newest first, separated by `—`:
 - One `•` line per user visible change, one sentence with a final period. Openers in use: `Nueva/Nuevo…`,
   `Ahora podés…`, `<Cotización> se suma a las cotizaciones disponibles.`, `Se suman…`.
 - A platform limit goes in parentheses at the end: `(requiere Android 8 o superior)`.
+- A line that names a device (Apple Watch, iPhone Duo, iPad, tablets) splits the entry in one per
+  store, each with only what applies to it.
 - The closing line is fixed and always last: `Ajustes estéticos, corrección de errores y mejoras en la
 estabilidad.` A release with nothing user visible carries only that line.
 - Fixes and internals (tracking, payload, polling cadence) stay out unless the user notices them.
+
+## Screenshots
+
+See `docs/store-screenshots.md`.

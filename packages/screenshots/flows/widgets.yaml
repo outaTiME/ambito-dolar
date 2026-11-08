@@ -1,0 +1,13 @@
+steps:
+  - launch: im.outa.AmbitoDolar
+  - echo: the app fetches the rates first, the widgets reload from the same data
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - await: { idle: true, timeout: 20000 }
+  - echo: the iOS widgets are alone on the only page, no swipe
+  - tool: button
+    args: { button: home }
+  - wait: 1000
+  - tool: button
+    args: { button: home }
+  - echo: the home screen is not the app, so no await reads it
+  - wait: 3000

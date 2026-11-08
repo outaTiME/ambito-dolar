@@ -1,0 +1,6 @@
+steps:
+  - launch: im.outa.AmbitoDolar
+  - echo: a cold start fetches the rates before the list shows
+  - await: { visible: { text: Oficial }, timeout: 30000 }
+  - echo: the first launch shows the rates of the last run, still for 5 s gives the fetch time to land
+  - await: { idle: true, stableFor: 5000, timeout: 20000 }

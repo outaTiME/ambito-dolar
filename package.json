@@ -15,12 +15,12 @@
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
     "astro-eslint-parser": "^3.2.0",
-    "ava": "^8.3.0",
+    "ava": "^8.4.0",
     "eslint": "^9.39.5",
     "eslint-config-universe": "^16.1.2",
     "eslint-plugin-astro": "^3.2.1",
     "husky": "^9.1.7",
-    "lerna": "^10.1.1",
+    "lerna": "^10.1.2",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.2",
     "sst": "^4.17.2",
@@ -34,6 +34,7 @@
     "client:prebuild": "yarn workspace @ambito-dolar/client exec expo prebuild",
     "client:build": "yarn workspace @ambito-dolar/client exec eas build --clear-cache",
     "client:check": "yarn workspace @ambito-dolar/client run check",
+    "client:e2e": "yarn workspace @ambito-dolar/client run e2e",
     "client:doctor": "yarn workspace @ambito-dolar/client exec npx expo-doctor@latest",
     "client:typecheck": "tsc --noEmit -p packages/client/tsconfig.json",
     "infra:start": "yarn sst dev",
@@ -41,6 +42,7 @@
     "infra:remove": "yarn sst remove",
     "website:start": "yarn workspace @ambito-dolar/website run start",
     "website:clean": "yarn workspace @ambito-dolar/website run clean",
+    "screenshots": "yarn workspace @ambito-dolar/screenshots run start",
     "publish": "lerna version --conventional-commits --conventional-graduate",
     "version": "yarn install && git stage yarn.lock",
     "depcheck": "yarn workspaces foreach -A --verbose exec npx depcheck",
@@ -48,6 +50,6 @@
   },
   "packageManager": "yarn@4.18.1",
   "engines": {
-    "node": "^22.18"
+    "node": "22"
   }
 }

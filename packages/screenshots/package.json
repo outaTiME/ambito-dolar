@@ -1,0 +1,14 @@
+{
+  "name": "@ambito-dolar/screenshots",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "./run.sh"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^1.1.0",
+    "@swmansion/argent": "^0.32.0",
+    "@types/node": "^22.20.5"
+  }
+}
