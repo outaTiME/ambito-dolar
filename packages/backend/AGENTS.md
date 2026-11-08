@@ -13,8 +13,8 @@ SST v4, Lambda handlers.
 - Public response shapes are contracts: the client, the website and both widget implementations
   read them. A `/fetch` change reaches the ios widgets first, see
   `packages/client/docs/android-widgets.md`.
-- **The `GET /fetch` lambda in `infra/api.ts` is a kept fallback**, CloudFront serves `/fetch` from S3
-  in front of it and the lambda takes over if CloudFront goes. Both build the body with
+- **The `GET /fetch` lambda in `infra/api.ts` is a kept fallback**, CloudFront serves `/fetch` from
+  S3 in front of it and the lambda takes over if CloudFront goes. Both build the body with
   `getFetchStats` in `shared.js`, each stat cut to the date, value, change and close the widgets and
   the watch app read. The S3 object is only rewritten on an `is_updated` run, so a body
   change shows after the first update following the deploy, not on the deploy.
@@ -28,18 +28,26 @@ SST v4, Lambda handlers.
 - **Markets live in `quotes.json` under `markets`, in both historical-quotes files and in `/fetch`,
   nowhere else.** `/fetch` carries them flat next to the rates for the widgets and the watch app,
   so an id never repeats between the two, a core test fails otherwise. `rates*.json`, `rate-stats`,
-  the realtime board and `notify` stay rates only. The
-  legacy files pick a fixed list (`LEGACY_RATE_TYPES`, `V5_RATE_TYPES` in
-  `packages/backend/src/libs/shared.js`), so a new rate or market never reaches them. A new market
-  enters core `getAvailableMarketTypes` and `getDataProviderForMarket` with the processor change, or
-  the client hides it and the detail names the wrong source. It also enters the widget and watch lists,
-  `Helper.swift` and `Format.kt`, or `packages/client/test.js` fails.
+  the realtime board and `notify` stay rates only. The legacy files pick a fixed list
+  (`LEGACY_RATE_TYPES`, `V5_RATE_TYPES` in `packages/backend/src/libs/shared.js`), so a new rate or
+  market never reaches them. A new market enters core `getAvailableMarketTypes` and
+  `getDataProviderForMarket` in `shared.js` with the processor change, or the client hides it and
+  the detail names the wrong source. It also enters the widget and watch lists, `Helper.swift` and
+  `Format.kt`, or `packages/client/test.js` fails. A bcra one only adds
+  its series id to `BCRA_MARKET_IDS` in `shared.js`, the processor, the source name and the
+  backfill read it.
+- **A market identity is its source date read in the market zone.** `getListedMarkets` passes
+  `timezone: getTimezoneDate().utcOffset()` to `chrono`, without it a lambda in utc reads a
+  `DD-MM-YYYY 00:00` as the day before and the hash depends on where it runs.
 - **The repair routes rewrite history.** `/update-rates` keeps each type's history before the
   body's first stat and replaces the rest with the body, so a body older than the stored
   `quotes.json` loses every day after its last stat; build it from a download taken after the 18:00
   close. Types the body does not carry stay as they are. `/update-historical-rates` replaces
   `full-historical-quotes.json` with the body, no merge, and regenerates `historical-quotes` and
   both legacy historicals from it.
+- **A backfill or a dropped type goes through `packages/backend/scripts/backfill-history.js`, never
+  the routes by hand.** Read `packages/backend/docs/backfill-history.md` first: deploy before
+  running it, the seed hash follows the deployed processor.
 - **`puppeteer-core` and `@sparticuz/chromium` move together or not at all**, both only used in
   `packages/backend/src/libs/chrome.js`. A mismatch fails when the social lambda launches Chrome,
   which surfaces as a missing post and not as an error. The chromium README prescribes the check:
@@ -53,7 +61,7 @@ SST v4, Lambda handlers.
   `getBusinessDay` took that trade so six retries could not outlast the minute `Process` gets.
 - **ky skips POST and PATCH.** A POST that is a query opts back in per call with
   `retry: { methods: ['post'] }`, the way `getBusinessDay` does. `promiseRetry` covers what ky
-  cannot reach: `notify.js`, the media still processing in
+  cannot reach: `packages/backend/src/subscribers/notify.js`, the media still processing in
   `packages/backend/src/libs/social/instagram.js`, and the social targets in `shared.js`. Retrying
   a publish can repeat it, and with lambda retries off in `infra/defaults.ts` that is the only way
   a post goes out twice.
@@ -71,7 +79,7 @@ SST v4, Lambda handlers.
   `getObjectRates` compacts the hole, so one slow source costs one rate. `getBusinessDay` throws
   uncaught and costs the whole cycle. A lambda killed after `storeRatesJsonObject` leaves S3 written
   and the push unsent, which is worse than dying before it.
-- **Do not reorder `process.js`.** `storeRatesJsonObject` -> `updateRealtimeData` -> `notify` is
+- **Do not reorder `packages/backend/src/subscribers/process.js`.** `storeRatesJsonObject` -> `updateRealtimeData` -> `notify` is
   load bearing, a push landing before the board is written shows stale rates to the clients still
   on it. Inside `storeRatesJsonObject` the history lands before every other object, a client that
   sees new rates asks for the history again, and a failed one writes none of them so the next run
