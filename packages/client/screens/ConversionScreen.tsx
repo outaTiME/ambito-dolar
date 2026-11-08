@@ -142,7 +142,8 @@ const ConversionScreen = ({ rates, rateTypes, backgroundColor }) => {
                 borderCurve: 'continuous',
                 borderWidth: Settings.BORDER_WIDTH,
                 borderColor: Settings.getStrokeColor(theme),
-                margin: Settings.CARD_PADDING,
+                // same edges as the segmented controls and the cards below
+                margin: Settings.CONTENT_MARGIN,
                 padding:
                   Settings.PADDING - (34 - 28) / 2 - Settings.BORDER_WIDTH * 2,
                 backgroundColor: Settings.getContentColor(theme),
@@ -186,7 +187,7 @@ const ConversionScreen = ({ rates, rateTypes, backgroundColor }) => {
         <EmptyRatesView
           edges={{ bottom: true }}
           backgroundColor={Settings.getContentColor(theme)}
-          alternativeBackground
+          buttonColor={Settings.getBackgroundColor(theme)}
         />
       ) : (
         <ScrollView

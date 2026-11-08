@@ -11,7 +11,6 @@ import Animated, {
 
 const SPRING = { stiffness: 150, damping: 20, mass: 1 };
 const ARROW_GAP = 30;
-const GUTTER = 1;
 
 export default function AnimatedSegmentedControl({
   segments,
@@ -54,17 +53,21 @@ export default function AnimatedSegmentedControl({
     transform: [{ scale: arrowScale.value }],
   }));
 
-  // the slot is static, the spring only moves a transform and never lays out the row
-  const trackSlotStyle = {
-    left: 0,
-    right: `${100 - 100 / count}%`,
-    marginRight: gap / 2,
+  // the track spans the row, a percent of a rounded slot would add up its rounding per step
+  const slotStyle = {
+    flex: 1,
+    width: `${100 / count}%`,
+    paddingRight: (gap * (count - 1)) / count,
   };
+  // the spring only moves a transform and never lays out the row
   const trackAnimatedStyle = useAnimatedStyle(() => {
     const p = position.value;
-    // a percent translate is relative to the tile, one slot per step plus the arrow gap
+    // a percent translate is relative to the track, each step moves one segment plus the arrow gap
     return {
-      transform: [{ translateX: `${p * 100}%` }, { translateX: p * gap }],
+      transform: [
+        { translateX: `${(p * 100) / count}%` },
+        { translateX: (p * gap) / count },
+      ],
     };
   });
 
@@ -84,19 +87,13 @@ export default function AnimatedSegmentedControl({
 
   const arrowChar = currentIndex === 0 ? '→' : '←';
   return (
-    <View
-      style={[
-        styles.wrapper,
-        { paddingHorizontal: GUTTER },
-        segmentedControlWrapper,
-      ]}
-    >
-      {/* inside the padding, the track and the segments share one geometry */}
+    <View style={[styles.wrapper, segmentedControlWrapper]}>
+      {/* one row, the track and the segments share its geometry */}
       <View style={[styles.row, { columnGap: gap }]}>
-        <Animated.View
-          style={[styles.track, trackSlotStyle, trackAnimatedStyle]}
-        >
-          <View style={[{ flex: 1, borderCurve: 'continuous' }, tileStyle]} />
+        <Animated.View style={[StyleSheet.absoluteFill, trackAnimatedStyle]}>
+          <View style={slotStyle}>
+            <View style={[{ flex: 1, borderCurve: 'continuous' }, tileStyle]} />
+          </View>
         </Animated.View>
         {arrowMode && (
           <Animated.View style={[styles.arrowWrapper, arrowAnimatedStyle]}>
@@ -118,7 +115,6 @@ const styles = StyleSheet.create({
   },
   segmentFlex: { flex: 1 },
   row: { flex: 1, flexDirection: 'row', alignItems: 'center' },
-  track: { position: 'absolute', top: 0, bottom: 0 },
   textWrapper: {
     flexDirection: 'row',
     alignItems: 'center',

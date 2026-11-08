@@ -11,7 +11,8 @@ import { goToCustomizeRatesModal } from '@/utilities/Navigation';
 export default ({
   edges,
   backgroundColor,
-  alternativeBackground,
+  // a content colored view passes another color, the default button vanishes on it
+  buttonColor,
   // markets reuse the view with their own customize screen
   onSelect = goToCustomizeRatesModal,
 }: any) => {
@@ -24,7 +25,7 @@ export default ({
       <ActionButton
         handleOnPress={onSelect}
         title={I18n.t('select_rates')}
-        alternativeBackground={alternativeBackground}
+        style={buttonColor && { backgroundColor: buttonColor }}
       />
     </>
   );

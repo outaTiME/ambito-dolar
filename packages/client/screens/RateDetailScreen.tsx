@@ -31,22 +31,14 @@ const SpreadCardItemView = ({ rateType, nominalValue, percentageValue }) => {
         paddingVertical: Settings.CARD_PADDING + Settings.SMALL_PADDING,
       }}
     >
-      <Text
-        style={[
-          fonts.body,
-          {
-            width: '40%',
-          },
-        ]}
-        numberOfLines={1}
-      >
+      <Text style={[fonts.body, { flex: 40 }]} numberOfLines={1}>
         {AmbitoDolar.getRateTitle(rateType)}
       </Text>
       <Text
         style={[
           fonts.body,
           {
-            width: '25%',
+            flex: 25,
             color: Settings.getGrayColor(theme),
             textAlign: 'right',
           },
@@ -60,8 +52,8 @@ const SpreadCardItemView = ({ rateType, nominalValue, percentageValue }) => {
           // fonts.subhead,
           fonts.body,
           {
-            // same as victory chart header
-            width: '35%',
+            // same share as the victory chart header, of the row without its gaps
+            flex: 35,
             color: Helper.getChangeColor(percentageValue, theme),
             textAlign: 'right',
           },
