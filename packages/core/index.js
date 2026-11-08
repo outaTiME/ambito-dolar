@@ -313,7 +313,7 @@ const getMarketTitle = (type) => {
   } else if (type === COUNTRY_RISK_TYPE) {
     return 'Riesgo país';
   } else if (type === MERVAL_TYPE) {
-    return 'Merval';
+    return 'MSCI Merval';
   } else if (type === RESERVES_TYPE) {
     return 'Reservas';
   }

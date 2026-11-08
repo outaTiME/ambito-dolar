@@ -94,7 +94,7 @@ object Format {
       "plazo_fijo" to "Plazo fijo",
       "uva" to "UVA",
       "riesgo_pais" to "Riesgo país",
-      "merval" to "Merval",
+      "merval" to "MSCI Merval",
       "reservas" to "Reservas",
     )
 

@@ -34,7 +34,7 @@ struct Helper {
       RateType(identifier: "plazo_fijo", display: "Plazo fijo"),
       RateType(identifier: "uva", display: "UVA"),
       RateType(identifier: "riesgo_pais", display: "Riesgo país"),
-      RateType(identifier: "merval", display: "Merval"),
+      RateType(identifier: "merval", display: "MSCI Merval"),
       RateType(identifier: "reservas", display: "Reservas")
     ]
   }

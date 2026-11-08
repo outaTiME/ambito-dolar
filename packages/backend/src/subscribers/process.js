@@ -110,7 +110,7 @@ const getRate = (type) => {
 // listing names to market types, one request carries them all
 const MARKET_NAMES = {
   'Riesgo País': AmbitoDolar.COUNTRY_RISK_TYPE,
-  Merval: AmbitoDolar.MERVAL_TYPE,
+  'MSCI Merval': AmbitoDolar.MERVAL_TYPE,
 };
 
 const getListedMarkets = () =>
@@ -153,7 +153,11 @@ const getListedMarkets = () =>
           );
           return;
         }
-        const date = chrono.strict.parseDate(value.fecha);
+        // read in the market zone, a utc lambda reads a 00:00 as the day before
+        // chrono takes an offset in minutes or an abbreviation, an iana name is ignored without a word
+        const date = chrono.strict.parseDate(value.fecha, {
+          timezone: AmbitoDolar.getTimezoneDate().utcOffset(),
+        });
         if (date === null) {
           console.warn(
             'Invalid date on market',
@@ -172,15 +176,6 @@ const getListedMarkets = () =>
         JSON.stringify({ error: error.message }),
       );
     });
-
-// bcra monetary series ids
-const BCRA_MARKET_IDS = {
-  [AmbitoDolar.INFLATION_TYPE]: 27,
-  [AmbitoDolar.INFLATION_ANNUAL_TYPE]: 28,
-  [AmbitoDolar.TERM_DEPOSIT_TYPE]: 12,
-  [AmbitoDolar.UVA_TYPE]: 31,
-  [AmbitoDolar.RESERVES_TYPE]: 1,
-};
 
 const getBcraMarket = ([type, id]) =>
   Promise.resolve()
@@ -366,7 +361,7 @@ const getRates = () =>
 const getMarkets = () =>
   Promise.all([
     getListedMarkets(),
-    ...Object.entries(BCRA_MARKET_IDS).map(getBcraMarket),
+    ...Object.entries(Shared.BCRA_MARKET_IDS).map(getBcraMarket),
   ]).then(getObjectRates);
 
 const addStats = (items, new_items) =>
@@ -518,3 +513,6 @@ export const handler = Shared.wrapHandler(async (event) => {
   console.info('Completed', JSON.stringify(new_rates));
   return new_rates;
 });
+
+// the backfill script seeds a reset market with the record the next tick would write
+export { getMarkets, getNewRates };

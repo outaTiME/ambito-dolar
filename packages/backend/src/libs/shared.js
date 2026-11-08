@@ -353,15 +353,8 @@ const getFetchStats = (quotes) =>
     stat?.slice(0, 4),
   );
 
-const storeFetchJsonObject = (quotes) => {
-  const json = getFetchStats(quotes);
-  const opts = { suffix: '' };
-  return Promise.all([
-    storeJsonObject(FETCH_OBJECT_KEY, json, opts),
-    // keep a prefixed key to serve GET /api/fetch from legacy api cdn
-    storeJsonObject(`api/${FETCH_OBJECT_KEY}`, json, opts),
-  ]);
-};
+const storeFetchJsonObject = (quotes) =>
+  storeJsonObject(FETCH_OBJECT_KEY, getFetchStats(quotes), { suffix: '' });
 
 const storeRateStats = (rates) => {
   const base_rates = Object.entries(
@@ -463,18 +456,17 @@ const getDataProviderForRate = (type) => {
   return 'Ámbito Financiero';
 };
 
-const getDataProviderForMarket = (type) => {
-  if (
-    type === AmbitoDolar.INFLATION_TYPE ||
-    type === AmbitoDolar.INFLATION_ANNUAL_TYPE ||
-    type === AmbitoDolar.TERM_DEPOSIT_TYPE ||
-    type === AmbitoDolar.UVA_TYPE ||
-    type === AmbitoDolar.RESERVES_TYPE
-  ) {
-    return 'BCRA';
-  }
-  return getDataProviderForRate(type);
+// bcra monetary series ids
+const BCRA_MARKET_IDS = {
+  [AmbitoDolar.INFLATION_TYPE]: 27,
+  [AmbitoDolar.INFLATION_ANNUAL_TYPE]: 28,
+  [AmbitoDolar.TERM_DEPOSIT_TYPE]: 12,
+  [AmbitoDolar.UVA_TYPE]: 31,
+  [AmbitoDolar.RESERVES_TYPE]: 1,
 };
+
+const getDataProviderForMarket = (type) =>
+  type in BCRA_MARKET_IDS ? 'BCRA' : getDataProviderForRate(type);
 
 const getPathForRate = (type) => {
   if (type === AmbitoDolar.TOURIST_TYPE) {
@@ -874,6 +866,7 @@ const getNotifications = ({
 };
 
 export default {
+  BCRA_MARKET_IDS,
   // fetchFirebaseData,
   // updateFirebaseData,
   updateRealtimeData,
