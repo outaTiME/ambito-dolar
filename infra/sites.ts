@@ -23,18 +23,21 @@ export function createSites(ctx: StackContext, api: sst.aws.ApiGatewayV2) {
     }),
   };
 
-  const landingSite =
-    ctx.shouldDeployWebApps &&
+  if (ctx.shouldDeployWebApps) {
+    // eslint-disable-next-line no-new
     new sst.aws.StaticSite('LandingSite', {
       path: 'packages/website',
       build: {
         command: 'yarn build',
         output: 'dist',
       },
+      ...(ctx.isProduction && {
+        domain: {
+          name: 'www.ambito-dolar.app',
+          dns: false,
+          cert: ctx.requiredEnv('DOMAIN_CERTIFICATE_ARN'),
+        },
+      }),
     });
-
-  return {
-    screenshotSite,
-    landingSite,
-  };
+  }
 }

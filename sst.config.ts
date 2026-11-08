@@ -19,7 +19,6 @@ export default $config({
     const { createResources } = await import('./infra/resources');
     const { createApi } = await import('./infra/api');
     const { createSites } = await import('./infra/sites');
-    const { createLegacyApi } = await import('./infra/legacy-api');
     const { createCrons } = await import('./infra/crons');
     const { createSubscribers } = await import('./infra/subscribers');
 
@@ -28,9 +27,7 @@ export default $config({
 
     const resources = createResources(ctx);
     const api = createApi(ctx, resources);
-    const { landingSite } = createSites(ctx, api);
-
-    createLegacyApi(ctx, api, landingSite, resources);
+    createSites(ctx, api);
     createCrons(ctx, resources);
     createSubscribers(ctx, resources);
   },

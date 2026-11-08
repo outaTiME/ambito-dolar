@@ -22,10 +22,6 @@ declare module "sst" {
       "type": "sst.aws.StaticSite"
       "url": string
     }
-    "LegacyApi": {
-      "type": "sst.aws.ApiGatewayV2"
-      "url": string
-    }
     "Notifications": {
       "name": string
       "type": "sst.aws.Dynamo"
