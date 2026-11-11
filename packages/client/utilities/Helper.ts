@@ -1,6 +1,5 @@
 // @ts-nocheck
 import AmbitoDolar from '@ambito-dolar/core';
-import rgba from 'color-rgba';
 import * as d3Array from 'd3-array';
 import * as Application from 'expo-application';
 import * as MailComposer from 'expo-mail-composer';
@@ -69,8 +68,6 @@ const FRACTION_DIGITS = AmbitoDolar.FRACTION_DIGITS;
 const formatNumber = AmbitoDolar.formatNumber;
 
 const formatRateCurrency = AmbitoDolar.formatRateCurrency;
-
-const formatRateChange = AmbitoDolar.formatRateChange;
 
 const formatCurrency = AmbitoDolar.formatCurrency;
 
@@ -306,17 +303,11 @@ export default {
     const ticks = d3Array.range(min, max, stepValue).concat(max);
     return ticks;
   },
-  getInlineRateValue(value, change) {
-    let value_str;
+  getInlineRateValue(value) {
     if (Array.isArray(value)) {
-      value_str = `${this.getCurrency(value[0])}–${this.getCurrency(value[1])}`;
-    } else {
-      value_str = this.getCurrency(value);
+      return `${this.getCurrency(value[0])}–${this.getCurrency(value[1])}`;
     }
-    if (change !== undefined) {
-      value_str += `${Settings.SPACE_SEPARATOR}(${formatRateChange(change)})`;
-    }
-    return value_str;
+    return this.getCurrency(value);
   },
   roundToNearestEven(num) {
     return Math.round(num / 2) * 2;
@@ -325,10 +316,7 @@ export default {
     const appearances = ['system', 'light', 'dark'];
     const version = parseInt(Platform.Version, 10);
     // remove system option when unavailable
-    if (
-      (Platform.OS === 'ios' && version < 13) ||
-      (Platform.OS === 'android' && version < 29)
-    ) {
+    if (Platform.OS === 'android' && version < 29) {
       appearances.shift();
     }
     return appearances;
@@ -480,12 +468,6 @@ export default {
     return showToast;
   },
   removeProtocol: (url) => url.replace(/^https?:\/\//, ''),
-  getRgbaColor: (color) => {
-    const rgbaArray = rgba(color);
-    if (rgbaArray.length > 0) {
-      return `rgba(${rgbaArray.toString()})`;
-    }
-  },
   debug,
   forceException(message) {
     throw new Error(message ?? 'Forced exception signal');
