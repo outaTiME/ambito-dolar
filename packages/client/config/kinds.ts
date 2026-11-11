@@ -19,7 +19,7 @@ import {
 
 // display rules per market, the order and titles come from core
 const MARKETS = {
-  // a monthly figure, the dates name its month instead of the last day
+  // a monthly figure dated on its last day like the bcra, month only picks the monthly ranges
   [AmbitoDolar.INFLATION_TYPE]: {
     suffix: '%',
     points: true,
@@ -51,22 +51,10 @@ const MARKETS = {
 
 const getMarket = (type) => MARKETS[type] ?? {};
 
-// same styles as DateUtils.humanize, in the market timezone, never the device one
+// same styles as DateUtils.humanize, a dated series in the offset the payload carries
 const formatMarketDate = (type, timestamp, style) => {
   const { dated } = getMarket(type);
-  if (dated === 'month') {
-    const date = AmbitoDolar.getTimezoneDate(timestamp);
-    if (style === 'axis') {
-      return date.format('MM/YY');
-    }
-    // the card names the month alone
-    return AmbitoDolar.getCapitalized(
-      date.format(
-        style === 'relative' || style === 'card' ? 'MMMM' : 'MMMM YYYY',
-      ),
-    );
-  }
-  if (dated === 'day') {
+  if (dated) {
     return DateUtils.humanizeDay(timestamp, style);
   }
   return DateUtils.humanize(timestamp, style);

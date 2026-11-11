@@ -36,7 +36,8 @@ interval from `getPollInterval` in `packages/client/utilities/Polling.ts`.
   early. A backend sending a cadence to shed load must count on the client asking that much sooner.
 - **Never derive a market date from the device.** `DateUtils.get` parses without a timezone, so a
   comparison at `'day'` follows the phone, not the market. `getTimezoneDate` in `packages/core`
-  knows about Argentina.
+  knows about Argentina for the market day. A day shown keeps the payload date (`parseZone` in the
+  app, its offset on android, its digits on ios), never a zone constant.
 - **The cadence gate lives inside `fetchRates`, not in the effects**, so every trigger shares it.
   Callers bypassing it with `{ force: true }`: the store clear, the retry button, the connectivity
   listener and a push, received with the app open or tapped.

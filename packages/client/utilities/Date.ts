@@ -34,10 +34,10 @@ export default {
   get(date = undefined, format = undefined) {
     return AmbitoDolar.getDate(date, format);
   },
-  // a dated series reads on the buenos aires calendar like humanizeDay, the rest like humanize
+  // a dated series reads in the offset the payload carries like humanizeDay, the rest like humanize
   formatRange(from, to, dated = false) {
-    from = dated ? AmbitoDolar.getTimezoneDate(from) : this.get(from);
-    to = dated ? AmbitoDolar.getTimezoneDate(to) : this.get(to);
+    from = dated ? this.get(from).parseZone() : this.get(from);
+    to = dated ? this.get(to).parseZone() : this.get(to);
     if (from.isSame(to, 'year')) {
       if (from.isSame(to, 'month')) {
         return `${from.date()} ${Settings.DASH_SEPARATOR} ${to.format('ll')}`;
@@ -103,9 +103,9 @@ export default {
     // statistics
     return date.format('DD/MM/YY H:mm');
   },
-  // the humanize styles for a series dated by day, in the market timezone
+  // the humanize styles for a series dated by day, in the offset the payload carries like the widgets
   humanizeDay(date, style) {
-    date = AmbitoDolar.getTimezoneDate(date);
+    date = this.get(date).parseZone();
     if (style === 'relative' && Platform.OS !== 'web') {
       return shortRelative(date, false);
     } else if (style === 'chart') {

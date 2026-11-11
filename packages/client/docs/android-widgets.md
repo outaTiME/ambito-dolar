@@ -37,7 +37,7 @@ Native, in the local expo module `packages/client/modules/widgets/`. RemoteViews
 - **Neither side stores an answer it cannot use**, both require a 2xx and at least one known rate before replacing the persisted payload: an error body is valid json too. ios stores the filtered rates, android the raw body, filtered again on read.
 - **A failed fetch never lowers what a widget shows.** `fetch` answers with the last call that came back or the payload on disk, and only another call that came back replaces it.
 - **Null means this process never got an answer and there is nothing on disk.** Then every id draws the empty text instead of the bare `initialLayout`, which has no text and not even a tap. Verified on a device: data cleared, booted with no network, all three drew the empty text.
-- **Nothing is cached across a locale change.** The `DecimalFormat` is built per call and not held in a lazy, which would freeze the separators of whatever locale was set the first time a widget drew.
+- **Nothing is cached across a locale change.** The `DecimalFormat` is built per call and not held in a lazy, which would freeze the separators of whatever locale was set the first time a widget drew. ios holds its `DateFormatter` and `NumberFormatter` with `.autoupdatingCurrent`, which follows a change.
 - **Unknown rate types are dropped at parse time**, `Format.isKnown` over `RATE_TYPES` and `MARKET_TYPES`, mirroring the ios `usableRates` whitelist. A type the app retires can still arrive from the service, and without the filter the widget titles a rate with its raw id. Survivors keep their order and compact to the top, blanks pad the bottom, same as the ios `compactMap`. The spread needs both sides or it goes empty, the list only when none of the three survives.
 - **Widget order in the picker follows the labels, not the declaration.** The launcher sorts alphabetically. Measured twice: two declaration orders gave the same picker, and renaming the labels to `Zzz`/`Aaa`/`Mmm` reordered it. Labels have to match `.configurationDisplayName(...)`, so the order is not ours to pick.
 - **`previewImage`**: regenerate from a live device with `node scripts/widget-preview.js assets/widgets/android-rate-2x2.png [--index n] [--device serial]` from `packages/client`, `oxipng -o 4 --strip safe` after. The module `build.gradle` `copyWidgetRes` task copies `packages/client/assets/fonts/FiraGO-Regular.otf` into `font` as `widget_firago_regular.otf` and every `android-*-2x2.png` into `drawable-nodpi`, straight from `packages/client/assets/` at build time, no prebuild step between. From android 15 `setWidgetPreview` replaces them at runtime with the real rates, capped at two calls per hour per provider.
@@ -74,18 +74,19 @@ gets shipped.
   and the first three of `getMarketTypes()`; android in each provider's `defaultRates`. Rate
   `oficial`, list `oficial, bna, informal`, spread `informal, bna` on both.
 - **Rates and markets share the flat keys of `/fetch`**, so an id never repeats between core
-  `getAvailableRateTypes` and `getAvailableMarketTypes`, a core test fails otherwise. The market
+  `getAvailableRateTypes` and `getAvailableMarketTypes`, a core test fails otherwise. `updated_at`
+  sits beside them for the watch footer, both parsers skip a key that is not a type. The market
   display rules are ported twice, `marketFormats` in `Rates.swift` and `Format.MARKETS`, from
   `MARKETS` in `packages/client/config/kinds.ts`: a change there moves all three. The native ones
   drop the units on purpose, like the tickers, MSCI Merval `84.093`, Riesgo país `1.684`, Reservas
-  `50.043 M`; the app keeps `pts`, `pb` and `US$`. A month or a day is formatted in
-  Buenos Aires with es-AR, a time (MSCI Merval, Riesgo país) in the device zone like the rates.
+  `50.043 M`; the app keeps `pts`, `pb` and `US$`. A day keeps the date the payload carries,
+  inflation on the last day of its month like the BCRA, a time (MSCI Merval, Riesgo país) in the
+  device zone like the rates.
 - **A /fetch schema change**: ios first, always, it reaches the widget and the watch app through
   `packages/client/targets/_shared/Rates.swift`. `lookupRateValues` reads the array by index and
   forces its casts, surviving only because `wellFormed` filters ahead of it, the stored payload
-  included, while android drops the
-  rate and keeps the rest. The timestamp is already guarded, `ISO8601DateFormatter` with default
-  options rejects fractional seconds.
+  included, while android drops the rate and keeps the rest. The timestamp is already guarded,
+  `ISO8601DateFormatter` with default options rejects fractional seconds.
 
 ### A new widget
 

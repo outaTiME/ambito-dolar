@@ -17,6 +17,8 @@ object Format {
     }
 
   private val DATE = DateTimeFormatter.ofPattern("dd/MM HH:mm")
+  // formats in the offset the payload carries, so a day never moves with the device zone
+  private val DAY = DateTimeFormatter.ofPattern("dd/MM")
 
   fun rateCurrency(value: Double): String = currency().format(value)
 
@@ -120,19 +122,19 @@ object Format {
     val points: Boolean = false,
     // up is bad news, so the colors swap
     val inverse: Boolean = false,
-    // a month or a day, never moved by the device timezone
-    val dated: String? = null,
+    // dated by day with no time behind, a monthly figure on its last day like the bcra
+    val dated: Boolean = false,
   )
 
   private val MARKETS =
     mapOf(
-      "inflacion" to Market(suffix = "%", points = true, inverse = true, dated = "MMMM"),
-      "inflacion_interanual" to Market(suffix = "%", points = true, inverse = true, dated = "MMMM"),
-      "plazo_fijo" to Market(suffix = "%", points = true, dated = "dd/MM"),
-      "uva" to Market(dated = "dd/MM"),
+      "inflacion" to Market(suffix = "%", points = true, inverse = true, dated = true),
+      "inflacion_interanual" to Market(suffix = "%", points = true, inverse = true, dated = true),
+      "plazo_fijo" to Market(suffix = "%", points = true, dated = true),
+      "uva" to Market(dated = true),
       "riesgo_pais" to Market(decimals = 0, inverse = true),
       "merval" to Market(decimals = 0),
-      "reservas" to Market(decimals = 0, suffix = " M", dated = "dd/MM"),
+      "reservas" to Market(decimals = 0, suffix = " M", dated = true),
     )
 
   private fun market(type: String) = MARKETS.getValue(type)
@@ -160,12 +162,8 @@ object Format {
     marketDiff(type, rate).let { changeColor(if (market(type).inverse) -it else it) }
 
   fun marketDate(type: String, timestamp: String): String {
-    val dated = market(type).dated ?: return timestamp(timestamp)
-    val text =
-      instant(timestamp)
-        ?.atZoneSameInstant(ZoneId.of("America/Argentina/Buenos_Aires"))
-        ?.format(DateTimeFormatter.ofPattern(dated, Locale.forLanguageTag("es-AR"))) ?: return ""
-    return text.replaceFirstChar { it.uppercase() }
+    if (!market(type).dated) return timestamp(timestamp)
+    return instant(timestamp)?.format(DAY) ?: ""
   }
 
   // ValueType.displayName on ios
