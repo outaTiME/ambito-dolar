@@ -204,6 +204,7 @@ const getBcraMarket = ([type, id]) =>
         return;
       }
       // the date of the data, a lagged series would read as today otherwise
+      // the bcra answers the day alone, the 00:00 marks no time and no client shows it
       return {
         type,
         rate: [last.fecha, last.valor, `${last.fecha}T00:00:00-03:00`],

@@ -16,8 +16,9 @@ SST v4, Lambda handlers.
 - **The `GET /fetch` lambda in `infra/api.ts` is a kept fallback**, CloudFront serves `/fetch` from
   S3 in front of it and the lambda takes over if CloudFront goes. Both build the body with
   `getFetchStats` in `shared.js`, each stat cut to the date, value, change and close the widgets and
-  the watch app read. The S3 object is only rewritten on an `is_updated` run, so a body
-  change shows after the first update following the deploy, not on the deploy.
+  the watch app read, plus `updated_at` for the watch footer. The S3 object is only rewritten on an
+  `is_updated` run, the only one that moves `updated_at`, so a body change shows after the first
+  update following the deploy, not on the deploy.
 - `is_open` in the rates payload drives how often the client asks for rates. Dropping it or changing
   its meaning fails silently, see `docs/product-policies.md`. It must not go into `/fetch` while
   `storeFetchJsonObject` is gated on `is_updated`: a gated write leaves it stale on exactly the

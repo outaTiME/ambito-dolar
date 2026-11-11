@@ -69,9 +69,17 @@ test('Fetch stats should carry the last stat without the notified value and the 
     Shared.getFetchStats({
       rates: { oficial: { stats: [['d', 1, 0], stat] } },
       markets: { merval: { stats: [stat] }, uva: { stats: [] } },
+      updated_at: stat[0],
     }),
-    { merval: stat.slice(0, 4), oficial: stat.slice(0, 4), uva: undefined },
+    {
+      merval: stat.slice(0, 4),
+      oficial: stat.slice(0, 4),
+      uva: undefined,
+      updated_at: stat[0],
+    },
   );
+  // nothing to serve stays empty, the route answers an error for it
+  t.deepEqual(Shared.getFetchStats({ rates: {}, updated_at: stat[0] }), {});
 });
 
 test('Notifications should follow the day and the notified value', (t) => {

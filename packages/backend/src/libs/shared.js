@@ -348,10 +348,14 @@ const storePublicJsonObject = (key, json) => storeJsonObject(key, json);
 
 // rates and markets share the flat keys of /fetch, core keeps their ids apart
 // the widgets and the watch app read the date, value, change and close, never the notified value or the hash
-const getFetchStats = (quotes) =>
-  _.mapValues(getLastStats({ ...quotes.markets, ...quotes.rates }), (stat) =>
-    stat?.slice(0, 4),
+const getFetchStats = (quotes) => {
+  const stats = _.mapValues(
+    getLastStats({ ...quotes.markets, ...quotes.rates }),
+    (stat) => stat?.slice(0, 4),
   );
+  // the time the app settings show, a key no type uses that the widgets skip
+  return _.isEmpty(stats) ? stats : { ...stats, updated_at: quotes.updated_at };
+};
 
 const storeFetchJsonObject = (quotes) =>
   storeJsonObject(FETCH_OBJECT_KEY, getFetchStats(quotes), { suffix: '' });
@@ -714,10 +718,8 @@ const getActiveDevices = async () => {
     .value();
 };
 
-const isTruthy = yn;
-
 const isQueryParamTruthy = (value) =>
-  isTruthy(value, {
+  yn(value, {
     // truthy when value exists and is blank
     default: value === '',
   });
@@ -911,6 +913,5 @@ export default {
   // TODO: update default limit close to 500 ???
   promiseLimit: (concurrency = MAX_SOCKETS) => pLimit(concurrency),
   getActiveDevices,
-  isTruthy,
   isQueryParamTruthy,
 };
