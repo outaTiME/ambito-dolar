@@ -23,18 +23,18 @@ struct LaunchProvider: TimelineProvider {
   }
 }
 
-// the app icon alone, scaled to the slot because the face caps a font in it
+// the app icon on the slot background, scaled because the face caps a font in it
 struct LaunchView: View {
   @Environment(\.widgetFamily) var family
   var body: some View {
     ZStack {
-      if family == .accessoryCircular {
-        AccessoryWidgetBackground()
-      }
+      AccessoryWidgetBackground()
       Image("AppWidgetIcon", label: Text("Ámbito Dólar"))
         .resizable()
         .scaledToFit()
-        .scaleEffect(family == .accessoryCorner ? 0.6 : 0.5)
+        .scaleEffect(0.6)
+        // the face draws the system launchers dimmer in the corner, white in the circle
+        .opacity(family == .accessoryCorner ? 0.75 : 1)
     }
   }
 }

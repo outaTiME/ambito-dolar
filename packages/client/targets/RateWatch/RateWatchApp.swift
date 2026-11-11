@@ -110,6 +110,15 @@ final class RatesModel: ObservableObject {
 
 @main
 struct RateWatchApp: App {
+  var body: some Scene {
+    WindowGroup {
+      RootView()
+    }
+  }
+}
+
+// observed here and not in the App body, there the refresh lost its withAnimation and the rows jumped
+struct RootView: View {
   @StateObject private var model = RatesModel()
   @Environment(\.scenePhase) private var scenePhase
   // by tag and not by position, so the markets page showing up keeps the page in view
@@ -120,43 +129,41 @@ struct RateWatchApp: App {
   @AppStorage(rateOrderDirectionKey) private var direction = OrderDirection.asc
   @AppStorage(rateTypesKey) private var rateTypes = ""
 
-  var body: some Scene {
-    WindowGroup {
-      // the pages only once there is a payload, like the InitialScreen of the app
-      NavigationStack {
-        if model.rates == nil {
-          if model.failed {
-            // same message and action as InitialScreen in the app, a plain stack since ContentUnavailableView anchors to the top on watchOS
-            VStack {
-              Text("Imposible obtener las cotizaciones.")
-                .multilineTextAlignment(.center)
-              Button("Reintentar") {
-                Task { await model.refresh() }
-              }
+  var body: some View {
+    // the pages only once there is a payload, like the InitialScreen of the app
+    NavigationStack {
+      if model.rates == nil {
+        if model.failed {
+          // same message and action as InitialScreen in the app, a plain stack since ContentUnavailableView anchors to the top on watchOS
+          VStack {
+            Text("Imposible obtener las cotizaciones.")
+              .multilineTextAlignment(.center)
+            Button("Reintentar") {
+              Task { await model.refresh() }
             }
-          } else {
-            ProgressView()
           }
         } else {
-          // the pages in the order of the app tabs, one stack around all of them for the titles
-          let catalog = available(Helper.getRateTypes(), model.rates)
-          let markets = available(Helper.getMarketTypes(), model.rates)
-          let rows = visibleRates(catalog, model.rates, excludedRates: excludedRates, valueType: valueType, order: order, direction: direction, rateTypes: rateTypes)
-          TabView(selection: $page) {
-            ContentView(catalog: catalog, rows: rows).tag("rates")
-            // only when the payload carries markets, like the app hides its tab
-            if !markets.isEmpty {
-              MarketsView(catalog: markets, rates: model.rates).tag("markets")
-            }
-            ConverterView(rates: rows).tag("converter")
+          ProgressView()
+        }
+      } else {
+        // the pages in the order of the app tabs, one stack around all of them for the titles
+        let catalog = available(Helper.getRateTypes(), model.rates)
+        let markets = available(Helper.getMarketTypes(), model.rates)
+        let rows = visibleRates(catalog, model.rates, excludedRates: excludedRates, valueType: valueType, order: order, direction: direction, rateTypes: rateTypes)
+        TabView(selection: $page) {
+          ContentView(catalog: catalog, rows: rows).tag("rates")
+          // only when the payload carries markets, like the app hides its tab
+          if !markets.isEmpty {
+            MarketsView(catalog: markets, rates: model.rates).tag("markets")
           }
-          .tabViewStyle(.page)
+          ConverterView(rates: rows).tag("converter")
         }
+        .tabViewStyle(.page)
       }
-      .onChange(of: scenePhase, initial: true) { _, phase in
-        if phase == .active {
-          Task { await model.refresh() }
-        }
+    }
+    .onChange(of: scenePhase, initial: true) { _, phase in
+      if phase == .active {
+        Task { await model.refresh() }
       }
     }
   }
@@ -229,10 +236,10 @@ private func settingsToolbar(action: @escaping () -> Void) -> some ToolbarConten
   }
 }
 
-// the last successful fetch under the rows, so a lost connection reads as an old time
+// the updated_at of the payload under the rows like the app settings, not the time of the fetch
 // the stored time only moves on a fetch, the timeline redraws the minutes between
 private struct UpdatedFooter: View {
-  @AppStorage(ratesCacheAtKey) private var updatedAt = 0.0
+  @AppStorage(ratesUpdatedAtKey) private var updatedAt = 0.0
 
   var body: some View {
     if updatedAt > 0 {

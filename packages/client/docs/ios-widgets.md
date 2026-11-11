@@ -235,10 +235,14 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
   covers coming back. No timer while open: the screen sleeps in 15 to 70s and a running timer keeps
   requesting under always on. No background refresh and no data complications, both would request
   all day with nobody looking.
-- **The footer of Cotizaciones and Indicadores shows `last_rates_at`**, the last successful fetch,
-  not the time of each row, centered alone, in the app `shortRelative` wording; an old time is a
-  lost connection. It moves only on a fetch, a `TimelineView(.everyMinute)` redraws the minutes
-  between with no request. No pull to reveal it, a gesture nobody finds.
+- **The model is observed in `RootView`, never in the `App` body.** A change seen at the `Scene`
+  level reaches the views without the `withAnimation` transaction of `refresh()`, so the
+  `numericText` rows jump instead of rolling.
+- **The footer of Cotizaciones and Indicadores shows `rates_updated_at`**, the `updated_at` that
+  `/fetch` carries, the same time the app settings show, not the fetch and not each row, centered
+  alone, in the app `shortRelative` wording, hidden while no answer has carried `updated_at`. It
+  moves only on a fetch, a `TimelineView(.everyMinute)` redraws the minutes between with no request.
+  No pull to reveal it, a gesture nobody finds.
 - **The pages show once there is a payload**, like `InitialScreen` in the app: before that one
   screen, a spinner or "Imposible obtener las cotizaciones." with Reintentar. Indicadores only
   shows when the payload carries markets, like `useMarketsEnabled` hides the app tab.
@@ -249,14 +253,15 @@ SwiftUI only, nothing from the JS side reaches it, so its rows are the widget `R
   never trimmed, a market carries its own decimals. Rows show `short ?? display` and the markets
   without `pts`, `pb` or `US$`, see `packages/client/docs/android-widgets.md`.
 - **The complication only launches the app**, no `widgetURL`, one per page would fall out of sync
-  the day a page goes. `RateWatchComplications`, the app icon, circular and corner, no label,
-  scaled to the slot because the face caps a font there, half the circle and 60% of the corner,
-  nothing fetched, one entry with `.never`. The same extension carries the Control Center control
-  from watchOS 26, the shared `LaunchControlWidget` behind `#available` in its `WidgetBundle`, with
-  the watch branch of `LaunchAppIntent` that only brings the app forward. The phone control does
-  not reach the watch, watchOS leaves out the controls that open the phone app. The plugin embeds a
-  `watch-widget` in the first watch target it already made and targets go in folder order, so the
-  folder sorts after `RateWatch/` or the extension lands in the iPhone app.
+  the day a page goes. `RateWatchComplications`, the app icon on `AccessoryWidgetBackground`,
+  circular and corner, no label, scaled to 60% of the slot because the face caps a font there, at
+  75% opacity in the corner like the system launchers, nothing fetched, one entry with `.never`. The
+  same extension carries the Control Center control from watchOS 26, the shared
+  `LaunchControlWidget` behind `#available` in its `WidgetBundle`, with the watch branch of
+  `LaunchAppIntent` that only brings the app forward. The phone control does not reach the watch,
+  watchOS leaves out the controls that open the phone app. The plugin embeds a `watch-widget` in the
+  first watch target it already made and targets go in folder order, so the folder sorts after
+  `RateWatch/` or the extension lands in the iPhone app.
 - **The widget sets the representation, the app the texts, watchOS the rest.** Rows are the two
   lines of the list widget. Settings hold the widget configuration, `excluded_rates` with the app
   key, `value_type` as the widget Mostrar parameter with its default. Restablecer is a `.bordered`

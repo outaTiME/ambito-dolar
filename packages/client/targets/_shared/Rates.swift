@@ -30,8 +30,10 @@ struct RateValue: Identifiable, Equatable {
 private let apiUrl = (Bundle.main.object(forInfoDictionaryKey: "ApiUrl") as? String).flatMap(URL.init(string:))
 
 private let ratesCacheKey = "last_rates"
-// the last successful fetch, the watch app shows it under its lists
-let ratesCacheAtKey = "last_rates_at"
+// the last successful fetch, the cache window counts from it
+private let ratesCacheAtKey = "last_rates_at"
+// the updated_at of the payload like the app settings, the watch app shows it under its lists
+let ratesUpdatedAtKey = "rates_updated_at"
 // the default is a minute, long enough for the system to kill the extension while it waits
 private let ratesSession: URLSession = {
   let configuration = URLSessionConfiguration.default
@@ -87,6 +89,9 @@ func getRates(cacheWindow: TimeInterval) async -> [String: Any]? {
     if let data = try? JSONSerialization.data(withJSONObject: kept) {
       UserDefaults.standard.set(data, forKey: ratesCacheKey)
       UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: ratesCacheAtKey)
+      if let updatedAt = (parsed["updated_at"] as? String).flatMap(ISO8601DateFormatter().date(from:)) {
+        UserDefaults.standard.set(updatedAt.timeIntervalSince1970, forKey: ratesUpdatedAtKey)
+      }
     }
     return kept
   }
@@ -115,7 +120,6 @@ extension ValueType {
 
 // display rules per market, the same as MARKETS in config/kinds.ts
 private struct MarketFormat {
-  enum Dated { case month, day }
   var decimals = 2
   // pts, pb and US$ are left out like the tickers do, only % and the M of reservas stay
   var suffix = ""
@@ -123,40 +127,48 @@ private struct MarketFormat {
   var points = false
   // up is bad news, so the colors swap
   var inverse = false
-  var dated: Dated? = nil
+  // dated by day with no time behind, a monthly figure on its last day like the bcra
+  var dated = false
 }
 
 private let marketFormats: [String: MarketFormat] = [
-  "inflacion": MarketFormat(suffix: "%", points: true, inverse: true, dated: .month),
-  "inflacion_interanual": MarketFormat(suffix: "%", points: true, inverse: true, dated: .month),
-  "plazo_fijo": MarketFormat(suffix: "%", points: true, dated: .day),
-  "uva": MarketFormat(dated: .day),
+  "inflacion": MarketFormat(suffix: "%", points: true, inverse: true, dated: true),
+  "inflacion_interanual": MarketFormat(suffix: "%", points: true, inverse: true, dated: true),
+  "plazo_fijo": MarketFormat(suffix: "%", points: true, dated: true),
+  "uva": MarketFormat(dated: true),
   "riesgo_pais": MarketFormat(decimals: 0, inverse: true),
   "merval": MarketFormat(decimals: 0),
-  "reservas": MarketFormat(decimals: 0, suffix: " M", dated: .day),
+  "reservas": MarketFormat(decimals: 0, suffix: " M", dated: true),
 ]
 
-// a time follows the device zone like android and the app, a day or a month stays in buenos aires
-private func formatMarketDate(_ date: Date, _ dated: MarketFormat.Dated?) -> String {
+// a time in the device zone like android and the app, autoupdating so a long lived watch follows a change
+private let timeFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  if dated != nil {
-    formatter.timeZone = TimeZone(identifier: "America/Argentina/Buenos_Aires")
-    formatter.locale = Locale(identifier: "es_AR")
-  }
-  switch dated {
-  case .month:
-    formatter.dateFormat = "MMMM"
-    return formatter.string(from: date).capitalized
-  case .day:
-    formatter.dateFormat = "dd/MM"
-  case nil:
-    formatter.dateFormat = "dd/MM HH:mm"
-  }
-  return formatter.string(from: date)
+  formatter.dateFormat = "dd/MM HH:mm"
+  formatter.timeZone = .autoupdatingCurrent
+  formatter.locale = .autoupdatingCurrent
+  return formatter
+}()
+private func currencyFormatter(_ digits: Int) -> NumberFormatter {
+  let nf = NumberFormatter()
+  nf.numberStyle = .decimal
+  nf.minimumFractionDigits = digits
+  nf.maximumFractionDigits = digits
+  nf.roundingMode = .down
+  nf.locale = .autoupdatingCurrent
+  return nf
+}
+private let centsFormatter = currencyFormatter(2)
+private let wholeFormatter = currencyFormatter(0)
+
+// a day keeps the date the payload carries
+private func formatMarketDay(_ timestamp: String) -> String {
+  let day = timestamp.prefix(10)
+  return "\(day.suffix(2))/\(day.dropFirst(5).prefix(2))"
 }
 
 // formatMarketValue and formatMarketChange of config/kinds.ts, the card form with its arrow
-private func marketValue(_ rateType: RateType, _ format: MarketFormat, _ rate: [Any], _ value: Double, _ percentage: Double, _ date: Date) -> RateValue {
+private func marketValue(_ rateType: RateType, _ format: MarketFormat, _ rate: [Any], _ value: Double, _ percentage: Double, _ date: Date, _ timestamp: String) -> RateValue {
   // the close the change is measured against, given back by the percentage when it is missing
   let close = (rate.count > 3 ? rate[3] as? Double : nil) ?? value / (1 + percentage / 100)
   let scale = pow(10, Double(format.decimals))
@@ -175,7 +187,7 @@ private func marketValue(_ rateType: RateType, _ format: MarketFormat, _ rate: [
     changeValue: diff,
     price: formatRateCurrency(num: value, cents: format.decimals > 0) + format.suffix,
     priceValue: value,
-    date: formatMarketDate(date, format.dated),
+    date: format.dated ? formatMarketDay(timestamp) : timeFormatter.string(from: date),
     dateValue: date.timeIntervalSince1970 * 1000.0
   )
 }
@@ -200,13 +212,14 @@ func lookupRateValues(rates: [String: Any]?, rateTypes: [RateType], valueType: V
       detail = valueType.displayName
     }
     // the default options reject fractional seconds, such a timestamp drops the rate like android
+    // built per call, unlike the cached formatters it is not thread safe
     guard let timestamp = rate[0] as? String,
           let rateDate = ISO8601DateFormatter().date(from: timestamp) else {
       return nil
     }
     let rateChange = rate[2] as! Double
     if let format = marketFormats[rateType.id] {
-      return marketValue(rateType, format, rate, value, rateChange, rateDate)
+      return marketValue(rateType, format, rate, value, rateChange, rateDate, timestamp)
     }
     let plain = formatRateChange(num: rateChange, percent: true, symbol: false)
     return RateValue(
@@ -219,7 +232,7 @@ func lookupRateValues(rates: [String: Any]?, rateTypes: [RateType], valueType: V
       changeValue: rateChange,
       price: formatRateCurrency(num: value),
       priceValue: value,
-      date: formatMarketDate(rateDate, nil),
+      date: timeFormatter.string(from: rateDate),
       dateValue: rateDate.timeIntervalSince1970 * 1000.0
     )
   }
@@ -227,13 +240,7 @@ func lookupRateValues(rates: [String: Any]?, rateTypes: [RateType], valueType: V
 
 // the watch drops the cents of a whole list when its longest amount does not fit
 func formatRateCurrency(num: Double, cents: Bool = true) -> String {
-  let nf = NumberFormatter()
-  nf.numberStyle = .decimal
-  let digits = cents ? 2 : 0
-  nf.minimumFractionDigits = digits
-  nf.maximumFractionDigits = digits
-  nf.roundingMode = .down
-  return nf.string(for: num)!
+  return (cents ? centsFormatter : wholeFormatter).string(for: num)!
 }
 
 private func getChangeSymbol(num: Double) -> String {
