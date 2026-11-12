@@ -24,7 +24,7 @@ const MAX_FONT_SIZE_MULTIPLIER = 1.2;
 const SPACE_SEPARATOR = ' ';
 const DASH_SEPARATOR = '‒';
 const MAX_DAYS_FOR_REVIEW = 5;
-// TODO: leave 6 days like "Ámbito Financiero" website?
+// TODO: leave 6 days like the source website?
 const MAX_NUMBER_OF_STATS = 6; // 1 week
 // an update landing inside this belongs to the open, so the toast announces it
 const FOREGROUND_TOAST_WINDOW = 10 * 1000;
