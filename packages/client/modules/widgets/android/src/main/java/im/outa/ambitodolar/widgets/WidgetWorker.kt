@@ -15,7 +15,7 @@ class WidgetWorker(context: Context, params: WorkerParameters) : Worker(context,
   override fun doWork(): Result {
     // the shared redraw thread, and waiting on it makes RatesApi.usable visible here
     Widgets.EXECUTOR
-      .submit { Widgets.ALL.forEach { it.renderNow(applicationContext, trigger = WidgetProvider.PERIODIC) } }
+      .submit { Widgets.ALL.forEach { it.renderNow(applicationContext, trigger = "worker") } }
       .get()
     // retry re-checks the constraint and backs off on its own, no count of our own
     return if (RatesApi.usable) Result.success() else Result.retry()

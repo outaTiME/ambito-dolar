@@ -41,7 +41,7 @@ sealed class Content(val rateType: String?) {
 }
 
 abstract class WidgetProvider : AppWidgetProvider() {
-  // null shows the empty text, the preview passes INVALID_APPWIDGET_ID and so reads the defaults
+  // null shows the empty text
   protected abstract fun card(context: Context, widgetId: Int, rates: Map<String, Rate>): Content?
 
   abstract val layout: Int
@@ -101,7 +101,8 @@ abstract class WidgetProvider : AppWidgetProvider() {
           intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS) ?: all(context, manager)
         else -> null
       }
-    // an empty list still refreshes the picker preview, only an unhandled action goes to the base class
+    // an empty list still goes on, MY_PACKAGE_REPLACED clears the stored preview of an unplaced provider
+    // only an unhandled action goes to the base class
     if (ids == null) {
       super.onReceive(context, intent)
       return
@@ -110,10 +111,29 @@ abstract class WidgetProvider : AppWidgetProvider() {
     val trigger = intent.action.orEmpty().substringAfterLast('.')
     Widgets.EXECUTOR.execute {
       try {
+        if (intent.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
+          removeStoredPreview(context, manager)
+        }
         renderNow(context, ids, trigger)
       } finally {
         pending.finish()
       }
+    }
+  }
+
+  // earlier builds stored a live picker preview, the png only shows again once it is removed
+  private fun removeStoredPreview(context: Context, manager: AppWidgetManager) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+      return
+    }
+    // a throw here would end the redraw that follows
+    try {
+      manager.removeWidgetPreview(
+        ComponentName(context, javaClass),
+        AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
+      )
+    } catch (e: Exception) {
+      Log.w(TAG, "stored preview not removed", e)
     }
   }
 
@@ -164,8 +184,8 @@ abstract class WidgetProvider : AppWidgetProvider() {
     ids: IntArray,
     trigger: String,
   ) {
-    // with nothing placed only the preview is left, and below api 35 there is none
-    if (ids.isEmpty() && Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+    // with nothing placed there is nothing to draw, so no fetch
+    if (ids.isEmpty()) {
       return
     }
     // scheduled before the fetch, or a first widget added offline would never get a periodic run
@@ -181,36 +201,11 @@ abstract class WidgetProvider : AppWidgetProvider() {
       }
       return
     }
-    if (ids.isNotEmpty()) {
-      // an id removed meanwhile is a no op for the host, never a widget brought back
-      for (id in ids) {
-        manager.updateAppWidget(id, responsive(context, card(context, id, rates), id))
-      }
-      Log.i(TAG, "${javaClass.simpleName} drew ${ids.size} on $trigger")
+    // an id removed meanwhile is a no op for the host, never a widget brought back
+    for (id in ids) {
+      manager.updateAppWidget(id, responsive(context, card(context, id, rates), id))
     }
-    // the preview quota is about two an hour, a periodic run for an unplaced provider would spend it
-    if (ids.isEmpty() && trigger == PERIODIC) {
-      return
-    }
-    // published even with nothing placed, a stale stored preview outlives the resource ids it was built against
-    try {
-      publishPreview(context, manager, rates)
-    } catch (e: Exception) {
-      Log.w(TAG, "preview not published", e)
-    }
-  }
-
-  // from android 15 the picker shows a real widget like the ios gallery, false when the quota is spent
-  private fun publishPreview(context: Context, manager: AppWidgetManager, rates: Map<String, Rate>) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-      return
-    }
-    val preview = card(context, AppWidgetManager.INVALID_APPWIDGET_ID, rates) ?: return
-    manager.setWidgetPreview(
-      ComponentName(context, javaClass),
-      AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
-      views(context, preview, null, 0),
-    )
+    Log.i(TAG, "${javaClass.simpleName} drew ${ids.size} on $trigger")
   }
 
   private fun RemoteViews.slot(
@@ -230,7 +225,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
   }
 
   // a ceiling and not a layout, twice the card because an s9 reports 174dp for a card it draws at 144
-  // the picker preview has no widget to ask and falls back to the declared minimum, zero means no ceiling
+  // a host that reports no size falls back to the declared minimum, zero means no ceiling
   private fun roomPx(context: Context, reported: Int, padding: Int): Int {
     val card =
       if (reported > 0) {
@@ -269,8 +264,8 @@ abstract class WidgetProvider : AppWidgetProvider() {
     return views(context, content, widgetId, minWidth)
   }
 
-  // reported is the card side in dp, 0 for the picker preview, which has no widget to ask
-  private fun views(context: Context, content: Content?, widgetId: Int?, reported: Int): RemoteViews {
+  // reported is the card side in dp, 0 when the host reports no size
+  private fun views(context: Context, content: Content?, widgetId: Int, reported: Int): RemoteViews {
     val views = RemoteViews(context.packageName, layout)
     views.setViewVisibility(R.id.widget_content, if (content == null) View.GONE else View.VISIBLE)
     views.setViewVisibility(R.id.widget_empty, if (content == null) View.VISIBLE else View.GONE)
@@ -303,7 +298,7 @@ abstract class WidgetProvider : AppWidgetProvider() {
       is Content.Rows -> {
         val room = roomPx(context, reported, padding)
         // name and date get the reported card minus the value beside them, so a long one ellipsizes at the row size
-        // an s9 reports more than it draws and still lands on fitStart, the picker preview keeps the ceiling
+        // an s9 reports more than it draws and still lands on fitStart, a host with no size keeps the ceiling
         val gap = (ROW_GAP_DP * context.resources.displayMetrics.density).roundToInt()
         val beside = { value: Int -> if (reported > 0) (room / CEILING - value - gap).coerceAtLeast(1) else room }
         SLOTS.forEachIndexed { slot, ids ->
@@ -340,12 +335,10 @@ abstract class WidgetProvider : AppWidgetProvider() {
         }
       }
     }
-    if (widgetId != null) {
-      views.setOnClickPendingIntent(
-        android.R.id.background,
-        openApp(context, widgetId, content?.rateType),
-      )
-    }
+    views.setOnClickPendingIntent(
+      android.R.id.background,
+      openApp(context, widgetId, content?.rateType),
+    )
     return views
   }
 
@@ -373,9 +366,6 @@ abstract class WidgetProvider : AppWidgetProvider() {
 
     // the marginStart of the price and the change in widget_list.xml
     private const val ROW_GAP_DP = 4f
-
-    // the trigger the periodic work reports
-    const val PERIODIC = "worker"
 
     // row container, meta container, name, price, date and change of each list slot
     private val SLOTS =

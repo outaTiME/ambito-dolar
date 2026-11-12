@@ -7,6 +7,6 @@
   <!-- scripts/widget-preview.js cuts the preview corners with this same value -->
   <dimen name="widget_corner">20dp</dimen>
 
-  <!-- minWidth and minHeight of every provider, and the picker preview room fallback -->
+  <!-- minWidth and minHeight of every provider, and the room fallback of a host that reports no size -->
   <dimen name="widget_min_size">110dp</dimen>
 </resources>
