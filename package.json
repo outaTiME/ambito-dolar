@@ -21,7 +21,7 @@
     "eslint-plugin-astro": "^3.2.1",
     "husky": "^9.1.7",
     "lerna": "^10.1.2",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.0",
     "prettier-plugin-astro": "^1.1.2",
     "sst": "^4.17.2",
     "typescript": "~6.0.3"
@@ -34,6 +34,7 @@
     "client:prebuild": "yarn workspace @ambito-dolar/client exec expo prebuild",
     "client:build": "yarn workspace @ambito-dolar/client exec eas build --clear-cache",
     "client:check": "yarn workspace @ambito-dolar/client run check",
+    "client:build:unattended": "yarn workspace @ambito-dolar/client run build:unattended",
     "client:e2e": "yarn workspace @ambito-dolar/client run e2e",
     "client:doctor": "yarn workspace @ambito-dolar/client exec npx expo-doctor@latest",
     "client:typecheck": "tsc --noEmit -p packages/client/tsconfig.json",
