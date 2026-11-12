@@ -1,6 +1,6 @@
 #!/bin/sh
 # yarn client:e2e, every flow of .argent/e2e on an iPhone simulator and then on an android emulator,
-# booting whichever is off, over the unattended build
+# booting whichever is off and shutting it down at the end, over the unattended build
 set -eu
 
 # the simulator by its default name, the AVD by its hardware profile so a renamed one still counts
@@ -17,14 +17,9 @@ running() { argent server status --json 2>/dev/null | grep -q '"running": true';
 ready() {
   if [ "$2" = booted ] || ! running; then
     # a free port, a stale server may still hold the default one, and the idle exit of an autospawn
-    argent server start --detach --force --port 0 --idle-timeout 30 >/dev/null 2>&1 || true
+    # it returns once the server answers, one that never does is killed and fails here
+    argent server start --detach --force --port 0 --idle-timeout 30 >/dev/null
   fi
-  tries=0
-  until running; do
-    [ "$tries" -lt 60 ] || { echo "argent's tool server never came up" >&2; exit 1; }
-    sleep 1
-    tries=$((tries + 1))
-  done
   argent run launch-app --udid "$1" --bundleId im.outa.AmbitoDolar >/dev/null 2>&1 || true
   argent run await-screen-idle --udid "$1" --timeoutMs 60000 >/dev/null 2>&1 || true
 }
@@ -55,6 +50,18 @@ ini=$(grep -lx "hw.device.name=$profile" "$avds"/*.avd/config.ini 2>/dev/null | 
 avd=$(basename "$(dirname "$ini")" .avd)
 
 "$client/scripts/unattended-build.sh"
+
+# what was off before the run goes down after it, a failed run included
+sim_off= emu_off= pid=
+xcrun simctl list devices | grep -F "($sim) (Shutdown)" >/dev/null && sim_off=1
+close() {
+  [ -z "$sim_off" ] || xcrun simctl shutdown "$sim" >/dev/null 2>&1 || true
+  # by the process it started, a serial could be another emulator that came up meanwhile
+  [ -z "$emu_off" ] || kill "$pid" 2>/dev/null || true
+}
+# ctrl-c too, sh skips the exit trap on a signal
+trap close EXIT
+trap 'exit 130' INT TERM
 
 # the flows read Argentine Spanish, a simulator booted in another language goes down to get it
 if ! xcrun simctl list devices | grep -F "($sim) (Shutdown)" >/dev/null && {
@@ -91,7 +98,7 @@ for serial in $(adb devices | awk '/^emulator-.*device$/ { print $1 }'); do
 done
 booted=
 if [ -z "$emu" ]; then
-  booted=booted
+  booted=booted emu_off=1
   before=$(adb devices | awk '/^emulator-/ { print $1 }')
   emulator -avd "$avd" -no-boot-anim -no-audio >/dev/null 2>&1 &
   pid=$!

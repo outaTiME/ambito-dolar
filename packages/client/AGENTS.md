@@ -157,7 +157,7 @@ error, and that is the whole of this section.
 
 - Argent YAML in `packages/client/.argent/e2e/`, one flow per file. `yarn client:e2e`
   (`packages/client/scripts/e2e.sh`) builds when needed, installs and runs them all on the iPhone 18 Pro Max
-  simulator, then on the emulator of the AVD with the `pixel_9_pro` profile, booted when it does not run. A flow that fails gets one more try, a launch can race argent's devtools handshake on a loaded host. One alone, on a booted
+  simulator, then on the emulator of the AVD with the `pixel_9_pro` profile, booted when it does not run. A device off before the run goes down at the end, a failed or cut run included. A flow that fails gets one more try, a launch can race argent's devtools handshake on a loaded host. One alone, on a booted
   device with the build installed:
   `yarn workspace @ambito-dolar/client exec argent e2e run <name> --device <udid>`.
 - Run on an unattended build (`UNATTENDED=true`, `Settings.UNATTENDED`): the developer screen in a
