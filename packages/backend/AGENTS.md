@@ -54,9 +54,12 @@ SST v4, Lambda handlers.
   which surfaces as a missing post and not as an error. The chromium README prescribes the check:
   match the Chrome major that puppeteer ships, from https://pptr.dev/supported-browsers, to the
   chromium package major.
-- **One `timeout` in `packages/core` and no per call override.** Every source was measured before it
-  was set and only one is above a second, so a second number would be a guess. A body read with
-  `.then(r => r.json())` sits outside that timer, the `.json()` shortcut gets one of its own.
+- **One `timeout` in `packages/core` and no per call override, the bcra aside.** Every source was
+  measured before it was set and only one is above a second, so a second number would be a guess.
+  The bcra stalls about 20s at times: `getBcraMarket` turns the per attempt timer off and sets
+  `totalTimeout`, one budget over ky retries and the body read. `totalTimeout` alone still inherits
+  the 15s. A body read with `.then(r => r.json())` sits outside that timer, the `.json()` shortcut
+  gets one of its own.
 - **ky retries neither a timeout nor a parse.** A hung source costs one attempt and not three, and
   a malformed body fails the call where a `promiseRetry` around the parse would have asked again.
   `getBusinessDay` took that trade so six retries could not outlast the minute `Process` gets.

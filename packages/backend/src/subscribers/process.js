@@ -183,6 +183,8 @@ const getBcraMarket = ([type, id]) =>
       // some series are published ahead, the value of today and never a later one
       AmbitoDolar.fetch(
         `${process.env.BCRA_URL}/${id}?hasta=${AmbitoDolar.getTimezoneDate().format('YYYY-MM-DD')}&limit=1`,
+        // the bcra stalls about 20s at times, one 30s budget covers ky retries and the body read
+        { timeout: false, totalTimeout: 30 * 1000 },
       ).json(),
     )
     .then((data) => {
