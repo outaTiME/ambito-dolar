@@ -217,7 +217,8 @@ const SettingsScreen = () => {
         plain
         note={I18n.t('opts_support_note')}
       >
-        {purchasesConfigured && (
+        {/* an unattended build lists its mock products even with no store key */}
+        {(purchasesConfigured || Settings.UNATTENDED) && (
           <CardItemView
             title={I18n.t('donate')}
             useSwitch={false}

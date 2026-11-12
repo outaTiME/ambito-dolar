@@ -1,8 +1,8 @@
 #!/bin/sh
 # the store screenshots into release/app-store and release/google-play
 # see docs/store-screenshots.md
-# run as yarn screenshots [--build] [--verbose] [device...], the Release builds run when out/build
-# is missing or older than the app sources, core or the lockfile, --build forces them
+# run as yarn screenshots [--build] [--verbose] [device...], over the client's unattended builds,
+# yarn client:build:unattended, which build only on a change, --build forces them
 # devices named capture alone, the rest compose from their last raw captures
 set -eu
 
@@ -20,8 +20,6 @@ done
 
 here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "$here/../.." && pwd)
-app="$here/out/build/AmbitoDolar.app"
-apk="$here/out/build/app-release.apk"
 cd "$here"
 mkdir -p out
 log=$here/out/run.log
@@ -86,41 +84,6 @@ step() {
   printf '%s✓%s %s %s%s%s\n' "$green" "$reset" "$current" "$dim" "$(took "$t")" "$reset"
   current=
 }
-
-# the client's own prebuild, then expo run:ios or gradle, without installing on a device, in a
-# subshell each
-build_ios() (
-  # a failed build leaves nothing behind, the next run builds again
-  command rm -rf out/build
-  cd "$repo"
-  # a Release build uploads its sourcemaps otherwise
-  export SENTRY_DISABLE_AUTO_UPLOAD=true
-  # empty keys skip the Sentry and Amplitude inits, every capture launch would reach them
-  # an unattended build, the developer screen and no update toast or donation modal of its own
-  export SENTRY_DSN= AMPLITUDE_KEY= UNATTENDED=true
-  yarn run client:prebuild --platform ios
-  # generic builds for the simulator and only copies the .app, the expo cli loads .env
-  # a Release build embeds its bundle, no Metro and no question about a busy port
-  yarn run client:run:ios --configuration Release --device generic --no-bundler \
-    --output "$here/out/build"
-  [ -d "$app" ] || { echo "the build left no $app" && exit 1; }
-)
-
-build_android() (
-  cd "$repo"
-  export SENTRY_DISABLE_AUTO_UPLOAD=true SENTRY_DSN= AMPLITUDE_KEY= UNATTENDED=true
-  yarn run client:prebuild --platform android
-  # expo run:android always installs on a device, so gradle alone with the env files loaded
-  # the way the expo cli loads them, API_URL among them
-  cd packages/client
-  node -e '
-    require("@expo/env").loadProjectEnv(".", { mode: "production" });
-    const { status } = require("child_process").spawnSync("./gradlew", ["app:assembleRelease"],
-      { cwd: "android", stdio: "inherit" });
-    process.exit(status ?? 1);
-  '
-  cp android/app/build/outputs/apk/release/app-release.apk "$apk"
-)
 
 # every simulator, emulator and argent tool server, a leftover one takes the next device's place
 close_all() {
@@ -223,20 +186,7 @@ for name in $only; do
   esac
 done
 devices=${only:-$devices}
-# a change in the app sources, core or the lockfile after out/build builds again
-# --build forces it after an Xcode bump, nothing in the repo shows that one
-client=$repo/packages/client
-changed=$([ ! -d "$app" ] || find "$client" "$repo/packages/core" "$repo/yarn.lock" -newer "$app" \
-  -type f -not -path '*/node_modules/*' \
-  -not -path '*/build/*' -not -path "$client/ios/*" -not -path "$client/android/*" \
-  -not -path '*.xcassets/*.colorset/*' -not -path '*.xcassets/*.appiconset/*' \
-  -not -path '*/.expo/*' -not -path '*/.argent/*' -not -path '*/docs/*' -not -path '*/scripts/*' \
-  -not -path "$client/dist/*" -not -path "$client/web-build/*" -not -name test.js -not -name '*.md' \
-  -not -name .DS_Store | sed -n 1p)
-if [ -n "$rebuild" ] || [ -n "$changed" ] || [ ! -d "$app" ] || [ ! -f "$apk" ]; then
-  step "build ios" build_ios
-  step "build android" build_android
-fi
+step build "$repo/packages/client/scripts/unattended-build.sh" ${rebuild:+--force}
 close_all >>"$log" 2>&1
 # the marble strip behind every set, each scene shows its own stretch of it, and the social header
 step background node background.ts
@@ -263,7 +213,7 @@ for dir in out/screenshots/*/; do
   mkdir -p "release/$store"
   mv "$dir" "release/$store/$device"
 done
-# out/build stays for the next run, out/raw and out/background for a node compose.ts by hand
+# out/raw and out/background for a node compose.ts by hand
 command rm -rf out/screenshots
 
 # the Play feature graphic at the Play folder's root, and the website phone

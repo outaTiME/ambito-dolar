@@ -3,10 +3,26 @@ steps:
   - launch: im.outa.AmbitoDolar
   - await: { visible: { text: Oficial }, timeout: 30000 }
   - await: { idle: true }
+  - when: { visible: { text: { matches: '\d{2}/\d{2} \d{2}:\d{2}' } } }
+    steps:
+      - echo: a failed run left relative dates off and they persist, turn them back on first
+      - tap: { text: Ajustes }
+      - await: { visible: { text: Fechas relativas }, timeout: 15000 }
+      - await: { idle: true }
+      - tap: { text: Fechas relativas }
+      - when: { platform: ios }
+        steps:
+          - tap: { text: Cotizaciones, within: { text: Barra de pestañas } }
+      - when: { platform: android }
+        steps:
+          - tap: { text: Cotizaciones, after: { text: Desarrollador } }
+      - await: { visible: { text: Oficial } }
+      - await: { idle: true }
   - assert: { hidden: { text: { matches: '\d{2}/\d{2} \d{2}:\d{2}' } } }
   - echo: turn relative dates off in settings
   - tap: { text: Ajustes }
   - await: { visible: { text: Fechas relativas }, timeout: 15000 }
+  - await: { idle: true }
   - echo: the switch carries the row title, the smallest exact match beats the label
   - tap: { text: Fechas relativas }
   - when: { platform: ios }
@@ -23,6 +39,7 @@ steps:
   - echo: turn it back on, the fixed day and time go away
   - tap: { text: Ajustes }
   - await: { visible: { text: Fechas relativas }, timeout: 15000 }
+  - await: { idle: true }
   - tap: { text: Fechas relativas }
   - when: { platform: ios }
     steps:

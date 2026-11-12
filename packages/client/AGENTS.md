@@ -155,25 +155,30 @@ error, and that is the whole of this section.
 
 ## E2E
 
-- Argent YAML in `packages/client/.argent/e2e/`, one flow per file, `yarn client:e2e` runs them all
-  on the booted device, iOS or Android. One alone:
-  `yarn workspace @ambito-dolar/client exec argent e2e run <name>`. With several devices booted
-  pass `--platform ios|android` or `--device <udid>`.
+- Argent YAML in `packages/client/.argent/e2e/`, one flow per file. `yarn client:e2e`
+  (`packages/client/scripts/e2e.sh`) builds when needed, installs and runs them all on the iPhone 18 Pro Max
+  simulator, then on the emulator of the AVD with the `pixel_9_pro` profile, booted when it does not run. A flow that fails gets one more try, a launch can race argent's devtools handshake on a loaded host. One alone, on a booted
+  device with the build installed:
+  `yarn workspace @ambito-dolar/client exec argent e2e run <name> --device <udid>`.
 - Run on an unattended build (`UNATTENDED=true`, `Settings.UNATTENDED`): the developer screen in a
   Release, the activity toast, clear rates and load error flows go through it, no update toast or
-  donation modal of its own. The `yarn screenshots` one, installed by hand:
-  `xcrun simctl install <udid> packages/screenshots/out/build/AmbitoDolar.app` or
-  `adb install -r packages/screenshots/out/build/app-release.apk`.
-- Device in `es-AR` (iOS Language & Region, Android
+  donation modal of its own. `yarn client:build:unattended` (`packages/client/scripts/unattended-build.sh`) writes
+  it into `packages/client/build/unattended/`, the store screenshots use it too. Release builds
+  without the Sentry DSN and the Amplitude key, Gradle for the APK with the env files loaded the way
+  Expo loads them because `expo run:android` always installs on a device. It builds only when
+  `packages/client`, `packages/core` or `yarn.lock` changed after the last one, `--force` after an
+  Xcode bump or a deleted source file, the change check sees neither. It needs no `packages/client/.env`: the app runs on the fixtures, the widgets draw the
+  empty text, and the donation products are the mock ones (`packages/client/hooks/useDonationProducts.ts`), so the flows
+  pass with or without it.
+- Device in `es-AR`, `packages/client/scripts/e2e.sh` sets it on both, by hand for a run alone (iOS Language & Region, Android
   `adb shell cmd locale set-app-locales im.outa.AmbitoDolar --locales es-AR`), iOS system strings
   (`Barra de pestañas`) and Android differences go under `when: { platform: ... }`: the Android
-  toast is outside the accessibility tree, and an emulator without a Google account gets no donation
-  products, the flow checks the error instead.
+  toast is outside the accessibility tree.
 - Selectors by visible text, the app has no `testID`. `text` matches a case-insensitive substring,
   a row title holding the text of what it shows (`Ver toast de actividad`) needs an anchored regex.
 - `echo` in English, the feature or behaviour checked, never the Spanish label the step taps:
   `the theme follows light and dark and goes back to system`. Same in `packages/screenshots/flows/`.
-- A failed run of `relative-dates` or `appearance` can leave the setting changed, restore it by hand
-  before the next run.
-- On iOS the donate flow checks the four amounts and their price only, a purchase needs a store
-  account. Appearance only switches the theme, the colors are checked by eye.
+- `relative-dates` turns relative dates back on first when a failed run left them off. A failed
+  `appearance` run can leave the theme changed, restore it by hand before the next run.
+- The donate flow checks the four mock amounts and the lowest and highest price only, a purchase
+  needs a store account. Appearance only switches the theme, the colors are checked by eye.

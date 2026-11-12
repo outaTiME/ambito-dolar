@@ -28,7 +28,7 @@ Guide for coding agents. Minimal targeted edits. Preserve behavior unless asked.
 ```bash
 yarn install / yarn test / yarn depcheck                          # root
 yarn client:start / client:run:ios / client:run:android / client:doctor
-yarn client:typecheck / client:prebuild / client:check / client:e2e # client
+yarn client:typecheck / client:prebuild / client:check / client:build:unattended / client:e2e # client
 yarn infra:start / infra:deploy / infra:remove                    # backend
 yarn website:start / website:clean                                # website
 yarn screenshots                                                  # screenshots
@@ -44,7 +44,7 @@ yarn workspace @ambito-dolar/website run build|preview
 ### Tests
 
 - Root `yarn test` lints every workspace and runs the AVA tests of `packages/core`, `packages/backend` and `packages/client` through lerna. CI runs it on every push. Website and screenshots have no test script. Details in each package `AGENTS.md`.
-- `yarn client:e2e` runs the client argent e2e tests on a booted device, local only, never in CI. See `packages/client/AGENTS.md`.
+- `yarn client:e2e` builds when needed and runs the client argent e2e tests on the iPhone 18 Pro Max simulator, then an emulator, local only, never in CI. See `packages/client/AGENTS.md`.
 
 ## Code Style
 
@@ -120,7 +120,7 @@ Four things outside the widget files break them when moved:
 `packages/client/assets/fonts/FiraGO-Regular.otf`, the build `API_URL` env var (the CloudFront
 alias that caches `/fetch`, never the raw API Gateway url), the `ambito-dolar` scheme with its
 `/rates[/type]` and `/markets[/type]` routes, and the app `AppTheme`. Only the font and `API_URL`
-fail loud, and only on android.
+fail loud, and only on android, `API_URL` not on an unattended build.
 
 Read `packages/client/docs/android-widgets.md` and `packages/client/docs/ios-widgets.md` before
 touching any of that.

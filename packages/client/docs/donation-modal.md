@@ -18,7 +18,8 @@ bypass.
 - The re-ask measures from `customerInfo.requestDate`, the server time of that snapshot, and the device clock only when it is missing. A clock months ahead would re-ask a donor the next day, one behind would never re-ask. A cached snapshot carries an older time, so it can only push the ask to the next usage day and never bring it forward.
 - Forced opens via Developer screen bypass cooldown but don't increment dismiss counter.
 - An unattended build (`Settings.UNATTENDED`, the local screenshot and e2e builds) opens it forced
-  only, never by cooldown, a run would capture it or break a test.
+  only, never by cooldown, a run would capture it or break a test. It lists the mock products of
+  `packages/client/hooks/useDonationProducts.ts` and Settings shows Donar with no store key.
 - The modal is the `packages/client/app/donate.tsx` route, a native `formSheet` with `fitToContents`
   opened by `goToDonateModal()`. `withAppDonation` in `packages/client/components/AppContainer.tsx`
   only decides when, and waits for valid rates: the initial screen mounts no navigator, `navigate`

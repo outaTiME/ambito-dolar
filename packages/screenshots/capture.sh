@@ -9,6 +9,8 @@ device=$1
 bundle=im.outa.AmbitoDolar
 out=out/raw/$device
 argent() { "$here/../../node_modules/.bin/argent" "$@"; }
+# yarn client:build:unattended, run.sh builds it first
+build=$here/../client/build/unattended
 
 # the device from config.ts as shell variables, scenes holds one "id flow appearance" line each
 # assigned first, a failed node inside eval "$(...)" would pass set -e
@@ -63,7 +65,7 @@ watch() {
   sim_boot true
   xcrun --sdk watchsimulator clang -target arm64-apple-watchos10.0-simulator -dynamiclib \
     -framework CoreFoundation -o out/watch-clock.dylib watch-clock.c
-  xcrun simctl install "$udid" out/build/AmbitoDolar.app/Watch/*.app
+  xcrun simctl install "$udid" "$build"/AmbitoDolar.app/Watch/*.app
   # 12 hour time on the face
   xcrun simctl spawn "$udid" defaults write -g AppleICUForce24HourTime -bool false
   xcrun simctl spawn "$udid" launchctl setenv FAKE_HHMM 1009
@@ -107,7 +109,7 @@ fi
 if [ "$platform" = ios ]; then
   sim_boot pin_locale
   # over the installed app, a reinstall would drop the widgets placed by hand
-  xcrun simctl install "$udid" out/build/AmbitoDolar.app
+  xcrun simctl install "$udid" "$build/AmbitoDolar.app"
   appearance() { xcrun simctl ui "$udid" appearance "$1"; }
   # "charged" draws the charging bolt, a cellular data type a faint label next to the wifi glyph
   status_bar() {
@@ -147,7 +149,7 @@ else
   adb -s "$udid" shell \
     "settings put global hide_error_dialogs 1; settings put secure sysui_rounded_size 0"
   adb -s "$udid" shell am force-stop "$bundle" 2>/dev/null || true
-  adb -s "$udid" install -r out/build/app-release.apk >/dev/null
+  adb -s "$udid" install -r "$build/app-release.apk" >/dev/null
   # the per app language, the emulator itself stays in en-US
   adb -s "$udid" shell cmd locale set-app-locales "$bundle" --locales es-AR
   appearance() {
@@ -170,9 +172,11 @@ fi
 
 # a tool server from before the boot never reaches the new devtools endpoint (argent #561), and
 # its first start after a boot can outlast the client's own wait (argent #1431)
-argent server start --detach --force >/dev/null 2>&1 || true
+# a free port, a stale server may still hold the default one, and the idle exit of an autospawn
+argent server start --detach --force --port 0 --idle-timeout 30 >/dev/null 2>&1 || true
 tries=0
-until argent server status >/dev/null 2>&1; do
+# status exits 0 with no server too, only the json says whether it answers
+until argent server status --json 2>/dev/null | grep -q '"running": true'; do
   [ "$tries" -lt 60 ] || { echo "$device: argent's tool server never came up" >&2; exit 1; }
   sleep 1
   tries=$((tries + 1))

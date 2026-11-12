@@ -2,6 +2,7 @@
 import React from 'react';
 import Purchases from 'react-native-purchases';
 
+import Settings from '@/config/settings';
 import Helper from '@/utilities/Helper';
 
 // module-level state dedupes parallel fetches
@@ -11,8 +12,9 @@ const fetchProductsOnce = () => {
   if (inflight) {
     return inflight;
   }
-  // mock products in dev, emulators and simulators have no live store billing
-  if (__DEV__) {
+  // mock products in dev and unattended builds
+  // a simulator has no store billing and an unattended build may have no store key
+  if (__DEV__ || Settings.UNATTENDED) {
     return Promise.resolve(
       [
         ['small', 0.99],

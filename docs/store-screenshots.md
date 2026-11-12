@@ -37,15 +37,12 @@ Apple Watch set, the website phone or the social header. All of it comes from
   `packages/website/src/components/Phone.astro` and the root `README.md`.
 - `packages/screenshots/frames/`: the bezel PNGs and their licenses, `measure-frame.ts` measures a new one.
 - `run.sh`: everything. A check of the simulators, AVDs, flows, tools, font and client env, then the
-  Release builds into `packages/screenshots/out/build/`: the client's prebuild and `expo run:ios`
-  for the simulator, and Gradle for the APK with the env files loaded the way Expo loads them,
-  `expo run:android` always installs on a device. The builds go without the Sentry DSN and the
-  Amplitude key, every capture launch would reach the real projects, and unattended
-  (`UNATTENDED=true`, see `packages/client/AGENTS.md` E2E). Then `background.ts`, the captures,
+  client's unattended builds, `packages/client/scripts/unattended-build.sh`, see
+  `packages/client/AGENTS.md` E2E. Then `background.ts`, the captures,
   `compose.ts`, the split into `packages/screenshots/release/app-store/` and
   `packages/screenshots/release/google-play/`, the extras, then `oxipng` when installed. What gets
   uploaded into `packages/screenshots/release/`, committed, the rest into
-  `packages/screenshots/out/`, ignored, `packages/screenshots/out/build/` kept for the next run.
+  `packages/screenshots/out/`, ignored.
 - `tsconfig.json`: for the editor and `tsc`, Node runs the `.ts` files without it.
 - `ipad-widgets.ts`: the iPad widget layout, see Widgets scene.
 
@@ -82,10 +79,8 @@ every device shows the same values and the rows read yesterday next to the 9:41 
 yarn screenshots
 ```
 
-- The Release builds, about 12 minutes, run when `packages/screenshots/out/build/` is missing or
-  `packages/client`, `packages/core` or `yarn.lock` changed after it, otherwise the run reuses
-  them. `--build` forces them after an Xcode bump or a deleted source file, the newer check sees
-  neither.
+- The Release builds, about 12 minutes, run only on a change, see `packages/client/AGENTS.md` E2E.
+  `--build` forces them after an Xcode bump or a deleted source file, the change check of `packages/client/scripts/unattended-build.sh` sees neither.
 - The captures take about 12 minutes. `run.sh` prints a start and an end line per step, the end one
   with its time, on a terminal a spinner in place of the start line, and the output folder at the
   end. Every command's output goes to `packages/screenshots/out/run.log`, `--verbose` shows it live
@@ -93,6 +88,8 @@ yarn screenshots
   while it runs. Not in parallel: an iOS boot restarts argent's tool server and drops a capture on
   another device. Every run takes every device in `config.ts` plus the watch, a device that fails
   gets a second try.
+- The captures share the iPhone and the Pixel with `yarn client:e2e` and keep the app's data. A failed
+  or interrupted e2e run can leave the appearance or relative dates changed, run it green before.
 - `yarn screenshots pixel-10-pro` captures only the devices named, the rest compose from their last
   raw captures. Its rates are from another moment than theirs, capture it close to the full run.
 - Upload `packages/screenshots/release/app-store/<device>/es-AR/` and
@@ -181,11 +178,12 @@ check the clock, the widgets, the wallpaper and the bezel fit.
   follows `SCENES.length`. `feature-graphic.ts` reads the `rates`, `markets` and `conversion`
   captures, `website-phone.ts` `rates` and `dark`. Play takes 8 screenshots.
 - argent bump: `@swmansion/argent` in the package; the flows use `tool:` and `await` steps,
-  `capture.sh` calls `e2e run`, `server start` and `status`, `run launch-app`, `await-screen-idle`,
-  `fold`, `rotate`, `screenshot` and `gesture-swipe`, `run.sh` `server stop`, check them all.
+  `capture.sh` calls `e2e run`, `server start` and `status --json`, `run launch-app`, `await-screen-idle`,
+  `fold`, `rotate`, `screenshot` and `gesture-swipe`, `run.sh` `server stop`, the client `e2e.sh` the
+  same server and run calls, check them all.
 - `@napi-rs/canvas` bump: a new skia moves the antialiasing of every edge. Recompose the last raw
   captures before and after and look at both sets.
-- Expo or Xcode bump: `build_ios`, `build_android` and the check lean on
+- Expo or Xcode bump: `packages/client/scripts/unattended-build.sh` and the check lean on
   `expo run:ios --device generic --no-bundler --output`, `@expo/env` `loadProjectEnv` and
   `parseProjectEnv` and the APK path. Run it, `--build` after an Xcode bump, and check a widget
   capture shows values, not "no disponible".
