@@ -24,10 +24,10 @@ __metadata:
   resolution: "@ambito-dolar/backend@workspace:packages/backend"
   dependencies:
     "@ambito-dolar/core": "npm:^5.2.2"
-    "@aws-sdk/client-dynamodb": "npm:^3.1167.0"
-    "@aws-sdk/client-s3": "npm:^3.1167.0"
-    "@aws-sdk/client-sns": "npm:^3.1167.0"
-    "@aws-sdk/lib-dynamodb": "npm:^3.1167.0"
+    "@aws-sdk/client-dynamodb": "npm:^3.1168.0"
+    "@aws-sdk/client-s3": "npm:^3.1168.0"
+    "@aws-sdk/client-sns": "npm:^3.1168.0"
+    "@aws-sdk/lib-dynamodb": "npm:^3.1168.0"
     "@aws-sdk/util-dynamodb": "npm:^3.996.9"
     "@instantdb/admin": "npm:^1.0.67"
     "@sentry/aws-serverless": "npm:^11.12.0"
@@ -64,19 +64,19 @@ __metadata:
     "@react-native-vector-icons/material-design-icons": "npm:^14.0.0"
     "@react-native-vector-icons/material-icons": "npm:^14.0.0"
     "@reduxjs/toolkit": "npm:^2.14.0"
-    "@sentry/react-native": "npm:^8.34.0"
+    "@sentry/react-native": "npm:^8.35.0"
     "@shopify/flash-list": "npm:^2.3.3"
-    "@swmansion/argent": "npm:^0.32.0"
+    "@swmansion/argent": "npm:^0.33.0"
     "@types/react": "npm:19.3.0"
     d3-array: "npm:^3.2.5"
     d3-shape: "npm:^3.2.1"
-    expo: "npm:^58.0.24"
+    expo: "npm:^58.0.25"
     expo-application: "npm:~58.1.2"
     expo-clipboard: "npm:~58.0.4"
     expo-constants: "npm:~58.0.16"
-    expo-dev-client: "npm:~58.0.19"
+    expo-dev-client: "npm:~58.0.20"
     expo-device: "npm:~58.0.5"
-    expo-device-hub: "npm:^0.23.0"
+    expo-device-hub: "npm:^0.23.1"
     expo-file-system: "npm:~58.0.13"
     expo-font: "npm:~58.0.12"
     expo-glass-effect: "npm:~58.0.5"
@@ -143,8 +143,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ambito-dolar/screenshots@workspace:packages/screenshots"
   dependencies:
-    "@napi-rs/canvas": "npm:^1.1.0"
-    "@swmansion/argent": "npm:^0.32.0"
+    "@napi-rs/canvas": "npm:^1.1.1"
+    "@swmansion/argent": "npm:^0.33.0"
     "@types/node": "npm:^22.20.5"
   languageName: unknown
   linkType: soft
@@ -448,9 +448,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-dynamodb@npm:^3.1167.0":
-  version: 3.1167.0
-  resolution: "@aws-sdk/client-dynamodb@npm:3.1167.0"
+"@aws-sdk/client-dynamodb@npm:^3.1168.0":
+  version: 3.1168.0
+  resolution: "@aws-sdk/client-dynamodb@npm:3.1168.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.981.0"
     "@aws-sdk/credential-provider-node": "npm:^3.972.97"
@@ -462,7 +462,7 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.14.2"
     "@smithy/types": "npm:^4.20.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/b02c7354f4091be067281d0d2a57be1f7fbf634b18184d7751883cc4a0feb7289dd124c4f07643b4cd007588f4a8ea8e998b3171bc9ba51614f0b416c0f0482b
+  checksum: 10/1d7229d2a3a267085f692e3af4447e068b0a75da33ac9ff7a0b023be5d5230f09537a071192098f54fa7fc16ea21e183602a375abdf872c3bcfefd274ce38979
   languageName: node
   linkType: hard
 
@@ -482,9 +482,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:^3.1167.0":
-  version: 3.1167.0
-  resolution: "@aws-sdk/client-s3@npm:3.1167.0"
+"@aws-sdk/client-s3@npm:^3.1168.0":
+  version: 3.1168.0
+  resolution: "@aws-sdk/client-s3@npm:3.1168.0"
   dependencies:
     "@aws-sdk/checksums": "npm:^3.1002.5"
     "@aws-sdk/core": "npm:^3.981.0"
@@ -497,13 +497,13 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.14.2"
     "@smithy/types": "npm:^4.20.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/e95b53eb78d3d006c335444b5df4894871d47cbb532d077b435efe98ec4810e393deedafec5a0ba1099a62f84ac3541f437d6ac624cb04d21f23906471bb0d58
+  checksum: 10/7ed5d683a0eecd10b095efef5fe18d5941f0e5d86658765fc979f42571fff8dedea512cf773fdea3ee87f71451fdb09070d6aaac2ef676a30d77b9195347bc47
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-sns@npm:^3.1167.0":
-  version: 3.1167.0
-  resolution: "@aws-sdk/client-sns@npm:3.1167.0"
+"@aws-sdk/client-sns@npm:^3.1168.0":
+  version: 3.1168.0
+  resolution: "@aws-sdk/client-sns@npm:3.1168.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.981.0"
     "@aws-sdk/credential-provider-node": "npm:^3.972.97"
@@ -513,7 +513,7 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.14.2"
     "@smithy/types": "npm:^4.20.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/00185638d0319441336d948c2a0c864481241efd87a870b14e3a1d612778b035668973fda7d976e937eb91d28f82c11eadc83a3c47b60145080064de9b4ab94a
+  checksum: 10/ecf836ed9191d941f3d2da7d51c65cab445b73127150439055a467b3341175b0795b53cde99d8d4d0585fa9f22e968a9759803f3ea2358daa75ea41b803b973c
   languageName: node
   linkType: hard
 
@@ -733,9 +733,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/lib-dynamodb@npm:^3.1167.0":
-  version: 3.1167.0
-  resolution: "@aws-sdk/lib-dynamodb@npm:3.1167.0"
+"@aws-sdk/lib-dynamodb@npm:^3.1168.0":
+  version: 3.1168.0
+  resolution: "@aws-sdk/lib-dynamodb@npm:3.1168.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.981.0"
     "@aws-sdk/util-dynamodb": "npm:^3.996.9"
@@ -743,8 +743,8 @@ __metadata:
     "@smithy/types": "npm:^4.20.0"
     tslib: "npm:^2.6.2"
   peerDependencies:
-    "@aws-sdk/client-dynamodb": ^3.1167.0
-  checksum: 10/24b5b968e46f360d4299d2f4f264e141d43338ac69550952836cac9545805f756eb690f77cf4b6d22a35db06c3fc47943b02b71f3cc8d77d9d8dfe23d6bc9b63
+    "@aws-sdk/client-dynamodb": ^3.1168.0
+  checksum: 10/f9b2051e09c539b8c2807477e22b4fe8d86d7fa6f01e01f8f1cf983bc298d5334f91451db2a66b7a3ddf3ba44a1bebd8386146217203ac7ec01db68b3711f369
   languageName: node
   linkType: hard
 
@@ -3939,98 +3939,98 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-android-arm64@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-android-arm64@npm:1.1.0"
+"@napi-rs/canvas-android-arm64@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-android-arm64@npm:1.1.1"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-darwin-arm64@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-darwin-arm64@npm:1.1.0"
+"@napi-rs/canvas-darwin-arm64@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-darwin-arm64@npm:1.1.1"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-darwin-x64@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-darwin-x64@npm:1.1.0"
+"@napi-rs/canvas-darwin-x64@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-darwin-x64@npm:1.1.1"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-arm-gnueabihf@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-linux-arm-gnueabihf@npm:1.1.0"
+"@napi-rs/canvas-linux-arm-gnueabihf@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-linux-arm-gnueabihf@npm:1.1.1"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-arm64-gnu@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-linux-arm64-gnu@npm:1.1.0"
+"@napi-rs/canvas-linux-arm64-gnu@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-linux-arm64-gnu@npm:1.1.1"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-arm64-musl@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-linux-arm64-musl@npm:1.1.0"
+"@napi-rs/canvas-linux-arm64-musl@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-linux-arm64-musl@npm:1.1.1"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-riscv64-gnu@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-linux-riscv64-gnu@npm:1.1.0"
+"@napi-rs/canvas-linux-riscv64-gnu@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-linux-riscv64-gnu@npm:1.1.1"
   conditions: os=linux & cpu=riscv64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-x64-gnu@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-linux-x64-gnu@npm:1.1.0"
+"@napi-rs/canvas-linux-x64-gnu@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-linux-x64-gnu@npm:1.1.1"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-x64-musl@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-linux-x64-musl@npm:1.1.0"
+"@napi-rs/canvas-linux-x64-musl@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-linux-x64-musl@npm:1.1.1"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-win32-arm64-msvc@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-win32-arm64-msvc@npm:1.1.0"
+"@napi-rs/canvas-win32-arm64-msvc@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-win32-arm64-msvc@npm:1.1.1"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-win32-x64-msvc@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas-win32-x64-msvc@npm:1.1.0"
+"@napi-rs/canvas-win32-x64-msvc@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas-win32-x64-msvc@npm:1.1.1"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@napi-rs/canvas@npm:1.1.0"
+"@napi-rs/canvas@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@napi-rs/canvas@npm:1.1.1"
   dependencies:
-    "@napi-rs/canvas-android-arm64": "npm:1.1.0"
-    "@napi-rs/canvas-darwin-arm64": "npm:1.1.0"
-    "@napi-rs/canvas-darwin-x64": "npm:1.1.0"
-    "@napi-rs/canvas-linux-arm-gnueabihf": "npm:1.1.0"
-    "@napi-rs/canvas-linux-arm64-gnu": "npm:1.1.0"
-    "@napi-rs/canvas-linux-arm64-musl": "npm:1.1.0"
-    "@napi-rs/canvas-linux-riscv64-gnu": "npm:1.1.0"
-    "@napi-rs/canvas-linux-x64-gnu": "npm:1.1.0"
-    "@napi-rs/canvas-linux-x64-musl": "npm:1.1.0"
-    "@napi-rs/canvas-win32-arm64-msvc": "npm:1.1.0"
-    "@napi-rs/canvas-win32-x64-msvc": "npm:1.1.0"
+    "@napi-rs/canvas-android-arm64": "npm:1.1.1"
+    "@napi-rs/canvas-darwin-arm64": "npm:1.1.1"
+    "@napi-rs/canvas-darwin-x64": "npm:1.1.1"
+    "@napi-rs/canvas-linux-arm-gnueabihf": "npm:1.1.1"
+    "@napi-rs/canvas-linux-arm64-gnu": "npm:1.1.1"
+    "@napi-rs/canvas-linux-arm64-musl": "npm:1.1.1"
+    "@napi-rs/canvas-linux-riscv64-gnu": "npm:1.1.1"
+    "@napi-rs/canvas-linux-x64-gnu": "npm:1.1.1"
+    "@napi-rs/canvas-linux-x64-musl": "npm:1.1.1"
+    "@napi-rs/canvas-win32-arm64-msvc": "npm:1.1.1"
+    "@napi-rs/canvas-win32-x64-msvc": "npm:1.1.1"
   dependenciesMeta:
     "@napi-rs/canvas-android-arm64":
       optional: true
@@ -4056,7 +4056,7 @@ __metadata:
       optional: true
     canvas:
       built: true
-  checksum: 10/f9917a0b2228537c5ccb2beba314e48683ed6a2c3d815097d77933965a3f75431cc1f46e63eac94764cf6d50b850521004044e52a69a215b8e2656b658e5ae82
+  checksum: 10/0526fff9f135b0e1a6a10a8b482db43ed62baaf9b690bd337e84bbf6019cb6dfb1a4c20ad9cef244e3c63c8225f35947f1811c7494d7432e379ee009c6d69418
   languageName: node
   linkType: hard
 
@@ -6051,9 +6051,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/expo-upload-sourcemaps@npm:8.34.0":
-  version: 8.34.0
-  resolution: "@sentry/expo-upload-sourcemaps@npm:8.34.0"
+"@sentry/expo-upload-sourcemaps@npm:8.35.0":
+  version: 8.35.0
+  resolution: "@sentry/expo-upload-sourcemaps@npm:8.35.0"
   dependencies:
     "@sentry/cli": "npm:3.8.2"
   peerDependencies:
@@ -6066,7 +6066,7 @@ __metadata:
       optional: true
   bin:
     expo-upload-sourcemaps: cli.js
-  checksum: 10/9f736171f2517ea771c8cb385ce1647c673ce11973021fc41efed6945d701e41571c7181413312ebd29804effd581bfe4a56b8405511a8f0eb54655d04b341c9
+  checksum: 10/bf059158d3e90e74bb5d7ef44a7cdb1e36577dfc9a7f068b715a2a8f00b50cff2105e752e34a180709fb81e19498d452552002d41e4d38f06677ff2ce93522af
   languageName: node
   linkType: hard
 
@@ -6106,15 +6106,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/react-native@npm:^8.34.0":
-  version: 8.34.0
-  resolution: "@sentry/react-native@npm:8.34.0"
+"@sentry/react-native@npm:^8.35.0":
+  version: 8.35.0
+  resolution: "@sentry/react-native@npm:8.35.0"
   dependencies:
     "@sentry/browser": "npm:10.78.0"
     "@sentry/bundler-plugins": "npm:10.78.0"
     "@sentry/cli": "npm:3.8.2"
     "@sentry/core": "npm:10.78.0"
-    "@sentry/expo-upload-sourcemaps": "npm:8.34.0"
+    "@sentry/expo-upload-sourcemaps": "npm:8.35.0"
     "@sentry/react": "npm:10.78.0"
   peerDependencies:
     "@babel/core": ">=7.0.0"
@@ -6167,7 +6167,7 @@ __metadata:
     sentry-eas-build-on-error: scripts/eas-build-hook.js
     sentry-eas-build-on-success: scripts/eas-build-hook.js
     sentry-expo-upload-sourcemaps: scripts/expo-upload-sourcemaps.js
-  checksum: 10/b098a3e851ff729cedb1e2294a94b9dd4d88628acaa2f2f193983d0a323c64d7721fdcbdccf6295e739d88276562295c4736ea2d52b84bbbcf9440c8df758be9
+  checksum: 10/ef1a8e9584564b7dc52a7d3ab5e02d5897ab75d6f8c066468b05b2d28e5bd6eece2abe56eb5171d9c3e727678e16e73009ef09af48bb87dbad9238a7e3e1903f
   languageName: node
   linkType: hard
 
@@ -6521,9 +6521,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swmansion/argent@npm:^0.32.0":
-  version: 0.32.0
-  resolution: "@swmansion/argent@npm:0.32.0"
+"@swmansion/argent@npm:^0.33.0":
+  version: 0.33.0
+  resolution: "@swmansion/argent@npm:0.33.0"
   dependencies:
     "@fails-components/webtransport": "npm:^1.6.8"
     "@fails-components/webtransport-transport-http3-quiche": "npm:^1.6.8"
@@ -6540,7 +6540,7 @@ __metadata:
   bin:
     argent: dist/cli.js
     argent-simulator-server: bin/argent-simulator-server.cjs
-  checksum: 10/b33d6b5942df6f916eeaf97ec956e7115f831a0a37383eda75645ad4874571d387526c079ae07cffc7276de8d62829ff1d526b480c9b853575ed46b60de592d3
+  checksum: 10/8fbeb2b21539834efab0626aa384f0f7c4335fddb472f69323136fc0ef4a0396e91dadfb8aa294e65e789044f2f63bff6628b6834e21df38297826a0ea86dd6d
   languageName: node
   linkType: hard
 
@@ -7299,7 +7299,7 @@ __metadata:
     eslint-plugin-astro: "npm:^3.2.1"
     husky: "npm:^9.1.7"
     lerna: "npm:^10.1.2"
-    prettier: "npm:^3.10.0"
+    prettier: "npm:^3.10.1"
     prettier-plugin-astro: "npm:^1.1.2"
     sst: "npm:^4.17.2"
     typescript: "npm:~6.0.3"
@@ -10649,24 +10649,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-dev-client@npm:~58.0.19":
-  version: 58.0.19
-  resolution: "expo-dev-client@npm:58.0.19"
+"expo-dev-client@npm:~58.0.20":
+  version: 58.0.20
+  resolution: "expo-dev-client@npm:58.0.20"
   dependencies:
-    expo-dev-launcher: "npm:~58.0.19"
+    expo-dev-launcher: "npm:~58.0.20"
     expo-dev-menu: "npm:~58.0.13"
     expo-dev-menu-interface: "npm:~58.0.2"
     expo-manifests: "npm:~58.0.1"
     expo-updates-interface: "npm:~58.0.1"
   peerDependencies:
     expo: "*"
-  checksum: 10/b7a2bcde34115835b0ee3ecf1507ef5a92c1cc4d354c9387415d18fc6b2b476e0e955de7abb8a77c58f939cafd1a8074627d80e634b8db923bd5f6a7032eac3b
+  checksum: 10/856168c4e52323384c8d922551ba687574c835cdc7519bb03e375f27b74f33ca2465b28aa6f2d812820bd4bf8a62ab1b0e1c13a754639801fafcd43bb67284ed
   languageName: node
   linkType: hard
 
-"expo-dev-launcher@npm:~58.0.19":
-  version: 58.0.19
-  resolution: "expo-dev-launcher@npm:58.0.19"
+"expo-dev-launcher@npm:~58.0.20":
+  version: 58.0.20
+  resolution: "expo-dev-launcher@npm:58.0.20"
   dependencies:
     "@expo/schema-utils": "npm:^58.0.3"
     expo-dev-menu: "npm:~58.0.13"
@@ -10674,7 +10674,7 @@ __metadata:
   peerDependencies:
     expo: "*"
     react-native: "*"
-  checksum: 10/fb8e728592717ebf9eae539416664f72bf5cb0b4d7e2eb07a453aacb4e2bdbeecffcee24ec47212469184921c244584632a27eadd5bf402fa9f4c1239f93f5fc
+  checksum: 10/a9c6c1f5f0b327f1d12cb7103a1fce1246c39c0099a0f6e3e9d33ef1e9310551267c357a2988f49d41c3e531c984368bc2a4dccc5d2d780f407adfede2ffc846
   languageName: node
   linkType: hard
 
@@ -10699,9 +10699,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-device-hub@npm:^0.23.0":
-  version: 0.23.0
-  resolution: "expo-device-hub@npm:0.23.0"
+"expo-device-hub@npm:^0.23.1":
+  version: 0.23.1
+  resolution: "expo-device-hub@npm:0.23.1"
   dependencies:
     "@fastify/busboy": "npm:^3.2.0"
     mediabunny: "npm:1.55.3"
@@ -10710,7 +10710,7 @@ __metadata:
     zustand: "npm:^5.0.15"
   bin:
     expo-device-hub: dist/server/cli.mjs
-  checksum: 10/b3bcd15ca0394f5b21fcbff8839b78e953fba61e60ef3212ded79fa18b32664e6c7464f8aa46950f0350689852e64f68eeef8b2b4efd0285905d7d59fd3c4796
+  checksum: 10/f2e5beeede17906d5fd874ad1121e3e738b79c28c165b0705bda9f71b245e85c166692432fd40ab3b28b5f67a107cec8d3a639a7cf86b5a508e792d425f38783
   languageName: node
   linkType: hard
 
@@ -11116,9 +11116,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo@npm:^58.0.24":
-  version: 58.0.24
-  resolution: "expo@npm:58.0.24"
+"expo@npm:^58.0.25":
+  version: 58.0.25
+  resolution: "expo@npm:58.0.25"
   dependencies:
     "@babel/runtime": "npm:^7.20.0"
     "@expo/cli": "npm:^58.1.20"
@@ -11169,7 +11169,7 @@ __metadata:
     expo-modules: bin/modules
     expo-modules-autolinking: bin/autolinking
     fingerprint: bin/fingerprint
-  checksum: 10/4168adf5208f613bbe20bd29556046c869386737c57e6c1765113f3c27fd6bee87e437a7bdcf82805f91fe36e34e72092c6b5d6e6d1d43c020e66f30f23a5b82
+  checksum: 10/8ead8158dacba8c096b72f1bbf623692672d000444a771630429520914fa223486de21aee92a3082a0aed76749db6e6b7f0c4216fd0801eb3d4f149e345e80df
   languageName: node
   linkType: hard
 
@@ -16347,12 +16347,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.10.0":
-  version: 3.10.0
-  resolution: "prettier@npm:3.10.0"
+"prettier@npm:^3.10.1":
+  version: 3.10.1
+  resolution: "prettier@npm:3.10.1"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10/c87442be0b480bc968cbd44d5984fd2ccf1d0b2a94aa3f35ffccc8751cf25751360adce3884d08b0f52c403fa75bfdf64bacdd2802d9fc1e0efee7456cf4ef36
+  checksum: 10/ab4fc7bbee5823eb99200f89172e1dc360a8225facc19db336f30aa4e089bd8576f141ca8e129ce6ce850f1d7beb4d6e8b7630c2522b3b2fdc62330114f828b2
   languageName: node
   linkType: hard
 

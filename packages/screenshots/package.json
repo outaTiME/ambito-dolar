@@ -7,8 +7,8 @@
     "start": "./run.sh"
   },
   "devDependencies": {
-    "@napi-rs/canvas": "^1.1.0",
-    "@swmansion/argent": "^0.32.0",
+    "@napi-rs/canvas": "^1.1.1",
+    "@swmansion/argent": "^0.33.0",
     "@types/node": "^22.20.5"
   }
 }

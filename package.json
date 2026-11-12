@@ -21,7 +21,7 @@
     "eslint-plugin-astro": "^3.2.1",
     "husky": "^9.1.7",
     "lerna": "^10.1.2",
-    "prettier": "^3.10.0",
+    "prettier": "^3.10.1",
     "prettier-plugin-astro": "^1.1.2",
     "sst": "^4.17.2",
     "typescript": "~6.0.3"
