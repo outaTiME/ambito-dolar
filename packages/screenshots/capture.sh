@@ -170,17 +170,10 @@ else
   in_front() { adb -s "$udid" shell dumpsys window | grep -q "mCurrentFocus=.*$bundle/"; }
 fi
 
-# a tool server from before the boot never reaches the new devtools endpoint (argent #561), and
-# its first start after a boot can outlast the client's own wait (argent #1431)
+# a tool server from before the boot never reaches the new devtools endpoint (argent #561)
 # a free port, a stale server may still hold the default one, and the idle exit of an autospawn
-argent server start --detach --force --port 0 --idle-timeout 30 >/dev/null 2>&1 || true
-tries=0
-# status exits 0 with no server too, only the json says whether it answers
-until argent server status --json 2>/dev/null | grep -q '"running": true'; do
-  [ "$tries" -lt 60 ] || { echo "$device: argent's tool server never came up" >&2; exit 1; }
-  sleep 1
-  tries=$((tries + 1))
-done
+# it returns once the server answers, one that never does is killed and fails here
+argent server start --detach --force --port 0 --idle-timeout 30 >/dev/null
 # the first launch pays the cold bundle and lands any new rates, outside any flow
 argent run launch-app --udid "$udid" --bundleId "$bundle" >/dev/null 2>&1 || true
 argent run await-screen-idle --udid "$udid" --timeoutMs 60000 >/dev/null 2>&1 || true

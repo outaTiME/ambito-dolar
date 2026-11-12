@@ -178,9 +178,9 @@ check the clock, the widgets, the wallpaper and the bezel fit.
   follows `SCENES.length`. `feature-graphic.ts` reads the `rates`, `markets` and `conversion`
   captures, `website-phone.ts` `rates` and `dark`. Play takes 8 screenshots.
 - argent bump: `@swmansion/argent` in the package; the flows use `tool:` and `await` steps,
-  `capture.sh` calls `e2e run`, `server start` and `status --json`, `run launch-app`, `await-screen-idle`,
-  `fold`, `rotate`, `screenshot` and `gesture-swipe`, `run.sh` `server stop`, the client `e2e.sh` the
-  same server and run calls, check them all.
+  `capture.sh` calls `e2e run`, `server start`, `run launch-app`, `await-screen-idle`, `fold`,
+  `rotate`, `screenshot` and `gesture-swipe`, `run.sh` `server stop`, the client `e2e.sh` the same
+  server and run calls plus `server status --json`, check them all.
 - `@napi-rs/canvas` bump: a new skia moves the antialiasing of every edge. Recompose the last raw
   captures before and after and look at both sets.
 - Expo or Xcode bump: `packages/client/scripts/unattended-build.sh` and the check lean on
