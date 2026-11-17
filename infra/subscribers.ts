@@ -80,6 +80,8 @@ export function createSubscribers(
         ...ctx.socialEnv,
         ...ctx.socialScreenshotEnv,
       },
+      // the @sparticuz/chromium npm package ships x64 binaries only
+      architecture: 'x86_64',
       nodejs: {
         install: ['puppeteer-core', '@sparticuz/chromium', 'sharp'],
       },
@@ -103,6 +105,8 @@ export function createSubscribers(
         ...ctx.socialEnv,
         ...ctx.socialScreenshotEnv,
       },
+      // the @sparticuz/chromium npm package ships x64 binaries only
+      architecture: 'x86_64',
       nodejs: {
         install: ['puppeteer-core', '@sparticuz/chromium', 'sharp'],
       },

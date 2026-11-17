@@ -6,6 +6,8 @@ export function applyFunctionDefaults() {
       retention: '1 day',
     };
     args.retries ??= 0;
+    // arm64 bills less than x86_64 for the same duration
+    args.architecture ??= 'arm64';
     args.runtime ??= 'nodejs22.x';
     // skip the sourcemap upload to s3
     args.nodejs = { ...args.nodejs, sourcemap: false };

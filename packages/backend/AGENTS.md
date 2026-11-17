@@ -54,6 +54,10 @@ SST v4, Lambda handlers.
   which surfaces as a missing post and not as an error. The chromium README prescribes the check:
   match the Chrome major that puppeteer ships, from https://pptr.dev/supported-browsers, to the
   chromium package major.
+- **A function that loads `packages/backend/src/libs/chrome.js` pins `architecture: 'x86_64'`**
+  in `infra/subscribers.ts`, every other one takes arm64 from `infra/defaults.ts`. The
+  `@sparticuz/chromium` npm package ships x64 binaries only, arm64 builds come from its GitHub
+  releases through `@sparticuz/chromium-min`, a migration and not a bump.
 - **One `timeout` in `packages/core` and no per call override, the bcra aside.** Every source was
   measured before it was set and only one is above a second, so a second number would be a guess.
   The bcra stalls about 20s at times: `getBcraMarket` turns the per attempt timer off and sets
@@ -63,9 +67,8 @@ SST v4, Lambda handlers.
 - **ky retries neither a timeout nor a parse.** A hung source costs one attempt and not three, and
   a malformed body fails the call where a `promiseRetry` around the parse would have asked again.
   `getBusinessDay` took that trade so six retries could not outlast the minute `Process` gets.
-- **ky skips POST and PATCH.** A POST that is a query opts back in per call with
-  `retry: { methods: ['post'] }`, the way `getBusinessDay` does. `promiseRetry` covers what ky
-  cannot reach: `packages/backend/src/subscribers/notify.js`, the media still processing in
+- **ky skips POST and PATCH.** `promiseRetry` covers what ky cannot reach:
+  `packages/backend/src/subscribers/notify.js`, the media still processing in
   `packages/backend/src/libs/social/instagram.js`, and the social targets in `shared.js`. Retrying
   a publish can repeat it, and with lambda retries off in `infra/defaults.ts` that is the only way
   a post goes out twice.
