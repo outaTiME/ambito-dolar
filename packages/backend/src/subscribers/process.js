@@ -16,20 +16,21 @@ const numberValidator = (value, helpers) => {
 };
 
 const getBusinessDay = async () => {
-  // ky skips post by default, and this one is a query so it opts back in
-  const data = await AmbitoDolar.fetch(process.env.BUSINESS_DAY_URL, {
-    method: 'POST',
-    retry: { methods: ['post'] },
-  }).json();
+  const today = AmbitoDolar.getTimezoneDate().format('YYYY-MM-DD');
+  // a working day lists no holiday
+  // the query stays a literal string, the encoded one answers an error page
+  const data = await AmbitoDolar.fetch(
+    `${process.env.BUSINESS_DAY_URL}?$format=json&$filter=Data eq ${today}`,
+  ).json();
   const { value, error } = Joi.object({
-    isWorkingDay: Joi.boolean().required(),
+    value: Joi.array().required(),
   })
     .unknown(true)
     .validate(data);
   if (error) {
     throw new Error('Invalid business day schema', { cause: error });
   }
-  return value.isWorkingDay;
+  return value.value.length === 0;
 };
 
 const getRate = (type) => {
