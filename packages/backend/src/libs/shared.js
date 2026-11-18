@@ -100,6 +100,7 @@ const FETCH_OBJECT_KEY = process.env.FETCH_OBJECT_KEY;
 const HISTORICAL_QUOTES_OBJECT_KEY = 'historical-' + QUOTES_OBJECT_KEY;
 const FULL_HISTORICAL_QUOTES_OBJECT_KEY =
   'full-historical-' + QUOTES_OBJECT_KEY;
+const HOLIDAYS_OBJECT_KEY = 'holidays';
 
 const getFirebaseAccessToken = () => {
   // https://firebase.google.com/docs/database/rest/auth#authenticate_with_an_access_token
@@ -786,6 +787,35 @@ const mergeHistoricalStats = (history, stats) => {
     .concat(stats.map((stat) => _.take(stat, 3)));
 };
 
+// the stored past days stay as they were
+// the source decides from today on, a day it drops was loaded by mistake
+const mergeHolidays = (stored, holidays, today) =>
+  _.sortBy(
+    _.unionBy(
+      _.filter(stored, ({ date }) => date < today),
+      holidays,
+      'date',
+    ),
+    'date',
+  );
+
+// an unreadable copy throws, rewriting it would lose the history
+const getStoredHolidays = () =>
+  getJsonObject(HOLIDAYS_OBJECT_KEY).catch((error) => {
+    if (error.name === 'NoSuchKey') {
+      return [];
+    }
+    throw error;
+  });
+
+const storeHolidays = async (holidays, today) => {
+  const stored = await getStoredHolidays();
+  const merged = mergeHolidays(stored, holidays, today);
+  if (!_.isEqual(merged, stored)) {
+    await storeJsonObject(HOLIDAYS_OBJECT_KEY, merged);
+  }
+};
+
 const getChangeMessage = (rate) => {
   const value = AmbitoDolar.getRateValue(rate);
   const formatted_value = AmbitoDolar.formatRateCurrency(value, true);
@@ -881,6 +911,9 @@ export default {
   getNextRateStat,
   addStat,
   mergeHistoricalStats,
+  mergeHolidays,
+  getStoredHolidays,
+  storeHolidays,
   getBodyMessage,
   getSocialCaption,
   getNotifications,

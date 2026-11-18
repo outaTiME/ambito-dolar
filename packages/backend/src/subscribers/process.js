@@ -15,22 +15,63 @@ const numberValidator = (value, helpers) => {
   return number;
 };
 
-const getBusinessDay = async () => {
-  const today = AmbitoDolar.getTimezoneDate().format('YYYY-MM-DD');
-  // a working day lists no holiday
-  // the query stays a literal string, the encoded one answers an error page
+const getHolidays = async () => {
   const data = await AmbitoDolar.fetch(
-    `${process.env.BUSINESS_DAY_URL}?$format=json&$filter=Data eq ${today}`,
+    `${process.env.BUSINESS_DAY_URL}?$format=json`,
   ).json();
+  // an empty list fails like a down source, applied it would drop every upcoming day
   const { value, error } = Joi.object({
-    value: Joi.array().required(),
+    value: Joi.array()
+      .items(
+        Joi.object({
+          Data: Joi.string()
+            .pattern(/^\d{4}-\d{2}-\d{2}$/)
+            .required(),
+        }).unknown(true),
+      )
+      .min(1)
+      .required(),
   })
     .unknown(true)
     .validate(data);
   if (error) {
-    throw new Error('Invalid business day schema', { cause: error });
+    throw new Error('Invalid holidays schema', { cause: error });
   }
-  return value.value.length === 0;
+  // the stored copy uses our own keys
+  // a missing name stays empty, undefined would never match the stored copy
+  return value.value.map(({ Data, Nome }) => ({
+    date: Data,
+    name: Nome ?? '',
+  }));
+};
+
+// the source decides when it answers, the stored copy when it fails
+const getBusinessDay = async () => {
+  const today = AmbitoDolar.getTimezoneDate().format('YYYY-MM-DD');
+  const holidays = await getHolidays().then(
+    async (holidays) => {
+      // the copy is a fallback, failing to keep it never blocks a day the source answered
+      await Shared.storeHolidays(holidays, today).catch((error) => {
+        console.warn(
+          'Unable to store the holidays',
+          JSON.stringify({ error: error.message }),
+        );
+      });
+      return holidays;
+    },
+    async (error) => {
+      const stored = await Shared.getStoredHolidays();
+      if (stored.length === 0) {
+        throw error;
+      }
+      console.warn(
+        'Unable to get the holidays, using the stored copy',
+        JSON.stringify({ error: error.message }),
+      );
+      return stored;
+    },
+  );
+  return !_.some(holidays, { date: today });
 };
 
 const getRate = (type) => {

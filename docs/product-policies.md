@@ -24,7 +24,7 @@ interval from `getPollInterval` in `packages/client/utilities/Polling.ts`.
   `ProcessClose` at 18:00, false through a non-working day because the business day guard returns
   early. That covers nights, weekends and holidays with no calendar on the client. The guard
   preserves the value and never repairs it: a missed close leaves the app polling fast until the
-  next open.
+  next close.
 - **`cadence` in the payload slows that polling, clamped so it can only slow, never speed up.** It
   carries the open market value, the client derives the closed one, so never send an already
   resolved value. It does not reach the widgets or the watch app, which keep their own.

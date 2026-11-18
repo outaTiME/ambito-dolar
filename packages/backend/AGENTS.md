@@ -66,7 +66,7 @@ SST v4, Lambda handlers.
   gets one of its own.
 - **ky retries neither a timeout nor a parse.** A hung source costs one attempt and not three, and
   a malformed body fails the call where a `promiseRetry` around the parse would have asked again.
-  `getBusinessDay` took that trade so six retries could not outlast the minute `Process` gets.
+  `getHolidays` took that trade so six attempts could not outlast the minute `Process` gets.
 - **ky skips POST and PATCH.** `promiseRetry` covers what ky cannot reach:
   `packages/backend/src/subscribers/notify.js`, the media still processing in
   `packages/backend/src/libs/social/instagram.js`, and the social targets in `shared.js`. Retrying
@@ -83,9 +83,19 @@ SST v4, Lambda handlers.
 - **Every lambda timeout in `infra/` is twice its observed duration and says so.** Move the pair
   together.
 - **What survives a slow source is the `catch`, not the timeout.** `getRate` catches and
-  `getObjectRates` compacts the hole, so one slow source costs one rate. `getBusinessDay` throws
-  uncaught and costs the whole cycle. A lambda killed after `storeRatesJsonObject` leaves S3 written
-  and the push unsent, which is worse than dying before it.
+  `getObjectRates` compacts the hole, so one slow source costs one rate. `getBusinessDay` falls
+  back to `holidays.json` in the bucket when the source fails, an empty list or a bad date counts
+  as failing, and throws uncaught, costing the whole cycle, only when the copy is missing or
+  unreadable too. While the source answers a storage error only logs, and an unreadable copy is
+  never overwritten. A lambda killed after `storeRatesJsonObject` leaves S3 written and the
+  push unsent, which is worse than dying before it.
+- **`holidays.json` is the only record of past holidays**, the source drops them as it goes. It
+  holds `[{ date: 'YYYY-MM-DD', name }]` sorted by date, our keys, not the source's.
+  `mergeHolidays` in `shared.js` keeps every stored past day as it was and follows the source
+  from today on, an upcoming day the source drops leaves the copy. `storeHolidays` puts only when
+  the merge changes it. Never rewrite it by hand: the object is gzipped, a console upload without
+  it is unreadable. Deleting it rebuilds it from the source on the next check, without the past
+  days.
 - **Do not reorder `packages/backend/src/subscribers/process.js`.** `storeRatesJsonObject` -> `updateRealtimeData` -> `notify` is
   load bearing, a push landing before the board is written shows stale rates to the clients still
   on it. Inside `storeRatesJsonObject` the history lands before every other object, a client that

@@ -63,6 +63,32 @@ test('Stats should merge by market day', (t) => {
   ]);
 });
 
+test('Holidays should keep the past and follow the source from today on', (t) => {
+  const stored = [
+    { date: '2025-12-25', name: 'a' },
+    { date: '2026-11-23', name: 'b' },
+    { date: '2026-11-24', name: 'c' },
+    { date: '2026-12-08', name: 'd' },
+    { date: '2026-12-15', name: 'e' },
+  ];
+  const holidays = [
+    { date: '2026-11-23', name: '' },
+    { date: '2026-12-08', name: 'new' },
+    { date: '2026-12-25', name: 'f' },
+  ];
+  const merged = Shared.mergeHolidays(stored, holidays, '2026-11-24');
+  // a stored past day stays as it was, today and later ones the source dropped leave
+  t.deepEqual(merged, [
+    { date: '2025-12-25', name: 'a' },
+    { date: '2026-11-23', name: 'b' },
+    { date: '2026-12-08', name: 'new' },
+    { date: '2026-12-25', name: 'f' },
+  ]);
+  // an unchanged list merges to itself and never puts again
+  t.deepEqual(Shared.mergeHolidays(merged, holidays, '2026-11-24'), merged);
+  t.deepEqual(Shared.mergeHolidays([], holidays, '2026-11-24'), holidays);
+});
+
 test('Fetch stats should carry the last stat without the notified value and the hash', (t) => {
   const stat = ['2026-10-02T12:00:00-03:00', 3, 0, 1, 1, 'h'];
   t.deepEqual(
